@@ -1,0 +1,201 @@
+'use client';
+
+import { useEffect } from 'react';
+import Script from 'next/script';
+import Link from 'next/link';
+
+export default function LandingPage() {
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).lucide) {
+      (window as any).lucide.createIcons();
+    }
+  }, []);
+
+  return (
+    <>
+      <Script src="https://cdn.tailwindcss.com" strategy="beforeInteractive" />
+      <Script src="https://unpkg.com/lucide@latest" strategy="lazyOnload" />
+      <link rel="stylesheet" href="/landing-backup/styles.css" />
+      
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <img src="/Assets/kursfind-logo.png" alt="Kursfind" className="h-8 w-auto" />
+              </div>
+              <div className="hidden md:flex items-center space-x-8">
+                <Link href="/suchen" className="text-gray-700 hover:text-blue-600 transition">
+                  AI-Suche
+                </Link>
+                <Link href="/courses" className="text-gray-700 hover:text-blue-600 transition">
+                  Kurse
+                </Link>
+                <Link href="/student/signup" className="text-gray-700 hover:text-blue-600 transition">
+                  Für Lernende
+                </Link>
+                <Link href="/provider/signup" className="text-gray-700 hover:text-blue-600 transition">
+                  Für Anbieter
+                </Link>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Link href="/student/login" className="text-gray-700 hover:text-blue-600 transition">
+                  Anmelden
+                </Link>
+                <Link 
+                  href="/student/signup"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Registrieren
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center">
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                Finde deinen perfekten Kurs mit{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                  KI-Power
+                </span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Unsere intelligente KI hilft dir, aus über 10.000 Weiterbildungen genau die richtige für deine Karriereziele zu finden.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link
+                  href="/suchen"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-lg transition transform hover:scale-105"
+                >
+                  Jetzt AI-Suche starten
+                </Link>
+                <Link
+                  href="/courses"
+                  className="bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-gray-200 hover:border-blue-600 transition"
+                >
+                  Kurse durchsuchen
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600">10.000+</div>
+                <div className="text-gray-600 mt-2">Kurse</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-600">500+</div>
+                <div className="text-gray-600 mt-2">Anbieter</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600">50.000+</div>
+                <div className="text-gray-600 mt-2">Teilnehmer</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-orange-600">4.8/5</div>
+                <div className="text-gray-600 mt-2">Bewertung</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-16">Warum Kursfind?</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
+                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+                  <i data-lucide="brain" className="w-6 h-6 text-white"></i>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">KI-gestützte Suche</h3>
+                <p className="text-gray-600">
+                  Unsere intelligente KI versteht deine Anfragen und findet genau die Kurse, die zu dir passen.
+                </p>
+              </div>
+              <div className="p-6 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100">
+                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
+                  <i data-lucide="filter" className="w-6 h-6 text-white"></i>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Personalisierte Empfehlungen</h3>
+                <p className="text-gray-600">
+                  Erhalte maßgeschneiderte Kursvorschläge basierend auf deinen Zielen und Vorkenntnissen.
+                </p>
+              </div>
+              <div className="p-6 rounded-xl bg-gradient-to-br from-green-50 to-green-100">
+                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+                  <i data-lucide="check-circle" className="w-6 h-6 text-white"></i>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Geprüfte Anbieter</h3>
+                <p className="text-gray-600">
+                  Alle Bildungsanbieter sind verifiziert und bieten hochwertige Weiterbildungen an.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+          <div className="max-w-4xl mx-auto text-center px-4">
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Bereit, deine Weiterbildung zu starten?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8">
+              Probiere jetzt unsere KI-gestützte Kurssuche aus und finde deinen perfekten Kurs in Sekunden.
+            </p>
+            <Link
+              href="/suchen"
+              className="inline-block bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:shadow-xl transition transform hover:scale-105"
+            >
+              Kostenlos starten
+            </Link>
+          </div>
+        </section>
+
+        <footer className="bg-gray-900 text-gray-300 py-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="grid md:grid-cols-4 gap-8">
+              <div>
+                <img src="/Assets/kursfind-logo.png" alt="Kursfind" className="h-8 w-auto mb-4 brightness-0 invert" />
+                <p className="text-sm">
+                  Die intelligente Plattform für Weiterbildung und berufliche Entwicklung.
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-4">Produkt</h4>
+                <ul className="space-y-2 text-sm">
+                  <li><Link href="/suchen" className="hover:text-white transition">AI-Suche</Link></li>
+                  <li><Link href="/courses" className="hover:text-white transition">Kurse</Link></li>
+                  <li><Link href="/student/dashboard" className="hover:text-white transition">Dashboard</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-4">Unternehmen</h4>
+                <ul className="space-y-2 text-sm">
+                  <li><Link href="/about" className="hover:text-white transition">Über uns</Link></li>
+                  <li><Link href="/provider/signup" className="hover:text-white transition">Für Anbieter</Link></li>
+                  <li><Link href="/contact" className="hover:text-white transition">Kontakt</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-4">Rechtliches</h4>
+                <ul className="space-y-2 text-sm">
+                  <li><Link href="/landing-backup/privacy-policy.html" className="hover:text-white transition">Datenschutz</Link></li>
+                  <li><Link href="/landing-backup/imprint.html" className="hover:text-white transition">Impressum</Link></li>
+                  <li><Link href="/terms" className="hover:text-white transition">AGB</Link></li>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+              <p>&copy; 2024 Kursfind. Alle Rechte vorbehalten.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+
+      <Script src="/landing-backup/script.js" strategy="lazyOnload" />
+    </>
+  );
+}
