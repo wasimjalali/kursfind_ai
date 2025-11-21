@@ -155,14 +155,14 @@ export default function Home() {
                     
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
-                      <div className="max-w-3xl bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 text-gray-900 rounded-2xl rounded-tr-sm px-6 py-4 shadow-lg">
-                        <p className="text-base leading-relaxed">{message.content}</p>
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-lg">
+                        <p className="text-sm sm:text-base leading-relaxed">{message.content}</p>
                       </div>
                     )}
                     
                     {/* AI MESSAGE - WITH MARKDOWN RENDERING */}
                     {message.role === 'assistant' && (
-                      <div className="max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-lg border border-gray-200">
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] mr-auto bg-white rounded-2xl rounded-tl-sm px-4 sm:px-6 py-3 sm:py-4 shadow-lg border border-gray-200">
                         <div className="flex items-start gap-3">
                           <div className="relative flex-shrink-0">
                             <Image 

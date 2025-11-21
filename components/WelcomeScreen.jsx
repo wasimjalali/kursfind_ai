@@ -101,18 +101,18 @@ export default function WelcomeScreen({ onExampleClick }) {
         </div>
       </div>
 
-      {/* Quick Links - Hide signup button when logged in */}
-      <div className="mt-12 flex flex-col sm:flex-row gap-4">
+      {/* Quick Links - Less prominent on mobile */}
+      <div className="mt-12 flex flex-col sm:flex-row gap-4 w-full max-w-md">
         <a
           href="/courses"
-          className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all text-center"
+          className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-600 md:border-2 md:text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all text-center text-sm md:text-base"
         >
           📚 Alle Kurse durchsuchen
         </a>
         {!user && (
           <a
             href="/student/signup"
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center"
+            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center"
           >
             Kostenloses Konto erstellen →
           </a>
