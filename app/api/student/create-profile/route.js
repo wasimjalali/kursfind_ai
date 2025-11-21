@@ -4,10 +4,11 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   // Create Supabase client with anon key (respects RLS policies)
   // Create client inside function to avoid build-time errors
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  // Validate that we have actual values (not empty strings)
+  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.trim() === '' || supabaseAnonKey.trim() === '') {
     return NextResponse.json(
       { error: 'Server configuration error: Missing Supabase credentials' },
       { status: 500 }
