@@ -87,36 +87,59 @@ export default function Home() {
     }
   };
 
+  const startNewChat = () => {
+    setMessages([]);
+    setInput('');
+    setSidebarOpen(false);
+  };
+
   return (
     <div className="flex h-screen bg-[#FFFBF5]">
+      
+      {/* MOBILE STICKY HEADER - Only visible on mobile */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 lg:hidden">
+        <div className="flex items-center justify-between h-14 px-4">
+          {/* Hamburger button - left */}
+          <button 
+            onClick={() => setSidebarOpen(true)} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* Logo - center */}
+          <Image 
+            src="/Assets/Kursfind-logo.png" 
+            width={32} 
+            height={32} 
+            alt="Kursfind AI"
+            className="rounded-lg"
+          />
+          
+          {/* New Chat button - right */}
+          <button 
+            onClick={startNewChat} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="New chat"
+          >
+            <svg className="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+      </div>
       
       {/* Sidebar */}
       <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-      {/* Floating Open Button (when sidebar is closed) */}
-      {!sidebarOpen && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setSidebarOpen(true);
-          }}
-          className="fixed top-4 left-4 z-40 p-2 bg-white border-2 border-gray-300 rounded-lg shadow-lg hover:bg-gray-50 hover:border-cyan-500 transition-all"
-          aria-label="Open sidebar"
-        >
-          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      )}
-
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidebarOpen ? 'ml-[260px]' : 'ml-0'
-      }`}>
+      <div className="flex-1 flex flex-col lg:ml-[260px]">
 
-        {/* Chat Area */}
-        <main className="flex-1 overflow-y-auto">
+        {/* Chat Area - Add padding-top for mobile header */}
+        <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
           <div className="max-w-4xl mx-auto px-4 py-8">
             
             {/* Show Welcome Screen if no messages */}

@@ -1,8 +1,29 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
 
 export default function WelcomeScreen({ onExampleClick }) {
+  const [user, setUser] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check auth state
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkUser();
+
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   const examples = [
     {
       icon: '🎓',
@@ -52,13 +73,13 @@ export default function WelcomeScreen({ onExampleClick }) {
         </p>
       </div>
 
-      {/* Example Prompts Grid */}
+      {/* Example Prompts Grid - Show 2 on mobile, all on desktop */}
       <div className="w-full max-w-4xl">
         <p className="text-sm text-gray-600 mb-4 text-center">
           Beispiele, um zu starten:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {examples.map((example, idx) => (
+          {examples.slice(0, isMobile ? 2 : 4).map((example, idx) => (
             <button
               key={idx}
               onClick={() => onExampleClick(example.query)}
@@ -80,20 +101,22 @@ export default function WelcomeScreen({ onExampleClick }) {
         </div>
       </div>
 
-      {/* Quick Links */}
-      <div className="mt-12 flex gap-4">
+      {/* Quick Links - Hide signup button when logged in */}
+      <div className="mt-12 flex flex-col sm:flex-row gap-4">
         <a
           href="/courses"
-          className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all"
+          className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all text-center"
         >
           📚 Alle Kurse durchsuchen
         </a>
-        <a
-          href="/student/signup"
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-        >
-          Kostenloses Konto erstellen →
-        </a>
+        {!user && (
+          <a
+            href="/student/signup"
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center"
+          >
+            Kostenloses Konto erstellen →
+          </a>
+        )}
       </div>
     </div>
   );
