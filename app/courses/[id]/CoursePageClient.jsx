@@ -38,20 +38,20 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
   // Helper function to get course context
   const getCourseContext = () => ({
-    title: course.title,
-    provider: provider?.name || course.provider,
-    location: course.location,
-    duration: course.duration,
-    funding_type: course.funding_type,
-    description: course.description,
-    price: course.price || 'Auf Anfrage',
-    start_date: course.start_date || 'Flexibler Start',
-    format: course.format || 'Vollzeit',
-    certificate: course.certificate || 'Zertifikat wird vergeben',
-    prerequisites: course.prerequisites || 'Keine besonderen Voraussetzungen',
-    target_audience: course.target_audience || 'Offen für alle',
-    website: course.website || '',
-    contact_email: course.contact_email || '',
+            title: course.title,
+            provider: provider?.name || course.provider,
+            location: course.location,
+            duration: course.duration,
+            funding_type: course.funding_type,
+            description: course.description,
+            price: course.price || 'Auf Anfrage',
+            start_date: course.start_date || 'Flexibler Start',
+            format: course.format || 'Vollzeit',
+            certificate: course.certificate || 'Zertifikat wird vergeben',
+            prerequisites: course.prerequisites || 'Keine besonderen Voraussetzungen',
+            target_audience: course.target_audience || 'Offen für alle',
+            website: course.website || '',
+            contact_email: course.contact_email || '',
     contact_phone: course.contact_phone || '',
     benefits: course.benefits || '',
     learning_objectives: course.learning_objectives || [],
@@ -1040,7 +1040,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </button>
             </div>
           </div>
-          </div>
+        </div>
         </>
       )}
 

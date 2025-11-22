@@ -137,7 +137,7 @@ export default function Home() {
 
       {/* DESKTOP: Floating Hamburger Button - Top Left - Hide when sidebar is open */}
       {!sidebarOpen && (
-        <button 
+        <button
           onClick={() => setSidebarOpen(true)} 
           className="hidden lg:flex fixed top-4 left-4 z-50 p-3 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all border border-gray-200"
           aria-label="Open menu"

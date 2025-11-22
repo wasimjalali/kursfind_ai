@@ -110,12 +110,12 @@ export default function WelcomeScreen({ onExampleClick }) {
           📚 Alle Kurse durchsuchen
         </a>
         {!user && (
-          <a
-            href="/student/signup"
+        <a
+          href="/student/signup"
             className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center"
-          >
-            Kostenloses Konto erstellen →
-          </a>
+        >
+          Kostenloses Konto erstellen →
+        </a>
         )}
       </div>
     </div>

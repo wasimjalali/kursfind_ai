@@ -475,19 +475,19 @@ export default function CoursesPage() {
                             <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
                               <span className="text-white font-bold text-xs">
                                 {(course.providers?.name || course.provider || 'K')[0].toUpperCase()}
-                              </span>
+                          </span>
                             </div>
-                          )}
+                        )}
                           {/* Provider Name */}
                           <div className="flex-1 min-w-0">
                             <div className="text-xs font-semibold text-gray-900 truncate">
                               {course.providers?.name || course.provider || 'Anbieter'}
                             </div>
-                            {course.funding_type && (
+                        {course.funding_type && (
                               <div className="text-xs text-emerald-600 font-medium mt-0.5">
-                                {course.funding_type}
+                            {course.funding_type}
                               </div>
-                            )}
+                        )}
                           </div>
                         </div>
                       </div>
