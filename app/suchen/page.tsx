@@ -14,7 +14,7 @@ interface Message {
 }
 
 export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -136,7 +136,7 @@ export default function Home() {
       <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:ml-[260px]">
+      <div className="flex-1 flex flex-col">
 
         {/* Chat Area - Add padding-top for mobile header */}
         <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
@@ -295,7 +295,7 @@ export default function Home() {
                   // Shift+Enter allows new line (default behavior)
                 }}
                 placeholder="z.B. Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein..."
-                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 focus:outline-none shadow-lg text-gray-900 placeholder-gray-500 leading-relaxed"
+                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 focus:outline-none shadow-lg text-gray-900 placeholder-gray-500 leading-relaxed bg-[#FFFBF5]"
                 disabled={loading}
                 rows={1}
               />

@@ -68,16 +68,16 @@ export default function WelcomeScreen({ onExampleClick }) {
         <p className="text-xl text-gray-600 max-w-2xl">
           Finden Sie Ihre perfekte Weiterbildung in Minuten mit KI-Unterstützung
         </p>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-gray-500 mt-2 mb-6">
           ✨ Powered by Powerful AI Engine
+        </p>
+        <p className="text-sm text-gray-600 text-center">
+          Beispiele, um zu starten:
         </p>
       </div>
 
       {/* Example Prompts Grid - Show 2 on mobile, all on desktop */}
-      <div className="w-full max-w-4xl">
-        <p className="text-sm text-gray-600 mb-4 text-center">
-          Beispiele, um zu starten:
-        </p>
+      <div className="w-full max-w-4xl mt-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {examples.slice(0, isMobile ? 2 : 4).map((example, idx) => (
             <button

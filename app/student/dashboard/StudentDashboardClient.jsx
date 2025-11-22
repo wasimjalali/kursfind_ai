@@ -5,7 +5,7 @@ import StudentSidebar from '@/components/student/StudentSidebar';
 import StudentHeader from '@/components/student/StudentHeader';
 
 export default function StudentDashboardClient({ student, children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Start closed
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">

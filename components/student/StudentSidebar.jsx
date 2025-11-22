@@ -51,17 +51,18 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
         />
       )}
 
-      {/* Sidebar - Overlay on mobile, fixed on desktop */}
+      {/* Sidebar - Overlay on both mobile and desktop */}
       <aside
         className={`
-          fixed lg:static
-          top-14 lg:top-0 bottom-0 lg:bottom-auto left-0 z-40
-          w-[80vw] max-w-[280px] lg:w-64
+          fixed
+          top-14 lg:top-0 bottom-0 left-0 z-40
+          w-[80vw] max-w-[280px] lg:w-[280px]
           bg-white lg:h-screen
           border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           overflow-y-auto
+          shadow-xl
         `}
       >
         <div className="flex flex-col h-full">
@@ -78,16 +79,25 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             </button>
           </div>
 
-          {/* Logo - Desktop only */}
-          <div className="hidden lg:block p-6 border-b border-gray-200">
-            <Link href="/" className="flex items-center space-x-3">
+          {/* Logo with Close Button - Desktop only */}
+          <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <Link href="/suchen" className="flex items-center space-x-2">
               <img
                 src="/Assets/Kursfind-logo.png"
                 alt="Kursfind AI"
-                className="w-16 h-16 rounded-xl"
+                className="w-12 h-12 rounded-xl"
               />
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+                <h1 className="text-base font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
                   Kursfind AI
                 </h1>
                 <p className="text-xs text-gray-600">Student Portal</p>

@@ -76,20 +76,21 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         />
       )}
 
-      {/* Sidebar - Overlay on mobile, fixed on desktop */}
+      {/* Sidebar - Overlay on both mobile and desktop */}
       <aside 
         className={`
-          fixed lg:relative
-          top-14 lg:top-0 bottom-0 lg:bottom-auto left-0
-          w-[80vw] max-w-[280px] lg:w-[260px]
+          fixed
+          top-14 lg:top-0 bottom-0 left-0
+          w-[80vw] max-w-[280px] lg:w-[280px]
           bg-gray-50
           lg:h-screen
           transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          z-40 lg:z-auto
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          z-40
           overflow-y-auto
           border-r border-gray-200
           flex flex-col
+          shadow-xl
         `}
       >
         
@@ -106,17 +107,26 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        {/* Header with Logo - Desktop only */}
-        <div className="hidden lg:block p-4 border-b border-gray-200">
-          <Link href="/" className="flex items-center gap-2">
+        {/* Header with Logo and Close Button - Desktop only */}
+        <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
+            aria-label="Close sidebar"
+          >
+            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <Link href="/suchen" className="flex items-center gap-2">
             <Image 
               src="/Assets/Kursfind-logo.png" 
               alt="Kursfind AI" 
-              width={48} 
-              height={48}
+              width={40} 
+              height={40}
               className="rounded-lg"
             />
-            <span className="font-bold text-lg text-gray-900">
+            <span className="font-bold text-base text-gray-900">
               Kursfind AI
             </span>
           </Link>
