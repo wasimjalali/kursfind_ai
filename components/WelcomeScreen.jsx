@@ -55,7 +55,7 @@ export default function WelcomeScreen({ onExampleClick }) {
         <div className="mb-6 flex justify-center">
           <div className="relative w-30 h-30">
             <Image 
-              src="/Assets/new-logo-kursfind.png" 
+              src="/Assets/kursfind-orginal-logo.png" 
               alt="Kursfind AI" 
               fill
               className="rounded-2xl shadow-lg"

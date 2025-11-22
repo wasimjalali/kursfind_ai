@@ -41,7 +41,7 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
             <Image 
-              src="/Assets/new-logo-kursfind.png" 
+              src="/Assets/kursfind-orginal-logo.png" 
               alt="Kursfind AI" 
               width={40} 
               height={40}
