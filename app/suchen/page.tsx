@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
