@@ -683,7 +683,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-6 sm:pb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-8 sm:pb-10">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
@@ -885,10 +885,10 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         </div>
       )}
 
-      {/* Floating AI Chat Button - Visible on all screens */}
+      {/* Floating AI Chat Button - Visible on all screens, 15px above bottom right on mobile */}
       <button
         onClick={() => setIsChatOpen(true)}
-        className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-40"
+        className="fixed right-4 bottom-[15px] sm:right-6 sm:bottom-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-[60]"
         aria-label="AI Chat öffnen"
       >
         {/* Sparkles/AI Icon */}
