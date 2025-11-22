@@ -46,14 +46,18 @@ CREATE POLICY "Public can view providers"
 -- ============================================
 -- 3. TRIGGER for updated_at (automatic timestamp)
 -- ============================================
--- Create function (if not exists)
+-- Create function (if not exists) with security fix
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Create trigger
 DROP TRIGGER IF EXISTS update_providers_updated_at ON providers;
