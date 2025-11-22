@@ -20,8 +20,20 @@ export async function POST(request) {
 
   // Prefer service role key for profile creation (bypasses RLS)
   // This is safe because we're creating the profile right after signup
-  const supabaseKey = supabaseServiceKey || supabaseAnonKey;
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  // If service role key is available, use it; otherwise use anon key
+  const supabaseKey = supabaseServiceKey && supabaseServiceKey.trim() !== '' 
+    ? supabaseServiceKey 
+    : supabaseAnonKey;
+  
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    },
+    db: {
+      schema: 'public'
+    }
+  });
 
   try {
     const body = await request.json();
@@ -54,6 +66,67 @@ export async function POST(request) {
 
     if (error) {
       console.error('Provider profile creation error:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error details:', error.details);
+      console.error('Error hint:', error.hint);
+      console.error('Provider data attempted:', providerData);
+      
+      // Handle schema cache errors - try with anon key instead
+      if (error.message?.includes('schema cache') || error.message?.includes('column') || error.message?.includes('auth_user_id')) {
+        console.log('Schema cache/column error detected, trying with anon key...');
+        
+        // Retry with anon key
+        const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        });
+        
+        const { data: retryData, error: retryError } = await supabaseAnon
+          .from('providers')
+          .insert([providerData])
+          .select()
+          .single();
+        
+        if (retryError) {
+          console.error('Retry with anon key also failed:', retryError);
+          
+          // If still failing with column error, try alternative column name
+          if (retryError.message?.includes('auth_user_id') || retryError.message?.includes('column')) {
+            console.log('Trying with alternative column name: user_id');
+            const alternativeData = {
+              ...providerData,
+              user_id: providerData.auth_user_id,
+            };
+            delete alternativeData.auth_user_id;
+            
+            const { data: altData, error: altError } = await supabaseAnon
+              .from('providers')
+              .insert([alternativeData])
+              .select()
+              .single();
+            
+            if (altError) {
+              console.error('Alternative column name also failed:', altError);
+              return NextResponse.json(
+                { error: `Datenbankfehler: Die Spalte 'auth_user_id' existiert möglicherweise nicht in der Tabelle 'providers'. Bitte überprüfen Sie die Datenbankstruktur. Fehler: ${altError.message}` },
+                { status: 500 }
+              );
+            }
+            
+            return NextResponse.json({ success: true, provider: altData });
+          }
+          
+          return NextResponse.json(
+            { error: `Datenbankfehler: ${retryError.message}. Bitte kontaktieren Sie den Support.` },
+            { status: 500 }
+          );
+        }
+        
+        return NextResponse.json({ success: true, provider: retryData });
+      }
       
       // Handle specific errors
       if (error.code === '23505') {
