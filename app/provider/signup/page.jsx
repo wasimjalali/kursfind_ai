@@ -50,35 +50,45 @@ export default function ProviderSignup() {
 
       console.log('Signup response:', authData);
 
-      // Check if email confirmation is required
-      if (authData.user && !authData.session) {
-        setError('Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen einen Bestätigungslink gesendet.');
-        setLoading(false);
-        return;
+      // Check if user was created
+      if (!authData.user) {
+        throw new Error('Benutzer konnte nicht erstellt werden. Bitte versuchen Sie es erneut.');
       }
 
-      // 2. Create provider profile
+      // 2. Create provider profile via API route (even if email confirmation is required)
       // Generate provider_id from company name (slug format)
       const providerId = formData.companyName
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
-      
-      const { error: profileError } = await supabase
-        .from('providers')
-        .insert([{
+
+      const profileResponse = await fetch('/api/provider/create-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           auth_user_id: authData.user.id,
-          provider_id: providerId,
           email: formData.email,
           company_name: formData.companyName,
           contact_name: formData.contactName,
           phone: formData.phone,
-        }]);
+          provider_id: providerId,
+        }),
+      });
 
-      if (profileError) {
-        console.error('Profile error:', profileError);
-        console.error('Profile error details:', JSON.stringify(profileError, null, 2));
-        throw profileError;
+      const profileResult = await profileResponse.json();
+
+      if (!profileResponse.ok) {
+        throw new Error(profileResult.error || 'Fehler beim Erstellen des Provider-Profils');
+      }
+
+      // Check if email confirmation is required
+      if (authData.user && !authData.session) {
+        setSuccess(true);
+        setError('Registrierung erfolgreich! Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen einen Bestätigungslink gesendet. Nach der Bestätigung können Sie sich anmelden.');
+        setLoading(false);
+        return;
       }
 
       setSuccess(true);
