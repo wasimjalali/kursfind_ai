@@ -56,15 +56,8 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
           </Link>
         </div>
 
-        {/* Page Title - Center */}
-        <div className="flex-1 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Willkommen zurück!
-          </h1>
-          <p className="text-sm text-gray-600">
-            {provider?.company_name || 'Provider Dashboard'}
-          </p>
-        </div>
+        {/* Spacer */}
+        <div className="flex-1"></div>
 
         {/* User Menu */}
         <div className="relative">
