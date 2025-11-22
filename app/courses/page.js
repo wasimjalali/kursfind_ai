@@ -37,7 +37,14 @@ export default function CoursesPage() {
   async function fetchCourses() {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      
+      // First, check if Supabase client is properly initialized
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        throw new Error('Supabase environment variables are not set')
+      }
+      
+      // Try to fetch with provider join first
+      let { data, error } = await supabase
         .from('courses')
         .select(`
           *,
@@ -49,7 +56,31 @@ export default function CoursesPage() {
         `)
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      // If join fails, try without join as fallback
+      if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
+        console.warn('Provider join failed, fetching courses without join:', error.message)
+        const fallbackResult = await supabase
+          .from('courses')
+          .select('*')
+          .order('created_at', { ascending: false })
+        
+        if (fallbackResult.error) {
+          throw fallbackResult.error
+        }
+        
+        data = fallbackResult.data
+        error = null
+      }
+
+      if (error) {
+        console.error('Supabase query error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        throw error
+      }
 
       if (data) {
         setAllCourses(data)
@@ -63,9 +94,26 @@ export default function CoursesPage() {
         setLocations(uniqueLocations.sort())
         setFundingTypes(uniqueFunding.sort())
         setProviders(uniqueProviders.sort())
+      } else {
+        // No error but no data - set empty arrays
+        setAllCourses([])
+        setFilteredCourses([])
+        setLocations([])
+        setFundingTypes([])
+        setProviders([])
       }
     } catch (error) {
-      console.error('Error fetching courses:', error)
+      console.error('Error fetching courses:', {
+        message: error?.message || 'Unknown error',
+        details: error?.details || error?.toString(),
+        stack: error?.stack
+      })
+      // Set empty arrays on error to prevent UI crashes
+      setAllCourses([])
+      setFilteredCourses([])
+      setLocations([])
+      setFundingTypes([])
+      setProviders([])
     } finally {
       setLoading(false)
     }
