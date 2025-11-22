@@ -3,6 +3,12 @@
 -- ============================================
 -- Run this in your Supabase SQL Editor
 -- This fixes all 8 security warnings from the linter
+-- 
+-- IMPROVEMENTS (based on Supabase agent feedback):
+-- ✅ Uses := for assignment (PostgreSQL convention)
+-- ✅ Sets function owner to postgres (trusted role)
+-- ✅ Revokes EXECUTE from PUBLIC (security best practice)
+-- ✅ Uses SET search_path = '' (prevents search path injection)
 -- ============================================
 
 -- ============================================
@@ -10,7 +16,7 @@
 -- ============================================
 -- These functions need SET search_path = '' to prevent search path injection
 
--- 1. Fix: update_updated_at_column
+-- 1. Fix: update_updated_at_column (Improved version with security best practices)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -18,10 +24,16 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 BEGIN
-  NEW.updated_at = NOW();
+  NEW.updated_at := NOW();
   RETURN NEW;
 END;
 $$;
+
+-- Set function owner to postgres (trusted role)
+ALTER FUNCTION update_updated_at_column() OWNER TO postgres;
+
+-- Revoke EXECUTE from PUBLIC for security
+REVOKE EXECUTE ON FUNCTION update_updated_at_column() FROM PUBLIC;
 
 -- 2. Fix: increment_course_clicks
 -- First, let's check if this function exists and what it does
@@ -46,6 +58,10 @@ BEGIN
       RETURN NEW;
     END;
     $func$';
+    
+    -- Set function owner and revoke public access
+    EXECUTE 'ALTER FUNCTION increment_course_clicks() OWNER TO postgres';
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION increment_course_clicks() FROM PUBLIC';
   END IF;
 END $$;
 
@@ -67,6 +83,10 @@ BEGIN
       RETURN NEW;
     END;
     $func$';
+    
+    -- Set function owner and revoke public access
+    EXECUTE 'ALTER FUNCTION increment_course_views() OWNER TO postgres';
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION increment_course_views() FROM PUBLIC';
   END IF;
 END $$;
 
@@ -84,10 +104,14 @@ BEGIN
     SET search_path = ''
     AS $func$
     BEGIN
-      NEW.updated_at = NOW();
+      NEW.updated_at := NOW();
       RETURN NEW;
     END;
     $func$';
+    
+    -- Set function owner and revoke public access
+    EXECUTE 'ALTER FUNCTION set_updated_at() OWNER TO postgres';
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION set_updated_at() FROM PUBLIC';
   END IF;
 END $$;
 
@@ -107,10 +131,14 @@ BEGIN
     SET search_path = ''
     AS $func$
     BEGIN
-      NEW.updated_at = NOW();
+      NEW.updated_at := NOW();
       RETURN NEW;
     END;
     $func$';
+    
+    -- Set function owner and revoke public access
+    EXECUTE 'ALTER FUNCTION providers_updated_at_trigger() OWNER TO postgres';
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION providers_updated_at_trigger() FROM PUBLIC';
   END IF;
 END $$;
 
@@ -135,6 +163,10 @@ BEGIN
       RETURN NEW;
     END;
     $func$';
+    
+    -- Set function owner and revoke public access
+    EXECUTE 'ALTER FUNCTION validate_analytics_event() OWNER TO postgres';
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION validate_analytics_event() FROM PUBLIC';
   END IF;
 END $$;
 
