@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-export default function ProviderSidebar() {
+export default function ProviderSidebar({ isOpen = true }) {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -95,7 +95,9 @@ export default function ProviderSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-[73px] bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto z-40">
+    <aside className={`fixed left-0 top-[73px] bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto z-40 transition-transform duration-300 ${
+      isOpen ? 'translate-x-0' : '-translate-x-full'
+    }`}>
       
       {/* Navigation */}
       <nav className="p-4">
