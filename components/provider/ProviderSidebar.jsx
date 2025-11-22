@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
@@ -96,27 +95,8 @@ export default function ProviderSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 overflow-y-auto z-40">
+    <aside className="fixed left-0 top-[73px] bottom-0 w-64 bg-white border-r border-gray-200 overflow-y-auto z-40">
       
-      {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
-        <Link href="/" className="flex items-center gap-3">
-          <Image 
-            src="/Assets/Kursfind-logo.png" 
-            alt="Kursfind AI" 
-            width={64} 
-            height={64}
-            className="rounded-lg"
-          />
-          <div>
-            <div className="font-bold text-lg bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-              Kursfind AI
-            </div>
-            <div className="text-xs text-gray-600">Provider Portal</div>
-          </div>
-        </Link>
-      </div>
-
       {/* Navigation */}
       <nav className="p-4">
         <div className="space-y-1">

@@ -31,15 +31,15 @@ export default async function DashboardLayout({ children }) {
 
       {/* Main Content */}
       <div className="ml-64">
+        {/* Header - Sticky */}
+        <ProviderHeader provider={activeProvider} />
+        
         {/* Demo Mode Banner */}
         {!provider && (
           <div className="bg-yellow-500 text-white px-6 py-3 text-center font-medium">
             🎭 DEMO MODE - Sie sind als Demo-Provider angemeldet (Bildungszentrum Köln)
           </div>
         )}
-        
-        {/* Header */}
-        <ProviderHeader provider={activeProvider} />
 
         {/* Page Content */}
         <main className="p-6">

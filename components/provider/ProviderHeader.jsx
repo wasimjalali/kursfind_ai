@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ProviderHeader({ provider }) {
   const router = useRouter();
@@ -16,11 +17,30 @@ export default function ProviderHeader({ provider }) {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-      <div className="px-6 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-30 h-[73px]">
+      <div className="px-6 py-4 flex items-center justify-between h-full">
         
-        {/* Page Title */}
-        <div>
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
+            <Image 
+              src="/Assets/Kursfind-logo.png" 
+              alt="Kursfind AI" 
+              width={40} 
+              height={40}
+              className="rounded-lg"
+            />
+            <div>
+              <div className="font-bold text-lg bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+                Kursfind AI
+              </div>
+              <div className="text-xs text-gray-600">Provider Portal</div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Page Title - Center */}
+        <div className="flex-1 text-center">
           <h1 className="text-2xl font-bold text-gray-900">
             Willkommen zurück!
           </h1>
