@@ -3,22 +3,17 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-  if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey)) {
+  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.trim() === '' || supabaseAnonKey.trim() === '') {
     return NextResponse.json(
       { error: 'Missing Supabase credentials' },
       { status: 500 }
     );
   }
 
-  // Use service role key to bypass RLS for schema inspection
-  const supabaseKey = supabaseServiceKey && supabaseServiceKey.trim() !== '' 
-    ? supabaseServiceKey 
-    : supabaseAnonKey;
-
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  // Use anon key - RLS policies allow public read access to providers table
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   try {
     // Try to query the table structure by selecting one row
