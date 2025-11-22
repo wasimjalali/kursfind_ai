@@ -36,54 +36,52 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
     scrollChatToBottom()
   }, [chatMessages, isChatLoading])
 
-  const handleChatSend = async () => {
-    if (!chatInput.trim()) return
-    
-    const userMessage = chatInput
-    setChatInput('')
-    setIsChatLoading(true)
-    
-    // Add user message
-    setChatMessages(prev => [...prev, {
+  // Helper function to get course context
+  const getCourseContext = () => ({
+    title: course.title,
+    provider: provider?.name || course.provider,
+    location: course.location,
+    duration: course.duration,
+    funding_type: course.funding_type,
+    description: course.description,
+    price: course.price || 'Auf Anfrage',
+    start_date: course.start_date || 'Flexibler Start',
+    format: course.format || 'Vollzeit',
+    certificate: course.certificate || 'Zertifikat wird vergeben',
+    prerequisites: course.prerequisites || 'Keine besonderen Voraussetzungen',
+    target_audience: course.target_audience || 'Offen für alle',
+    website: course.website || '',
+    contact_email: course.contact_email || '',
+    contact_phone: course.contact_phone || '',
+    benefits: course.benefits || '',
+    learning_objectives: course.learning_objectives || [],
+    career_paths: course.career_paths || {}
+  })
+
+  // Helper function to send message with full context
+  const sendMessageWithContext = async (userMessage, currentMessages) => {
+    const updatedMessages = [...currentMessages, {
       role: 'user',
       content: userMessage
-    }])
+    }]
+    setChatMessages(updatedMessages)
+    setIsChatLoading(true)
     
     try {
-      // Call the same AI API
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMessage,
-          courseContext: {
-            title: course.title,
-            provider: provider?.name || course.provider,
-            location: course.location,
-            duration: course.duration,
-            funding_type: course.funding_type,
-            description: course.description,
-            price: course.price || 'Auf Anfrage',
-            start_date: course.start_date || 'Flexibler Start',
-            format: course.format || 'Vollzeit',
-            certificate: course.certificate || 'Zertifikat wird vergeben',
-            prerequisites: course.prerequisites || 'Keine besonderen Voraussetzungen',
-            target_audience: course.target_audience || 'Offen für alle',
-            website: course.website || '',
-            contact_email: course.contact_email || '',
-            contact_phone: course.contact_phone || ''
-          }
+          messages: updatedMessages, // Full conversation history
+          courseContext: getCourseContext()
         })
       })
       
       const data = await response.json()
       
-      // Add AI response
       setChatMessages(prev => [...prev, {
         role: 'assistant',
-        content: data.message
+        content: data.message || data.response || 'Keine Antwort erhalten.'
       }])
     } catch (error) {
       console.error('Chat error:', error)
@@ -94,6 +92,14 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
     } finally {
       setIsChatLoading(false)
     }
+  }
+
+  const handleChatSend = async () => {
+    if (!chatInput.trim()) return
+    
+    const userMessage = chatInput
+    setChatInput('')
+    await sendMessageWithContext(userMessage, chatMessages)
   }
 
   return (
@@ -879,14 +885,14 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         </div>
       )}
 
-      {/* Floating AI Chat Button */}
+      {/* Floating AI Chat Button - Visible on all screens */}
       <button
         onClick={() => setIsChatOpen(true)}
-        className="hidden sm:block fixed right-6 bottom-6 w-16 h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-40"
+        className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-40"
         aria-label="AI Chat öffnen"
       >
         {/* Sparkles/AI Icon */}
-        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
         </svg>
       </button>
@@ -927,109 +933,19 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 </p>
                 <div className="mt-4 space-y-2 text-left">
                   <button
-                    onClick={async () => {
-                      const question = 'Was sind die Voraussetzungen für diesen Kurs?'
-                      setChatInput(question)
-                      setChatMessages([{ role: 'user', content: question }])
-                      setIsChatLoading(true)
-                      
-                      try {
-                        const response = await fetch('/api/chat', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            message: question,
-                            courseContext: {
-                              title: course.title,
-                              provider: provider?.name || course.provider,
-                              location: course.location,
-                              duration: course.duration,
-                              funding_type: course.funding_type,
-                              description: course.description
-                            }
-                          })
-                        })
-                        const data = await response.json()
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: data.message }])
-                      } catch (error) {
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.' }])
-                      } finally {
-                        setIsChatLoading(false)
-                        setChatInput('')
-                      }
-                    }}
+                    onClick={() => sendMessageWithContext('Was sind die Voraussetzungen für diesen Kurs?', chatMessages)}
                     className="w-full bg-white p-3 rounded-lg text-sm text-gray-700 hover:shadow-md hover:border-cyan-500 transition-all border border-gray-200 text-left"
                   >
                     💡 Was sind die Voraussetzungen für diesen Kurs?
                   </button>
                   <button
-                    onClick={async () => {
-                      const question = 'Wann kann ich starten?'
-                      setChatInput(question)
-                      setChatMessages([{ role: 'user', content: question }])
-                      setIsChatLoading(true)
-                      
-                      try {
-                        const response = await fetch('/api/chat', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            message: question,
-                            courseContext: {
-                              title: course.title,
-                              provider: provider?.name || course.provider,
-                              location: course.location,
-                              duration: course.duration,
-                              funding_type: course.funding_type,
-                              description: course.description
-                            }
-                          })
-                        })
-                        const data = await response.json()
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: data.message }])
-                      } catch (error) {
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.' }])
-                      } finally {
-                        setIsChatLoading(false)
-                        setChatInput('')
-                      }
-                    }}
+                    onClick={() => sendMessageWithContext('Wann kann ich starten?', chatMessages)}
                     className="w-full bg-white p-3 rounded-lg text-sm text-gray-700 hover:shadow-md hover:border-cyan-500 transition-all border border-gray-200 text-left"
                   >
                     📅 Wann kann ich starten?
                   </button>
                   <button
-                    onClick={async () => {
-                      const question = 'Welche Karrierechancen habe ich nach dem Kurs?'
-                      setChatInput(question)
-                      setChatMessages([{ role: 'user', content: question }])
-                      setIsChatLoading(true)
-                      
-                      try {
-                        const response = await fetch('/api/chat', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            message: question,
-                            courseContext: {
-                              title: course.title,
-                              provider: provider?.name || course.provider,
-                              location: course.location,
-                              duration: course.duration,
-                              funding_type: course.funding_type,
-                              description: course.description
-                            }
-                          })
-                        })
-                        const data = await response.json()
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: data.message }])
-                      } catch (error) {
-                        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Entschuldigung, es gab einen Fehler. Bitte versuchen Sie es erneut.' }])
-                      } finally {
-                        setIsChatLoading(false)
-                        setChatInput('')
-                      }
-                    }}
+                    onClick={() => sendMessageWithContext('Welche Karrierechancen habe ich nach dem Kurs?', chatMessages)}
                     className="w-full bg-white p-3 rounded-lg text-sm text-gray-700 hover:shadow-md hover:border-cyan-500 transition-all border border-gray-200 text-left"
                   >
                     🎓 Welche Karrierechancen habe ich nach dem Kurs?

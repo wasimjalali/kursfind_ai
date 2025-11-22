@@ -60,9 +60,9 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       <aside
         className={`
           fixed
-          top-14 lg:top-0 bottom-0 left-0 z-40
+          top-14 bottom-0 left-0 z-40
           w-[80vw] max-w-[280px] lg:w-[280px]
-          bg-white lg:h-screen
+          bg-white h-[calc(100vh-3.5rem)]
           border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
