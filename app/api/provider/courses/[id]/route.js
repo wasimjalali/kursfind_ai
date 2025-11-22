@@ -34,7 +34,7 @@ export async function PUT(request, { params }) {
       .from('courses')
       .update(courseData)
       .eq('id', id)
-      .eq('provider_id', provider.id)
+      .eq('provider_id', provider.provider_id || provider.id.toString())
       .select()
       .single();
 
@@ -69,7 +69,7 @@ export async function DELETE(request, { params }) {
     // Get provider
     const { data: provider } = await supabase
       .from('providers')
-      .select('id')
+      .select('id, provider_id')
       .eq('auth_user_id', user.id)
       .single();
 
@@ -85,7 +85,7 @@ export async function DELETE(request, { params }) {
       .from('courses')
       .delete()
       .eq('id', id)
-      .eq('provider_id', provider.id);
+      .eq('provider_id', provider.provider_id || provider.id.toString());
 
     if (deleteError) {
       console.error('Delete error:', deleteError);

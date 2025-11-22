@@ -34,7 +34,7 @@ export async function GET(request) {
     const { data: courses, error } = await supabase
       .from('courses')
       .select('*')
-      .eq('provider_id', provider.id)
+      .eq('provider_id', provider.provider_id || provider.id.toString())
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -93,8 +93,9 @@ export async function POST(request) {
     }
 
     // Prepare course data
+    // Use provider.provider_id (TEXT slug) not provider.id (numeric)
     const courseData = {
-      provider_id: provider.id,
+      provider_id: provider.provider_id || provider.id.toString(),
       title: body.title,
       description: body.description,
       location: body.location,
@@ -182,7 +183,7 @@ export async function PUT(request) {
       .from('courses')
       .select('*')
       .eq('id', courseId)
-      .eq('provider_id', provider.id)
+      .eq('provider_id', provider.provider_id || provider.id.toString())
       .single();
 
     if (fetchError || !existingCourse) {
@@ -224,7 +225,7 @@ export async function PUT(request) {
       .from('courses')
       .update(updateData)
       .eq('id', courseId)
-      .eq('provider_id', provider.id)
+      .eq('provider_id', provider.provider_id || provider.id.toString())
       .select()
       .single();
 
@@ -293,7 +294,7 @@ export async function DELETE(request) {
       .from('courses')
       .select('*')
       .eq('id', courseId)
-      .eq('provider_id', provider.id)
+      .eq('provider_id', provider.provider_id || provider.id.toString())
       .single();
 
     if (!existingCourse) {
@@ -308,7 +309,7 @@ export async function DELETE(request) {
       .from('courses')
       .delete()
       .eq('id', courseId)
-      .eq('provider_id', provider.id);
+      .eq('provider_id', provider.provider_id || provider.id.toString());
 
     if (deleteError) {
       console.error('Error deleting course:', deleteError);
