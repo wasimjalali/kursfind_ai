@@ -109,10 +109,10 @@ export default async function StudentDashboardPage() {
     <div className="p-6 space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-center md:text-left px-4 md:px-0">
           Hallo, {student.first_name}! 🎓
         </h1>
-        <p className="text-cyan-50 text-lg">
+        <p className="text-cyan-50 text-base md:text-lg text-center md:text-left px-4 md:px-0">
           Bereit für Ihre nächste Weiterbildung? Entdecken Sie neue Kurse und verfolgen Sie Ihre Bewerbungen.
         </p>
       </div>

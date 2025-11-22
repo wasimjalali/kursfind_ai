@@ -13,6 +13,7 @@ export default function CoursesPage() {
   const [allCourses, setAllCourses] = useState([])
   const [filteredCourses, setFilteredCourses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
   
   // Quick filter states (top bar)
   const [searchTerm, setSearchTerm] = useState('')
@@ -91,6 +92,19 @@ export default function CoursesPage() {
       supabase.removeChannel(channel)
     }
   }, [])
+
+  // Scroll to top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   // Apply filters whenever filter states change
   useEffect(() => {
@@ -233,7 +247,7 @@ export default function CoursesPage() {
       </section>
 
       {/* Horizontal Quick Filters Bar - ALL FILTERS */}
-      <section className="bg-white border-b border-gray-200 shadow-sm sticky top-[73px] z-40">
+      <section className="bg-white border-b border-gray-200 shadow-sm lg:sticky lg:top-[73px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             
@@ -514,6 +528,19 @@ export default function CoursesPage() {
           )}
         </div>
       </div>
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-30 hover:scale-110"
+          aria-label="Scroll to top"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+      )}
     </div>
   )
 }

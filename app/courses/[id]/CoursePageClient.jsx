@@ -238,16 +238,16 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     <>
                       {/* Laptop - Large Featured Benefit */}
                       {orderedBenefits.includes('Inklusiver Laptop') && (
-                        <div className="flex items-center gap-8 p-10 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-2xl border-2 border-cyan-200">
-                          <div className="flex-1">
-                            <h3 className="text-3xl font-bold text-gray-900 mb-3">
+                        <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 p-6 sm:p-10 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-2xl border-2 border-cyan-200">
+                          <div className="flex-1 text-center sm:text-left">
+                            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
                               Inklusiver Laptop
                             </h3>
-                            <p className="text-gray-600 text-xl">
+                            <p className="text-gray-600 text-lg sm:text-xl">
                               Kostenloser Laptop
                             </p>
                           </div>
-                          <div className="flex-shrink-0 overflow-hidden rounded-2xl">
+                          <div className="hidden sm:block flex-shrink-0 overflow-hidden rounded-2xl">
                             <div className="px-[10px]">
                               <Image
                                 src="/Assets/laptop-new.png"
@@ -677,7 +677,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-6 sm:pb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
@@ -686,7 +686,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               {provider.name}
             </p>
             
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               {provider.phone && (
                 <a 
                   href={`tel:${provider.phone}`}

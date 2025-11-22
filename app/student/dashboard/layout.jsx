@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
-import StudentSidebar from '@/components/student/StudentSidebar';
-import StudentHeader from '@/components/student/StudentHeader';
+import StudentDashboardClient from './StudentDashboardClient';
 
 export default async function StudentDashboardLayout({ children }) {
   const supabase = await createClient();
@@ -40,21 +39,5 @@ export default async function StudentDashboardLayout({ children }) {
     };
   }
 
-  return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      {/* Sidebar */}
-      <StudentSidebar />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <StudentHeader student={student} />
-
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  return <StudentDashboardClient student={student}>{children}</StudentDashboardClient>;
 }

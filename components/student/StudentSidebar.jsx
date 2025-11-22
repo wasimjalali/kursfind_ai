@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-export default function StudentSidebar() {
+export default function StudentSidebar({ isOpen, setIsOpen }) {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
     {
@@ -43,68 +42,53 @@ export default function StudentSidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
-      >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          {isOpen ? (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          ) : (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          )}
-        </svg>
-      </button>
-
-      {/* Overlay for mobile */}
+      {/* Backdrop overlay - mobile only */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Overlay on mobile, fixed on desktop */}
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          w-64 bg-white
-          border-r border-gray-200 transform transition-transform duration-200 ease-in-out
+          w-[80vw] max-w-[280px] lg:w-64
+          bg-white h-screen
+          border-r border-gray-200
+          transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          overflow-y-auto
         `}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-gray-200 relative">
             <Link href="/" className="flex items-center space-x-3">
               <img
                 src="/Assets/Kursfind-logo.png"
                 alt="Kursfind AI"
-                className="w-16 h-16 rounded-xl"
+                className="w-12 h-12 lg:w-16 lg:h-16 rounded-xl"
               />
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+                <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
                   Kursfind AI
                 </h1>
                 <p className="text-xs text-gray-600">Student Portal</p>
               </div>
             </Link>
+            
+            {/* Close X button - mobile only */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           {/* Navigation */}

@@ -83,6 +83,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           inset-y-0 left-0
           w-[80vw] max-w-[280px] lg:w-[260px]
           bg-gray-50
+          h-screen
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           z-40 lg:z-auto
