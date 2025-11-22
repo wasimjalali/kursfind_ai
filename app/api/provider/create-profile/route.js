@@ -71,6 +71,18 @@ export async function POST(request) {
       console.error('Error details:', error.details);
       console.error('Error hint:', error.hint);
       console.error('Provider data attempted:', providerData);
+      console.error('Using service role key:', !!supabaseServiceKey && supabaseServiceKey.trim() !== '');
+      
+      // Handle RLS policy violations
+      if (error.message?.includes('row-level security') || error.message?.includes('RLS') || error.code === '42501') {
+        console.error('RLS policy violation detected. Service role key may not be set in Vercel.');
+        return NextResponse.json(
+          { 
+            error: 'Berechtigungsfehler: Die Registrierung konnte nicht abgeschlossen werden. Bitte kontaktieren Sie den Support. Technischer Fehler: RLS policy violation. Stellen Sie sicher, dass SUPABASE_SERVICE_ROLE_KEY in Vercel gesetzt ist.' 
+          },
+          { status: 403 }
+        );
+      }
       
       // Handle schema cache errors - try with anon key instead
       if (error.message?.includes('schema cache') || error.message?.includes('column') || error.message?.includes('auth_user_id')) {
