@@ -11,6 +11,7 @@ export default function ProviderSignup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [debugInfo, setDebugInfo] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -24,6 +25,7 @@ export default function ProviderSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setDebugInfo('');
     setLoading(true);
 
     // Validation
@@ -39,29 +41,57 @@ export default function ProviderSignup() {
       return;
     }
 
+    if (!formData.companyName.trim()) {
+      setError('Firmenname ist erforderlich');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.contactName.trim()) {
+      setError('Ansprechpartner ist erforderlich');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('🚀 Starting provider signup...');
+      setDebugInfo('Schritt 1: Erstelle Benutzerkonto...');
+
       // 1. Sign up user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('❌ Auth error:', authError);
+        throw authError;
+      }
 
-      console.log('Signup response:', authData);
+      console.log('✅ Auth signup successful:', authData);
 
       // Check if user was created
       if (!authData.user) {
         throw new Error('Benutzer konnte nicht erstellt werden. Bitte versuchen Sie es erneut.');
       }
 
-      // 2. Create provider profile via API route (even if email confirmation is required)
-      // Generate provider_id from company name (slug format)
+      console.log('✅ User created:', authData.user.id);
+
+      // 2. Generate provider_id from company name (slug format)
       const providerId = formData.companyName
         .toLowerCase()
+        .trim()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
+      if (!providerId) {
+        throw new Error('Ungültiger Firmenname. Bitte verwenden Sie nur Buchstaben und Zahlen.');
+      }
+
+      console.log('📝 Creating provider profile...');
+      setDebugInfo('Schritt 2: Erstelle Provider-Profil...');
+
+      // 3. Create provider profile via API route
       const profileResponse = await fetch('/api/provider/create-profile', {
         method: 'POST',
         headers: {
@@ -70,53 +100,79 @@ export default function ProviderSignup() {
         body: JSON.stringify({
           auth_user_id: authData.user.id,
           email: formData.email,
-          company_name: formData.companyName,
-          contact_name: formData.contactName,
-          phone: formData.phone,
+          company_name: formData.companyName.trim(),
+          contact_name: formData.contactName.trim(),
+          phone: formData.phone.trim() || null,
           provider_id: providerId,
         }),
       });
 
       const profileResult = await profileResponse.json();
 
+      console.log('📡 API Response:', {
+        status: profileResponse.status,
+        ok: profileResponse.ok,
+        result: profileResult,
+      });
+
       if (!profileResponse.ok) {
-        throw new Error(profileResult.error || 'Fehler beim Erstellen des Provider-Profils');
+        // Extract error message
+        const errorMsg = profileResult.error || 'Fehler beim Erstellen des Provider-Profils';
+        console.error('❌ Profile creation failed:', errorMsg);
+        throw new Error(errorMsg);
       }
 
-      // Check if email confirmation is required
+      console.log('✅ Provider profile created:', profileResult);
+
+      // 4. Check if email confirmation is required
       if (authData.user && !authData.session) {
         setSuccess(true);
-        setError('Registrierung erfolgreich! Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen einen Bestätigungslink gesendet. Nach der Bestätigung können Sie sich anmelden.');
+        setError(''); // Clear any previous errors
+        setDebugInfo('');
         setLoading(false);
+        // Show success message about email confirmation
+        setTimeout(() => {
+          setError('Registrierung erfolgreich! Bitte bestätigen Sie Ihre E-Mail-Adresse. Wir haben Ihnen einen Bestätigungslink gesendet. Nach der Bestätigung können Sie sich anmelden.');
+        }, 100);
         return;
       }
 
+      // 5. Success - redirect to dashboard
       setSuccess(true);
+      setError('');
+      setDebugInfo('');
+      setLoading(false);
       
-      // Redirect to dashboard after 2 seconds with full page reload
+      console.log('✅ Signup complete! Redirecting to dashboard...');
+      
+      // Redirect to dashboard after 2 seconds
       setTimeout(() => {
         window.location.href = '/provider/dashboard';
       }, 2000);
 
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error('❌ Signup error:', error);
+      setLoading(false);
+      setDebugInfo('');
       
       // More specific error messages
       let errorMessage = 'Registrierung fehlgeschlagen';
       
-      if (error.message?.includes('duplicate key')) {
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.code === '23505') {
+        errorMessage = 'Diese E-Mail-Adresse ist bereits registriert';
+      } else if (error.code === '23503') {
+        errorMessage = 'Datenbankfehler: Ungültige Referenz';
+      } else if (error.message?.includes('duplicate key')) {
         errorMessage = 'Diese E-Mail-Adresse ist bereits registriert';
       } else if (error.message?.includes('violates foreign key')) {
         errorMessage = 'Datenbankfehler: Ungültige Referenz';
-      } else if (error.code === '23505') {
-        errorMessage = 'Diese E-Mail-Adresse ist bereits registriert';
-      } else if (error.message) {
-        errorMessage = error.message;
+      } else if (error.message?.includes('row-level security') || error.message?.includes('RLS')) {
+        errorMessage = 'Berechtigungsfehler: Die Registrierung konnte nicht abgeschlossen werden. Bitte kontaktieren Sie den Support.';
       }
       
       setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -144,7 +200,7 @@ export default function ProviderSignup() {
         </div>
 
         {/* Success Message */}
-        {success && (
+        {success && !error && (
           <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
             ✅ Registrierung erfolgreich! Sie werden weitergeleitet...
           </div>
@@ -154,6 +210,13 @@ export default function ProviderSignup() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
             ❌ {error}
+          </div>
+        )}
+
+        {/* Debug Info */}
+        {debugInfo && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-6 text-sm">
+            ℹ️ {debugInfo}
           </div>
         )}
 
@@ -173,6 +236,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, companyName: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="z.B. Bildungszentrum Berlin GmbH"
+                disabled={loading}
               />
             </div>
 
@@ -188,6 +252,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, contactName: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="Ihr Name"
+                disabled={loading}
               />
             </div>
 
@@ -203,6 +268,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="ihre@email.de"
+                disabled={loading}
               />
             </div>
 
@@ -217,6 +283,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="+49 123 456789"
+                disabled={loading}
               />
             </div>
 
@@ -233,6 +300,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="Mindestens 6 Zeichen"
+                disabled={loading}
               />
             </div>
 
@@ -249,6 +317,7 @@ export default function ProviderSignup() {
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
                 placeholder="Passwort wiederholen"
+                disabled={loading}
               />
             </div>
 
