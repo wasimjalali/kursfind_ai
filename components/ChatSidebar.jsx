@@ -58,7 +58,8 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       items.push(
         { icon: '🏠', label: 'Dashboard', href: '/student/dashboard' },
         { icon: '❤️', label: 'Gespeicherte Kurse', href: '/student/dashboard/saved' },
-        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' }
+        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' },
+        { icon: '⚙️', label: 'Profil', href: '/student/dashboard/profile', desktopOnly: true }
       );
     }
     
@@ -79,9 +80,10 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       <aside 
         className={`
           fixed lg:relative
-          top-14 lg:top-0 bottom-0 left-0
+          top-14 lg:top-0 bottom-0 lg:bottom-auto left-0
           w-[80vw] max-w-[280px] lg:w-[260px]
           bg-gray-50
+          lg:h-screen
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           z-40 lg:z-auto
@@ -104,6 +106,22 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
+        {/* Header with Logo - Desktop only */}
+        <div className="hidden lg:block p-4 border-b border-gray-200">
+          <Link href="/" className="flex items-center gap-2">
+            <Image 
+              src="/Assets/Kursfind-logo.png" 
+              alt="Kursfind AI" 
+              width={48} 
+              height={48}
+              className="rounded-lg"
+            />
+            <span className="font-bold text-lg text-gray-900">
+              Kursfind AI
+            </span>
+          </Link>
+        </div>
+
         {/* Navigation - Flat list */}
         <nav className="flex-1 px-4 py-6 space-y-1">
           {getMenuItems().map((item, idx) => {
@@ -121,6 +139,21 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                   <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
                   <span className="text-sm font-medium">{item.label}</span>
                 </button>
+              );
+            }
+            
+            // Hide desktop-only items on mobile
+            if (item.desktopOnly) {
+              return (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="hidden lg:flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
+                >
+                  <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
+                  <span className="text-sm font-medium">{item.label}</span>
+                </Link>
               );
             }
             
@@ -158,23 +191,41 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </div>
         )}
 
-        {/* Bottom Section - Settings or Login */}
+        {/* Bottom Section - Mobile: Settings, Desktop: User Profile */}
         <div className="p-4 border-t border-gray-200 mt-auto">
           {user && student ? (
-            <Link
-              href="/student/dashboard/profile"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900">Einstellungen</div>
-                <div className="text-xs text-gray-600 truncate">{student.email}</div>
+            <>
+              {/* Mobile: Settings Link */}
+              <Link
+                href="/student/dashboard/profile"
+                onClick={() => setIsOpen(false)}
+                className="flex lg:hidden items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-gray-900">Einstellungen</div>
+                  <div className="text-xs text-gray-600 truncate">{student.email}</div>
+                </div>
+              </Link>
+
+              {/* Desktop: User Profile */}
+              <div className="hidden lg:flex items-center gap-3 p-2 rounded-lg hover:bg-gray-200 cursor-pointer">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold">
+                  {student.first_name?.[0]?.toUpperCase() || 'U'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    {student.first_name} {student.last_name}
+                  </div>
+                  <div className="text-xs text-gray-600 truncate">
+                    {student.email}
+                  </div>
+                </div>
               </div>
-            </Link>
+            </>
           ) : (
             <Link
               href="/student/login"

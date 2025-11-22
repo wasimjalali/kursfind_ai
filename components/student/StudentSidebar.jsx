@@ -33,6 +33,12 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       href: '/courses',
       icon: '🔍',
     },
+    {
+      name: 'Profil',
+      href: '/student/dashboard/profile',
+      icon: '⚙️',
+      desktopOnly: true, // Only show on desktop
+    },
   ];
 
   return (
@@ -49,9 +55,9 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       <aside
         className={`
           fixed lg:static
-          top-14 lg:top-0 bottom-0 left-0 z-40
+          top-14 lg:top-0 bottom-0 lg:bottom-auto left-0 z-40
           w-[80vw] max-w-[280px] lg:w-64
-          bg-white
+          bg-white lg:h-screen
           border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -72,10 +78,49 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             </button>
           </div>
 
+          {/* Logo - Desktop only */}
+          <div className="hidden lg:block p-6 border-b border-gray-200">
+            <Link href="/" className="flex items-center space-x-3">
+              <img
+                src="/Assets/Kursfind-logo.png"
+                alt="Kursfind AI"
+                className="w-16 h-16 rounded-xl"
+              />
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+                  Kursfind AI
+                </h1>
+                <p className="text-xs text-gray-600">Student Portal</p>
+              </div>
+            </Link>
+          </div>
+
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {menuItems.map((item) => {
               const isActive = pathname === item.href;
+              // Hide desktop-only items on mobile
+              if (item.desktopOnly) {
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`
+                      hidden lg:flex items-center space-x-3 px-4 py-3 rounded-lg
+                      transition-all duration-200
+                      ${
+                        isActive
+                          ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-lg font-semibold scale-105'
+                          : 'text-gray-700 hover:bg-white/50 hover:translate-x-1 hover:shadow-sm'
+                      }
+                    `}
+                  >
+                    <span className="text-xl">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              }
               return (
                 <Link
                   key={item.href}
@@ -98,13 +143,14 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             })}
           </nav>
 
-          {/* Settings Link at Bottom */}
+          {/* Bottom Section - Mobile: Settings, Desktop: Footer */}
           <div className="p-4 border-t border-gray-200 mt-auto">
+            {/* Mobile: Settings Link */}
             <Link
               href="/student/dashboard/profile"
               onClick={() => setIsOpen(false)}
               className={`
-                flex items-center space-x-3 px-4 py-3 rounded-lg
+                flex lg:hidden items-center space-x-3 px-4 py-3 rounded-lg
                 transition-all duration-200
                 ${
                   pathname === '/student/dashboard/profile'
@@ -119,6 +165,11 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
               </svg>
               <span>Einstellungen</span>
             </Link>
+
+            {/* Desktop: Footer */}
+            <div className="hidden lg:block text-xs text-gray-600 text-center">
+              © 2025 Kursfind AI
+            </div>
           </div>
         </div>
       </aside>
