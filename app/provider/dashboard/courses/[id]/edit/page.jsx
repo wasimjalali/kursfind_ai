@@ -78,8 +78,8 @@ export default async function EditCoursePage({ params }) {
             </svg>
             Zurück zu Meine Kurse
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Kurs bearbeiten</h1>
-          <p className="text-gray-600 mt-1">Aktualisieren Sie die Kursinformationen</p>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">Kurs bearbeiten</h1>
+          <p className="text-base lg:text-lg text-gray-600 mt-1">Aktualisieren Sie die Kursinformationen</p>
         </div>
         
         <EditCourseForm course={course} />

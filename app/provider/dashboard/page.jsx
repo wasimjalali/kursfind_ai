@@ -35,10 +35,10 @@ export default async function ProviderDashboard() {
       
       {/* Welcome Message */}
       <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-2xl p-8 shadow-lg">
-        <h2 className="text-3xl font-bold mb-2">
+        <h2 className="text-2xl lg:text-3xl font-bold mb-2">
           Willkommen, {activeProvider?.company_name}!
         </h2>
-        <p className="text-cyan-50 text-lg">
+        <p className="text-cyan-50 text-base lg:text-lg">
           Hier ist eine Übersicht über Ihre Kurse und Performance.
         </p>
       </div>
@@ -55,10 +55,10 @@ export default async function ProviderDashboard() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {totalCourses}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Kurse insgesamt
           </div>
         </div>
@@ -73,10 +73,10 @@ export default async function ProviderDashboard() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {totalViews.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Gesamt Aufrufe
           </div>
         </div>
@@ -90,10 +90,10 @@ export default async function ProviderDashboard() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {totalClicks.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Gesamt Klicks
           </div>
         </div>
@@ -107,10 +107,10 @@ export default async function ProviderDashboard() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {activeCourses}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Aktive Kurse
           </div>
         </div>
@@ -120,12 +120,12 @@ export default async function ProviderDashboard() {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-lg lg:text-xl font-bold text-gray-900">
               Ihre neuesten Kurse
             </h3>
             <Link 
               href="/provider/dashboard/courses/new"
-              className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm"
+              className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm lg:text-base"
             >
               + Neuer Kurs
             </Link>
@@ -139,10 +139,10 @@ export default async function ProviderDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h4 className="text-lg font-bold text-gray-900 mb-2">
+            <h4 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">
               Noch keine Kurse
             </h4>
-            <p className="text-gray-600 mb-6">
+            <p className="text-base lg:text-lg text-gray-600 mb-6">
               Erstellen Sie Ihren ersten Kurs, um loszulegen.
             </p>
             <Link
@@ -166,10 +166,10 @@ export default async function ProviderDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-base lg:text-lg text-gray-900">
                         {course.title}
                       </h4>
-                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      <span className={`px-2 py-1 rounded-full text-xs lg:text-sm font-semibold ${
                         course.is_active 
                           ? 'bg-green-100 text-green-700' 
                           : 'bg-gray-100 text-gray-700'
@@ -177,7 +177,7 @@ export default async function ProviderDashboard() {
                         {course.is_active ? 'Aktiv' : 'Inaktiv'}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm lg:text-base text-gray-600">
                       <span className="flex items-center gap-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

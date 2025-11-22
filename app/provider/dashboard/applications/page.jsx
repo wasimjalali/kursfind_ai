@@ -161,10 +161,10 @@ export default function ApplicationsPage() {
       
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
           Bewerbungen
         </h1>
-        <p className="text-gray-600">
+        <p className="text-base lg:text-lg text-gray-600">
           Verwalten Sie Ihre Kursbewerbungen
         </p>
       </div>
@@ -181,10 +181,10 @@ export default function ApplicationsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {stats.total}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Gesamt Bewerbungen
           </div>
         </div>
@@ -198,10 +198,10 @@ export default function ApplicationsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {stats.newApps}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Neue Bewerbungen
           </div>
         </div>
@@ -215,10 +215,10 @@ export default function ApplicationsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {stats.thisMonth}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Diesen Monat
           </div>
         </div>
@@ -232,10 +232,10 @@ export default function ApplicationsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {stats.conversionRate}%
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm lg:text-base text-gray-600">
             Conversion Rate
           </div>
         </div>
@@ -251,10 +251,10 @@ export default function ApplicationsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-2">
               Noch keine Bewerbungen
             </h3>
-            <p className="text-gray-600 max-w-md mx-auto">
+            <p className="text-base lg:text-lg text-gray-600 max-w-md mx-auto">
               Bewerbungen werden hier angezeigt, sobald Studenten sich bewerben.
             </p>
           </div>
@@ -264,28 +264,28 @@ export default function ApplicationsPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Telefon
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Kurs
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Förderung
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Datum
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
                     Aktionen
                   </th>
                 </tr>
@@ -296,7 +296,7 @@ export default function ApplicationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <span className={`w-3 h-3 rounded-full ${getStatusColor(app.status)}`}></span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm lg:text-base font-medium text-gray-900">
                           {getStatusLabel(app.status)}
                         </span>
                       </div>
@@ -304,11 +304,11 @@ export default function ApplicationsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm lg:text-base font-medium text-gray-900">
                             {app.first_name} {app.last_name}
                           </div>
                           {!app.provider_viewed && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs lg:text-sm font-medium bg-blue-100 text-blue-800">
                               Neu
                             </span>
                           )}
@@ -316,27 +316,27 @@ export default function ApplicationsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{app.email}</div>
+                      <div className="text-sm lg:text-base text-gray-900">{app.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{app.phone}</div>
+                      <div className="text-sm lg:text-base text-gray-900">{app.phone}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
+                      <div className="text-sm lg:text-base text-gray-900 max-w-xs truncate">
                         {app.course_title}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs lg:text-sm font-medium bg-cyan-100 text-cyan-800">
                         {app.funding_type}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm lg:text-base text-gray-900">
                         {formatDate(app.applied_at)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm lg:text-base">
                       <button
                         onClick={() => {
                           setSelectedApplication(app)

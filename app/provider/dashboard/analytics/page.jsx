@@ -30,8 +30,8 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics</h1>
-        <p className="text-gray-600">Übersicht über Ihre Kurs-Performance</p>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Analytics</h1>
+        <p className="text-base lg:text-lg text-gray-600">Übersicht über Ihre Kurs-Performance</p>
       </div>
 
       {/* Stats Cards */}
@@ -45,10 +45,10 @@ export default async function AnalyticsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {totalViews.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-600">Gesamt Aufrufe</div>
+          <div className="text-sm lg:text-base text-gray-600">Gesamt Aufrufe</div>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200">
@@ -59,10 +59,10 @@ export default async function AnalyticsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {totalClicks.toLocaleString()}
           </div>
-          <div className="text-sm text-gray-600">Gesamt Klicks</div>
+          <div className="text-sm lg:text-base text-gray-600">Gesamt Klicks</div>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200">
@@ -73,24 +73,24 @@ export default async function AnalyticsPage() {
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">
+          <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
             {conversionRate}%
           </div>
-          <div className="text-sm text-gray-600">Conversion Rate</div>
+          <div className="text-sm lg:text-base text-gray-600">Conversion Rate</div>
         </div>
       </div>
 
       {/* Top Courses */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow duration-300">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Top Kurse</h2>
+        <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-4">Top Kurse</h2>
         {courses && courses.length > 0 ? (
           <div className="space-y-4">
             {courses.slice(0, 5).map((course) => (
               <div key={course.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:translate-x-1 hover:shadow-sm transition-all duration-200">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{course.title}</h3>
+                  <h3 className="font-semibold text-base lg:text-lg text-gray-900">{course.title}</h3>
                 </div>
-                <div className="flex items-center gap-6 text-sm">
+                <div className="flex items-center gap-6 text-sm lg:text-base">
                   <div className="text-gray-600">
                     <span className="font-semibold text-gray-900">{course.views_count || 0}</span> Aufrufe
                   </div>
@@ -102,7 +102,7 @@ export default async function AnalyticsPage() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-600 text-center py-8">Noch keine Daten verfügbar</p>
+          <p className="text-base lg:text-lg text-gray-600 text-center py-8">Noch keine Daten verfügbar</p>
         )}
       </div>
     </div>
