@@ -683,7 +683,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-8 sm:pb-10">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[37px] sm:pb-[45px]">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
@@ -885,10 +885,10 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         </div>
       )}
 
-      {/* Floating AI Chat Button - Visible on all screens, 15px above bottom right on mobile */}
+      {/* Floating AI Chat Button - Visible on all screens, positioned above application button on mobile */}
       <button
         onClick={() => setIsChatOpen(true)}
-        className="fixed right-4 bottom-[15px] sm:right-6 sm:bottom-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-[60]"
+        className="fixed right-4 bottom-[100px] sm:right-6 sm:bottom-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center z-[60]"
         aria-label="AI Chat öffnen"
       >
         {/* Sparkles/AI Icon */}
@@ -897,11 +897,19 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         </svg>
       </button>
 
-      {/* AI Chat Widget Modal */}
+      {/* AI Chat Widget Modal - Floating on all screens */}
       {isChatOpen && (
-        <div className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-6 sm:w-96 sm:h-[500px] bg-white sm:rounded-2xl shadow-2xl z-40 flex flex-col">
+        <>
+          {/* Backdrop - Mobile only */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-[55] sm:hidden"
+            onClick={() => setIsChatOpen(false)}
+          />
+          
+          {/* Chat Modal - Floating */}
+          <div className="fixed right-4 bottom-4 left-4 sm:right-6 sm:bottom-6 sm:left-auto sm:w-96 sm:h-[500px] h-[500px] bg-white rounded-2xl shadow-2xl z-[60] flex flex-col">
           {/* Chat Header */}
-          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white p-4 sm:rounded-t-2xl flex justify-between items-center">
+          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white p-4 rounded-t-2xl flex justify-between items-center">
             <div className="flex items-center gap-2">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -999,7 +1007,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           </div>
 
           {/* Chat Input */}
-          <div className="p-4 border-t border-gray-200 bg-white sm:rounded-b-2xl">
+          <div className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -1032,7 +1040,8 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </button>
             </div>
           </div>
-        </div>
+          </div>
+        </>
       )}
 
     </div>
