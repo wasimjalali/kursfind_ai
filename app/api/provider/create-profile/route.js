@@ -2,30 +2,22 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
-  // Create Supabase client
-  // Use service role key if available (bypasses RLS for initial profile creation)
-  // Otherwise use anon key (respects RLS policies)
+  // Create Supabase client using anon key
+  // The RLS policy has been updated to allow signup, so anon key works now
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
   // Validate that we have actual values (not empty strings)
-  if (!supabaseUrl || (!supabaseServiceKey && !supabaseAnonKey) || 
-      supabaseUrl.trim() === '' || (supabaseServiceKey.trim() === '' && supabaseAnonKey.trim() === '')) {
+  if (!supabaseUrl || !supabaseAnonKey || 
+      supabaseUrl.trim() === '' || supabaseAnonKey.trim() === '') {
     return NextResponse.json(
       { error: 'Server configuration error: Missing Supabase credentials' },
       { status: 500 }
     );
   }
 
-  // Prefer service role key for profile creation (bypasses RLS)
-  // This is safe because we're creating the profile right after signup
-  // If service role key is available, use it; otherwise use anon key
-  const supabaseKey = supabaseServiceKey && supabaseServiceKey.trim() !== '' 
-    ? supabaseServiceKey 
-    : supabaseAnonKey;
-  
-  const supabase = createClient(supabaseUrl, supabaseKey, {
+  // Use anon key - RLS policy allows inserts when auth_user_id exists in auth.users
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
@@ -71,14 +63,13 @@ export async function POST(request) {
       console.error('Error details:', error.details);
       console.error('Error hint:', error.hint);
       console.error('Provider data attempted:', providerData);
-      console.error('Using service role key:', !!supabaseServiceKey && supabaseServiceKey.trim() !== '');
       
       // Handle RLS policy violations
       if (error.message?.includes('row-level security') || error.message?.includes('RLS') || error.code === '42501') {
-        console.error('RLS policy violation detected. Service role key may not be set in Vercel.');
+        console.error('RLS policy violation detected. The RLS policy may need to be updated.');
         return NextResponse.json(
           { 
-            error: 'Berechtigungsfehler: Die Registrierung konnte nicht abgeschlossen werden. Bitte kontaktieren Sie den Support. Technischer Fehler: RLS policy violation. Stellen Sie sicher, dass SUPABASE_SERVICE_ROLE_KEY in Vercel gesetzt ist.' 
+            error: 'Berechtigungsfehler: Die Registrierung konnte nicht abgeschlossen werden. Bitte kontaktieren Sie den Support.' 
           },
           { status: 403 }
         );
