@@ -39,7 +39,14 @@ export default function CoursesPage() {
       setLoading(true)
       const { data, error } = await supabase
         .from('courses')
-        .select('*')
+        .select(`
+          *,
+          providers (
+            id,
+            name,
+            logo_url
+          )
+        `)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -51,7 +58,7 @@ export default function CoursesPage() {
         // Extract unique values for filters
         const uniqueLocations = [...new Set(data.map(c => c.location).filter(Boolean))]
         const uniqueFunding = [...new Set(data.map(c => c.funding_type).filter(Boolean))]
-        const uniqueProviders = [...new Set(data.map(c => c.provider).filter(Boolean))]
+        const uniqueProviders = [...new Set(data.map(c => c.provider || c.providers?.name).filter(Boolean))]
         
         setLocations(uniqueLocations.sort())
         setFundingTypes(uniqueFunding.sort())
@@ -436,22 +443,53 @@ export default function CoursesPage() {
                 >
                   <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-xl hover:border-cyan-300 transition-all duration-300 overflow-hidden flex flex-col h-full">
                     
-                    {/* Top Gradient Bar */}
-                    <div className="h-1 bg-gradient-to-r from-cyan-500 to-emerald-500 flex-shrink-0"></div>
+                    {/* Course Image */}
+                    {course.image_url ? (
+                      <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 overflow-hidden">
+                        <img 
+                          src={course.image_url} 
+                          alt={course.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
+                        <svg className="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
                     
                     <div className="p-6 flex flex-col flex-grow">
-                      {/* Provider Badge + Funding Badge */}
-                      <div className="flex items-start justify-between mb-4 gap-2 flex-wrap">
-                        {course.provider && (
-                          <span className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-xs font-semibold rounded-full">
-                            {course.provider}
-                          </span>
-                        )}
-                        {course.funding_type && (
-                          <span className="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full">
-                            {course.funding_type}
-                          </span>
-                        )}
+                      {/* Provider Logo + Name + Funding Badge */}
+                      <div className="flex items-start justify-between mb-4 gap-3">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          {/* Provider Logo */}
+                          {course.providers?.logo_url ? (
+                            <img 
+                              src={course.providers.logo_url} 
+                              alt={course.providers.name || course.provider}
+                              className="w-10 h-10 rounded-lg object-contain border border-gray-200 bg-white p-1 flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                              <span className="text-white font-bold text-xs">
+                                {(course.providers?.name || course.provider || 'K')[0].toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                          {/* Provider Name */}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-semibold text-gray-900 truncate">
+                              {course.providers?.name || course.provider || 'Anbieter'}
+                            </div>
+                            {course.funding_type && (
+                              <div className="text-xs text-emerald-600 font-medium mt-0.5">
+                                {course.funding_type}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       {/* Course Title - Taller min-height */}
@@ -461,10 +499,32 @@ export default function CoursesPage() {
 
                       {/* Description - More lines visible */}
                       {course.description && (
-                        <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-4 flex-grow">
+                        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
                           {course.description}
                         </p>
                       )}
+
+                      {/* Benefits */}
+                      {course.benefits && (() => {
+                        const benefitsList = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+                        return benefitsList.length > 0 ? (
+                          <div className="mb-4">
+                            <div className="flex flex-wrap gap-2">
+                              {benefitsList.slice(0, 3).map((benefit, idx) => (
+                                <span 
+                                  key={idx}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-cyan-50 text-cyan-700 text-xs font-semibold rounded-full border border-cyan-200"
+                                >
+                                  {benefit === 'Inklusiver Laptop' && '💻'}
+                                  {benefit === 'Jobcoaching' && '👔'}
+                                  {benefit === 'Job Garantie' && '✅'}
+                                  <span>{benefit}</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null;
+                      })()}
 
                       {/* Metadata Grid - FULL INFO VISIBLE */}
                       <div className="space-y-3 mb-6">
