@@ -33,11 +33,6 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       href: '/courses',
       icon: '🔍',
     },
-    {
-      name: 'Profil',
-      href: '/student/dashboard/profile',
-      icon: '⚙️',
-    },
   ];
 
   return (
@@ -53,9 +48,10 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       {/* Sidebar - Overlay on mobile, fixed on desktop */}
       <aside
         className={`
-          fixed lg:static inset-y-0 left-0 z-40
+          fixed lg:static
+          top-14 lg:top-0 bottom-0 left-0 z-40
           w-[80vw] max-w-[280px] lg:w-64
-          bg-white h-screen
+          bg-white
           border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -63,26 +59,11 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-200 relative">
-            <Link href="/" className="flex items-center space-x-3">
-              <img
-                src="/Assets/Kursfind-logo.png"
-                alt="Kursfind AI"
-                className="w-12 h-12 lg:w-16 lg:h-16 rounded-xl"
-              />
-              <div>
-                <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
-                  Kursfind AI
-                </h1>
-                <p className="text-xs text-gray-600">Student Portal</p>
-              </div>
-            </Link>
-            
-            {/* Close X button - mobile only */}
+          {/* Close X button - mobile only, at top */}
+          <div className="p-3 border-b border-gray-200 lg:hidden">
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              className="ml-auto p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex"
               aria-label="Close sidebar"
             >
               <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,11 +98,27 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             })}
           </nav>
 
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="text-xs text-gray-600 text-center">
-              © 2025 Kursfind AI
-            </div>
+          {/* Settings Link at Bottom */}
+          <div className="p-4 border-t border-gray-200 mt-auto">
+            <Link
+              href="/student/dashboard/profile"
+              onClick={() => setIsOpen(false)}
+              className={`
+                flex items-center space-x-3 px-4 py-3 rounded-lg
+                transition-all duration-200
+                ${
+                  pathname === '/student/dashboard/profile'
+                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-lg font-semibold'
+                    : 'text-gray-700 hover:bg-gray-100 hover:translate-x-1'
+                }
+              `}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Einstellungen</span>
+            </Link>
           </div>
         </div>
       </aside>

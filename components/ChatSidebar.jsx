@@ -58,8 +58,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       items.push(
         { icon: '🏠', label: 'Dashboard', href: '/student/dashboard' },
         { icon: '❤️', label: 'Gespeicherte Kurse', href: '/student/dashboard/saved' },
-        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' },
-        { icon: '⚙️', label: 'Profil', href: '/student/dashboard/profile' }
+        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' }
       );
     }
     
@@ -80,10 +79,9 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       <aside 
         className={`
           fixed lg:relative
-          inset-y-0 left-0
+          top-14 lg:top-0 bottom-0 left-0
           w-[80vw] max-w-[280px] lg:w-[260px]
           bg-gray-50
-          h-screen
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           z-40 lg:z-auto
@@ -93,25 +91,11 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         `}
       >
         
-        {/* Header with Logo */}
-        <div className="p-4 border-b border-gray-200 relative">
-          <Link href="/" className="flex items-center gap-2">
-            <Image 
-              src="/Assets/Kursfind-logo.png" 
-              alt="Kursfind AI" 
-              width={48} 
-              height={48}
-              className="rounded-lg"
-            />
-            <span className="font-bold text-lg text-gray-900">
-              Kursfind AI
-            </span>
-          </Link>
-          
-          {/* Close X button - mobile only */}
+        {/* Close X button - mobile only, at top */}
+        <div className="p-3 border-b border-gray-200 lg:hidden">
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 p-1.5 hover:bg-gray-200 rounded-lg transition-colors lg:hidden"
+            className="ml-auto p-1.5 hover:bg-gray-200 rounded-lg transition-colors flex"
             aria-label="Close sidebar"
           >
             <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,25 +158,27 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </div>
         )}
 
-        {/* Bottom Section - User Profile or Login */}
-        <div className="p-4 border-t border-gray-200">
+        {/* Bottom Section - Settings or Login */}
+        <div className="p-4 border-t border-gray-200 mt-auto">
           {user && student ? (
-            <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-200 cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold">
-                {student.first_name?.[0]?.toUpperCase() || 'U'}
-              </div>
+            <Link
+              href="/student/dashboard/profile"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900 truncate">
-                  {student.first_name} {student.last_name}
-                </div>
-                <div className="text-xs text-gray-600 truncate">
-                  {student.email}
-                </div>
+                <div className="text-sm font-semibold text-gray-900">Einstellungen</div>
+                <div className="text-xs text-gray-600 truncate">{student.email}</div>
               </div>
-            </div>
+            </Link>
           ) : (
             <Link
               href="/student/login"
+              onClick={() => setIsOpen(false)}
               className="w-full px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-100 transition-all text-center block"
             >
               Anmelden
