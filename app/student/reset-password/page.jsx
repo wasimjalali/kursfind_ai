@@ -106,7 +106,7 @@ export default function ResetPassword() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <img 
-              src="/Assets/kursfind-new-logo.PNG" 
+              src="/Assets/kursfind-logo-new.png" 
               alt="Kursfind AI" 
               className="w-20 h-20 mx-auto rounded-2xl shadow-lg mb-4"
             />

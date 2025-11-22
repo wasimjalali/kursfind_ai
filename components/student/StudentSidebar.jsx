@@ -89,7 +89,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             {/* Logo - Left side */}
             <Link href="/suchen" className="flex items-center space-x-2">
               <img
-                src="/Assets/kursfind-new-logo.PNG"
+                src="/Assets/kursfind-logo-new.png"
                 alt="Kursfind AI"
                 className="w-12 h-12 rounded-xl"
               />
