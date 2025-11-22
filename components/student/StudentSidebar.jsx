@@ -85,16 +85,16 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           </div>
 
           {/* Logo with Close Button - Desktop only */}
-          <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200 relative">
-            {/* Logo - Centered */}
-            <Link href="/suchen" className="flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200">
+            {/* Logo - Left side */}
+            <Link href="/suchen" className="flex items-center space-x-2">
               <img
                 src="/Assets/Kursfind-logo.png"
                 alt="Kursfind AI"
                 className="w-12 h-12 rounded-xl"
               />
               <div>
-                <h1 className="text-base font-bold bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+                <h1 className="text-base font-bold text-black">
                   Kursfind AI
                 </h1>
                 <p className="text-xs text-gray-600">Student Portal</p>
@@ -104,7 +104,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             {/* Close X button - Right side */}
             <button
               onClick={() => setIsOpen(false)}
-              className="ml-auto p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
               aria-label="Close sidebar"
             >
               <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -108,9 +108,9 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         </div>
 
         {/* Header with Logo and Close Button - Desktop only */}
-        <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200 relative">
-          {/* Logo - Centered */}
-          <Link href="/suchen" className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
+        <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200">
+          {/* Logo - Left side */}
+          <Link href="/suchen" className="flex items-center gap-2">
             <Image 
               src="/Assets/Kursfind-logo.png" 
               alt="Kursfind AI" 
@@ -118,7 +118,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               height={40}
               className="rounded-lg"
             />
-            <span className="font-bold text-base text-gray-900">
+            <span className="font-bold text-base text-black">
               Kursfind AI
             </span>
           </Link>
@@ -126,7 +126,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           {/* Close X button - Right side */}
           <button
             onClick={() => setIsOpen(false)}
-            className="ml-auto p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
             aria-label="Close sidebar"
           >
             <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
