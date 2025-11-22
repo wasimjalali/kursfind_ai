@@ -114,7 +114,7 @@ export default function Home() {
           {/* Logo - center - Larger and clickable */}
           <Link href="/suchen">
             <Image 
-              src="/Assets/kursfind-logo-new.png" 
+              src="/Assets/new-logo-kursfind.png" 
               width={40} 
               height={40} 
               alt="Kursfind AI"
@@ -194,7 +194,7 @@ export default function Home() {
                         <div className="flex items-start gap-3">
                           <div className="relative flex-shrink-0">
                             <Image 
-                              src="/Assets/kursfind-logo-new.png" 
+                              src="/Assets/new-logo-kursfind.png" 
                               width={32} 
                               height={32}
                               className="rounded-lg animate-pulse"

@@ -40,7 +40,7 @@ export default function ForgotPassword() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <Image 
-              src="/Assets/kursfind-logo-new.png" 
+              src="/Assets/new-logo-kursfind.png" 
               alt="Kursfind AI" 
               width={80} 
               height={80}

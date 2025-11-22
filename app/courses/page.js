@@ -265,7 +265,7 @@ export default function CoursesPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <Image 
-                src="/Assets/kursfind-logo-new.png"
+                src="/Assets/new-logo-kursfind.png"
                 alt="Kursfind AI"
                 width={280}
                 height={70}
