@@ -150,7 +150,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
                       >
                   <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
-                        <span className="text-sm font-medium">{item.label}</span>
+                        <span className="text-base lg:text-lg font-medium">{item.label}</span>
                       </button>
                     );
                   }
@@ -165,7 +165,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                   className="hidden lg:flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
                 >
                   <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-base lg:text-lg font-medium">{item.label}</span>
                 </Link>
               );
             }
@@ -178,7 +178,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
                     >
                 <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <span className="text-base lg:text-lg font-medium">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -193,7 +193,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                         key={idx}
                         href={`/chat/${conv.id}`}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all text-sm text-gray-700"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all text-base lg:text-lg text-gray-700"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -219,8 +219,8 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-gray-900">Einstellungen</div>
-                  <div className="text-xs text-gray-600 truncate">{student.email}</div>
+                  <div className="text-base lg:text-lg font-semibold text-gray-900">Einstellungen</div>
+                  <div className="text-sm lg:text-base text-gray-600 truncate">{student.email}</div>
                 </div>
               </Link>
 
@@ -230,10 +230,10 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 {student.first_name?.[0]?.toUpperCase() || 'U'}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-900 truncate">
+                <div className="text-base lg:text-lg font-semibold text-gray-900 truncate">
                   {student.first_name} {student.last_name}
                 </div>
-                <div className="text-xs text-gray-600 truncate">
+                <div className="text-sm lg:text-base text-gray-600 truncate">
                   {student.email}
                 </div>
               </div>
