@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import StudentSidebar from '@/components/student/StudentSidebar';
 import StudentHeader from '@/components/student/StudentHeader';
 
@@ -58,6 +59,15 @@ export default function StudentDashboardClient({ student, children }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+          
+          {/* Logo - center - Clickable, links to main AI chat */}
+          <Link href="/suchen" className="flex items-center justify-center flex-1">
+            <img 
+              src="/Assets/Kursfind-logo.png" 
+              alt="Kursfind AI"
+              className="h-12 w-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+            />
+          </Link>
           
           {/* KI-Kurssuche icon - right (larger, no text) */}
           <a 
