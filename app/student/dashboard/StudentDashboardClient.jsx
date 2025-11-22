@@ -23,12 +23,14 @@ export default function StudentDashboardClient({ student, children }) {
             </svg>
           </button>
           
-          {/* Logo - center */}
-          <img 
-            src="/Assets/Kursfind-logo.png" 
-            alt="Kursfind AI"
-            className="w-8 h-8 rounded-lg"
-          />
+          {/* Logo - center - Larger and clickable */}
+          <a href="/suchen">
+            <img 
+              src="/Assets/Kursfind-logo.png" 
+              alt="Kursfind AI"
+              className="w-10 h-10 rounded-lg cursor-pointer"
+            />
+          </a>
           
           {/* User avatar - right */}
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white text-sm font-semibold">
@@ -37,18 +39,40 @@ export default function StudentDashboardClient({ student, children }) {
         </div>
       </div>
 
+      {/* DESKTOP HEADER - Only visible on desktop */}
+      <div className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+        <div className="flex items-center gap-3 h-14 px-4">
+          {/* Hamburger button - left */}
+          <button 
+            onClick={() => setSidebarOpen(true)} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* KI-Suche button */}
+          <a 
+            href="/suchen"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg hover:shadow-lg transition-all font-medium"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            <span>KI-Kurssuche</span>
+          </a>
+        </div>
+      </div>
+
       {/* Sidebar */}
       <StudentSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header - Hidden on mobile, visible on desktop */}
-        <div className="hidden lg:block">
-          <StudentHeader student={student} />
-        </div>
-
-        {/* Page Content - Add padding-top for mobile header */}
-        <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
+        {/* Page Content - Add padding-top for headers */}
+        <main className="flex-1 overflow-y-auto pt-14">
           {children}
         </main>
       </div>

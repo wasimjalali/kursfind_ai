@@ -110,14 +110,16 @@ export default function Home() {
             </svg>
           </button>
           
-          {/* Logo - center */}
-          <Image 
-            src="/Assets/Kursfind-logo.png" 
-            width={32} 
-            height={32} 
-            alt="Kursfind AI"
-            className="rounded-lg"
-          />
+          {/* Logo - center - Larger and clickable */}
+          <Link href="/suchen">
+            <Image 
+              src="/Assets/Kursfind-logo.png" 
+              width={40} 
+              height={40} 
+              alt="Kursfind AI"
+              className="rounded-lg cursor-pointer"
+            />
+          </Link>
           
           {/* New Chat button - right */}
           <button 
@@ -131,6 +133,34 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {/* DESKTOP HEADER - Only visible on desktop */}
+      <div className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+        <div className="flex items-center gap-3 h-14 px-4">
+          {/* Hamburger button - left */}
+          <button 
+            onClick={() => setSidebarOpen(true)} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* New Chat button */}
+          <button 
+            onClick={startNewChat} 
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg hover:shadow-lg transition-all font-medium"
+            aria-label="New chat"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Neuer Chat</span>
+          </button>
+        </div>
+      </div>
       
       {/* Sidebar */}
       <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
@@ -138,8 +168,8 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
 
-        {/* Chat Area - Add padding-top for mobile header */}
-        <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
+        {/* Chat Area - Add padding-top for headers */}
+        <main className="flex-1 overflow-y-auto pt-14">
           <div className="max-w-4xl mx-auto px-4 py-8">
             
             {/* Show Welcome Screen if no messages */}

@@ -14,6 +14,11 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       icon: '🏠',
     },
     {
+      name: 'KI-Kurssuche',
+      href: '/suchen',
+      icon: '✨',
+    },
+    {
       name: 'Gespeicherte Kurse',
       href: '/student/dashboard/saved',
       icon: '❤️',
