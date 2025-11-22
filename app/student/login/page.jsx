@@ -131,7 +131,7 @@ export default function StudentLogin() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <img 
-              src="/Assets/Kursfind-logo.png" 
+              src="/Assets/kursfind-new-logo.PNG" 
               alt="Kursfind AI" 
               className="w-20 h-20 mx-auto rounded-2xl shadow-lg mb-4"
             />

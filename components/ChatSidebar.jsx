@@ -112,7 +112,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           {/* Logo - Left side */}
           <Link href="/suchen" className="flex items-center gap-2">
               <Image 
-                src="/Assets/Kursfind-logo.png" 
+                src="/Assets/kursfind-new-logo.PNG" 
                 alt="Kursfind AI" 
               width={40} 
               height={40}
