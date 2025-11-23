@@ -87,7 +87,7 @@ export default async function ChatHistoryPage() {
           href="/"
           className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
         >
-          + Neue Suche starten
+          + Neue Suche
         </Link>
       </div>
 
@@ -139,7 +139,7 @@ export default async function ChatHistoryPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-lg">🤖</span>
                     </div>
                     <div>
@@ -159,7 +159,7 @@ export default async function ChatHistoryPage() {
                   </div>
                   <Link
                     href={`/suchen?chat=${chat.conversation_id}`}
-                    className="px-4 py-2 text-sm font-semibold text-purple-600 hover:text-purple-700 border border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
+                    className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
                   >
                     Fortsetzen →
                   </Link>

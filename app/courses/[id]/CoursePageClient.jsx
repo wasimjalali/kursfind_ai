@@ -685,20 +685,26 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             Über den Anbieter
           </h2>
           
-          {/* Mobile: Logo left, Desktop: Logo left */}
-          <div className="flex flex-row items-start gap-4 mb-6">
-            {/* Logo - Left on both mobile and desktop */}
+          {/* Mobile: Title first, then logo on left. Desktop: Logo on left with content */}
+          <div className="flex flex-col md:flex-row md:items-start gap-4 mb-6">
+            {/* Company name - shows first on mobile, hidden on desktop */}
+            <h3 className="text-xl font-bold text-gray-900 md:hidden">
+              {provider?.company_name || provider?.name || course.provider}
+            </h3>
+            
+            {/* Logo - Left aligned on mobile (after title), left on desktop */}
             {provider?.logo_url && (
               <img 
                 src={provider.logo_url} 
                 alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
-                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 flex-shrink-0"
+                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 self-start flex-shrink-0"
               />
             )}
             
             {/* Content */}
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {/* Company name - hidden on mobile, shows on desktop */}
+              <h3 className="hidden md:block text-xl font-bold text-gray-900 mb-2">
                 {provider?.company_name || provider?.name || course.provider}
               </h3>
               
