@@ -18,7 +18,6 @@ export default function CoursesPage() {
   // Quick filter states (top bar)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedLocation, setSelectedLocation] = useState('')
-  const [selectedFunding, setSelectedFunding] = useState('')
   const [selectedProvider, setSelectedProvider] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
@@ -289,10 +288,6 @@ export default function CoursesPage() {
       filtered = filtered.filter(course => course.location === selectedLocation)
     }
 
-    if (selectedFunding) {
-      filtered = filtered.filter(course => course.funding_type === selectedFunding)
-    }
-
     if (selectedProvider) {
       filtered = filtered.filter(course => {
         const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
@@ -382,12 +377,11 @@ export default function CoursesPage() {
     }
 
     setFilteredCourses(filtered)
-  }, [searchTerm, selectedLocation, selectedFunding, selectedProvider, selectedLanguage, selectedCategory, selectedFormat, selectedDuration, selectedFundingOption, sortBy, allCourses])
+  }, [searchTerm, selectedLocation, selectedProvider, selectedLanguage, selectedCategory, selectedFormat, selectedDuration, selectedFundingOption, sortBy, allCourses])
 
   const resetFilters = () => {
     setSearchTerm('')
     setSelectedLocation('')
-    setSelectedFunding('')
     setSelectedProvider('')
     setSelectedLanguage('')
     setSelectedCategory('')
@@ -582,7 +576,7 @@ export default function CoursesPage() {
           </div>
 
           {/* Active Filter Chips */}
-          {(selectedLocation || selectedProvider || selectedFunding || selectedLanguage || selectedCategory || selectedFormat || selectedDuration || selectedFundingOption) && (
+          {(selectedLocation || selectedProvider || selectedLanguage || selectedCategory || selectedFormat || selectedDuration || selectedFundingOption) && (
             <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-200">
               <span className="text-sm text-gray-600 font-medium">Aktive Filter:</span>
               
@@ -604,19 +598,6 @@ export default function CoursesPage() {
                   🏢 {selectedProvider}
                   <button
                     onClick={() => setSelectedProvider('')}
-                    className="ml-1 hover:text-cyan-900"
-                    aria-label="Filter entfernen"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              
-              {selectedFunding && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
-                  💰 {selectedFunding}
-                  <button
-                    onClick={() => setSelectedFunding('')}
                     className="ml-1 hover:text-cyan-900"
                     aria-label="Filter entfernen"
                   >
