@@ -125,7 +125,7 @@ export default function SavedCourseCard({ saved }) {
 
         {/* Saved Date */}
         <p className="text-xs text-gray-500">
-          Gespeichert am {new Date(saved.created_at).toLocaleDateString('de-DE')}
+          Gespeichert am {new Date(saved.saved_at).toLocaleDateString('de-DE')}
         </p>
 
         {/* Notes */}
@@ -140,7 +140,7 @@ export default function SavedCourseCard({ saved }) {
         {/* Actions */}
         <div className="flex gap-2 pt-3">
           <Link
-            href={`/courses/${course.id}`}
+            href={`/kurse/${course.slug || course.id}`}
             className="flex-1 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-center font-semibold rounded-lg hover:shadow-lg transition-shadow text-sm"
           >
             Details ansehen

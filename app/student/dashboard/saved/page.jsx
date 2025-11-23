@@ -35,11 +35,12 @@ export default async function SavedCoursesPage() {
     .from('saved_courses')
     .select(`
       id,
-      created_at,
+      saved_at,
       notes,
       courses (
         id,
         title,
+        slug,
         description,
         category,
         location,
@@ -54,7 +55,7 @@ export default async function SavedCoursesPage() {
       )
     `)
     .eq('student_id', student.id)
-    .order('created_at', { ascending: false });
+    .order('saved_at', { ascending: false });
 
   const handleRemove = async (savedId) => {
     'use server';
