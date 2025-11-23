@@ -3921,20 +3921,26 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
         console.log('💾 Messages count:', messages.length);
         
-        // Get the first user message as conversation title
-        const firstUserMessage = messages.find(m => m.role === 'user')
-        const conversationTitle = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
+        // Get the latest user message as conversation title (for new conversations)
+        const latestUserMessage = messages.filter(m => m.role === 'user').pop()
+        const conversationTitle = latestUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
         console.log('💾 Conversation title:', conversationTitle);
         
-        // Check if we're continuing an existing conversation (within last 5 minutes)
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+        // IMPORTANT: Only save the LAST 2 messages (current user message + AI response)
+        // This prevents re-saving the entire conversation history on every request
+        const messagesToSave = messages.slice(-2);
+        console.log('💾 Messages to save (last 2):', messagesToSave.length);
+        
+        // Check if we're continuing an existing conversation
+        // Look for messages in the last 10 minutes to determine if this is the same session
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
         
         // SECURITY: Query existing conversation - MUST filter by student_id to ensure data isolation
         const { data: existingConversation, error: queryError } = await supabaseServer
           .from('chat_history')
           .select('conversation_id, conversation_title')
           .eq('student_id', studentId) // CRITICAL: Filter by student.id (int8)
-          .gte('created_at', fiveMinutesAgo)
+          .gte('created_at', tenMinutesAgo)
           .order('created_at', { ascending: false })
           .limit(1)
           .maybeSingle()
@@ -3943,21 +3949,31 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
           console.error('❌ Error querying existing conversation:', queryError);
         }
         
-        // Determine conversation_id and title
-        let conversationId = existingConversation?.conversation_id
-        let finalTitle = existingConversation?.conversation_title || conversationTitle
+        // Determine if we should create a new conversation or continue existing one
+        // NEW conversation if:
+        // 1. No existing conversation found (first message)
+        // 2. Messages array length is 2 or less (indicates "Neue Suche" was clicked)
+        const isNewConversation = !existingConversation || messages.length <= 2;
         
-        if (!conversationId) {
+        let conversationId;
+        let finalTitle;
+        
+        if (isNewConversation) {
           // Generate new conversation_id for new conversation
           conversationId = crypto.randomUUID()
-          console.log('➕ Creating new conversation:', conversationId);
+          finalTitle = conversationTitle
+          console.log('➕ Creating NEW conversation:', conversationId);
+          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messages.length <= 2)');
         } else {
+          // Continue existing conversation
+          conversationId = existingConversation.conversation_id
+          finalTitle = existingConversation.conversation_title
           console.log('📝 Continuing existing conversation:', conversationId);
         }
         
-        // Save each message as a separate row
+        // Save only the NEW messages (last 2) as separate rows
         // Database structure: one row per message with conversation_id linking them
-        const messagesToInsert = messages.map(msg => ({
+        const messagesToInsert = messagesToSave.map(msg => ({
           student_id: studentId, // CRITICAL: Use students.id (int8)
           conversation_id: conversationId,
           conversation_title: finalTitle,
@@ -3969,6 +3985,7 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         }))
         
         console.log('💾 Inserting messages:', messagesToInsert.length);
+        console.log('💾 Message roles:', messagesToInsert.map(m => m.role).join(', '));
         
         // SECURITY: Insert messages - student_id ensures data isolation
         const { data: insertData, error: insertError } = await supabaseServer
