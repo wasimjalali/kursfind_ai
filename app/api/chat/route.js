@@ -1167,20 +1167,10 @@ Welcher interessiert Sie?"
 ### Implementation Guide:
 
 **Step 1: Decide What to Discuss**
-🚨🚨🚨 CRITICAL WARNING: THESE ARE TEACHING EXAMPLES ONLY! 🚨🚨🚨
-═══════════════════════════════════════════════════════════════
-
-⚠️ THE COURSE IDs BELOW (10, 16, 23, 45, etc.) ARE **FICTIONAL EXAMPLES**!
-⚠️ NEVER USE THESE IDs IN YOUR ACTUAL RESPONSES!
-⚠️ ONLY USE COURSE IDs PROVIDED IN THE "LIVE-DATENBANK" SECTION ABOVE!
-
-These examples show FORMAT only, not real data!
-
 Before generating response, decide:
 "I will discuss Business Analyse and Projektmanagement in detail."
 
 **Step 2: Show ONLY Those Cards**
-⚠️ EXAMPLE FORMAT ONLY - USE REAL IDs FROM DATABASE:
 [SHOW_COURSES]
 {"courseIds": [10, 16]}
 ← Show EXACTLY 2 cards (the ones you'll discuss)
@@ -1194,8 +1184,6 @@ Cards shown = Courses discussed = 2
 ---
 
 ### Strategic Course Selection (For Category A - Course Search)
-
-⚠️ EXAMPLE ONLY - FICTIONAL SCENARIO:
 
 **User asks: "IT-Kurse in München für Anfänger mit B1-Deutsch und Hörbehinderung"**
 
@@ -1211,11 +1199,8 @@ Cards shown = Courses discussed = 2
 ✅ Maybe Projektmanagement (beginner-friendly, organizational)
 
 **Show ONLY these 2-3 cards!**
-⚠️ EXAMPLE IDs - REPLACE WITH REAL DATABASE IDs:
 [SHOW_COURSES]
 {"courseIds": [10, 45, 16]}
-
-⚠️ IN REAL RESPONSES: Use the actual course IDs from the "GEFUNDENE KURSE" section above!
 
 **Then discuss ALL 3 in text:**
 "Hier sind 3 perfekt passende IT-Kurse für Ihre Situation:
@@ -1232,10 +1217,6 @@ Cards shown = Courses discussed = 2
 💡 TIPP: [helpful tip]
 
 Welcher dieser 3 Kurse spricht Sie am meisten an?"
-
-═══════════════════════════════════════════════════════════════
-END OF TEACHING EXAMPLES - ALWAYS USE REAL DATABASE IDs ABOVE!
-═══════════════════════════════════════════════════════════════
 
 Perfect match: 3 cards shown = 3 courses discussed!
 
@@ -3553,28 +3534,6 @@ Für Anfänger empfehle ich die Fullstack-Programme, für Fortgeschrittene die M
       if (messages && shouldShowCourses) {
         const totalCount = courses.totalCount || 0
         
-        // Extract previously shown courses from conversation history
-        let previouslyShownCourses = []
-        if (messages && messages.length > 2) {
-          // Look through previous assistant messages for course references
-          for (let i = messages.length - 2; i >= 0; i--) {
-            if (messages[i].role === 'assistant') {
-              const msg = messages[i].content
-              // Extract course IDs or titles mentioned
-              const idMatches = msg.match(/ID:\s*(\d+)/g)
-              if (idMatches) {
-                previouslyShownCourses.push(...idMatches.map(m => m.match(/\d+/)[0]))
-              }
-            }
-          }
-        }
-        
-        const conversationContext = previouslyShownCourses.length > 0
-          ? `\n\n🔄 CONVERSATION CONTEXT:
-You previously discussed courses with IDs: ${previouslyShownCourses.join(', ')}
-If user refers to "that course", "the first one", "the bootcamp you mentioned", etc., use this context.`
-          : ''
-        
         if (courses.length > 0) {
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
 📚 LIVE-DATENBANK: VERFÜGBARE KURSE GEFUNDEN!
@@ -3589,7 +3548,7 @@ DATABASE INFO:
 - These course cards will appear BELOW your message
 
 GEFUNDENE KURSE (die dem Nutzer angezeigt werden):
-${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.provider ? ' by ' + c.provider : ''}`).join('\n')}${conversationContext}
+${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.provider ? ' by ' + c.provider : ''}`).join('\n')}
 
 🚨 WICHTIGE ANWEISUNGEN:
 1. Beginne deine Antwort mit: "Ich habe ${courses.length} passende Kurs${courses.length !== 1 ? 'e' : ''} gefunden:"
@@ -3598,10 +3557,9 @@ ${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.prov
 4. Halte deine Antwort KURZ (2-3 Sätze) - die Details stehen in den Kurskarten
 5. Gib nur eine kurze Einschätzung, welche Kurse für welche Zielgruppe geeignet sind
 6. Sage GENAU "${courses.length} Kurse" - nicht "mehrere" oder "einige"
-7. Wenn User auf vorherige Kurse verweist ("der erste Kurs"), benutze die Conversation Context oben
 
 BEISPIEL ANTWORT:
-"Ich habe ${courses.length} passende ${courses[0]?.title?.includes('Web') ? 'Web-Entwicklung' : ''} Kurs${courses.length !== 1 ? 'e' : ''} gefunden. Die Kurskarten erscheinen gleich unter dieser Nachricht.
+"Ich habe ${courses.length} passende ${courses[0]?.title?.includes('Web') ? 'Web-Entwicklung' : ''} Kurs${courses.length !== 1 ? 'e' : ''} gefunden: Die Kurskarten erscheinen gleich unter dieser Nachricht.
 
 ${courses.length > 3 ? 'Die meisten sind Vollzeit-Bootcamps.' : 'Diese Kurse decken verschiedene Niveaus ab.'} Welches Format passt besser zu dir?"
 
@@ -3747,56 +3705,9 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       }
     }
 
-    // Determine which courses will actually be displayed
-    const finalCourses = coursesToShow.length > 0 ? coursesToShow : (shouldShowCourses ? courses : null)
-    const courseCount = finalCourses ? finalCourses.length : 0
-    
-    // VALIDATION: Check if AI message matches the number of courses being displayed
-    console.log('📊 Validation Check:')
-    console.log('  - Courses to display:', courseCount)
-    console.log('  - AI message length:', aiMessage.length)
-    console.log('  - shouldShowCourses:', shouldShowCourses)
-    
-    // Extract number mentioned in AI message (look for patterns like "3 Kurse", "5 courses", etc.)
-    const numberPattern = /(\d+)\s+(Kurs|course|Bootcamp)/gi
-    const matches = aiMessage.match(numberPattern)
-    
-    if (shouldShowCourses && courseCount > 0) {
-      console.log('✅ Will display', courseCount, 'course cards')
-      
-      if (matches) {
-        const mentionedNumbers = matches.map(m => parseInt(m.match(/\d+/)[0]))
-        console.log('  - Numbers mentioned in AI message:', mentionedNumbers)
-        
-        // Check if any mentioned number matches our actual count
-        const hasMatch = mentionedNumbers.includes(courseCount)
-        if (!hasMatch && mentionedNumbers.length > 0) {
-          console.warn('⚠️ MISMATCH WARNING: AI mentions', mentionedNumbers, 'but displaying', courseCount, 'courses')
-          console.warn('⚠️ This may confuse users. AI message:', aiMessage.substring(0, 200))
-        } else if (hasMatch) {
-          console.log('✅ VALIDATION PASSED: AI message matches course count')
-        }
-      } else {
-        console.log('  - No specific number mentioned in AI message (this is OK if using "mehrere" etc.)')
-      }
-      
-      // Log the actual courses being sent
-      console.log('  - Course IDs being sent:', finalCourses.map(c => c.id).join(', '))
-      console.log('  - Course titles:', finalCourses.map(c => c.title).slice(0, 3).join(' | '))
-    } else if (shouldShowCourses && courseCount === 0) {
-      console.log('⚠️ Course search detected but NO courses found/displayed')
-      // Check if AI is claiming to show courses when there are none
-      if (aiMessage.toLowerCase().includes('zeige') || 
-          aiMessage.toLowerCase().includes('hier sind') || 
-          aiMessage.toLowerCase().includes('gefunden')) {
-        console.warn('⚠️ WARNING: AI may be claiming to show courses when none exist!')
-        console.warn('   AI message preview:', aiMessage.substring(0, 150))
-      }
-    }
-
     return Response.json({
       message: aiMessage,
-      courses: finalCourses
+      courses: coursesToShow.length > 0 ? coursesToShow : (shouldShowCourses ? courses : null)
     })
 
   } catch (error) {
