@@ -213,19 +213,29 @@ function ChatContent() {
       const assistantMessage: Message = { 
         role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: Array.isArray(data.courses) ? data.courses : [],  // Ensure courses is always an array
+        courses: Array.isArray(data.courses) && data.courses.length > 0 ? data.courses : [],  // Ensure courses is always an array
         searchMeta: data.searchMeta  // Include search metadata if available
       };
       
       console.log('💬 Assistant message created:', {
         contentLength: assistantMessage.content.length,
         coursesLength: assistantMessage.courses?.length || 0,
-        courses: assistantMessage.courses,
+        coursesIsArray: Array.isArray(assistantMessage.courses),
+        hasCoursesData: assistantMessage.courses && assistantMessage.courses.length > 0,
         searchMeta: assistantMessage.searchMeta
       });
       
+      // Log each course being added
+      if (assistantMessage.courses && assistantMessage.courses.length > 0) {
+        console.log('📚 Courses being added to message:', assistantMessage.courses.map(c => ({
+          id: c.id,
+          title: c.title
+        })));
+      }
+      
       // Save search state if search metadata is available
       if (data.searchMeta) {
+        console.log('💾 Saving search metadata:', data.searchMeta);
         setCurrentSearch({
           query: data.searchMeta.filters.query || '',
           filters: data.searchMeta.filters,
@@ -235,7 +245,14 @@ function ChatContent() {
         });
       }
       
-      setMessages(prev => [...prev, assistantMessage]);
+      // Add assistant message to messages array
+      console.log('📝 Adding assistant message to state...');
+      setMessages(prev => {
+        const updated = [...prev, assistantMessage];
+        console.log('✅ Messages state updated. New length:', updated.length);
+        console.log('✅ Last message has courses:', updated[updated.length - 1].courses?.length || 0);
+        return updated;
+      });
       
       // Trigger sidebar reload by dispatching a custom event
       // This will tell ChatSidebar to reload conversations
@@ -503,13 +520,27 @@ function ChatContent() {
                               // Show "Show More" button if there are more results available
                               const showMoreButton = (searchMeta?.hasMore || currentSearch.hasMore) && isLastMessage;
                               
+                              console.log(`🎨 Rendering message ${idx} (${message.role}):`, {
+                                hasCourses,
+                                coursesLength: message.courses?.length || 0,
+                                coursesType: typeof message.courses,
+                                coursesIsArray: Array.isArray(message.courses),
+                                isLastMessage,
+                                willShowCourseCards: hasCourses
+                              });
+                              
                               if (!hasCourses && message.role === 'assistant') {
-                                console.log('🔍 No courses to render:', {
+                                console.log('⚠️ Assistant message but no courses to render:', {
                                   hasCoursesProp: !!message.courses,
                                   coursesType: typeof message.courses,
                                   coursesIsArray: Array.isArray(message.courses),
-                                  coursesLength: message.courses?.length || 0
+                                  coursesLength: message.courses?.length || 0,
+                                  messageIndex: idx
                                 });
+                              }
+                              
+                              if (hasCourses && message.courses) {
+                                console.log('✅ Will render', message.courses.length, 'course cards for message', idx);
                               }
                               
                               return hasCourses && message.courses ? (
