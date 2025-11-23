@@ -3627,26 +3627,32 @@ Bei komplexen Themen: Kurze Zusammenfassung, dann fragen: "Möchtest du eine det
 
 When you find relevant courses to recommend, you MUST use this special format:
 
-FORMAT TO USE:
-First, write your introductory text (1-2 sentences).
-Then write exactly: [SHOW_COURSES]
-Then list course IDs in JSON format: {"courseIds": [1, 2, 3]}
-Then write your follow-up text/questions.
+🚨 CRITICAL: DO NOT USE [SHOW_COURSES] MARKER!
+═══════════════════════════════════════════════════════════════
 
-EXAMPLE OUTPUT:
-"Ich habe 3 passende Data Science Bootcamps für dich gefunden:
+The courses are ALREADY being shown automatically by the system!
+When the user searches for courses, the search results are displayed AUTOMATICALLY.
 
-[SHOW_COURSES]
-{"courseIds": [1, 5, 12]}
+YOUR ROLE:
+- Provide context and recommendations about the courses
+- Explain which courses are best suited for the user
+- Give advice on next steps
+- Answer questions about the courses
 
-Möchtest du wissen, welcher für Anfänger geeignet ist?"
+DO NOT:
+- Use [SHOW_COURSES] marker (DEPRECATED - causes system to show ALL courses)
+- List course IDs manually
+- Try to manually display courses
 
-CRITICAL RULES:
-- Always use [SHOW_COURSES] marker when recommending courses
-- Always include course IDs in JSON format
-- Maximum 3-4 courses per response
-- Only show courses that exist in the database
-- Keep your text short and conversational`
+The frontend will automatically display the courses that match the search.
+You just need to provide helpful commentary and guidance.
+
+EXAMPLE OF CORRECT RESPONSE:
+"Ich habe mehrere Python Bootcamps für dich gefunden. Die Kurse decken verschiedene Niveaus ab:
+
+Für Anfänger empfehle ich die Fullstack-Bootcamps, die Python als Backend-Sprache vermitteln. Diese sind besonders gut für Quereinsteiger geeignet.
+
+Hast du bereits Programmiererfahrung oder bist du kompletter Anfänger?"`
 
       // For new messages array format, inject course context into system prompt
       if (messages && shouldShowCourses) {
@@ -3683,12 +3689,13 @@ ${courses.map(c => {
 }).join('\n')}
 
 DEINE AUFGABE:
-1. Zeige diese Kurse dem Nutzer (mit [SHOW_COURSES] Format)
-2. Empfehle die passendsten basierend auf der Anfrage
-3. Sage NIEMALS "Ich kann nicht suchen" - Die Suche ist bereits erfolgt!
-4. Stelle sicher, dass die gezeigten Kurse zur Anfrage passen (z.B. nur IT-Kurse wenn nach IT gefragt wurde)
-5. Wenn mehr als 10 Kurse gefunden wurden, erwähne: "Es gibt noch X weitere Kurse. Möchtest du mehr sehen?"
-6. Beginne mit einer kontextuellen Einleitung: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} für dich gefunden:"
+1. 🚨 DO NOT use [SHOW_COURSES] marker - courses are displayed AUTOMATICALLY
+2. Provide helpful context about the found courses
+3. Recommend the most suitable courses based on user's situation
+4. Explain what makes each type of course suitable for different learners
+5. If ${totalCount} > ${courses.length}, mention: "Es gibt noch ${totalCount - courses.length} weitere Kurse. Möchtest du mehr sehen?"
+6. Begin with a contextual introduction: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} für dich gefunden:"
+7. The courses will appear AUTOMATICALLY below your message - you just provide guidance
 
 KURS-DETAILS:
 ${courseSummary}
