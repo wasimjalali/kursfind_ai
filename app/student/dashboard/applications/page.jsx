@@ -117,7 +117,7 @@ export default async function ApplicationsPage() {
         </div>
         <Link
           href="/courses"
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105"
         >
           + Neue Bewerbung
         </Link>
@@ -125,49 +125,49 @@ export default async function ApplicationsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Gesamt</p>
               <p className="text-3xl font-bold text-gray-900">{applications?.length || 0}</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center transition-transform duration-200 hover:scale-110">
               <span className="text-2xl">📝</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Ausstehend</p>
               <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center transition-transform duration-200 hover:scale-110">
               <span className="text-2xl">⏳</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Angenommen</p>
               <p className="text-3xl font-bold text-green-600">{acceptedCount}</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center transition-transform duration-200 hover:scale-110">
               <span className="text-2xl">✅</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Abgelehnt</p>
               <p className="text-3xl font-bold text-red-600">{rejectedCount}</p>
             </div>
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center transition-transform duration-200 hover:scale-110">
               <span className="text-2xl">❌</span>
             </div>
           </div>
@@ -184,19 +184,19 @@ export default async function ApplicationsPage() {
             return (
               <div
                 key={application.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:scale-[1.01]"
               >
                 <div className="flex items-start justify-between gap-6">
                   {/* Course Image */}
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 overflow-hidden rounded-lg">
                     {course?.image_url ? (
                       <img
                         src={course.image_url}
                         alt={course.title}
-                        className="w-32 h-32 rounded-lg object-cover"
+                        className="w-32 h-32 rounded-lg object-cover transition-transform duration-300 hover:scale-110"
                       />
                     ) : (
-                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
+                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center transition-all duration-300 hover:from-cyan-200 hover:to-emerald-200">
                         <span className="text-4xl">📚</span>
                       </div>
                     )}
@@ -206,16 +206,16 @@ export default async function ApplicationsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1 hover:text-cyan-600 transition-colors duration-200">
                           {course?.title || 'Kurs nicht gefunden'}
                         </h3>
                         {provider && (
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200">
                             📍 {provider.company_name} • {provider.city}
                           </p>
                         )}
                       </div>
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(application.status)}`}>
+                      <span className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-200 ${getStatusColor(application.status)}`}>
                         {getStatusIcon(application.status)} {getStatusText(application.status)}
                       </span>
                     </div>
@@ -274,14 +274,14 @@ export default async function ApplicationsPage() {
                       <div className="flex gap-2">
                         <Link
                           href={`/courses/${course?.id}`}
-                          className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
+                          className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-all duration-200 hover:shadow-md"
                         >
                           Kurs ansehen
                         </Link>
                         {provider?.email && (
                           <a
                             href={`mailto:${provider.email}`}
-                            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
                           >
                             Anbieter kontaktieren
                           </a>
@@ -306,7 +306,7 @@ export default async function ApplicationsPage() {
           </p>
           <Link
             href="/courses"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105"
           >
             Kurse durchsuchen
           </Link>
