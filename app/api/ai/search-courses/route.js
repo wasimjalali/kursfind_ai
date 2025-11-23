@@ -31,9 +31,9 @@ export async function POST(req) {
         )
       `, { count: 'exact' })
     
-    // Filter by status if column exists (optional - some databases might not have it)
-    // Note: If status column doesn't exist, this will be ignored by Supabase
-    dbQuery = dbQuery.eq('status', 'active')
+    // NOTE: Removed status filter as it was preventing courses from showing
+    // The courses table may not have a status column, or courses may not have status='active'
+    // If you need status filtering in the future, check if the column exists first
 
     // Smart search across relevant fields
     if (query && query.trim()) {
@@ -88,7 +88,6 @@ export async function POST(req) {
       const fallbackQuery = supabase
         .from('courses')
         .select('*', { count: 'exact' })
-        .eq('status', 'active')
 
       // Reapply filters
       if (query && query.trim()) {
