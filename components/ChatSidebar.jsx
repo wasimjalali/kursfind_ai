@@ -298,9 +298,6 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Chat-Verlauf {conversations.length > 0 && `(${conversations.length})`}
               </h3>
-              <div className="text-xs text-gray-400 mt-1">
-                User: {user ? '✓' : '✗'} | Student: {student?.id || 'N/A'} | Chats: {conversations.length}
-              </div>
             </div>
             <div className="px-4 py-2 space-y-1">
               {conversations.length > 0 ? (
@@ -327,23 +324,8 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 <div className="px-4 py-3 text-center">
                   <div className="text-gray-400 text-2xl mb-2">💬</div>
                   <div className="text-xs text-gray-500">Noch keine Chats</div>
-                  <div className="text-xs text-gray-400 mt-2">
-                    Debug: Checking student ID {student?.id}
-                  </div>
                 </div>
               )}
-            </div>
-          </div>
-        )}
-        
-        {/* Debug info when not showing chat history */}
-        {(!user || !student) && (
-          <div className="px-4 py-3 border-t border-gray-200 bg-yellow-50">
-            <div className="text-xs text-yellow-700">
-              <div>🔍 Debug Info:</div>
-              <div>User logged in: {user ? 'YES ✓' : 'NO ✗'}</div>
-              <div>Student data: {student ? `YES (ID: ${student.id})` : 'NO ✗'}</div>
-              <div>Auth User ID: {user?.id?.substring(0, 8) || 'N/A'}...</div>
             </div>
           </div>
         )}
