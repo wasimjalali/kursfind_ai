@@ -178,14 +178,29 @@ function ChatContent() {
       const data = await response.json();
 
       // Debug: Log the API response
-      console.log('📥 API Response:', {
+      console.log('📥 API Response received:', {
         hasMessage: !!data.message,
+        hasResponse: !!data.response,
         hasCourses: !!data.courses,
         coursesLength: Array.isArray(data.courses) ? data.courses.length : 0,
         coursesType: typeof data.courses,
         coursesIsArray: Array.isArray(data.courses),
-        hasConversationId: !!data.conversation_id
+        hasConversationId: !!data.conversation_id,
+        firstCourseId: data.courses?.[0]?.id || 'none',
+        hasSearchMeta: !!data.searchMeta
       });
+      
+      // Additional validation
+      if (Array.isArray(data.courses) && data.courses.length > 0) {
+        console.log('✅ Courses received in API response:', data.courses.length);
+        console.log('📋 First course:', {
+          id: data.courses[0].id,
+          title: data.courses[0].title,
+          location: data.courses[0].location
+        });
+      } else {
+        console.log('⚠️ No courses in API response or courses array is empty');
+      }
 
       // Update URL with conversation_id if provided (for new conversations)
       if (data.conversation_id && !searchParams.get('chat')) {

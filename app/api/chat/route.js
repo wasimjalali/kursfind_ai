@@ -246,6 +246,7 @@ Antworte auf DEUTSCH.`
         if (!isCountQuestion) {
           // Use smart search API
           try {
+            console.log('🔍 Calling search-courses API with intent:', searchIntent)
             const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai/search-courses`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -261,6 +262,8 @@ Antworte auf DEUTSCH.`
               })
             })
             
+            console.log('🔍 Search API response status:', searchResponse.status, searchResponse.statusText)
+            
             if (searchResponse.ok) {
               const searchData = await searchResponse.json()
               courses = searchData.courses || []
@@ -268,7 +271,10 @@ Antworte auf DEUTSCH.`
               console.log('✅ Smart search results:', {
                 found: courses.length,
                 total: totalCount,
-                hasMore: searchData.hasMore
+                hasMore: searchData.hasMore,
+                coursesType: typeof courses,
+                coursesIsArray: Array.isArray(courses),
+                firstCourseId: courses[0]?.id || 'none'
               })
               // Store search metadata for "Show More" functionality
               if (searchIntent) {
@@ -277,7 +283,10 @@ Antworte auf DEUTSCH.`
                 searchIntent.total = totalCount
               }
             } else {
-              console.warn('Smart search API failed, falling back to basic search')
+              console.warn('⚠️ Smart search API returned non-OK status:', searchResponse.status)
+              const errorText = await searchResponse.text()
+              console.warn('⚠️ Error response:', errorText)
+              console.warn('⚠️ Falling back to basic search')
               // Fallback to basic search if API fails
               const { count: countResult } = await supabase
                 .from('courses')
@@ -297,29 +306,41 @@ Antworte auf DEUTSCH.`
               const { data, error } = await query
               if (!error && data) {
                 courses = data
+                console.log('✅ Fallback search returned:', courses.length, 'courses')
+              } else {
+                console.error('❌ Fallback search also failed:', error)
               }
             }
           } catch (apiError) {
-            console.error('Error calling smart search API:', apiError)
+            console.error('❌ Exception calling smart search API:', apiError.message)
+            console.error('❌ Full error:', apiError)
+            console.log('🔄 Attempting fallback to basic search')
             // Fallback to basic search
-            const { count: countResult } = await supabase
-              .from('courses')
-              .select('*', { count: 'exact', head: true })
-            totalCount = countResult || 0
-            
-            let query = supabase.from('courses').select(`
-              *,
-              providers!courses_provider_id_fkey(
-                provider_id,
-                company_name,
-                logo_url,
-                name:company_name
-              )
-            `).limit(10)
-            
-            const { data, error } = await query
-            if (!error && data) {
-              courses = data
+            try {
+              const { count: countResult } = await supabase
+                .from('courses')
+                .select('*', { count: 'exact', head: true })
+              totalCount = countResult || 0
+              
+              let query = supabase.from('courses').select(`
+                *,
+                providers!courses_provider_id_fkey(
+                  provider_id,
+                  company_name,
+                  logo_url,
+                  name:company_name
+                )
+              `).limit(10)
+              
+              const { data, error } = await query
+              if (!error && data) {
+                courses = data
+                console.log('✅ Fallback search returned:', courses.length, 'courses')
+              } else {
+                console.error('❌ Fallback search failed:', error)
+              }
+            } catch (fallbackError) {
+              console.error('❌ Fallback search exception:', fallbackError)
             }
           }
         } else {
@@ -3877,7 +3898,8 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       coursesIsArray: Array.isArray(courses),
       coursesType: typeof courses,
       coursesToReturnType: typeof coursesToReturn,
-      coursesToReturnIsArray: Array.isArray(coursesToReturn)
+      coursesToReturnIsArray: Array.isArray(coursesToReturn),
+      willReturnCourses: (coursesToReturn?.length || 0) > 0
     })
     
     // Prepare response with search metadata if available
@@ -3886,6 +3908,13 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       courses: coursesToReturn || [],  // Return courses array or empty array
       response: aiMessage  // Also include as 'response' for compatibility
     }
+    
+    console.log('📤 Response data being sent:', {
+      hasMessage: !!responseData.message,
+      hasCourses: !!responseData.courses,
+      coursesLength: responseData.courses?.length || 0,
+      coursesIsArray: Array.isArray(responseData.courses)
+    })
     
     // Include search metadata if this was a course search
     if (shouldShowCourses && searchIntent && typeof searchIntent.hasMore !== 'undefined') {
