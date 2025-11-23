@@ -286,7 +286,7 @@ export default function Home() {
                                   coursesLength: message.courses?.length || 0
                                 });
                               }
-                              return hasCourses ? (
+                              return hasCourses && message.courses ? (
                                 <div className="space-y-3 mt-4">
                                   {message.courses.map((course: any) => {
                                     console.log('🎴 Rendering course card:', course.id, course.title);
