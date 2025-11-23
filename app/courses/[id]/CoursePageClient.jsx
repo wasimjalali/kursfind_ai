@@ -509,8 +509,39 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Certificate Information Section */}
         {course.certificate_type && (
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <div className="flex items-start gap-6">
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Mobile: Icon and title side by side in header, Desktop: Side by side layout */}
+            <div className="md:hidden bg-gradient-to-r from-cyan-50 to-emerald-50 px-8 py-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                <svg className="w-8 h-8 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Anerkanntes Zertifikat
+              </h2>
+            </div>
+            
+            {/* Mobile: Content only */}
+            <div className="md:hidden p-8">
+              <p className="text-lg text-cyan-600 font-semibold mb-3">
+                {course.certificate_type}
+              </p>
+              <p className="text-gray-700 mb-4">
+                Nach erfolgreichem Abschluss erhalten Sie ein anerkanntes Zertifikat, das Ihre erworbenen Qualifikationen dokumentiert und bei Arbeitgebern hohes Ansehen genießt.
+              </p>
+              {course.job_placement_rate && (
+                <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg inline-flex">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-semibold">
+                    {course.job_placement_rate}% Vermittlungsquote nach Abschluss
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop: Original side-by-side layout */}
+            <div className="hidden md:flex md:items-start md:gap-6 md:p-8">
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center">
                   <svg className="w-8 h-8 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -780,7 +811,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email || provider.contact_name) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[52px] sm:pb-[60px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[59px] sm:pb-[67px]">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
