@@ -226,7 +226,21 @@ Antworte auf DEUTSCH.`
         searchTerms.includes('verfügbar') ||
         searchTerms.includes('available') ||
         searchTerms.includes('how many') ||
-        searchTerms.includes('wie viele')
+        searchTerms.includes('wie viele') ||
+        searchTerms.includes('show') ||
+        searchTerms.includes('zeig') ||
+        searchTerms.includes('python') ||
+        searchTerms.includes('java') ||
+        searchTerms.includes('web') ||
+        searchTerms.includes('data') ||
+        searchTerms.includes('online') ||
+        searchTerms.includes('hybrid') ||
+        searchTerms.includes('vollzeit') ||
+        searchTerms.includes('teilzeit') ||
+        searchTerms.includes('month') ||
+        searchTerms.includes('monat') ||
+        searchTerms.includes('duration') ||
+        searchTerms.includes('dauer')
 
       // Extract user intent from message (available for both search and non-search)
       if (isCourseSearch) {
@@ -3690,28 +3704,57 @@ ${courses.map(c => {
 
 DEINE AUFGABE:
 1. 🚨 DO NOT use [SHOW_COURSES] marker - courses are displayed AUTOMATICALLY
-2. Provide helpful context about the found courses
-3. Recommend the most suitable courses based on user's situation
-4. Explain what makes each type of course suitable for different learners
-5. If ${totalCount} > ${courses.length}, mention: "Es gibt noch ${totalCount - courses.length} weitere Kurse. Möchtest du mehr sehen?"
-6. Begin with a contextual introduction: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} für dich gefunden:"
-7. The courses will appear AUTOMATICALLY below your message - you just provide guidance
+2. Begin with: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} gefunden:"
+3. Mention that the course cards will appear below your message
+4. Provide helpful context about the types of courses found
+5. Recommend the most suitable courses based on user's situation
+6. Explain what makes each type of course suitable for different learners
+7. If ${totalCount} > ${courses.length}, mention: "Es gibt noch ${totalCount - courses.length} weitere Kurse. Möchtest du mehr sehen?"
+8. Keep your response concise (3-5 sentences) since users will see full details in the cards below
+
+BEISPIEL ANTWORT:
+"Ich habe ${courses.length} passende Python Bootcamps gefunden. Die Kurs-Karten erscheinen gleich unter dieser Nachricht.
+
+Die meisten Kurse sind Vollzeit-Bootcamps mit 3-6 Monaten Dauer und kombinieren Python mit Web Development oder Data Science. Für Anfänger empfehle ich die Fullstack-Kurse, für Fortgeschrittene die Data Science Spezialisierungen.
+
+Welches Format passt besser zu dir: Vollzeit oder Teilzeit?"
 
 KURS-DETAILS:
 ${courseSummary}
 
 Nutze diese Kurse in deiner Antwort. Analysiere sie aus Expertensicht und gib konkrete Empfehlungen.`
         } else {
-          // User asked about count/total but we don't need to show courses
+          // No courses found matching the search
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
-📊 DATENBANK-STATISTIK
+⚠️ KEINE KURSE GEFUNDEN
 ═══════════════════════════════════════════════════════════════
 
-DATABASE INFO:
-- Total courses available: ${totalCount}
+🔴 WICHTIG: Die Datenbank-Suche hat KEINE Kurse gefunden, die der Anfrage entsprechen!
 
-Der Nutzer fragt nach der Anzahl oder Verfügbarkeit von Kursen.
-Antworte mit der genauen Zahl (${totalCount} Kurse) und biete an, spezifische Kurse zu zeigen wenn gewünscht.`
+DATABASE INFO:
+- Total courses in database: ${totalCount}
+- Matching courses found: 0
+- Applied search criteria: ${currentSearchIntent?.query || latestMessage}
+
+DEINE AUFGABE:
+1. Erkläre höflich, dass aktuell keine Kurse zu den spezifischen Kriterien verfügbar sind
+2. Biete alternative Suchoptionen an:
+   - Andere Standorte
+   - Andere Formate (Online statt Präsenz)
+   - Verwandte Themen/Kategorien
+   - Breitere Zeiträume
+3. Frage nach den Prioritäten des Nutzers (Was ist am wichtigsten? Standort? Thema? Format?)
+4. 🚨 SAGE NIEMALS "Ich zeige dir die Kurse" oder "Die Karten werden angezeigt" - ES GIBT KEINE!
+
+BEISPIEL ANTWORT:
+"Leider habe ich aktuell keine Kurse gefunden, die exakt deinen Kriterien entsprechen (Python + 3-6 Monate + Online).
+
+Darf ich alternative Optionen vorschlagen?
+- Python Kurse mit anderer Dauer (z.B. 2-3 Monate oder 6-12 Monate)
+- Vollzeit Präsenzkurse mit Python
+- Verwandte Themen wie Data Science oder Web Development (die Python beinhalten)
+
+Was ist dir am wichtigsten: Die Sprache Python, die Dauer, oder das Online-Format?"`
         }
       }
 
