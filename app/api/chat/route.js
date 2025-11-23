@@ -189,66 +189,69 @@ Antworte auf DEUTSCH.`
       if (isCourseSearch) {
         shouldShowCourses = true
         
-        // First, get total count for the AI to know
-        const { count: totalCount } = await supabase
-          .from('courses')
-          .select('*', { count: 'exact', head: true })
+        console.log('🔍 Course search detected, querying database BEFORE AI response...')
         
-        let query = supabase.from('courses').select('*')
-        let hasFilters = false
-
-        // Location filters
+        // 🔴 CRITICAL FIX: Search database FIRST, before AI generates response
+        // Build search intent from user message
+        const searchIntent = {
+          query: latestMessage,
+          maxResults: 10  // Get up to 10 courses for better selection
+        }
+        
+        // Extract specific filters from search terms
         if (searchTerms.includes('berlin')) {
-          query = query.ilike('location', '%Berlin%')
-          hasFilters = true
+          searchIntent.location = 'Berlin'
         } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
-          query = query.ilike('location', '%München%')
-          hasFilters = true
+          searchIntent.location = 'München'
         } else if (searchTerms.includes('hamburg')) {
-          query = query.ilike('location', '%Hamburg%')
-          hasFilters = true
+          searchIntent.location = 'Hamburg'
         } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
-          query = query.ilike('location', '%Köln%')
-          hasFilters = true
+          searchIntent.location = 'Köln'
         } else if (searchTerms.includes('frankfurt')) {
-          query = query.ilike('location', '%Frankfurt%')
-          hasFilters = true
+          searchIntent.location = 'Frankfurt'
         }
-
-        // Topic filters
+        
+        // Extract category/topic
         if (searchTerms.includes('marketing')) {
-          query = query.ilike('title', '%Marketing%')
-          hasFilters = true
+          searchIntent.category = 'Marketing'
         } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
-          query = query.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
-          hasFilters = true
+          searchIntent.category = 'Web Development'
         } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
-          query = query.or('title.ilike.%Data%,title.ilike.%Daten%')
-          hasFilters = true
+          searchIntent.category = 'Data Science'
         } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
-          query = query.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
-          hasFilters = true
-        }
-
-        // Check if user is asking about count/total (don't show courses, just answer)
-        const isCountQuestion = searchTerms.includes('total') || searchTerms.includes('alle') || 
-                               searchTerms.includes('how many') || searchTerms.includes('wie viele') ||
-                               searchTerms.includes('available') || searchTerms.includes('verfügbar')
-        
-        // If specific filters, get ALL matching courses (no limit)
-        // If general search, limit to 6 courses
-        const { data, error } = hasFilters 
-          ? await query // Get all matching courses for specific topics
-          : (isCountQuestion 
-              ? { data: [], error: null } // Don't fetch courses for count questions
-              : await query.limit(6)) // General search, show 6
-
-        if (!error && data) {
-          courses = data
+          searchIntent.category = 'Design'
+        } else if (searchTerms.includes('python')) {
+          searchIntent.category = 'Python'
+        } else if (searchTerms.includes('javascript') || searchTerms.includes('js')) {
+          searchIntent.category = 'JavaScript'
         }
         
-        // Store total count for AI to reference
-        courses.totalCount = totalCount || 0
+        // Call the smart search API
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
+          const searchResponse = await fetch(`${baseUrl}/api/ai/search-courses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(searchIntent)
+          })
+          
+          if (searchResponse.ok) {
+            const searchData = await searchResponse.json()
+            courses = searchData.courses || []
+            courses.totalCount = searchData.total || 0
+            courses.hasMore = searchData.hasMore || false
+            
+            console.log(`✅ Database search complete: Found ${courses.length} courses to show (${courses.totalCount} total match)`)
+          } else {
+            console.error('❌ Search API failed, falling back to empty results')
+            courses = []
+            courses.totalCount = 0
+          }
+        } catch (error) {
+          console.error('❌ Search API error:', error)
+          courses = []
+          courses.totalCount = 0
+        }
       }
 
       const courseSummary = shouldShowCourses && courses.length > 0
@@ -3550,18 +3553,29 @@ DATABASE INFO:
 GEFUNDENE KURSE (die dem Nutzer angezeigt werden):
 ${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.provider ? ' by ' + c.provider : ''}`).join('\n')}
 
-🚨 WICHTIGE ANWEISUNGEN:
-1. Beginne deine Antwort mit: "Ich habe ${courses.length} passende Kurs${courses.length !== 1 ? 'e' : ''} gefunden:"
-2. Die Kurskarten erscheinen AUTOMATISCH unter deiner Nachricht - du musst sie NICHT manuell zeigen
-3. VERWENDE NICHT den [SHOW_COURSES] Marker - das ist veraltet
-4. Halte deine Antwort KURZ (2-3 Sätze) - die Details stehen in den Kurskarten
-5. Gib nur eine kurze Einschätzung, welche Kurse für welche Zielgruppe geeignet sind
-6. Sage GENAU "${courses.length} Kurse" - nicht "mehrere" oder "einige"
+🚨 ABSOLUTE REQUIREMENTS - MUST FOLLOW EXACTLY:
+1. 🔴 START YOUR RESPONSE WITH THIS EXACT SENTENCE:
+   "Ich habe ${courses.length} passende Kurs${courses.length !== 1 ? 'e' : ''} gefunden:"
+   
+2. 🔴 NEVER say different numbers like "3 Kurse" when ${courses.length} courses exist
+   - If ${courses.length} = 5, you MUST say "5 Kurse"
+   - If ${courses.length} = 1, you MUST say "1 Kurs"
+   - NEVER use vague terms like "mehrere", "einige", "ein paar"
+   
+3. The course cards will appear AUTOMATICALLY below your message
+   
+4. Keep your response SHORT (2-3 sentences max) - details are in the cards
+   
+5. Give brief guidance on which courses suit different learners
+   
+6. DO NOT use [SHOW_COURSES] marker (deprecated and will break the system)
 
-BEISPIEL ANTWORT:
-"Ich habe ${courses.length} passende ${courses[0]?.title?.includes('Web') ? 'Web-Entwicklung' : ''} Kurs${courses.length !== 1 ? 'e' : ''} gefunden: Die Kurskarten erscheinen gleich unter dieser Nachricht.
+EXAMPLE RESPONSE STRUCTURE:
+"Ich habe ${courses.length} passende ${courses[0]?.title?.includes('Web') ? 'Web-Entwicklung' : courses[0]?.title?.includes('Data') ? 'Data Science' : courses[0]?.title?.includes('Marketing') ? 'Marketing' : ''} Kurs${courses.length !== 1 ? 'e' : ''} gefunden: Die Kurskarten erscheinen gleich unter dieser Nachricht.
 
 ${courses.length > 3 ? 'Die meisten sind Vollzeit-Bootcamps.' : 'Diese Kurse decken verschiedene Niveaus ab.'} Welches Format passt besser zu dir?"
+
+🔴 CRITICAL: Your response MUST start with "Ich habe ${courses.length} passende Kurse gefunden:" - this ensures accuracy!
 
 KURS-DETAILS:
 ${courseSummary}
@@ -3674,40 +3688,15 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
     }
 
     const aiData = await aiResponse.json()
-    let aiMessage = aiData.choices[0].message.content
+    const aiMessage = aiData.choices[0].message.content
 
-    // Parse AI response to extract course IDs
-    const coursePattern = /\[SHOW_COURSES\]\s*\n?\s*(\{[^}]+\})/
-    const match = aiMessage.match(coursePattern)
-    
-    let coursesToShow = []
-    
-    if (match) {
-      try {
-        const courseData = JSON.parse(match[1])
-        const courseIds = courseData.courseIds
-        
-        // Fetch full course details for the IDs
-        const { data: matchedCourses, error } = await supabase
-          .from('courses')
-          .select('*')
-          .in('id', courseIds)
-        
-        if (!error && matchedCourses) {
-          coursesToShow = matchedCourses
-        }
-        
-        // Remove the [SHOW_COURSES] marker from message
-        aiMessage = aiMessage.replace(coursePattern, '').trim()
-        
-      } catch (e) {
-        console.error('Error parsing course IDs:', e)
-      }
-    }
+    // 🔴 CRITICAL: Courses were already fetched BEFORE AI response
+    // No need to parse markers or fetch again - just return what we have
+    console.log(`✅ AI response generated. Attaching ${shouldShowCourses && courses ? courses.length : 0} courses`)
 
     return Response.json({
       message: aiMessage,
-      courses: coursesToShow.length > 0 ? coursesToShow : (shouldShowCourses ? courses : null)
+      courses: shouldShowCourses ? courses : null
     })
 
   } catch (error) {
