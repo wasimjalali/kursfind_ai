@@ -27,7 +27,7 @@ export default function StudentDashboardClient({ student, children }) {
           {/* Logo - center - Larger and clickable */}
           <a href="/suchen">
             <img 
-              src="/Assets/kursfind-orginal-logo.png" 
+              src="/Assets/kursfind-ai-logo.jpg" 
               alt="Kursfind AI"
               className="w-10 h-10 rounded-lg cursor-pointer"
             />
@@ -63,7 +63,7 @@ export default function StudentDashboardClient({ student, children }) {
           {/* Logo - center - Clickable, links to main AI chat */}
           <Link href="/suchen" className="flex items-center justify-center flex-1">
             <img 
-              src="/Assets/kursfind-orginal-logo.png" 
+              src="/Assets/kursfind-ai-logo.jpg" 
               alt="Kursfind AI"
               className="h-12 w-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
             />

@@ -82,7 +82,7 @@ export default function StudentSignup() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <img 
-              src="/Assets/kursfind-orginal-logo.png" 
+              src="/Assets/kursfind-ai-logo.jpg" 
               alt="Kursfind AI" 
               className="w-20 h-20 mx-auto rounded-2xl shadow-lg mb-4"
             />
