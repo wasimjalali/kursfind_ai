@@ -18,6 +18,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [renderKey, setRenderKey] = useState(0); // Force re-render trigger
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -70,12 +71,40 @@ export default function Home() {
 
       const data = await response.json();
 
+      // Debug logging
+      console.log('📥 API Response received:', {
+        hasMessage: !!data.message,
+        hasResponse: !!data.response,
+        hasCourses: !!data.courses,
+        coursesCount: Array.isArray(data.courses) ? data.courses.length : 0,
+        coursesType: typeof data.courses
+      });
+
       // Add AI response WITH courses if available
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
+      const aiMessage = { 
+        role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: data.courses || []  // Include courses in message object
-      }]);
+        courses: Array.isArray(data.courses) && data.courses.length > 0 ? data.courses : []
+      };
+
+      console.log('💬 Assistant message created:', {
+        contentLength: aiMessage.content.length,
+        coursesCount: aiMessage.courses?.length || 0,
+        coursesIsArray: Array.isArray(aiMessage.courses)
+      });
+
+      // Update messages state
+      setMessages(prev => {
+        const updated = [...prev, aiMessage];
+        console.log('✅ Messages state updated, total messages:', updated.length);
+        return updated;
+      });
+
+      // Force re-render if courses exist
+      if (aiMessage.courses && aiMessage.courses.length > 0) {
+        console.log('🔄 Triggering force re-render for', aiMessage.courses.length, 'courses');
+        setRenderKey(prev => prev + 1);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -209,10 +238,14 @@ export default function Home() {
 
                             {/* COURSE CARDS - NEW! */}
                             {message.courses && message.courses.length > 0 && (
-                              <div className="space-y-3 mt-4">
-                                {message.courses.map((course: any) => (
-                                  <ChatCourseCard key={course.id} course={course} />
-                                ))}
+                              <div className="space-y-3 mt-4" key={`courses-${renderKey}`}>
+                                {(() => {
+                                  console.log('🎴 Rendering', message.courses.length, 'course cards');
+                                  return message.courses.map((course: any, index: number) => {
+                                    console.log('  - Course', index + 1, ':', course.id, course.title);
+                                    return <ChatCourseCard key={`${course.id}-${renderKey}-${index}`} course={course} />;
+                                  });
+                                })()}
                               </div>
                             )}
                           </div>
