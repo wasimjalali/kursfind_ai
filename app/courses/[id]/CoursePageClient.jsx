@@ -685,14 +685,14 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             Über den Anbieter
           </h2>
           
-          {/* Mobile: Logo top right, Desktop: Logo left */}
-          <div className="flex flex-col md:flex-row md:items-start gap-4 mb-6">
-            {/* Logo - Top right on mobile, left on desktop */}
+          {/* Mobile: Logo left, Desktop: Logo left */}
+          <div className="flex flex-row items-start gap-4 mb-6">
+            {/* Logo - Left on both mobile and desktop */}
             {provider?.logo_url && (
               <img 
                 src={provider.logo_url} 
                 alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
-                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 self-end md:self-start md:order-first"
+                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 flex-shrink-0"
               />
             )}
             
@@ -811,7 +811,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email || provider.contact_name) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[59px] sm:pb-[67px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[69px] sm:pb-[77px]">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
