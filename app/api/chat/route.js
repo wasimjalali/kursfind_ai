@@ -3425,8 +3425,12 @@ Beispiel: "Data Scientists verdienen in Deutschland durchschnittlich 55.000-75.0
 ✅ Sei präzise und auf den Punkt
 
 ═══════════════════════════════════════════════════════════════
-📋 BEISPIELE FÜR PERFEKTE ANTWORTEN
+📋 <TRAINING_EXAMPLES> - NICHT ALS ECHTE KURSE VERWENDEN!
 ═══════════════════════════════════════════════════════════════
+
+🔴 WARNUNG: Die folgenden Beispiele dienen NUR zur Illustration des richtigen Formats.
+Dies sind KEINE echten Kurse aus der Datenbank!
+Verwende NIEMALS Kurse aus diesem Abschnitt in deinen Antworten!
 
 ❌ FALSCH (zu lang, vergisst Hauptaufgabe):
 User: "Data Science Bootcamp?"
@@ -3457,6 +3461,9 @@ AI: "Für Anfänger ohne Vorkenntnisse empfehle ich Kurse, die mit Python-Grundl
 ✅ RICHTIG (Finanzierungsfrage):
 User: "Kann ich das über Bildungsgutschein finanzieren?"
 AI: "Ja, die meisten Kurse auf Kursfind AI sind AZAV-zertifiziert und über Bildungsgutschein der Agentur für Arbeit oder des Jobcenters förderfähig. Du brauchst: 1) Beratungstermin vereinbaren, 2) Notwendigkeit nachweisen, 3) Gutschein beantragen. Welche Kurse interessieren dich?"
+
+</TRAINING_EXAMPLES>
+═══════════════════════════════════════════════════════════════
 
 ═══════════════════════════════════════════════════════════════
 🎯 EXPERTISE-BEREICHE (Nur wenn gefragt)
@@ -3553,7 +3560,23 @@ DATABASE INFO:
 GEFUNDENE KURSE (die dem Nutzer angezeigt werden):
 ${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.provider ? ' by ' + c.provider : ''}`).join('\n')}
 
-🚨 ABSOLUTE REQUIREMENTS - MUST FOLLOW EXACTLY:
+�🔴🔴 KRITISCHE REGEL - NIEMALS VERGESSEN! 🔴🔴🔴
+═══════════════════════════════════════════════════════════════
+
+DU DARFST NUR KURSE ZEIGEN, DIE IN DER OBIGEN LISTE STEHEN!
+
+- Diese ${courses.length} Kurse kommen aus der echten Datenbank
+- Diese IDs (${courses.map(c => c.id).join(', ')}) sind die EINZIGEN Kurse, die existieren
+- NIEMALS Kurse aus <TRAINING_EXAMPLES> verwenden
+- NIEMALS eigene Kurs-IDs erfinden
+- NIEMALS sagen "Ich zeige dir Kurs ID 10, 16, 23" - diese existieren nicht!
+- Wenn keine Kurse gefunden wurden, ehrlich sagen "Keine Kurse gefunden"
+
+DIESE KURSE WERDEN AUTOMATISCH ANGEZEIGT - Du musst sie NICHT auflisten!
+
+═══════════════════════════════════════════════════════════════
+
+�🚨 ABSOLUTE REQUIREMENTS - MUST FOLLOW EXACTLY:
 1. 🔴 START YOUR RESPONSE WITH THIS EXACT SENTENCE:
    "Ich habe ${courses.length} passende Kurs${courses.length !== 1 ? 'e' : ''} gefunden:"
    
@@ -3592,6 +3615,18 @@ DATABASE INFO:
 - Matching courses found: 0
 
 🚨 WICHTIG: KEINE Kurskarten werden angezeigt!
+
+🔴🔴🔴 KRITISCHE REGEL - WENN KEINE KURSE GEFUNDEN 🔴🔴🔴
+═══════════════════════════════════════════════════════════════
+
+Die Datenbank hat 0 passende Kurse gefunden!
+
+- NIEMALS Kurse aus <TRAINING_EXAMPLES> als Alternative anbieten
+- NIEMALS eigene Kurs-IDs erfinden (z.B. "Versuch mal Kurs 10, 16, 23")
+- NIEMALS sagen "Ich zeige dir diese Kurse:" wenn keine existieren
+- Sei EHRLICH: "Keine Kurse gefunden"
+
+═══════════════════════════════════════════════════════════════
 
 DEINE AUFGABE:
 Wenn der Nutzer nach spezifischen Kursen gefragt hat (z.B. "Zeig mir Pflegehelfer Kurse"):
@@ -3659,6 +3694,32 @@ Give practical, concrete advice from your expertise. Answer in ENGLISH.`
 ${shouldShowCourses && courses.length === 0 ? 'Hinweis: Keine passenden Kurse in der Datenbank. Gib trotzdem hilfreiche Beratung basierend auf deinem Expertenwissen über den deutschen Bildungsmarkt.' : 'Nutze dein Wissen über Karriereplanung, Weiterbildung und den deutschen Arbeitsmarkt.'}
 
 Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.`)
+    }
+
+    // 🔴 Track previously shown course IDs for conversation memory
+    let shownCourseIds = []
+    if (messages && messages.length > 0) {
+      messages.forEach(msg => {
+        if (msg.role === 'assistant' && msg.courses && Array.isArray(msg.courses)) {
+          shownCourseIds.push(...msg.courses.map(c => c.id))
+        }
+      })
+      console.log(`📝 Conversation memory: Previously shown ${shownCourseIds.length} course IDs: [${shownCourseIds.join(', ')}]`)
+    }
+    
+    // Add conversation memory to system prompt if we have shown courses before
+    if (shownCourseIds.length > 0) {
+      aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
+📝 KONVERSATIONS-SPEICHER
+═══════════════════════════════════════════════════════════════
+
+In dieser Konversation wurden bereits folgende Kurse gezeigt:
+Kurs-IDs: [${shownCourseIds.join(', ')}]
+
+🔴 REGEL: Versuche in Folge-Antworten KEINE bereits gezeigten Kurse zu wiederholen,
+es sei denn der Nutzer fragt explizit danach.
+
+═══════════════════════════════════════════════════════════════`
     }
 
     const aiResponse = await fetch('https://api.deepseek.com/chat/completions', {
