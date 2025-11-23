@@ -3907,25 +3907,32 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
     // Save chat history for logged-in students
     // SECURITY: Only save if studentId is valid (students.id int8)
     // This ensures chat_history is always linked to the correct student
+    
+    // IMPORTANT: Add AI response to messages array before saving
+    // The messages array from frontend only includes up to the user's question
+    // We need to add the AI response so it gets saved to the database
+    const messagesWithAIResponse = messages ? [...messages, { role: 'assistant', content: aiMessage }] : [];
+    
     console.log('🔍 Chat history save check:', {
       hasStudentId: !!studentId,
       studentIdType: typeof studentId,
       studentIdValue: studentId,
-      hasMessages: !!messages,
-      isMessagesArray: Array.isArray(messages),
-      messagesLength: Array.isArray(messages) ? messages.length : 0
+      hasMessages: !!messagesWithAIResponse,
+      isMessagesArray: Array.isArray(messagesWithAIResponse),
+      messagesLength: messagesWithAIResponse.length,
+      includesAIResponse: true
     });
     
-    if (studentId && typeof studentId === 'number' && messages && Array.isArray(messages) && messages.length > 0) {
+    if (studentId && typeof studentId === 'number' && messagesWithAIResponse && Array.isArray(messagesWithAIResponse) && messagesWithAIResponse.length > 0) {
       try {
         console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
-        console.log('💾 Messages count:', messages.length);
+        console.log('💾 Messages count:', messagesWithAIResponse.length);
         
         // Get the first user message as conversation title (for new conversations)
-        const firstUserMessage = messages.find(m => m.role === 'user')
+        const firstUserMessage = messagesWithAIResponse.find(m => m.role === 'user')
         const conversationTitle = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
         console.log('💾 Conversation title:', conversationTitle);
-        console.log('💾 Total messages in request:', messages.length);
+        console.log('💾 Total messages in request:', messagesWithAIResponse.length);
         
         // Check if we're continuing an existing conversation
         // Look for messages in the last 10 minutes to determine if this is the same session
@@ -3949,7 +3956,7 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         // NEW conversation if:
         // 1. No existing conversation found (first message)
         // 2. Messages array length is 2 (indicates "Neue Suche" was clicked - first exchange)
-        const isNewConversation = !existingConversation || messages.length === 2;
+        const isNewConversation = !existingConversation || messagesWithAIResponse.length === 2;
         
         let conversationId;
         let finalTitle;
@@ -3959,10 +3966,10 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
           conversationId = crypto.randomUUID()
           finalTitle = conversationTitle
           console.log('➕ Creating NEW conversation:', conversationId);
-          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messages.length === 2)');
+          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messagesWithAIResponse.length === 2)');
           
           // For NEW conversation, save ALL messages
-          var messagesToSave = messages;
+          var messagesToSave = messagesWithAIResponse;
         } else {
           // Continue existing conversation
           conversationId = existingConversation.conversation_id
@@ -3977,12 +3984,12 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
             .eq('conversation_id', conversationId)
           
           console.log('💾 Messages already in DB:', existingMessageCount);
-          console.log('💾 Messages in current request:', messages.length);
+          console.log('💾 Messages in current request:', messagesWithAIResponse.length);
           
           // Save only the NEW messages (messages that aren't in DB yet)
           // Example: If DB has 4 messages and request has 6, save the last 2
-          const newMessageCount = messages.length - (existingMessageCount || 0);
-          var messagesToSave = newMessageCount > 0 ? messages.slice(-newMessageCount) : [];
+          const newMessageCount = messagesWithAIResponse.length - (existingMessageCount || 0);
+          var messagesToSave = newMessageCount > 0 ? messagesWithAIResponse.slice(-newMessageCount) : [];
           
           console.log('💾 NEW messages to save:', messagesToSave.length);
         }
@@ -4035,7 +4042,7 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       if (!studentId) {
         console.log('⚠️ No studentId available - chat history not saved');
       }
-      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      if (!messagesWithAIResponse || !Array.isArray(messagesWithAIResponse) || messagesWithAIResponse.length === 0) {
         console.log('⚠️ No messages available - chat history not saved');
       }
     }

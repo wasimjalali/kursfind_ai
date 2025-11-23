@@ -158,7 +158,7 @@ export default async function ChatHistoryPage() {
                     </div>
                   </div>
                   <Link
-                    href={`/?chat=${chat.id}`}
+                    href={`/suchen?chat=${chat.conversation_id}`}
                     className="px-4 py-2 text-sm font-semibold text-purple-600 hover:text-purple-700 border border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
                   >
                     Fortsetzen →
