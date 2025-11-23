@@ -20,6 +20,22 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     }
   }, [student?.id]);
 
+  // Listen for chat history updates
+  useEffect(() => {
+    const handleChatHistoryUpdate = () => {
+      console.log('🔄 Chat history updated - reloading conversations');
+      if (student?.id) {
+        loadConversations();
+      }
+    };
+
+    window.addEventListener('chatHistoryUpdated', handleChatHistoryUpdate);
+    
+    return () => {
+      window.removeEventListener('chatHistoryUpdated', handleChatHistoryUpdate);
+    };
+  }, [student?.id]);
+
   const checkUser = async () => {
     console.log('🔐 Checking user authentication...');
     const { data: { user }, error: authError } = await supabase.auth.getUser();

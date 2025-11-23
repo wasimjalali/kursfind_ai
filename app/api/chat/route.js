@@ -3921,15 +3921,11 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
         console.log('💾 Messages count:', messages.length);
         
-        // Get the latest user message as conversation title (for new conversations)
-        const latestUserMessage = messages.filter(m => m.role === 'user').pop()
-        const conversationTitle = latestUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
+        // Get the first user message as conversation title (for new conversations)
+        const firstUserMessage = messages.find(m => m.role === 'user')
+        const conversationTitle = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
         console.log('💾 Conversation title:', conversationTitle);
-        
-        // IMPORTANT: Only save the LAST 2 messages (current user message + AI response)
-        // This prevents re-saving the entire conversation history on every request
-        const messagesToSave = messages.slice(-2);
-        console.log('💾 Messages to save (last 2):', messagesToSave.length);
+        console.log('💾 Total messages in request:', messages.length);
         
         // Check if we're continuing an existing conversation
         // Look for messages in the last 10 minutes to determine if this is the same session
@@ -3952,8 +3948,8 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         // Determine if we should create a new conversation or continue existing one
         // NEW conversation if:
         // 1. No existing conversation found (first message)
-        // 2. Messages array length is 2 or less (indicates "Neue Suche" was clicked)
-        const isNewConversation = !existingConversation || messages.length <= 2;
+        // 2. Messages array length is 2 (indicates "Neue Suche" was clicked - first exchange)
+        const isNewConversation = !existingConversation || messages.length === 2;
         
         let conversationId;
         let finalTitle;
@@ -3963,15 +3959,41 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
           conversationId = crypto.randomUUID()
           finalTitle = conversationTitle
           console.log('➕ Creating NEW conversation:', conversationId);
-          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messages.length <= 2)');
+          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messages.length === 2)');
+          
+          // For NEW conversation, save ALL messages
+          var messagesToSave = messages;
         } else {
           // Continue existing conversation
           conversationId = existingConversation.conversation_id
           finalTitle = existingConversation.conversation_title
           console.log('📝 Continuing existing conversation:', conversationId);
+          
+          // For CONTINUING conversation, check which messages are already saved
+          // Get count of messages already in database for this conversation
+          const { count: existingMessageCount } = await supabaseServer
+            .from('chat_history')
+            .select('*', { count: 'exact', head: true })
+            .eq('conversation_id', conversationId)
+          
+          console.log('💾 Messages already in DB:', existingMessageCount);
+          console.log('💾 Messages in current request:', messages.length);
+          
+          // Save only the NEW messages (messages that aren't in DB yet)
+          // Example: If DB has 4 messages and request has 6, save the last 2
+          const newMessageCount = messages.length - (existingMessageCount || 0);
+          var messagesToSave = newMessageCount > 0 ? messages.slice(-newMessageCount) : [];
+          
+          console.log('💾 NEW messages to save:', messagesToSave.length);
         }
         
-        // Save only the NEW messages (last 2) as separate rows
+        // If no new messages to save, skip insert
+        if (messagesToSave.length === 0) {
+          console.log('⚠️ No new messages to save - all messages already in database');
+          // Don't return early - still need to add conversation_id to response
+        } else {
+        
+        // Prepare messages for insert
         // Database structure: one row per message with conversation_id linking them
         const messagesToInsert = messagesToSave.map(msg => ({
           student_id: studentId, // CRITICAL: Use students.id (int8)
@@ -3984,22 +4006,26 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
           created_at: new Date().toISOString()
         }))
         
-        console.log('💾 Inserting messages:', messagesToInsert.length);
-        console.log('💾 Message roles:', messagesToInsert.map(m => m.role).join(', '));
-        
-        // SECURITY: Insert messages - student_id ensures data isolation
-        const { data: insertData, error: insertError } = await supabaseServer
-          .from('chat_history')
-          .insert(messagesToInsert)
-          .select()
-        
-        if (insertError) {
-          console.error('❌ Error inserting chat history:', insertError);
-          console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
-          console.error('Insert error hint:', insertError.hint);
-        } else {
-          console.log('✅ Chat history saved successfully:', insertData?.length, 'messages');
+          console.log('💾 Inserting messages:', messagesToInsert.length);
+          console.log('💾 Message roles:', messagesToInsert.map(m => m.role).join(', '));
+          
+          // SECURITY: Insert messages - student_id ensures data isolation
+          const { data: insertData, error: insertError } = await supabaseServer
+            .from('chat_history')
+            .insert(messagesToInsert)
+            .select()
+          
+          if (insertError) {
+            console.error('❌ Error inserting chat history:', insertError);
+            console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
+            console.error('Insert error hint:', insertError.hint);
+          } else {
+            console.log('✅ Chat history saved successfully:', insertData?.length, 'messages');
+          }
         }
+        
+        // Add conversation_id to response so frontend can update URL
+        responseData.conversation_id = conversationId;
       } catch (saveError) {
         // Don't fail the request if saving chat history fails
         console.error('❌ Exception saving chat history:', saveError);

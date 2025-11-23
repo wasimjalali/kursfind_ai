@@ -183,8 +183,16 @@ export default function Home() {
         hasCourses: !!data.courses,
         coursesLength: Array.isArray(data.courses) ? data.courses.length : 0,
         coursesType: typeof data.courses,
-        coursesIsArray: Array.isArray(data.courses)
+        coursesIsArray: Array.isArray(data.courses),
+        hasConversationId: !!data.conversation_id
       });
+
+      // Update URL with conversation_id if provided (for new conversations)
+      if (data.conversation_id && !searchParams.get('chat')) {
+        const newUrl = `/suchen?chat=${data.conversation_id}`;
+        window.history.pushState({}, '', newUrl);
+        console.log('🔗 Updated URL with conversation_id:', data.conversation_id);
+      }
 
       // Add AI response WITH courses if available
       const assistantMessage: Message = { 
@@ -213,6 +221,10 @@ export default function Home() {
       }
       
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // Trigger sidebar reload by dispatching a custom event
+      // This will tell ChatSidebar to reload conversations
+      window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -235,6 +247,9 @@ export default function Home() {
       hasMore: false,
       totalCount: 0
     });
+    // Clear URL parameter
+    window.history.pushState({}, '', '/suchen');
+    console.log('🆕 Started new chat - cleared URL');
   };
 
   const handleShowMore = async () => {
