@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { extractSearchIntent } from '../ai/extract-intent'
 
 // Detect the language of the user's message
 function detectLanguage(text) {
@@ -37,6 +38,7 @@ export async function POST(req) {
     let totalCount = 0  // Total count of courses in database
     let aiSystemPrompt = ''
     let aiUserPrompt = ''
+    let searchIntent = null  // Search intent for "Show More" functionality
 
     if (isCourseQuestion) {
       // Detect user's language
@@ -187,224 +189,122 @@ Antworte auf DEUTSCH.`
         searchTerms.includes('how many') ||
         searchTerms.includes('wie viele')
 
+      // Extract user intent from message (available for both search and non-search)
       if (isCourseSearch) {
         shouldShowCourses = true
-        console.log('🔍 Course search detected, will fetch courses')
+        console.log('🔍 Course search detected, will use smart search')
         
-        // First, get total count for the AI to know
-        const { count: countResult } = await supabase
-          .from('courses')
-          .select('*', { count: 'exact', head: true })
-        totalCount = countResult || 0
-        console.log('📊 Total courses in database:', totalCount)
+        // Extract user intent from message
+        searchIntent = extractSearchIntent(latestMessage)
+        console.log('🎯 Extracted search intent:', searchIntent)
         
-        // Select course fields including provider data
-        let query = supabase.from('courses').select(`
-          *,
-          providers!courses_provider_id_fkey(
-            provider_id,
-            company_name,
-            logo_url,
-            name:company_name
-          )
-        `)
-        let hasFilters = false
-
-        // Location filters
-        if (searchTerms.includes('berlin')) {
-          query = query.ilike('location', '%Berlin%')
-          hasFilters = true
-        } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
-          query = query.ilike('location', '%München%')
-          hasFilters = true
-        } else if (searchTerms.includes('hamburg')) {
-          query = query.ilike('location', '%Hamburg%')
-          hasFilters = true
-        } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
-          query = query.ilike('location', '%Köln%')
-          hasFilters = true
-        } else if (searchTerms.includes('frankfurt')) {
-          query = query.ilike('location', '%Frankfurt%')
-          hasFilters = true
-        }
-
-        // Topic filters
-        if (searchTerms.includes('marketing')) {
-          query = query.ilike('title', '%Marketing%')
-          hasFilters = true
-        } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
-          query = query.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
-          hasFilters = true
-        } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
-          query = query.or('title.ilike.%Data%,title.ilike.%Daten%')
-          hasFilters = true
-        } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
-          query = query.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
-          hasFilters = true
-        }
-
         // Check if user is asking ONLY about count/total (don't show courses, just answer)
-        // Note: "available" and "verfügbar" are removed because they often mean "show me available courses"
         const isCountQuestion = (searchTerms.includes('total') || searchTerms.includes('alle') || 
                                  searchTerms.includes('how many') || searchTerms.includes('wie viele')) &&
                                 !searchTerms.includes('show') && !searchTerms.includes('zeig') &&
                                 !searchTerms.includes('find') && !searchTerms.includes('suche')
         
-        console.log('🔍 Search analysis:', {
-          isCountQuestion,
-          hasFilters,
-          searchTerms: searchTerms.substring(0, 100)
-        })
-        
-        // If specific filters, get ALL matching courses (no limit)
-        // If general search, limit to 6 courses
-        // Only skip fetching if it's a pure count question (not asking to show courses)
-        let { data, error } = hasFilters 
-          ? await query // Get all matching courses for specific topics
-          : (isCountQuestion 
-              ? { data: [], error: null } // Don't fetch courses for pure count questions
-              : await query.limit(6)) // General search, show 6
-
-        // If join fails, try without foreign key syntax
-        if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
-          console.warn('Provider join with FK name failed, trying without FK name:', error.message)
-          const retryQuery = supabase.from('courses').select(`
-            *,
-            providers(
-              provider_id,
-              company_name,
-              logo_url,
-              name:company_name
-            )
-          `)
-          
-          // Reapply filters
-          let retryQueryWithFilters = retryQuery
-          if (searchTerms.includes('berlin')) {
-            retryQueryWithFilters = retryQuery.ilike('location', '%Berlin%')
-          } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
-            retryQueryWithFilters = retryQuery.ilike('location', '%München%')
-          } else if (searchTerms.includes('hamburg')) {
-            retryQueryWithFilters = retryQuery.ilike('location', '%Hamburg%')
-          } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
-            retryQueryWithFilters = retryQuery.ilike('location', '%Köln%')
-          } else if (searchTerms.includes('frankfurt')) {
-            retryQueryWithFilters = retryQuery.ilike('location', '%Frankfurt%')
-          }
-          
-          if (searchTerms.includes('marketing')) {
-            retryQueryWithFilters = retryQueryWithFilters.ilike('title', '%Marketing%')
-          } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
-            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
-          } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
-            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Data%,title.ilike.%Daten%')
-          } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
-            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
-          }
-          
-          const retryResult = hasFilters 
-            ? await retryQueryWithFilters
-            : (isCountQuestion 
-                ? { data: [], error: null }
-                : await retryQueryWithFilters.limit(6))
-          
-          if (!retryResult.error) {
-            data = retryResult.data
-            error = null
-          } else {
-            console.warn('Provider join failed, fetching courses without join:', retryResult.error.message)
-            // Final fallback: fetch courses without provider join, then fetch providers separately
-            const fallbackQuery = supabase.from('courses').select('*')
-            let fallbackQueryWithFilters = fallbackQuery
-            
-            // Reapply filters
-            if (searchTerms.includes('berlin')) {
-              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Berlin%')
-            } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
-              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%München%')
-            } else if (searchTerms.includes('hamburg')) {
-              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Hamburg%')
-            } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
-              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Köln%')
-            } else if (searchTerms.includes('frankfurt')) {
-              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Frankfurt%')
-            }
-            
-            if (searchTerms.includes('marketing')) {
-              fallbackQueryWithFilters = fallbackQueryWithFilters.ilike('title', '%Marketing%')
-            } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
-              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
-            } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
-              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Data%,title.ilike.%Daten%')
-            } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
-              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
-            }
-            
-            const fallbackResult = hasFilters 
-              ? await fallbackQueryWithFilters
-              : (isCountQuestion 
-                  ? { data: [], error: null }
-                  : await fallbackQueryWithFilters.limit(6))
-            
-            if (!fallbackResult.error && fallbackResult.data) {
-              // Fetch providers separately for each course
-              const coursesWithProviders = await Promise.all(
-                fallbackResult.data.map(async (course) => {
-                  if (course.provider_id) {
-                    const { data: providerData } = await supabase
-                      .from('providers')
-                      .select('provider_id, company_name, logo_url')
-                      .eq('provider_id', course.provider_id)
-                      .single()
-                    
-                    if (providerData) {
-                      return {
-                        ...course,
-                        providers: {
-                          provider_id: providerData.provider_id,
-                          company_name: providerData.company_name,
-                          logo_url: providerData.logo_url,
-                          name: providerData.company_name
-                        }
-                      }
-                    }
-                  }
-                  return course
-                })
-              )
-              data = coursesWithProviders
-              error = null
-            } else {
-              error = fallbackResult.error
-            }
-          }
-        }
-
-        if (!error && data) {
-          courses = Array.isArray(data) ? data : []
-          console.log('✅ Courses fetched successfully:', courses.length, 'courses')
-          if (courses.length > 0) {
-            const firstCourse = courses[0]
-            console.log('📋 First course sample:', {
-              id: firstCourse.id,
-              title: firstCourse.title,
-              providerId: firstCourse.provider_id,
-              hasProvider: !!firstCourse.providers,
-              providerType: typeof firstCourse.providers,
-              providerIsArray: Array.isArray(firstCourse.providers),
-              providerData: firstCourse.providers ? {
-                company_name: firstCourse.providers.company_name || firstCourse.providers[0]?.company_name,
-                logo_url: firstCourse.providers.logo_url || firstCourse.providers[0]?.logo_url
-              } : 'No provider data'
+        if (!isCountQuestion) {
+          // Use smart search API
+          try {
+            const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai/search-courses`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                query: searchIntent.query,
+                category: searchIntent.category,
+                format: searchIntent.format,
+                location: searchIntent.location,
+                funding: searchIntent.funding,
+                language: searchIntent.language,
+                maxResults: 10,
+                offset: 0
+              })
             })
+            
+            if (searchResponse.ok) {
+              const searchData = await searchResponse.json()
+              courses = searchData.courses || []
+              totalCount = searchData.total || 0
+              console.log('✅ Smart search results:', {
+                found: courses.length,
+                total: totalCount,
+                hasMore: searchData.hasMore
+              })
+              // Store search metadata for "Show More" functionality
+              if (searchIntent) {
+                searchIntent.hasMore = searchData.hasMore
+                searchIntent.nextOffset = searchData.nextOffset || 10
+                searchIntent.total = totalCount
+              }
+            } else {
+              console.warn('Smart search API failed, falling back to basic search')
+              // Fallback to basic search if API fails
+              const { count: countResult } = await supabase
+                .from('courses')
+                .select('*', { count: 'exact', head: true })
+              totalCount = countResult || 0
+              
+              let query = supabase.from('courses').select(`
+                *,
+                providers!courses_provider_id_fkey(
+                  provider_id,
+                  company_name,
+                  logo_url,
+                  name:company_name
+                )
+              `).limit(10)
+              
+              const { data, error } = await query
+              if (!error && data) {
+                courses = data
+              }
+            }
+          } catch (apiError) {
+            console.error('Error calling smart search API:', apiError)
+            // Fallback to basic search
+            const { count: countResult } = await supabase
+              .from('courses')
+              .select('*', { count: 'exact', head: true })
+            totalCount = countResult || 0
+            
+            let query = supabase.from('courses').select(`
+              *,
+              providers!courses_provider_id_fkey(
+                provider_id,
+                company_name,
+                logo_url,
+                name:company_name
+              )
+            `).limit(10)
+            
+            const { data, error } = await query
+            if (!error && data) {
+              courses = data
+            }
           }
         } else {
+          // Just get count for count questions
+          const { count: countResult } = await supabase
+            .from('courses')
+            .select('*', { count: 'exact', head: true })
+          totalCount = countResult || 0
           courses = []
-          if (error) {
-            console.error('❌ Error fetching courses:', error)
-          } else {
-            console.warn('⚠️ No courses data returned (data is null/undefined)')
-          }
+        }
+
+        // Log search results
+        if (courses.length > 0) {
+          console.log('✅ Courses fetched successfully:', courses.length, 'courses')
+          const firstCourse = courses[0]
+          console.log('📋 First course sample:', {
+            id: firstCourse.id,
+            title: firstCourse.title,
+            category: firstCourse.category,
+            location: firstCourse.location,
+            hasProvider: !!firstCourse.providers
+          })
+        } else {
+          console.log('⚠️ No courses found for search intent:', searchIntent)
         }
         
         // Store total count for AI to reference
@@ -3691,8 +3591,18 @@ CRITICAL RULES:
       // For new messages array format, inject course context into system prompt
       if (messages && shouldShowCourses) {
         // totalCount is available from the query above
+        // searchIntent is already extracted above if isCourseSearch is true
+        const currentSearchIntent = searchIntent || extractSearchIntent(latestMessage)
         
         if (courses.length > 0) {
+          const appliedFilters = []
+          if (currentSearchIntent?.category) appliedFilters.push(`Kategorie: ${currentSearchIntent.category}`)
+          if (currentSearchIntent?.location) appliedFilters.push(`Standort: ${currentSearchIntent.location}`)
+          if (currentSearchIntent?.format) appliedFilters.push(`Format: ${currentSearchIntent.format}`)
+          if (currentSearchIntent?.funding) appliedFilters.push(`Finanzierung: ${currentSearchIntent.funding}`)
+          if (currentSearchIntent?.language) appliedFilters.push(`Sprache: ${currentSearchIntent.language}`)
+          if (currentSearchIntent?.query) appliedFilters.push(`Suchbegriff: ${currentSearchIntent.query}`)
+          
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
 📚 LIVE-DATENBANK: VERFÜGBARE KURSE GEFUNDEN!
 ═══════════════════════════════════════════════════════════════
@@ -3703,14 +3613,22 @@ Sie sind ECHT, AKTUELL und können direkt gebucht werden!
 DATABASE INFO:
 - Total courses in database: ${totalCount}
 - Matching courses found: ${courses.length}
+${appliedFilters.length > 0 ? `- Angewendete Filter: ${appliedFilters.join(', ')}` : ''}
 
 GEFUNDENE KURSE (verwende diese IDs beim Empfehlen):
-${courses.map(c => `ID: ${c.id} - "${c.title}" by ${c.provider} in ${c.location}`).join('\n')}
+${courses.map(c => {
+  const provider = Array.isArray(c.providers) ? c.providers[0] : c.providers
+  const providerName = provider?.company_name || provider?.name || c.provider || 'Anbieter'
+  return `ID: ${c.id} - "${c.title}" by ${providerName} in ${c.location || 'N/A'}${c.category ? ` (${c.category})` : ''}`
+}).join('\n')}
 
 DEINE AUFGABE:
 1. Zeige diese Kurse dem Nutzer (mit [SHOW_COURSES] Format)
 2. Empfehle die passendsten basierend auf der Anfrage
 3. Sage NIEMALS "Ich kann nicht suchen" - Die Suche ist bereits erfolgt!
+4. Stelle sicher, dass die gezeigten Kurse zur Anfrage passen (z.B. nur IT-Kurse wenn nach IT gefragt wurde)
+5. Wenn mehr als 10 Kurse gefunden wurden, erwähne: "Es gibt noch X weitere Kurse. Möchtest du mehr sehen?"
+6. Beginne mit einer kontextuellen Einleitung: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} für dich gefunden:"
 
 KURS-DETAILS:
 ${courseSummary}
@@ -3923,10 +3841,31 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       coursesToReturnIsArray: Array.isArray(coursesToReturn)
     })
     
-    return Response.json({
+    // Prepare response with search metadata if available
+    const responseData = {
       message: aiMessage,
-      courses: coursesToReturn || []  // Return courses array or empty array
-    })
+      courses: coursesToReturn || [],  // Return courses array or empty array
+      response: aiMessage  // Also include as 'response' for compatibility
+    }
+    
+    // Include search metadata if this was a course search
+    if (shouldShowCourses && searchIntent && typeof searchIntent.hasMore !== 'undefined') {
+      responseData.searchMeta = {
+        hasMore: searchIntent.hasMore || false,
+        nextOffset: searchIntent.nextOffset || 10,
+        total: searchIntent.total || totalCount || 0,
+        filters: {
+          query: searchIntent.query || '',
+          category: searchIntent.category || undefined,
+          format: searchIntent.format || undefined,
+          location: searchIntent.location || undefined,
+          funding: searchIntent.funding || undefined,
+          language: searchIntent.language || undefined
+        }
+      }
+    }
+    
+    return Response.json(responseData)
 
   } catch (error) {
     console.error('API Error:', error)

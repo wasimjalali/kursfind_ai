@@ -50,9 +50,9 @@ export default function ChatCourseCard({ course }) {
     >
       <div className="bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:border-cyan-300 transition-all relative">
         
-        {/* Provider Logo Badge - Top Right Corner of entire card */}
+        {/* Provider Logo Badge - Bottom Right Corner of entire card */}
         {providerLogo && providerLogo.trim() !== '' && (
-          <div className="absolute top-3 right-3 z-10 w-20 h-20 bg-white rounded-xl p-2 shadow-lg border-2 border-gray-200 flex items-center justify-center">
+          <div className="absolute bottom-3 right-3 z-10 w-20 h-20 bg-white rounded-xl p-2 shadow-lg border-2 border-gray-200 flex items-center justify-center">
             <img 
               src={providerLogo} 
               alt={providerName}

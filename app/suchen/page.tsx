@@ -12,6 +12,34 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   courses?: any[];  // Optional courses array for AI messages
+  searchMeta?: {
+    hasMore: boolean;
+    nextOffset: number;
+    total: number;
+    filters: {
+      query?: string;
+      category?: string;
+      format?: string;
+      location?: string;
+      funding?: string;
+      language?: string;
+    };
+  };
+}
+
+interface SearchState {
+  query: string;
+  filters: {
+    query?: string;
+    category?: string;
+    format?: string;
+    location?: string;
+    funding?: string;
+    language?: string;
+  };
+  offset: number;
+  hasMore: boolean;
+  totalCount: number;
 }
 
 export default function Home() {
@@ -19,6 +47,14 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentSearch, setCurrentSearch] = useState<SearchState>({
+    query: '',
+    filters: {},
+    offset: 0,
+    hasMore: false,
+    totalCount: 0
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,6 +73,26 @@ export default function Home() {
     
     const userMessage = exampleQuery || input;
     if (!userMessage.trim()) return;
+
+    // Check if user is asking for "more" courses
+    const isShowMoreRequest = /mehr|weitere|show more|nächste|next/i.test(userMessage);
+    
+    if (isShowMoreRequest && currentSearch.hasMore) {
+      // Handle "show more" request
+      await handleShowMore();
+      return;
+    }
+
+    // Reset search state on new query (unless it's a "show more" request)
+    if (!isShowMoreRequest) {
+      setCurrentSearch({
+        query: '',
+        filters: {},
+        offset: 0,
+        hasMore: false,
+        totalCount: 0
+      });
+    }
 
     // Create new user message
     const newUserMessage = { role: 'user' as const, content: userMessage };
@@ -81,17 +137,30 @@ export default function Home() {
       });
 
       // Add AI response WITH courses if available
-      const assistantMessage = { 
+      const assistantMessage: Message = { 
         role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: Array.isArray(data.courses) ? data.courses : []  // Ensure courses is always an array
+        courses: Array.isArray(data.courses) ? data.courses : [],  // Ensure courses is always an array
+        searchMeta: data.searchMeta  // Include search metadata if available
       };
       
       console.log('💬 Assistant message created:', {
         contentLength: assistantMessage.content.length,
-        coursesLength: assistantMessage.courses.length,
-        courses: assistantMessage.courses
+        coursesLength: assistantMessage.courses?.length || 0,
+        courses: assistantMessage.courses,
+        searchMeta: assistantMessage.searchMeta
       });
+      
+      // Save search state if search metadata is available
+      if (data.searchMeta) {
+        setCurrentSearch({
+          query: data.searchMeta.filters.query || '',
+          filters: data.searchMeta.filters,
+          offset: data.searchMeta.nextOffset || 10,
+          hasMore: data.searchMeta.hasMore,
+          totalCount: data.searchMeta.total
+        });
+      }
       
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
@@ -109,6 +178,76 @@ export default function Home() {
     setMessages([]);
     setInput('');
     setSidebarOpen(false);
+    setCurrentSearch({
+      query: '',
+      filters: {},
+      offset: 0,
+      hasMore: false,
+      totalCount: 0
+    });
+  };
+
+  const handleShowMore = async () => {
+    if (!currentSearch.hasMore || isLoadingMore) return;
+    
+    setIsLoadingMore(true);
+    
+    try {
+      const response = await fetch('/api/ai/search-courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: currentSearch.filters.query || '',
+          category: currentSearch.filters.category,
+          format: currentSearch.filters.format,
+          location: currentSearch.filters.location,
+          funding: currentSearch.filters.funding,
+          language: currentSearch.filters.language,
+          maxResults: 10,
+          offset: currentSearch.offset
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.courses && data.courses.length > 0) {
+        // Append new courses to the last assistant message
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastAssistantIndex = newMessages.length - 1;
+          
+          if (lastAssistantIndex >= 0 && newMessages[lastAssistantIndex].role === 'assistant') {
+            const lastMessage = newMessages[lastAssistantIndex];
+            newMessages[lastAssistantIndex] = {
+              ...lastMessage,
+              courses: [...(lastMessage.courses || []), ...data.courses]
+            };
+          }
+          
+          return newMessages;
+        });
+
+        // Update search state
+        setCurrentSearch(prev => ({
+          ...prev,
+          offset: data.nextOffset || prev.offset + 10,
+          hasMore: data.hasMore || false
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading more courses:', error);
+      // Add error message to chat
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Entschuldigung, es gab einen Fehler beim Laden weiterer Kurse. Bitte versuchen Sie es erneut.'
+      }]);
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
   return (
@@ -278,6 +417,12 @@ export default function Home() {
                             {/* COURSE CARDS - NEW! */}
                             {(() => {
                               const hasCourses = message.courses && Array.isArray(message.courses) && message.courses.length > 0;
+                              const searchMeta = message.searchMeta;
+                              // Show "Show More" button only on the last assistant message with courses and if there are more results
+                              const isLastMessage = idx === messages.length - 1;
+                              // Show "Show More" button if there are more results available
+                              const showMoreButton = (searchMeta?.hasMore || currentSearch.hasMore) && isLastMessage;
+                              
                               if (!hasCourses && message.role === 'assistant') {
                                 console.log('🔍 No courses to render:', {
                                   hasCoursesProp: !!message.courses,
@@ -286,12 +431,61 @@ export default function Home() {
                                   coursesLength: message.courses?.length || 0
                                 });
                               }
+                              
                               return hasCourses && message.courses ? (
                                 <div className="space-y-3 mt-4">
-                                  {message.courses.map((course: any) => {
-                                    console.log('🎴 Rendering course card:', course.id, course.title);
-                                    return <ChatCourseCard key={course.id} course={course} />;
-                                  })}
+                                  {/* Context message */}
+                                  {searchMeta && searchMeta.total > 0 && (
+                                    <p className="text-sm text-gray-600 mb-2">
+                                      {searchMeta.total > message.courses.length 
+                                        ? `Ich habe ${searchMeta.total} passende Kurse gefunden. Hier sind die ersten ${message.courses.length}:`
+                                        : `Ich habe ${message.courses.length} passende Kurse gefunden:`
+                                      }
+                                    </p>
+                                  )}
+                                  
+                                  {/* Course cards with full design */}
+                                  <div className="space-y-3">
+                                    {message.courses.map((course: any) => {
+                                      console.log('🎴 Rendering course card:', course.id, course.title);
+                                      return <ChatCourseCard key={`${course.id}-${idx}`} course={course} />;
+                                    })}
+                                  </div>
+                                  
+                                  {/* Show More Button */}
+                                  {showMoreButton && (
+                                    <div className="mt-4 flex items-center justify-center">
+                                      <button
+                                        onClick={handleShowMore}
+                                        disabled={isLoadingMore}
+                                        className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg hover:from-cyan-600 hover:to-emerald-600 transition-all font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                      >
+                                        {isLoadingMore ? (
+                                          <>
+                                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span>Lade weitere Kurse...</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <span>
+                                              {currentSearch.totalCount > 0 
+                                                ? `Weitere ${Math.max(0, currentSearch.totalCount - currentSearch.offset)} Kurse anzeigen`
+                                                : searchMeta?.total 
+                                                  ? `Weitere ${Math.max(0, searchMeta.total - (message.courses?.length || 0))} Kurse anzeigen`
+                                                  : 'Weitere Kurse anzeigen'
+                                              }
+                                            </span>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                          </>
+                                        )}
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               ) : null;
                             })()}
