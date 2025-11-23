@@ -1,13 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
 
 export default function CoursesPage() {
   const [allCourses, setAllCourses] = useState([])
@@ -319,22 +314,43 @@ export default function CoursesPage() {
       }
 
       const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      // Only redirect to signup if user is NOT authenticated
       if (authError || !user) {
+        console.log('User not authenticated, redirecting to signup')
         window.location.href = '/student/signup'
         return
       }
 
+      // User is authenticated, proceed with save
       setSavingCourses(prev => new Set(prev).add(courseIdNum))
 
       const { data: student, error: studentError } = await supabase
         .from('students')
         .select('id')
         .eq('auth_user_id', user.id)
-        .single()
+        .maybeSingle()
 
-      if (studentError || !student) {
-        console.error('Student not found:', studentError)
-        window.location.href = '/student/signup'
+      // If student profile doesn't exist, show error but don't redirect (user is logged in)
+      if (studentError) {
+        console.error('Error fetching student profile:', studentError)
+        alert('Fehler beim Laden Ihres Profils. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.')
+        setSavingCourses(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(courseIdNum)
+          return newSet
+        })
+        return
+      }
+
+      if (!student) {
+        console.error('Student profile not found for authenticated user:', user.id)
+        alert('Ihr Studentenprofil wurde nicht gefunden. Bitte vervollständigen Sie Ihr Profil.')
+        setSavingCourses(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(courseIdNum)
+          return newSet
+        })
         return
       }
 

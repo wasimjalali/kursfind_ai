@@ -25,6 +25,7 @@ async function getCourseData(identifier) {
         logo_url,
         description,
         certifications,
+        Certification,
         phone,
         email,
         website,
@@ -69,7 +70,7 @@ async function getCourseData(identifier) {
     // Fetch provider separately
     const { data: providerData, error: providerErr } = await supabase
       .from('providers')
-      .select('*')
+      .select('*, Certification')
       .eq('provider_id', course.provider_id)
       .single()
     
@@ -82,7 +83,8 @@ async function getCourseData(identifier) {
       ...providerData,
       name: providerData.company_name,
       short_description: providerData.short_description || providerData.description,
-      provider_description: providerData.description
+      provider_description: providerData.description,
+      Certification: providerData.Certification
     } : null
     
     // Fetch provider FAQs

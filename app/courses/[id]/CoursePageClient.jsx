@@ -654,18 +654,55 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             Über den Anbieter
           </h2>
           
-          <div className="flex items-start gap-4 mb-6">
+          {/* Mobile: Logo top right, Desktop: Logo left */}
+          <div className="flex flex-col md:flex-row md:items-start gap-4 mb-6">
+            {/* Logo - Top right on mobile, left on desktop */}
             {provider?.logo_url && (
               <img 
                 src={provider.logo_url} 
                 alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
-                className="w-32 h-32 object-contain rounded-lg border border-gray-200 bg-white p-2"
+                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 self-end md:self-start md:order-first"
               />
             )}
+            
+            {/* Content */}
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {provider?.company_name || provider?.name || course.provider}
               </h3>
+              
+              {/* Certification Badge - Show below company name if exists */}
+              {/* Check for both certifications array and Certification field */}
+              {((provider?.certifications && Array.isArray(provider.certifications) && provider.certifications.length > 0) || provider?.Certification) && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {/* Display certifications array if exists */}
+                  {provider?.certifications && Array.isArray(provider.certifications) && provider.certifications.length > 0 && (
+                    provider.certifications.map((cert, index) => (
+                      <span 
+                        key={index}
+                        className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200 text-cyan-700 rounded-full text-xs font-semibold"
+                      >
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        {typeof cert === 'string' ? cert : cert.name || cert.title || 'Zertifiziert'}
+                      </span>
+                    ))
+                  )}
+                  {/* Display Certification field if exists (fallback) */}
+                  {provider?.Certification && (!provider?.certifications || provider.certifications.length === 0) && (
+                    <span 
+                      className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200 text-cyan-700 rounded-full text-xs font-semibold"
+                    >
+                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {provider.Certification}-zertifiziert
+                    </span>
+                  )}
+                </div>
+              )}
+              
               <p className="text-gray-600 mb-4">
                 {provider?.description || provider?.short_description || 'Zertifizierter Bildungsträger mit langjähriger Erfahrung'}
               </p>
@@ -685,7 +722,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             </div>
           </div>
 
-          {/* External Review Links */}
+          {/* Trust Badges - Mobile & Desktop */}
           {(provider?.trustpilot_url || provider?.google_reviews_url) && (
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-3">Bewertungen ansehen</h3>
@@ -695,7 +732,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     href={provider.trustpilot_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-emerald-50 to-cyan-50 border-2 border-emerald-200 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
+                    className="group flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
                   >
                     <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
                       <svg className="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
@@ -717,7 +754,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     href={provider.google_reviews_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
+                    className="group flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
                   >
                     <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
                       <svg className="w-6 h-6" viewBox="0 0 24 24">
@@ -739,28 +776,11 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </div>
             </div>
           )}
-
-          {/* Certifications - At the bottom of the section */}
-          {provider?.certifications && Array.isArray(provider.certifications) && provider.certifications.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Zertifizierungen</h3>
-              <div className="flex flex-wrap gap-3">
-                {provider.certifications.map((cert, index) => (
-                  <span 
-                    key={index}
-                    className="px-6 py-3 bg-cyan-50 text-cyan-700 rounded-lg text-base font-semibold"
-                  >
-                    ✓ {typeof cert === 'string' ? cert : cert.name || cert.title || 'Zertifiziert'} zertifiziert
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Provider Contact Section */}
         {provider && (provider.phone || provider.email || provider.contact_name) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[37px] sm:pb-[45px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[52px] sm:pb-[60px]">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>

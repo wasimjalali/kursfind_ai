@@ -38,36 +38,41 @@ export default function SavedCourseCard({ saved }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-      {/* Course Image */}
-      {course.image_url && (
-        <div className="relative h-48 bg-gradient-to-br from-cyan-100 to-emerald-100">
-          <img
-            src={course.image_url}
-            alt={course.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute top-3 right-3">
-            <button
-              onClick={handleRemove}
-              disabled={removing}
-              className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors disabled:opacity-50"
-              title="Aus Favoriten entfernen"
-            >
-              {removing ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              )}
-            </button>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group">
+      <Link href={`/courses/${course.slug || course.id}`} className="block">
+        {/* Course Image */}
+        {course.image_url && (
+          <div className="relative h-48 bg-gradient-to-br from-cyan-100 to-emerald-100">
+            <img
+              src={course.image_url}
+              alt={course.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute top-3 right-3">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRemove();
+                }}
+                disabled={removing}
+                className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors disabled:opacity-50 z-10"
+                title="Aus Favoriten entfernen"
+              >
+                {removing ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Course Info */}
-      <div className="p-5 space-y-3">
+        {/* Course Info */}
+        <div className="p-5 space-y-3">
         {/* Category Badge */}
         {course.category && (
           <span className="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-semibold rounded-full">
@@ -136,11 +141,14 @@ export default function SavedCourseCard({ saved }) {
             </p>
           </div>
         )}
+      </div>
+      </Link>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-3">
+      {/* Actions - Outside the link to prevent nested links */}
+      <div className="px-5 pb-5">
+        <div className="flex gap-2 pt-3 border-t border-gray-100">
           <Link
-            href={`/kurse/${course.slug || course.id}`}
+            href={`/courses/${course.slug || course.id}`}
             className="flex-1 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-center font-semibold rounded-lg hover:shadow-lg transition-shadow text-sm"
           >
             Details ansehen

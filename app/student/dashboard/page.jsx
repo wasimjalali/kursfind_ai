@@ -30,11 +30,24 @@ export default async function StudentDashboardPage() {
     };
   }
 
-  // Count saved courses
-  const { count: savedCount } = await supabase
+  // Count saved courses - only count those with valid course references
+  const { data: savedCoursesWithCourses } = await supabase
     .from('saved_courses')
-    .select('*', { count: 'exact', head: true })
+    .select('id, course_id')
     .eq('student_id', student.id);
+
+  // Get course IDs and verify they exist
+  let savedCount = 0;
+  if (savedCoursesWithCourses && savedCoursesWithCourses.length > 0) {
+    const courseIds = savedCoursesWithCourses.map(s => s.course_id);
+    const { data: existingCourses } = await supabase
+      .from('courses')
+      .select('id')
+      .in('id', courseIds);
+    
+    // Only count saved courses where the course still exists
+    savedCount = existingCourses?.length || 0;
+  }
 
   // Count applications
   const { count: applicationsCount } = await supabase
@@ -42,23 +55,32 @@ export default async function StudentDashboardPage() {
     .select('*', { count: 'exact', head: true })
     .eq('student_id', student.id);
 
-  // Get latest saved courses (last 3)
-  const { data: recentSaved } = await supabase
+  // Get latest saved courses (last 3) - only those with valid courses
+  const { data: savedData } = await supabase
     .from('saved_courses')
-    .select(`
-      *,
-      courses (
-        id,
-        title,
-        slug,
-        description,
-        start_date,
-        duration
-      )
-    `)
+    .select('id, saved_at, course_id')
     .eq('student_id', student.id)
-    .order('saved_at', { ascending: false })
-    .limit(3);
+    .order('saved_at', { ascending: false });
+
+  let recentSaved = [];
+  if (savedData && savedData.length > 0) {
+    const courseIds = savedData.map(s => s.course_id);
+    const { data: coursesData } = await supabase
+      .from('courses')
+      .select('id, title, slug, description, start_date, duration')
+      .in('id', courseIds);
+
+    // Merge and filter, then take first 3
+    if (coursesData) {
+      recentSaved = savedData
+        .map(saved => ({
+          ...saved,
+          courses: coursesData.find(c => c.id === saved.course_id)
+        }))
+        .filter(saved => saved.courses)
+        .slice(0, 3);
+    }
+  }
 
   // Get latest applications (last 3)
   const { data: recentApplications } = await supabase

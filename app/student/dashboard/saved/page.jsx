@@ -30,159 +30,83 @@ export default async function SavedCoursesPage() {
     };
   }
 
-  // Get all saved courses with course details
-  let savedCourses = null;
+  // Get all saved courses - fetch separately without FK joins
+  let savedCourses = [];
   let savedError = null;
 
-  // Try with foreign key join first
-  const { data: savedCoursesData, error: savedCoursesError } = await supabase
-    .from('saved_courses')
-    .select(`
-      id,
-      saved_at,
-      notes,
-      course_id,
-      courses!saved_courses_course_id_fkey (
-        id,
-        title,
-        slug,
-        description,
-        category,
-        location,
-        start_date,
-        duration,
-        price,
-        image_url,
-        providers (
-          company_name,
-          city
-        )
-      )
-    `)
-    .eq('student_id', student.id)
-    .order('saved_at', { ascending: false });
-
-  if (savedCoursesError) {
-    // If FK join fails, try without FK name
-    console.warn('FK join failed, trying without FK name:', savedCoursesError.message);
-    const { data: savedCoursesData2, error: savedCoursesError2 } = await supabase
+  try {
+    // First, get all saved course records for this student
+    const { data: savedData, error: savedErr } = await supabase
       .from('saved_courses')
-      .select(`
-        id,
-        saved_at,
-        notes,
-        course_id,
-        courses (
-          id,
-          title,
-          slug,
-          description,
-          category,
-          location,
-          start_date,
-          duration,
-          price,
-          image_url,
-          providers (
-            company_name,
-            city
-          )
-        )
-      `)
+      .select('id, saved_at, notes, course_id')
       .eq('student_id', student.id)
       .order('saved_at', { ascending: false });
 
-    if (savedCoursesError2) {
-      // If that also fails, fetch separately
-      console.warn('Join failed, fetching separately:', savedCoursesError2.message);
-      const { data: savedData, error: savedErr } = await supabase
-        .from('saved_courses')
-        .select('id, saved_at, notes, course_id')
-        .eq('student_id', student.id)
-        .order('saved_at', { ascending: false });
+    console.log('Saved courses raw data:', { 
+      count: savedData?.length, 
+      error: savedErr?.message,
+      sample: savedData?.[0] 
+    });
 
-      if (!savedErr && savedData && savedData.length > 0) {
-        const courseIds = savedData.map(s => s.course_id);
-        const { data: coursesData, error: coursesErr } = await supabase
-          .from('courses')
-          .select(`
-            id,
-            title,
-            slug,
-            description,
-            category,
-            location,
-            start_date,
-            duration,
-            price,
-            image_url,
-            providers (
-              company_name,
-              city
-            )
-          `)
-          .in('id', courseIds);
+    if (savedErr) {
+      savedError = savedErr;
+      console.error('Error fetching saved courses:', savedErr);
+    } else if (savedData && savedData.length > 0) {
+      // Get all course IDs
+      const courseIds = savedData.map(s => s.course_id);
+      
+      // Fetch all courses separately
+      const { data: coursesData, error: coursesErr } = await supabase
+        .from('courses')
+        .select('id, title, slug, description, category, location, start_date, duration, price, image_url, provider_id')
+        .in('id', courseIds);
 
-        if (!coursesErr && coursesData) {
-          // Normalize providers (handle array vs object) and fetch separately if needed
-          const coursesWithProviders = await Promise.all(
-            coursesData.map(async (course) => {
-              // Normalize providers to single object
-              let provider = null;
-              if (course.providers) {
-                provider = Array.isArray(course.providers) ? course.providers[0] : course.providers;
-              } else if (course.provider_id) {
-                // Fetch provider separately if join failed
-                const { data: providerData } = await supabase
-                  .from('providers')
-                  .select('company_name, city')
-                  .eq('provider_id', course.provider_id)
-                  .single();
-                provider = providerData;
-              }
-              
-              return {
-                ...course,
-                providers: provider
-              };
-            })
-          );
-          
-          // Merge saved_courses with courses
-          savedCourses = savedData.map(saved => ({
-            ...saved,
-            courses: coursesWithProviders.find(c => c.id === saved.course_id)
-          }));
-        } else {
-          savedError = coursesErr;
+      console.log('Courses data:', { 
+        count: coursesData?.length, 
+        error: coursesErr?.message 
+      });
+
+      if (!coursesErr && coursesData && coursesData.length > 0) {
+        // Get unique provider IDs
+        const providerIds = [...new Set(coursesData.map(c => c.provider_id).filter(Boolean))];
+        
+        // Fetch all providers separately
+        const { data: providersData } = await supabase
+          .from('providers')
+          .select('provider_id, company_name, city')
+          .in('provider_id', providerIds);
+
+        console.log('Providers data:', { 
+          count: providersData?.length 
+        });
+
+        // Create a map of providers by provider_id
+        const providersMap = {};
+        if (providersData) {
+          providersData.forEach(p => {
+            providersMap[p.provider_id] = p;
+          });
         }
+
+        // Attach provider to each course
+        const coursesWithProviders = coursesData.map(course => ({
+          ...course,
+          providers: providersMap[course.provider_id] || null
+        }));
+
+        // Merge saved_courses with courses
+        savedCourses = savedData.map(saved => ({
+          ...saved,
+          courses: coursesWithProviders.find(c => c.id === saved.course_id) || null
+        })).filter(saved => saved.courses !== null); // Remove entries where course wasn't found
+
       } else {
-        savedCourses = savedData || [];
-        savedError = savedErr;
+        savedError = coursesErr;
       }
-    } else {
-      // Normalize providers (handle array vs object)
-      savedCourses = savedCoursesData2?.map(saved => ({
-        ...saved,
-        courses: saved.courses ? {
-          ...saved.courses,
-          providers: Array.isArray(saved.courses.providers) 
-            ? saved.courses.providers[0] 
-            : saved.courses.providers
-        } : null
-      }));
     }
-  } else {
-    // Normalize providers (handle array vs object)
-    savedCourses = savedCoursesData?.map(saved => ({
-      ...saved,
-      courses: saved.courses ? {
-        ...saved.courses,
-        providers: Array.isArray(saved.courses.providers) 
-          ? saved.courses.providers[0] 
-          : saved.courses.providers
-      } : null
-    }));
+  } catch (error) {
+    console.error('Error in saved courses fetch:', error);
+    savedError = error;
   }
 
   // Debug logging
