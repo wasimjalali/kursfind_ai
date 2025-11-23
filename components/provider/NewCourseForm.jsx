@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import CourseForm from '@/components/provider/CourseForm';
 
-export default function NewCourseForm() {
+export default function NewCourseForm({ provider = null }) {
   const router = useRouter();
 
   function handleSuccess() {
@@ -11,5 +11,5 @@ export default function NewCourseForm() {
     router.refresh();
   }
 
-  return <CourseForm onSuccess={handleSuccess} />;
+  return <CourseForm onSuccess={handleSuccess} provider={provider} />;
 }

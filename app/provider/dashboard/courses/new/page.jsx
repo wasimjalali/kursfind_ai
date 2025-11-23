@@ -39,7 +39,7 @@ export default async function NewCoursePage() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-8">
-        <NewCourseForm />
+        <NewCourseForm provider={activeProvider} />
       </div>
     </div>
   );

@@ -34,6 +34,7 @@ export async function POST(req) {
 
     let courses = []
     let shouldShowCourses = false
+    let totalCount = 0  // Total count of courses in database
     let aiSystemPrompt = ''
     let aiUserPrompt = ''
 
@@ -188,13 +189,25 @@ Antworte auf DEUTSCH.`
 
       if (isCourseSearch) {
         shouldShowCourses = true
+        console.log('🔍 Course search detected, will fetch courses')
         
         // First, get total count for the AI to know
-        const { count: totalCount } = await supabase
+        const { count: countResult } = await supabase
           .from('courses')
           .select('*', { count: 'exact', head: true })
+        totalCount = countResult || 0
+        console.log('📊 Total courses in database:', totalCount)
         
-        let query = supabase.from('courses').select('*')
+        // Select course fields including provider data
+        let query = supabase.from('courses').select(`
+          *,
+          providers!courses_provider_id_fkey(
+            provider_id,
+            company_name,
+            logo_url,
+            name:company_name
+          )
+        `)
         let hasFilters = false
 
         // Location filters
@@ -230,25 +243,172 @@ Antworte auf DEUTSCH.`
           hasFilters = true
         }
 
-        // Check if user is asking about count/total (don't show courses, just answer)
-        const isCountQuestion = searchTerms.includes('total') || searchTerms.includes('alle') || 
-                               searchTerms.includes('how many') || searchTerms.includes('wie viele') ||
-                               searchTerms.includes('available') || searchTerms.includes('verfügbar')
+        // Check if user is asking ONLY about count/total (don't show courses, just answer)
+        // Note: "available" and "verfügbar" are removed because they often mean "show me available courses"
+        const isCountQuestion = (searchTerms.includes('total') || searchTerms.includes('alle') || 
+                                 searchTerms.includes('how many') || searchTerms.includes('wie viele')) &&
+                                !searchTerms.includes('show') && !searchTerms.includes('zeig') &&
+                                !searchTerms.includes('find') && !searchTerms.includes('suche')
+        
+        console.log('🔍 Search analysis:', {
+          isCountQuestion,
+          hasFilters,
+          searchTerms: searchTerms.substring(0, 100)
+        })
         
         // If specific filters, get ALL matching courses (no limit)
         // If general search, limit to 6 courses
-        const { data, error } = hasFilters 
+        // Only skip fetching if it's a pure count question (not asking to show courses)
+        let { data, error } = hasFilters 
           ? await query // Get all matching courses for specific topics
           : (isCountQuestion 
-              ? { data: [], error: null } // Don't fetch courses for count questions
+              ? { data: [], error: null } // Don't fetch courses for pure count questions
               : await query.limit(6)) // General search, show 6
 
+        // If join fails, try without foreign key syntax
+        if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
+          console.warn('Provider join with FK name failed, trying without FK name:', error.message)
+          const retryQuery = supabase.from('courses').select(`
+            *,
+            providers(
+              provider_id,
+              company_name,
+              logo_url,
+              name:company_name
+            )
+          `)
+          
+          // Reapply filters
+          let retryQueryWithFilters = retryQuery
+          if (searchTerms.includes('berlin')) {
+            retryQueryWithFilters = retryQuery.ilike('location', '%Berlin%')
+          } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
+            retryQueryWithFilters = retryQuery.ilike('location', '%München%')
+          } else if (searchTerms.includes('hamburg')) {
+            retryQueryWithFilters = retryQuery.ilike('location', '%Hamburg%')
+          } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
+            retryQueryWithFilters = retryQuery.ilike('location', '%Köln%')
+          } else if (searchTerms.includes('frankfurt')) {
+            retryQueryWithFilters = retryQuery.ilike('location', '%Frankfurt%')
+          }
+          
+          if (searchTerms.includes('marketing')) {
+            retryQueryWithFilters = retryQueryWithFilters.ilike('title', '%Marketing%')
+          } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
+            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
+          } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
+            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Data%,title.ilike.%Daten%')
+          } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
+            retryQueryWithFilters = retryQueryWithFilters.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
+          }
+          
+          const retryResult = hasFilters 
+            ? await retryQueryWithFilters
+            : (isCountQuestion 
+                ? { data: [], error: null }
+                : await retryQueryWithFilters.limit(6))
+          
+          if (!retryResult.error) {
+            data = retryResult.data
+            error = null
+          } else {
+            console.warn('Provider join failed, fetching courses without join:', retryResult.error.message)
+            // Final fallback: fetch courses without provider join, then fetch providers separately
+            const fallbackQuery = supabase.from('courses').select('*')
+            let fallbackQueryWithFilters = fallbackQuery
+            
+            // Reapply filters
+            if (searchTerms.includes('berlin')) {
+              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Berlin%')
+            } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
+              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%München%')
+            } else if (searchTerms.includes('hamburg')) {
+              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Hamburg%')
+            } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
+              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Köln%')
+            } else if (searchTerms.includes('frankfurt')) {
+              fallbackQueryWithFilters = fallbackQuery.ilike('location', '%Frankfurt%')
+            }
+            
+            if (searchTerms.includes('marketing')) {
+              fallbackQueryWithFilters = fallbackQueryWithFilters.ilike('title', '%Marketing%')
+            } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
+              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Web%,title.ilike.%Entwicklung%')
+            } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
+              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Data%,title.ilike.%Daten%')
+            } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
+              fallbackQueryWithFilters = fallbackQueryWithFilters.or('title.ilike.%Design%,title.ilike.%UX%,title.ilike.%UI%')
+            }
+            
+            const fallbackResult = hasFilters 
+              ? await fallbackQueryWithFilters
+              : (isCountQuestion 
+                  ? { data: [], error: null }
+                  : await fallbackQueryWithFilters.limit(6))
+            
+            if (!fallbackResult.error && fallbackResult.data) {
+              // Fetch providers separately for each course
+              const coursesWithProviders = await Promise.all(
+                fallbackResult.data.map(async (course) => {
+                  if (course.provider_id) {
+                    const { data: providerData } = await supabase
+                      .from('providers')
+                      .select('provider_id, company_name, logo_url')
+                      .eq('provider_id', course.provider_id)
+                      .single()
+                    
+                    if (providerData) {
+                      return {
+                        ...course,
+                        providers: {
+                          provider_id: providerData.provider_id,
+                          company_name: providerData.company_name,
+                          logo_url: providerData.logo_url,
+                          name: providerData.company_name
+                        }
+                      }
+                    }
+                  }
+                  return course
+                })
+              )
+              data = coursesWithProviders
+              error = null
+            } else {
+              error = fallbackResult.error
+            }
+          }
+        }
+
         if (!error && data) {
-          courses = data
+          courses = Array.isArray(data) ? data : []
+          console.log('✅ Courses fetched successfully:', courses.length, 'courses')
+          if (courses.length > 0) {
+            const firstCourse = courses[0]
+            console.log('📋 First course sample:', {
+              id: firstCourse.id,
+              title: firstCourse.title,
+              providerId: firstCourse.provider_id,
+              hasProvider: !!firstCourse.providers,
+              providerType: typeof firstCourse.providers,
+              providerIsArray: Array.isArray(firstCourse.providers),
+              providerData: firstCourse.providers ? {
+                company_name: firstCourse.providers.company_name || firstCourse.providers[0]?.company_name,
+                logo_url: firstCourse.providers.logo_url || firstCourse.providers[0]?.logo_url
+              } : 'No provider data'
+            })
+          }
+        } else {
+          courses = []
+          if (error) {
+            console.error('❌ Error fetching courses:', error)
+          } else {
+            console.warn('⚠️ No courses data returned (data is null/undefined)')
+          }
         }
         
         // Store total count for AI to reference
-        courses.totalCount = totalCount || 0
+        // Note: totalCount is used in courseSummary generation, not returned to frontend
       }
 
       const courseSummary = shouldShowCourses && courses.length > 0
@@ -3530,7 +3690,7 @@ CRITICAL RULES:
 
       // For new messages array format, inject course context into system prompt
       if (messages && shouldShowCourses) {
-        const totalCount = courses.totalCount || 0
+        // totalCount is available from the query above
         
         if (courses.length > 0) {
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
@@ -3660,14 +3820,67 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         const courseData = JSON.parse(match[1])
         const courseIds = courseData.courseIds
         
-        // Fetch full course details for the IDs
-        const { data: matchedCourses, error } = await supabase
+        // Fetch full course details for the IDs including provider data
+        let { data: matchedCourses, error } = await supabase
           .from('courses')
-          .select('*')
+          .select(`
+            *,
+            language,
+            subtitle,
+            duration_hours,
+            providers(
+              provider_id,
+              company_name,
+              logo_url,
+              name:company_name
+            )
+          `)
           .in('id', courseIds)
+        
+        // If provider join fails, fetch providers separately
+        if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
+          console.warn('Provider join failed for coursesToShow, fetching separately:', error.message)
+          const { data: coursesWithoutProviders } = await supabase
+            .from('courses')
+            .select('*, language, subtitle, duration_hours')
+            .in('id', courseIds)
+          
+          if (coursesWithoutProviders) {
+            // Fetch providers separately for each course
+            matchedCourses = await Promise.all(
+              coursesWithoutProviders.map(async (course) => {
+                if (course.provider_id) {
+                  const { data: providerData } = await supabase
+                    .from('providers')
+                    .select('provider_id, company_name, logo_url')
+                    .eq('provider_id', course.provider_id)
+                    .single()
+                  
+                  if (providerData) {
+                    return {
+                      ...course,
+                      providers: {
+                        provider_id: providerData.provider_id,
+                        company_name: providerData.company_name,
+                        logo_url: providerData.logo_url,
+                        name: providerData.company_name
+                      }
+                    }
+                  }
+                }
+                return course
+              })
+            )
+            error = null
+          }
+        }
         
         if (!error && matchedCourses) {
           coursesToShow = matchedCourses
+          console.log('✅ coursesToShow fetched with providers:', coursesToShow.length, 'courses')
+          if (coursesToShow.length > 0 && coursesToShow[0].providers) {
+            console.log('📋 Sample provider:', coursesToShow[0].providers.company_name)
+          }
         }
         
         // Remove the [SHOW_COURSES] marker from message
@@ -3678,9 +3891,41 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
       }
     }
 
+    // Determine which courses to return
+    // Priority: coursesToShow (from AI parsing) > courses (from search) > null
+    let coursesToReturn = null
+    
+    if (coursesToShow.length > 0) {
+      // AI explicitly requested specific courses via [SHOW_COURSES] marker
+      coursesToReturn = coursesToShow
+      console.log('✅ Returning courses from AI parsing:', coursesToShow.length)
+    } else if (shouldShowCourses && Array.isArray(courses)) {
+      // Return courses from search if shouldShowCourses is true
+      // Return courses array even if empty - frontend will handle it
+      coursesToReturn = courses
+      if (courses.length > 0) {
+        console.log('✅ Returning courses from search:', courses.length, 'courses')
+        console.log('📋 Sample course IDs:', courses.slice(0, 3).map(c => c.id))
+      } else {
+        console.log('⚠️ shouldShowCourses is true but courses array is empty')
+      }
+    }
+    
+    // Debug logging
+    console.log('📤 Final course return debug:', {
+      coursesToShowLength: coursesToShow.length,
+      shouldShowCourses,
+      coursesLength: Array.isArray(courses) ? courses.length : 0,
+      coursesToReturnLength: coursesToReturn?.length || 0,
+      coursesIsArray: Array.isArray(courses),
+      coursesType: typeof courses,
+      coursesToReturnType: typeof coursesToReturn,
+      coursesToReturnIsArray: Array.isArray(coursesToReturn)
+    })
+    
     return Response.json({
       message: aiMessage,
-      courses: coursesToShow.length > 0 ? coursesToShow : (shouldShowCourses ? courses : null)
+      courses: coursesToReturn || []  // Return courses array or empty array
     })
 
   } catch (error) {

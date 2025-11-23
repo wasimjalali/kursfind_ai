@@ -71,12 +71,29 @@ export default function Home() {
 
       const data = await response.json();
 
+      // Debug: Log the API response
+      console.log('📥 API Response:', {
+        hasMessage: !!data.message,
+        hasCourses: !!data.courses,
+        coursesLength: Array.isArray(data.courses) ? data.courses.length : 0,
+        coursesType: typeof data.courses,
+        coursesIsArray: Array.isArray(data.courses)
+      });
+
       // Add AI response WITH courses if available
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
+      const assistantMessage = { 
+        role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: data.courses || []  // Include courses in message object
-      }]);
+        courses: Array.isArray(data.courses) ? data.courses : []  // Ensure courses is always an array
+      };
+      
+      console.log('💬 Assistant message created:', {
+        contentLength: assistantMessage.content.length,
+        coursesLength: assistantMessage.courses.length,
+        courses: assistantMessage.courses
+      });
+      
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -205,12 +222,12 @@ export default function Home() {
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
                             {/* MARKDOWN CONTENT */}
-                            <div className="prose prose-sm max-w-none mb-4">
+                            <div className="prose prose-sm max-w-none mb-4 prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:!text-gray-900 prose-li:text-gray-700">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text
+                                  // Bold text - ensure it's dark and visible (use !important to override prose defaults)
                                   strong: ({node, ...props}) => (
-                                    <strong className="font-bold text-gray-900" {...props} />
+                                    <strong className="font-bold !text-gray-900" style={{ color: '#111827' }} {...props} />
                                   ),
                                   // Italic text
                                   em: ({node, ...props}) => (
@@ -259,13 +276,25 @@ export default function Home() {
                             </div>
 
                             {/* COURSE CARDS - NEW! */}
-                            {message.courses && message.courses.length > 0 && (
-                              <div className="space-y-3 mt-4">
-                                {message.courses.map((course: any) => (
-                                  <ChatCourseCard key={course.id} course={course} />
-                                ))}
-                              </div>
-                            )}
+                            {(() => {
+                              const hasCourses = message.courses && Array.isArray(message.courses) && message.courses.length > 0;
+                              if (!hasCourses && message.role === 'assistant') {
+                                console.log('🔍 No courses to render:', {
+                                  hasCoursesProp: !!message.courses,
+                                  coursesType: typeof message.courses,
+                                  coursesIsArray: Array.isArray(message.courses),
+                                  coursesLength: message.courses?.length || 0
+                                });
+                              }
+                              return hasCourses ? (
+                                <div className="space-y-3 mt-4">
+                                  {message.courses.map((course: any) => {
+                                    console.log('🎴 Rendering course card:', course.id, course.title);
+                                    return <ChatCourseCard key={course.id} course={course} />;
+                                  })}
+                                </div>
+                              ) : null;
+                            })()}
                           </div>
                         </div>
                       </div>

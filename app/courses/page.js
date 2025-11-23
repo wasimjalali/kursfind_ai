@@ -20,18 +20,20 @@ export default function CoursesPage() {
   const [selectedLocation, setSelectedLocation] = useState('')
   const [selectedFunding, setSelectedFunding] = useState('')
   const [selectedProvider, setSelectedProvider] = useState('')
+  const [selectedLanguage, setSelectedLanguage] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedFormat, setSelectedFormat] = useState('')
+  const [selectedDuration, setSelectedDuration] = useState('')
+  const [selectedFundingOption, setSelectedFundingOption] = useState('')
   const [sortBy, setSortBy] = useState('newest')
-  
-  // Advanced filter states (sidebar checkboxes)
-  const [selectedCategories, setSelectedCategories] = useState([])
-  const [selectedFormats, setSelectedFormats] = useState([])
-  const [selectedDurations, setSelectedDurations] = useState([])
-  const [selectedFundingOptions, setSelectedFundingOptions] = useState([])
   
   // Unique values for dropdowns
   const [locations, setLocations] = useState([])
   const [fundingTypes, setFundingTypes] = useState([])
   const [providers, setProviders] = useState([])
+  const [languages, setLanguages] = useState([])
+  const [categories, setCategories] = useState([])
+  const [formats, setFormats] = useState([])
 
   // Fetch courses function (separate so it can be reused for real-time updates)
   async function fetchCourses() {
@@ -48,28 +50,62 @@ export default function CoursesPage() {
         .from('courses')
         .select(`
           *,
-          providers (
-            id,
-            name,
-            logo_url
+          language,
+          providers!courses_provider_id_fkey(
+            provider_id,
+            company_name,
+            logo_url,
+            description,
+            certifications,
+            phone,
+            email,
+            website,
+            contact_name,
+            city
           )
         `)
         .order('created_at', { ascending: false })
 
-      // If join fails, try without join as fallback
+      // If join fails, try with simpler syntax
       if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
-        console.warn('Provider join failed, fetching courses without join:', error.message)
-        const fallbackResult = await supabase
+        console.warn('Provider join with FK name failed, trying without FK name:', error.message)
+        const retryResult = await supabase
           .from('courses')
-          .select('*')
+          .select(`
+            *,
+            language,
+            providers(
+              provider_id,
+              company_name,
+              logo_url,
+              description,
+              certifications,
+              phone,
+              email,
+              website,
+              contact_name,
+              city
+            )
+          `)
           .order('created_at', { ascending: false })
         
-        if (fallbackResult.error) {
-          throw fallbackResult.error
+        if (!retryResult.error) {
+          data = retryResult.data
+          error = null
+        } else {
+          console.warn('Provider join failed, fetching courses without join:', retryResult.error.message)
+          const fallbackResult = await supabase
+            .from('courses')
+            .select('*, language')
+            .order('created_at', { ascending: false })
+          
+          if (fallbackResult.error) {
+            throw fallbackResult.error
+          }
+          
+          data = fallbackResult.data
+          error = null
         }
-        
-        data = fallbackResult.data
-        error = null
       }
 
       if (error) {
@@ -83,22 +119,95 @@ export default function CoursesPage() {
       }
 
       if (data) {
-        setAllCourses(data)
-        setFilteredCourses(data)
+        // Process data: handle providers as array or object, and fetch separately if needed
+        let processedData = data.map((course) => {
+          // If providers is already joined, use it
+          if (course.providers) {
+            // Handle providers as array (one-to-many) or object (one-to-one)
+            const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
+            return {
+              ...course,
+              providers: provider || null
+            }
+          }
+          return course
+        })
+        
+        // Check if any courses are missing provider data
+        const coursesNeedingProviders = processedData.filter(c => !c.providers && c.provider_id)
+        
+        if (coursesNeedingProviders.length > 0) {
+          // Fetch all unique provider_ids at once
+          const providerIds = [...new Set(coursesNeedingProviders.map(c => c.provider_id).filter(Boolean))]
+          
+          if (providerIds.length > 0) {
+            // Fetch all providers in one query
+            const { data: allProviders, error: providersError } = await supabase
+              .from('providers')
+              .select('provider_id, company_name, logo_url, description, certifications, phone, email, website, contact_name, city')
+              .in('provider_id', providerIds)
+            
+            if (!providersError && allProviders) {
+              // Create a map for quick lookup
+              const providersMap = new Map(allProviders.map(p => [p.provider_id, p]))
+              
+              // Attach providers to courses
+              processedData = processedData.map(course => {
+                if (!course.providers && course.provider_id) {
+                  const provider = providersMap.get(course.provider_id)
+                  if (provider) {
+                    return {
+                      ...course,
+                      providers: provider
+                    }
+                  }
+                }
+                return course
+              })
+            }
+          }
+        }
+        
+        console.log('Processed courses data sample:', processedData[0])
+        console.log('Provider data in sample:', processedData[0]?.providers)
+        
+        setAllCourses(processedData)
+        setFilteredCourses(processedData)
         
         // Extract unique values for filters
-        const uniqueLocations = [...new Set(data.map(c => c.location).filter(Boolean))]
-        const uniqueFunding = [...new Set(data.map(c => c.funding_type).filter(Boolean))]
-        const uniqueProviders = [...new Set(data.map(c => c.provider || c.providers?.name).filter(Boolean))]
+        const uniqueLocations = [...new Set(processedData.map(c => c.location).filter(Boolean))]
+        const uniqueLanguages = [...new Set(processedData.map(c => c.language).filter(Boolean))]
+        const uniqueCategories = [...new Set(processedData.map(c => c.category).filter(Boolean))]
+        const uniqueFormats = [...new Set(processedData.map(c => c.format).filter(Boolean))]
+        const uniqueProviders = [...new Set(processedData.map(c => {
+          const provider = Array.isArray(c.providers) ? c.providers[0] : c.providers
+          return c.provider || provider?.company_name || provider?.name
+        }).filter(Boolean))]
+        
+        // Extract funding types from funding_types array column
+        const allFundingTypes = processedData.flatMap(c => {
+          if (Array.isArray(c.funding_types)) {
+            return c.funding_types.filter(Boolean)
+          }
+          // Fallback to funding_type if funding_types doesn't exist
+          return c.funding_type ? [c.funding_type] : []
+        })
+        const uniqueFundingTypes = [...new Set(allFundingTypes)]
         
         setLocations(uniqueLocations.sort())
-        setFundingTypes(uniqueFunding.sort())
+        setLanguages(uniqueLanguages.sort())
+        setCategories(uniqueCategories.sort())
+        setFormats(uniqueFormats.sort())
+        setFundingTypes(uniqueFundingTypes.sort())
         setProviders(uniqueProviders.sort())
       } else {
         // No error but no data - set empty arrays
         setAllCourses([])
         setFilteredCourses([])
         setLocations([])
+        setLanguages([])
+        setCategories([])
+        setFormats([])
         setFundingTypes([])
         setProviders([])
       }
@@ -185,76 +294,118 @@ export default function CoursesPage() {
     }
 
     if (selectedProvider) {
-      filtered = filtered.filter(course => course.provider === selectedProvider)
-    }
-
-    // Advanced filters (sidebar checkboxes)
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter(course =>
-        selectedCategories.some(cat => 
-          course.title?.toLowerCase().includes(cat.toLowerCase())
-        )
-      )
-    }
-
-    if (selectedFormats.length > 0) {
-      filtered = filtered.filter(course =>
-        selectedFormats.some(format => 
-          course.format?.toLowerCase().includes(format.toLowerCase()) ||
-          course.title?.toLowerCase().includes(format.toLowerCase())
-        )
-      )
-    }
-
-    if (selectedDurations.length > 0) {
       filtered = filtered.filter(course => {
-        const durationText = course.duration?.toLowerCase() || ''
-        return selectedDurations.some(dur => {
-          if (dur === '0-3') {
-            return durationText.includes('woche') || 
-                   (durationText.includes('monat') && !durationText.match(/[4-9]|1[0-9]/))
-          }
-          if (dur === '3-6') {
-            return durationText.match(/[3-6]\s*monat/)
-          }
-          if (dur === '6+') {
-            return durationText.match(/[7-9]\s*monat/) || durationText.match(/1[0-9]\s*monat/)
-          }
-          return false
-        })
+        const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
+        const providerName = provider?.company_name || provider?.name || course.provider
+        return providerName === selectedProvider
       })
     }
 
-    if (selectedFundingOptions.length > 0) {
+    // Language filter
+    if (selectedLanguage) {
+      filtered = filtered.filter(course => course.language === selectedLanguage)
+    }
+
+    // Category filter
+    if (selectedCategory) {
+      filtered = filtered.filter(course => course.category === selectedCategory)
+    }
+
+    // Format filter
+    if (selectedFormat) {
+      filtered = filtered.filter(course => course.format === selectedFormat)
+    }
+
+    // Duration filter with smart ranges
+    if (selectedDuration) {
       filtered = filtered.filter(course => {
-        return selectedFundingOptions.some(opt => 
-          course.funding_type === opt
-        );
+        const durationText = course.duration?.toLowerCase() || ''
+        if (selectedDuration === 'short') {
+          // Bis 1 Monat - Wochen or short months
+          return durationText.includes('woche') || 
+                 durationText.match(/1\s*monat/) ||
+                 durationText.match(/2\s*monat/) ||
+                 durationText.match(/3\s*monat/) ||
+                 durationText.match(/4\s*wochen/) ||
+                 durationText.match(/8\s*wochen/) ||
+                 durationText.match(/12\s*wochen/)
+        } else if (selectedDuration === 'medium') {
+          // 1-3 Monate
+          return durationText.match(/[1-3]\s*monat/) ||
+                 durationText.match(/8\s*wochen/) ||
+                 durationText.match(/10\s*wochen/) ||
+                 durationText.match(/12\s*wochen/) ||
+                 durationText.match(/16\s*wochen/)
+        } else if (selectedDuration === 'long') {
+          // 3-6 Monate
+          return durationText.match(/[3-6]\s*monat/) ||
+                 durationText.match(/20\s*wochen/) ||
+                 durationText.match(/24\s*wochen/)
+        } else if (selectedDuration === 'very_long') {
+          // 6+ Monate
+          return durationText.match(/[6-9]\s*monat/) ||
+                 durationText.match(/1[0-9]\s*monat/) ||
+                 durationText.match(/2[0-9]\s*monat/) ||
+                 durationText.match(/jahr/) ||
+                 durationText.match(/year/)
+        }
+        return false
+      })
+    }
+
+    // Funding options filter (check funding_types array)
+    if (selectedFundingOption) {
+      filtered = filtered.filter(course => {
+        if (Array.isArray(course.funding_types)) {
+          return course.funding_types.includes(selectedFundingOption)
+        }
+        // Fallback to funding_type column
+        return course.funding_type === selectedFundingOption
       })
     }
 
     // Sorting
     if (sortBy === 'newest') {
-      filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      filtered.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+    } else if (sortBy === 'oldest') {
+      filtered.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
+    } else if (sortBy === 'popular') {
+      filtered.sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+    } else if (sortBy === 'price_asc') {
+      filtered.sort((a, b) => (a.price || 0) - (b.price || 0))
+    } else if (sortBy === 'price_desc') {
+      filtered.sort((a, b) => (b.price || 0) - (a.price || 0))
     } else if (sortBy === 'a-z') {
-      filtered.sort((a, b) => a.title.localeCompare(b.title))
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
     } else if (sortBy === 'z-a') {
-      filtered.sort((a, b) => b.title.localeCompare(a.title))
+      filtered.sort((a, b) => (b.title || '').localeCompare(a.title || ''))
     }
 
     setFilteredCourses(filtered)
-  }, [searchTerm, selectedLocation, selectedFunding, selectedProvider, selectedCategories, selectedFormats, selectedDurations, selectedFundingOptions, sortBy, allCourses])
+  }, [searchTerm, selectedLocation, selectedFunding, selectedProvider, selectedLanguage, selectedCategory, selectedFormat, selectedDuration, selectedFundingOption, sortBy, allCourses])
 
   const resetFilters = () => {
     setSearchTerm('')
     setSelectedLocation('')
     setSelectedFunding('')
     setSelectedProvider('')
+    setSelectedLanguage('')
+    setSelectedCategory('')
+    setSelectedFormat('')
+    setSelectedDuration('')
+    setSelectedFundingOption('')
     setSortBy('newest')
-    setSelectedCategories([])
-    setSelectedFormats([])
-    setSelectedDurations([])
-    setSelectedFundingOptions([])
+  }
+
+  // Helper function to get language icon/emoji
+  const getLanguageIcon = (lang) => {
+    if (!lang) return '🌐'
+    const langLower = lang.toLowerCase()
+    if (langLower.includes('deutsch') || langLower.includes('german')) return '🇩🇪'
+    if (langLower.includes('english') || langLower.includes('englisch')) return '🇬🇧'
+    if (langLower.includes('französisch') || langLower.includes('french')) return '🇫🇷'
+    if (langLower.includes('spanisch') || langLower.includes('spanish')) return '🇪🇸'
+    return '🌐'
   }
 
   return (
@@ -302,7 +453,7 @@ export default function CoursesPage() {
       </section>
 
       {/* Horizontal Quick Filters Bar - ALL FILTERS */}
-      <section className="bg-white border-b border-gray-200 shadow-sm lg:sticky lg:top-[73px] z-40">
+      <section className="bg-white border-b border-gray-200 shadow-sm z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             
@@ -343,11 +494,15 @@ export default function CoursesPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[140px]"
+              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[180px]"
             >
               <option value="newest">Neueste zuerst</option>
-              <option value="a-z">A-Z</option>
-              <option value="z-a">Z-A</option>
+              <option value="oldest">Älteste zuerst</option>
+              <option value="popular">Beliebteste</option>
+              <option value="price_asc">Preis: Niedrig → Hoch</option>
+              <option value="price_desc">Preis: Hoch → Niedrig</option>
+              <option value="a-z">A → Z</option>
+              <option value="z-a">Z → A</option>
             </select>
 
             {/* Reset Button */}
@@ -364,81 +519,178 @@ export default function CoursesPage() {
             
             {/* Category Filter */}
             <select
-              value={selectedCategories.length === 1 ? selectedCategories[0] : ''}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setSelectedCategories([e.target.value])
-                } else {
-                  setSelectedCategories([])
-                }
-              }}
-              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[160px]"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[180px]"
             >
               <option value="">Alle Kategorien</option>
-              <option value="Data Science">Data Science</option>
-              <option value="Web Development">Web Development</option>
-              <option value="Digital Marketing">Digital Marketing</option>
-              <option value="Design">Design</option>
-              <option value="Cyber Security">Cyber Security</option>
-              <option value="Cloud Computing">Cloud Computing</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
             </select>
 
             {/* Format Filter */}
             <select
-              value={selectedFormats.length === 1 ? selectedFormats[0] : ''}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setSelectedFormats([e.target.value])
-                } else {
-                  setSelectedFormats([])
-                }
-              }}
+              value={selectedFormat}
+              onChange={(e) => setSelectedFormat(e.target.value)}
               className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[140px]"
             >
               <option value="">Alle Formate</option>
-              <option value="Vollzeit">Vollzeit</option>
-              <option value="Teilzeit">Teilzeit</option>
-              <option value="Online">Online</option>
-              <option value="Präsenz">Präsenz</option>
-              <option value="Hybrid">Hybrid</option>
+              {formats.map(format => (
+                <option key={format} value={format}>{format}</option>
+              ))}
+            </select>
+
+            {/* Language Filter */}
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[160px]"
+            >
+              <option value="">Alle Sprachen</option>
+              {languages.map(lang => (
+                <option key={lang} value={lang}>
+                  {getLanguageIcon(lang)} {lang}
+                </option>
+              ))}
             </select>
 
             {/* Duration Filter */}
             <select
-              value={selectedDurations.length === 1 ? selectedDurations[0] : ''}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setSelectedDurations([e.target.value])
-                } else {
-                  setSelectedDurations([])
-                }
-              }}
-              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[140px]"
+              value={selectedDuration}
+              onChange={(e) => setSelectedDuration(e.target.value)}
+              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[160px]"
             >
               <option value="">Alle Dauern</option>
-              <option value="0-3">Unter 3 Monate</option>
-              <option value="3-6">3-6 Monate</option>
-              <option value="6+">Über 6 Monate</option>
+              <option value="short">Bis 1 Monat</option>
+              <option value="medium">1-3 Monate</option>
+              <option value="long">3-6 Monate</option>
+              <option value="very_long">6+ Monate</option>
             </select>
 
             {/* Funding Options Filter */}
             <select
-              value={selectedFundingOptions.length === 1 ? selectedFundingOptions[0] : ''}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setSelectedFundingOptions([e.target.value])
-                } else {
-                  setSelectedFundingOptions([])
-                }
-              }}
-              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[160px]"
+              value={selectedFundingOption}
+              onChange={(e) => setSelectedFundingOption(e.target.value)}
+              className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-cyan-500 min-w-[200px]"
             >
-              <option value="">Finanzierungsoptionen</option>
+              <option value="">Alle Finanzierungsoptionen</option>
               {fundingTypes.map(funding => (
                 <option key={funding} value={funding}>{funding}</option>
               ))}
             </select>
           </div>
+
+          {/* Active Filter Chips */}
+          {(selectedLocation || selectedProvider || selectedFunding || selectedLanguage || selectedCategory || selectedFormat || selectedDuration || selectedFundingOption) && (
+            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-200">
+              <span className="text-sm text-gray-600 font-medium">Aktive Filter:</span>
+              
+              {selectedLocation && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  📍 {selectedLocation}
+                  <button
+                    onClick={() => setSelectedLocation('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedProvider && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  🏢 {selectedProvider}
+                  <button
+                    onClick={() => setSelectedProvider('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedFunding && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  💰 {selectedFunding}
+                  <button
+                    onClick={() => setSelectedFunding('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedLanguage && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  {getLanguageIcon(selectedLanguage)} {selectedLanguage}
+                  <button
+                    onClick={() => setSelectedLanguage('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedCategory && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  📚 {selectedCategory}
+                  <button
+                    onClick={() => setSelectedCategory('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedFormat && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  💻 {selectedFormat}
+                  <button
+                    onClick={() => setSelectedFormat('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedDuration && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  ⏱️ {selectedDuration === 'short' ? 'Bis 1 Monat' : selectedDuration === 'medium' ? '1-3 Monate' : selectedDuration === 'long' ? '3-6 Monate' : '6+ Monate'}
+                  <button
+                    onClick={() => setSelectedDuration('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              
+              {selectedFundingOption && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium border border-cyan-200">
+                  💳 {selectedFundingOption}
+                  <button
+                    onClick={() => setSelectedFundingOption('')}
+                    className="ml-1 hover:text-cyan-900"
+                    aria-label="Filter entfernen"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -491,68 +743,159 @@ export default function CoursesPage() {
                 >
                   <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-xl hover:border-cyan-300 transition-all duration-300 overflow-hidden flex flex-col h-full">
                     
-                    {/* Course Image */}
-                    {course.image_url ? (
-                      <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 overflow-hidden">
-                        <img 
-                          src={course.image_url} 
-                          alt={course.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
-                        <svg className="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
+                    {/* Course Image with Fallback to Provider Logo */}
+                    {(() => {
+                      // Handle providers as array or object
+                      const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
+                      const providerLogo = provider?.logo_url
+                      
+                      // Get course image with fallback to provider logo
+                      const getCourseImage = () => {
+                        // Check if course.image_url exists and is not empty
+                        if (course.image_url && course.image_url.trim() !== '') {
+                          return course.image_url
+                        }
+                        // Fallback to provider logo
+                        if (providerLogo && providerLogo.trim() !== '') {
+                          return providerLogo
+                        }
+                        return null
+                      }
+                      
+                      const imageUrl = getCourseImage()
+                      
+                      return imageUrl ? (
+                        <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 overflow-hidden relative">
+                          <img 
+                            src={imageUrl} 
+                            alt={course.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // If course image fails to load, try provider logo as fallback
+                              const currentSrc = e.target.src
+                              if (providerLogo && providerLogo.trim() !== '' && currentSrc !== providerLogo) {
+                                e.target.src = providerLogo
+                              } else {
+                                // If provider logo also fails or doesn't exist, show placeholder
+                                e.target.style.display = 'none'
+                                const placeholder = document.createElement('div')
+                                placeholder.className = 'w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center absolute inset-0'
+                                placeholder.innerHTML = `
+                                  <svg class="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                `
+                                e.target.parentElement.appendChild(placeholder)
+                              }
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
+                          <svg className="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )
+                    })()}
                     
                     <div className="p-6 flex flex-col flex-grow">
                       {/* Provider Logo + Name + Funding Badge */}
-                      <div className="flex items-start justify-between mb-4 gap-3">
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          {/* Provider Logo */}
-                          {course.providers?.logo_url ? (
-                            <img 
-                              src={course.providers.logo_url} 
-                              alt={course.providers.name || course.provider}
-                              className="w-10 h-10 rounded-lg object-contain border border-gray-200 bg-white p-1 flex-shrink-0"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
-                              <span className="text-white font-bold text-xs">
-                                {(course.providers?.name || course.provider || 'K')[0].toUpperCase()}
-                          </span>
-                            </div>
-                        )}
-                          {/* Provider Name */}
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs font-semibold text-gray-900 truncate">
-                              {course.providers?.name || course.provider || 'Anbieter'}
-                            </div>
-                        {course.funding_type && (
-                              <div className="text-xs text-emerald-600 font-medium mt-0.5">
-                            {course.funding_type}
+                      {(() => {
+                        // Handle providers as array or object
+                        const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
+                        const providerName = provider?.company_name || provider?.name || course.provider
+                        const providerLogo = provider?.logo_url
+                        
+                        return (
+                          <div className="flex items-start justify-between mb-4 gap-3">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              {/* Provider Logo - 2.5x larger for better brand awareness */}
+                              {providerLogo ? (
+                                <img 
+                                  src={providerLogo} 
+                                  alt={providerName || 'Provider Logo'}
+                                  className="w-24 h-24 rounded-lg object-contain border border-gray-200 bg-white p-2 flex-shrink-0 shadow-sm"
+                                />
+                              ) : (
+                                <div className="w-24 h-24 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                  <span className="text-white font-bold text-2xl">
+                                    {(providerName || 'K')[0].toUpperCase()}
+                                  </span>
+                                </div>
+                              )}
+                              {/* Provider Name */}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-semibold text-gray-900 truncate">
+                                  {providerName || 'Anbieter'}
+                                </div>
+                                {course.funding_type && (
+                                  <div className="text-xs text-emerald-600 font-medium mt-1">
+                                    {course.funding_type}
+                                  </div>
+                                )}
                               </div>
-                        )}
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        )
+                      })()}
 
                       {/* Course Title - Taller min-height */}
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 group-hover:text-cyan-600 transition-colors line-clamp-2 min-h-[3.5rem]">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2 min-h-[3.5rem]">
                         {course.title}
                       </h3>
 
-                      {/* Description - More lines visible */}
-                      {course.description && (
-                        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
-                          {course.description}
+                      {/* Subtitle - Full text, 2-3 lines max */}
+                      {course.subtitle && (
+                        <p className="text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                          {course.subtitle}
                         </p>
                       )}
 
-                      {/* Benefits */}
+                      {/* Badges (Language, Bestseller, etc.) */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {/* Language Badge */}
+                        {course.language && (() => {
+                          const getLanguageIcon = (lang) => {
+                            const langLower = (lang || '').toLowerCase();
+                            if (langLower.includes('deutsch') || langLower.includes('german')) return '🇩🇪';
+                            if (langLower.includes('english') || langLower.includes('englisch')) return '🇬🇧';
+                            if (langLower.includes('französisch') || langLower.includes('french')) return '🇫🇷';
+                            if (langLower.includes('spanisch') || langLower.includes('spanish')) return '🇪🇸';
+                            return '🌐';
+                          };
+                          return (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+                              {getLanguageIcon(course.language)}
+                              {course.language}
+                            </span>
+                          );
+                        })()}
+                        {/* Badges (Bestseller, Neu, etc.) - Max 3 */}
+                        {(() => {
+                          // Handle badges as array or string
+                          let badgesArray = [];
+                          if (course.badges) {
+                            if (Array.isArray(course.badges)) {
+                              badgesArray = course.badges;
+                            } else if (typeof course.badges === 'string') {
+                              badgesArray = course.badges.split(',').map(b => b.trim()).filter(Boolean);
+                            }
+                          }
+                          return badgesArray.length > 0 ? badgesArray.slice(0, 3).map((badge, idx) => (
+                            <span 
+                              key={idx}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-yellow-50 text-yellow-700 text-xs font-semibold rounded-full border border-yellow-200"
+                            >
+                              {badge === 'Bestseller' && '⭐'}
+                              {badge === 'Neu' && '🆕'}
+                              {badge}
+                            </span>
+                          )) : null;
+                        })()}
+                      </div>
+
+                      {/* Benefits - Max 3 badges */}
                       {course.benefits && (() => {
                         const benefitsList = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
                         return benefitsList.length > 0 ? (
@@ -574,51 +917,72 @@ export default function CoursesPage() {
                         ) : null;
                       })()}
 
-                      {/* Metadata Grid - FULL INFO VISIBLE */}
-                      <div className="space-y-3 mb-6">
-                        {/* Location */}
+                      {/* Course Info Grid - Above Button (6 items: 3 left, 3 right) */}
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 text-sm">
+                        {/* Left Column */}
                         {course.location && (
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-5 h-5 text-cyan-600">
-                              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500 font-medium">Standort</div>
-                              <div className="text-sm text-gray-900 font-semibold">{course.location}</div>
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span className="text-gray-700 font-semibold truncate">{course.location}</span>
                           </div>
                         )}
-                        
-                        {/* Duration */}
                         {course.duration && (
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-5 h-5 text-cyan-600">
-                              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <div className="text-xs text-gray-500 font-medium">Dauer</div>
-                              <div className="text-sm text-gray-900 font-semibold">{course.duration}</div>
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-gray-700 font-semibold truncate">{course.duration}</span>
                           </div>
                         )}
-                        
-                        {/* Format */}
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-5 h-5 text-cyan-600">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {course.format && (
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
+                            <span className="text-gray-700 font-semibold truncate">{course.format}</span>
                           </div>
-                          <div>
-                            <div className="text-xs text-gray-500 font-medium">Format</div>
-                            <div className="text-sm text-gray-900 font-semibold">{course.format || 'Vollzeit'}</div>
+                        )}
+                        
+                        {/* Right Column */}
+                        {course.duration_hours && (
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-gray-700 font-semibold truncate">{course.duration_hours}</span>
                           </div>
-                        </div>
+                        )}
+                        {course.start_date && (
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span className="text-gray-700 font-semibold truncate">
+                              {new Date(course.start_date).toLocaleDateString('de-DE', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        {course.price && (
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-gray-700 font-semibold truncate">
+                              {new Intl.NumberFormat('de-DE', { 
+                                style: 'currency', 
+                                currency: 'EUR',
+                                maximumFractionDigits: 0
+                              }).format(course.price)}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {/* CTA Button */}

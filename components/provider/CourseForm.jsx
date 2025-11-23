@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
-export default function CourseForm({ course = null, onSuccess }) {
+export default function CourseForm({ course = null, onSuccess, provider = null }) {
   const isEditing = !!course;
+  
+  const [currentProvider, setCurrentProvider] = useState(provider);
   
   // Parse funding types from comma-separated string to array
   const parseFundingTypes = (fundingString) => {
@@ -61,6 +64,30 @@ export default function CourseForm({ course = null, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Fetch provider info if not passed as prop
+  useEffect(() => {
+    async function fetchProvider() {
+      if (!currentProvider) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: providerData } = await supabase
+              .from('providers')
+              .select('provider_id, company_name, logo_url')
+              .eq('auth_user_id', user.id)
+              .single();
+            if (providerData) {
+              setCurrentProvider(providerData);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching provider:', err);
+        }
+      }
+    }
+    fetchProvider();
+  }, [currentProvider]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -147,13 +174,18 @@ export default function CourseForm({ course = null, onSuccess }) {
       }
 
       // Validate required fields
-      if (!formData.title || !formData.description || !formData.location) {
-        throw new Error('Bitte füllen Sie alle Pflichtfelder aus');
+      if (!formData.title || !formData.description) {
+        throw new Error('Titel und Beschreibung sind Pflichtfelder');
       }
 
-      // Validate at least one funding type is selected
-      if (fundingTypes.length === 0) {
-        throw new Error('Bitte wählen Sie mindestens eine Förderungsart aus');
+      // Validate location is required for Präsenz or Hybrid format
+      if ((formData.format === 'Präsenz' || formData.format === 'Hybrid') && !formData.location) {
+        throw new Error('Standort ist erforderlich für Präsenz- und Hybrid-Kurse');
+      }
+
+      // Validate funding types if funding is eligible
+      if (formData.funding_eligible && fundingTypes.length === 0) {
+        throw new Error('Bitte wählen Sie mindestens eine Förderungsart aus, wenn der Kurs förderungsfähig ist');
       }
 
       // Upload image if new one selected
@@ -162,14 +194,19 @@ export default function CourseForm({ course = null, onSuccess }) {
         imageUrl = await uploadImage();
       }
 
+      // Generate slug from title
+      const slug = generateSlug(formData.title);
+
       // Prepare course data - convert textarea strings to arrays
       const courseData = {
         ...formData,
-        funding_type: fundingTypes.join(', '),
+        slug: isEditing ? course.slug : slug, // Don't change slug when editing
+        funding_type: fundingTypes.length > 0 ? fundingTypes.join(', ') : null,
+        funding_types: fundingTypes.length > 0 ? fundingTypes : null,
         benefits: benefits.length > 0 ? benefits.join(', ') : null,
         image_url: imageUrl,
         price: formData.price ? parseFloat(formData.price) : null,
-        duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
+        duration_hours: formData.duration_hours?.trim() || null,
         job_placement_rate: formData.job_placement_rate ? parseFloat(formData.job_placement_rate) : null,
         // Convert newline-separated strings to arrays (with null safety)
         prerequisites: (formData.prerequisites && formData.prerequisites.trim()) ? formData.prerequisites.split('\n').filter(Boolean) : [],
@@ -177,6 +214,8 @@ export default function CourseForm({ course = null, onSuccess }) {
         target_audience: (formData.target_audience && formData.target_audience.trim()) ? formData.target_audience.split('\n').filter(Boolean) : [],
         keywords: (formData.keywords && formData.keywords.trim()) ? formData.keywords.split('\n').filter(Boolean) : [],
         badges: (formData.badges && formData.badges.trim()) ? formData.badges.split('\n').filter(Boolean) : [],
+        // Remove provider_id from form data - it's set automatically
+        provider_id: undefined,
       };
 
       const url = isEditing 
@@ -216,8 +255,42 @@ export default function CourseForm({ course = null, onSuccess }) {
     }
   };
 
+  // Generate slug from title
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Provider Info Display (Read-only) */}
+      {currentProvider && (
+        <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-3">
+            {currentProvider.logo_url && (
+              <img 
+                src={currentProvider.logo_url} 
+                alt={currentProvider.company_name}
+                className="w-12 h-12 object-contain rounded-lg border border-cyan-200 bg-white p-1"
+              />
+            )}
+            <div className="flex-1">
+              <p className="text-sm text-gray-600">Kurs wird veröffentlicht von:</p>
+              <p className="text-base font-semibold text-gray-900">{currentProvider.company_name}</p>
+            </div>
+            <Link
+              href="/provider/dashboard/profile"
+              className="text-sm text-cyan-600 hover:text-cyan-700 font-medium underline"
+            >
+              Profil bearbeiten
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
@@ -270,7 +343,7 @@ export default function CourseForm({ course = null, onSuccess }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
-            Standort <span className="text-red-500">*</span>
+            Standort {formData.format === 'Präsenz' || formData.format === 'Hybrid' ? <span className="text-red-500">*</span> : ''}
           </label>
           <input
             type="text"
@@ -278,10 +351,13 @@ export default function CourseForm({ course = null, onSuccess }) {
             name="location"
             value={formData.location}
             onChange={handleInputChange}
-            required
+            required={formData.format === 'Präsenz' || formData.format === 'Hybrid'}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
             placeholder="z.B. Berlin, Hamburg"
           />
+          {formData.format === 'Online' && (
+            <p className="mt-1 text-sm text-gray-500">Optional für Online-Kurse</p>
+          )}
         </div>
 
         <div>
@@ -612,18 +688,18 @@ export default function CourseForm({ course = null, onSuccess }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label htmlFor="duration_hours" className="block text-sm font-semibold text-gray-700 mb-2">
-              Stunden
+              Dauer in Stunden/UE
             </label>
             <input
-              type="number"
+              type="text"
               id="duration_hours"
               name="duration_hours"
               value={formData.duration_hours}
               onChange={handleInputChange}
-              min="0"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400"
-              placeholder="Gesamtstunden"
+              placeholder="z.B. 400 UE oder 200 Std"
             />
+            <p className="mt-1 text-sm text-gray-500">Format: z.B. "400 UE" oder "200 Std"</p>
           </div>
           
           <div>

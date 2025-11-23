@@ -82,7 +82,7 @@ export default async function EditCoursePage({ params }) {
           <p className="text-base lg:text-lg text-gray-600 mt-1">Aktualisieren Sie die Kursinformationen</p>
         </div>
         
-        <EditCourseForm course={course} />
+        <EditCourseForm course={course} provider={activeProvider} />
       </div>
     </div>
   );

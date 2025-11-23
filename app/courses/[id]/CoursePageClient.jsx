@@ -39,7 +39,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
   // Helper function to get course context
   const getCourseContext = () => ({
             title: course.title,
-            provider: provider?.name || course.provider,
+            provider: provider?.company_name || provider?.name || course.provider,
             location: course.location,
             duration: course.duration,
             funding_type: course.funding_type,
@@ -50,9 +50,9 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             certificate: course.certificate || 'Zertifikat wird vergeben',
             prerequisites: course.prerequisites || 'Keine besonderen Voraussetzungen',
             target_audience: course.target_audience || 'Offen für alle',
-            website: course.website || '',
-            contact_email: course.contact_email || '',
-    contact_phone: course.contact_phone || '',
+            website: provider?.website || course.website || '',
+            contact_email: provider?.email || course.contact_email || '',
+    contact_phone: provider?.phone || course.contact_phone || '',
     benefits: course.benefits || '',
     learning_objectives: course.learning_objectives || [],
     career_paths: course.career_paths || {}
@@ -127,7 +127,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         <div className="max-w-7xl mx-auto px-6 py-16 relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <span className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold">
-              {provider?.name || course.provider}
+              {provider?.company_name || provider?.name || course.provider}
             </span>
             <span className="bg-emerald-500 px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -141,30 +141,82 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             {course.title}
           </h1>
           
-          <p className="text-xl text-white/90 mb-8 max-w-3xl leading-relaxed">
-            {course.short_description || 'Starten Sie Ihre Karriere im digitalen Zeitalter mit praxisnaher Ausbildung und 100% Förderung'}
-          </p>
+          {course.subtitle && (
+            <p className="text-xl text-white/90 mb-6 max-w-3xl leading-relaxed">
+              {course.subtitle}
+            </p>
+          )}
           
-          <div className="flex flex-wrap gap-4 mb-8">
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="font-medium">{course.duration}</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span className="font-medium">{course.location}</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span className="font-medium">{course.format || 'Online & Vor Ort'}</span>
-            </div>
+          {/* Duration, Format, Location, Language, and Badges */}
+          <div className="flex flex-wrap gap-3 mb-8">
+            {/* Duration Badge - Show both duration and duration_hours if available */}
+            {(course.duration || course.duration_hours) && (
+              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-medium">
+                  {course.duration && course.duration_hours 
+                    ? `${course.duration} | ${course.duration_hours}`
+                    : course.duration || course.duration_hours}
+                </span>
+              </div>
+            )}
+            {/* Format Badge */}
+            {course.format && (
+              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+                {course.format === 'Online' && '💻'}
+                {course.format === 'Präsenz' && '🏢'}
+                {course.format === 'Hybrid' && '🔄'}
+                <span className="font-medium">{course.format}</span>
+              </div>
+            )}
+            {/* Language Badge */}
+            {course.language && (() => {
+              const getLanguageIcon = (lang) => {
+                const langLower = (lang || '').toLowerCase();
+                if (langLower.includes('deutsch') || langLower.includes('german')) return '🇩🇪';
+                if (langLower.includes('english') || langLower.includes('englisch')) return '🇬🇧';
+                if (langLower.includes('französisch') || langLower.includes('french')) return '🇫🇷';
+                if (langLower.includes('spanisch') || langLower.includes('spanish')) return '🇪🇸';
+                return '🌐';
+              };
+              return (
+                <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+                  <span>{getLanguageIcon(course.language)}</span>
+                  <span className="font-medium">{course.language}</span>
+                </div>
+              );
+            })()}
+            {/* Location Badge - Only for Präsenz/Hybrid */}
+            {course.location && (course.format === 'Präsenz' || course.format === 'Hybrid') && (
+              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="font-medium">{course.location}</span>
+              </div>
+            )}
+            {/* Badges (Bestseller, Neu, etc.) */}
+            {(() => {
+              // Handle badges as array or string
+              let badgesArray = [];
+              if (course.badges) {
+                if (Array.isArray(course.badges)) {
+                  badgesArray = course.badges;
+                } else if (typeof course.badges === 'string') {
+                  badgesArray = course.badges.split(',').map(b => b.trim()).filter(Boolean);
+                }
+              }
+              return badgesArray.length > 0 ? badgesArray.map((badge, idx) => (
+                <div key={idx} className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
+                  {badge === 'Bestseller' && '⭐'}
+                  {badge === 'Neu' && '🆕'}
+                  <span className="font-medium">{badge}</span>
+                </div>
+              )) : null;
+            })()}
           </div>
 
           <div className="flex flex-wrap gap-4 items-center">
@@ -556,33 +608,42 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         )}
 
         {/* FAQ Section - Provider Level */}
-        {providerFaqs && providerFaqs.length > 0 && (
+        {/* Priority: Use provider.faq from JOIN if available, otherwise use providerFaqs from separate table */}
+        {((provider?.faq && Array.isArray(provider.faq) && provider.faq.length > 0) || (providerFaqs && providerFaqs.length > 0)) && (
           <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Häufig gestellte Fragen
             </h2>
             <div className="space-y-4">
-              {providerFaqs.map((faq, index) => (
-                <details 
-                  key={faq.id || index}
-                  className="group border border-gray-200 rounded-lg overflow-hidden"
-                >
-                  <summary className="flex justify-between items-center cursor-pointer p-4 hover:bg-gray-50 transition-colors">
-                    <span className="font-medium text-gray-900">{faq.question}</span>
-                    <svg 
-                      className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <div className="p-4 pt-0 text-gray-600">
-                    {faq.answer}
-                  </div>
-                </details>
-              ))}
+              {/* Use provider.faq if available, otherwise fall back to providerFaqs */}
+              {(provider?.faq && Array.isArray(provider.faq) && provider.faq.length > 0 ? provider.faq : providerFaqs).map((faq, index) => {
+                // Handle both formats: provider.faq (may be objects or strings) and providerFaqs (has question/answer)
+                const question = faq.question || faq.title || (typeof faq === 'string' ? faq : 'Frage')
+                const answer = faq.answer || faq.content || (typeof faq === 'object' ? JSON.stringify(faq) : faq)
+                const faqId = faq.id || index
+                
+                return (
+                  <details 
+                    key={faqId}
+                    className="group border border-gray-200 rounded-lg overflow-hidden"
+                  >
+                    <summary className="flex justify-between items-center cursor-pointer p-4 hover:bg-gray-50 transition-colors">
+                      <span className="font-medium text-gray-900">{question}</span>
+                      <svg 
+                        className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="p-4 pt-0 text-gray-600">
+                      {answer}
+                    </div>
+                  </details>
+                )
+              })}
             </div>
           </div>
         )}
@@ -597,33 +658,32 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             {provider?.logo_url && (
               <img 
                 src={provider.logo_url} 
-                alt={provider?.name || course.provider}
+                alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
                 className="w-32 h-32 object-contain rounded-lg border border-gray-200 bg-white p-2"
               />
             )}
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {provider?.name || course.provider}
+                {provider?.company_name || provider?.name || course.provider}
               </h3>
               <p className="text-gray-600 mb-4">
-                {provider?.short_description || 'Zertifizierter Bildungsträger mit langjähriger Erfahrung'}
+                {provider?.description || provider?.short_description || 'Zertifizierter Bildungsträger mit langjähriger Erfahrung'}
               </p>
+              {provider?.website && (
+                <a 
+                  href={provider.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-medium text-sm mt-2"
+                >
+                  Website besuchen
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
-
-          {/* Certifications */}
-          {provider?.certifications && provider.certifications.length > 0 && (
-            <div className="flex flex-wrap gap-3 mb-6">
-              {provider.certifications.map((cert, index) => (
-                <span 
-                  key={index}
-                  className="px-6 py-3 bg-cyan-50 text-cyan-700 rounded-lg text-base font-semibold"
-                >
-                  ✓ {cert} zertifiziert
-                </span>
-              ))}
-            </div>
-          )}
 
           {/* External Review Links */}
           {(provider?.trustpilot_url || provider?.google_reviews_url) && (
@@ -679,18 +739,41 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </div>
             </div>
           )}
+
+          {/* Certifications - At the bottom of the section */}
+          {provider?.certifications && Array.isArray(provider.certifications) && provider.certifications.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Zertifizierungen</h3>
+              <div className="flex flex-wrap gap-3">
+                {provider.certifications.map((cert, index) => (
+                  <span 
+                    key={index}
+                    className="px-6 py-3 bg-cyan-50 text-cyan-700 rounded-lg text-base font-semibold"
+                  >
+                    ✓ {typeof cert === 'string' ? cert : cert.name || cert.title || 'Zertifiziert'} zertifiziert
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Provider Contact Section */}
-        {provider && (provider.phone || provider.email) && (
+        {provider && (provider.phone || provider.email || provider.contact_name) && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 pb-[37px] sm:pb-[45px]">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Kontakt zum Anbieter
             </h2>
             
             <p className="text-xl font-semibold text-gray-900 mb-4">
-              {provider.name}
+              {provider.company_name || provider.name}
             </p>
+            
+            {provider.contact_name && (
+              <p className="text-gray-600 mb-4">
+                Ansprechpartner: {provider.contact_name}
+              </p>
+            )}
             
             <div className="space-y-3 mb-6">
               {provider.phone && (
@@ -716,7 +799,31 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   <span>{provider.email}</span>
                 </a>
               )}
+              
+              {provider.website && (
+                <a 
+                  href={provider.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-gray-700 hover:text-cyan-600 transition-colors"
+                >
+                  <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                  <span>{provider.website}</span>
+                </a>
+              )}
             </div>
+            
+            {provider.city && (
+              <p className="text-gray-600 text-sm">
+                <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {provider.city}
+              </p>
+            )}
           </div>
         )}
 
@@ -755,16 +862,28 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   </div>
                 )}
                 
-                {/* Duration */}
-                <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-gray-700 font-medium">Dauer</span>
+                {/* Language */}
+                {course.language && (
+                  <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-gray-700 font-medium">Sprache</span>
+                    </div>
+                    <span className="font-semibold text-gray-900 flex items-center gap-1">
+                      {(() => {
+                        const langLower = (course.language || '').toLowerCase();
+                        if (langLower.includes('deutsch') || langLower.includes('german')) return '🇩🇪';
+                        if (langLower.includes('english') || langLower.includes('englisch')) return '🇬🇧';
+                        if (langLower.includes('französisch') || langLower.includes('french')) return '🇫🇷';
+                        if (langLower.includes('spanisch') || langLower.includes('spanish')) return '🇪🇸';
+                        return '🌐';
+                      })()}
+                      {course.language}
+                    </span>
                   </div>
-                  <span className="font-semibold text-gray-900">{course.duration}</span>
-                </div>
+                )}
                 
                 {/* Format */}
                 {course.format && (
@@ -779,36 +898,65 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   </div>
                 )}
                 
-                {/* Location */}
-                <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="text-gray-700 font-medium">Ort</span>
+                {/* Duration */}
+                {course.duration && (
+                  <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-gray-700 font-medium">Dauer</span>
+                    </div>
+                    <span className="font-semibold text-gray-900">{course.duration}</span>
                   </div>
-                  <span className="font-semibold text-gray-900">{course.location}</span>
-                </div>
+                )}
+                
+                {/* Duration Hours */}
+                {course.duration_hours && (
+                  <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-gray-700 font-medium">Stunden</span>
+                    </div>
+                    <span className="font-semibold text-gray-900">{course.duration_hours}</span>
+                  </div>
+                )}
+                
+                {/* Location */}
+                {course.location && (
+                  <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="text-gray-700 font-medium">Ort</span>
+                    </div>
+                    <span className="font-semibold text-gray-900">{course.location}</span>
+                  </div>
+                )}
                 
                 {/* Next Start Date */}
                 {course.start_date && (
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center pb-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Nächster Start</span>
+                      <span className="text-gray-700 font-medium">Start</span>
                     </div>
                     <span className="font-semibold text-gray-900">
                       {new Date(course.start_date).toLocaleDateString('de-DE', {
                         day: '2-digit',
-                        month: 'long',
+                        month: '2-digit',
                         year: 'numeric'
                       })}
                     </span>
                   </div>
                 )}
+
               </div>
 
               {/* Apply Button */}
@@ -826,9 +974,40 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 {/* Additional Info */}
                 <div className="mt-4 text-center">
                   <p className="text-sm text-gray-500">
-                    ✓ 100% Förderung möglich<br/>
-                    ✓ Kostenlose Beratung<br/>
-                    ✓ Zertifizierter Anbieter
+                    {(() => {
+                      // Get funding types from course data
+                      let fundingTypes = [];
+                      if (course.funding_types && Array.isArray(course.funding_types)) {
+                        fundingTypes = course.funding_types;
+                      } else if (course.funding_type) {
+                        if (typeof course.funding_type === 'string') {
+                          fundingTypes = course.funding_type.split(',').map(f => f.trim()).filter(Boolean);
+                        }
+                      }
+                      
+                      return (
+                        <>
+                          {/* Funding Types */}
+                          {fundingTypes.length > 0 ? (
+                            <>
+                              {fundingTypes.map((type, idx) => (
+                                <span key={idx}>
+                                  ✓ {type}
+                                  {idx < fundingTypes.length - 1 && <br/>}
+                                </span>
+                              ))}
+                              <br/>
+                            </>
+                          ) : course.funding_eligible ? (
+                            <>
+                              ✓ 100% Förderung möglich<br/>
+                            </>
+                          ) : null}
+                          ✓ Kostenlose Beratung<br/>
+                          ✓ Zertifizierter Anbieter
+                        </>
+                      );
+                    })()}
                   </p>
                 </div>
               </div>
@@ -878,7 +1057,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 courseId={course.course_id || course.id}
                 courseName={course.title}
                 providerId={provider.provider_id}
-                providerName={provider.name}
+                providerName={provider.company_name || provider.name}
               />
             </div>
           </div>

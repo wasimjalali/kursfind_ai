@@ -34,6 +34,8 @@ export default async function ProfilePage() {
     city: activeProvider.city || '',
     postal_code: activeProvider.postal_code || '',
     logo_url: activeProvider.logo_url || '',
+    certifications: activeProvider.certifications || [],
+    faq: activeProvider.faq || [],
   };
 
   return (
