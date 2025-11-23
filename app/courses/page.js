@@ -14,6 +14,8 @@ export default function CoursesPage() {
   const [filteredCourses, setFilteredCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [savedCourses, setSavedCourses] = useState(new Set())
+  const [savingCourses, setSavingCourses] = useState(new Set())
   
   // Quick filter states (top bar)
   const [searchTerm, setSearchTerm] = useState('')
@@ -264,6 +266,118 @@ export default function CoursesPage() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Load saved courses for current user
+  useEffect(() => {
+    async function loadSavedCourses() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data: student } = await supabase
+          .from('students')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+
+        if (!student) return
+
+        const { data: saved } = await supabase
+          .from('saved_courses')
+          .select('course_id')
+          .eq('student_id', student.id)
+
+        if (saved) {
+          // Ensure all course IDs are numbers
+          const courseIds = saved.map(s => {
+            const id = s.course_id
+            return typeof id === 'string' ? parseInt(id, 10) : id
+          }).filter(id => !isNaN(id))
+          setSavedCourses(new Set(courseIds))
+          console.log('Loaded saved courses:', courseIds)
+        }
+      } catch (error) {
+        console.error('Error loading saved courses:', error)
+      }
+    }
+    loadSavedCourses()
+  }, [])
+
+  // Toggle save course
+  const toggleSaveCourse = async (courseId, e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+      // Ensure courseId is a number
+      const courseIdNum = typeof courseId === 'string' ? parseInt(courseId, 10) : courseId
+      
+      if (isNaN(courseIdNum)) {
+        console.error('Invalid course ID:', courseId)
+        alert('Fehler: Ungültige Kurs-ID')
+        return
+      }
+
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        window.location.href = '/student/signup'
+        return
+      }
+
+      setSavingCourses(prev => new Set(prev).add(courseIdNum))
+
+      const { data: student, error: studentError } = await supabase
+        .from('students')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (studentError || !student) {
+        console.error('Student not found:', studentError)
+        window.location.href = '/student/signup'
+        return
+      }
+
+      const isSaved = savedCourses.has(courseIdNum)
+      const method = isSaved ? 'DELETE' : 'POST'
+
+      console.log('Saving course:', { courseId: courseIdNum, method, isSaved })
+
+      const response = await fetch('/api/student/saved-courses', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: courseIdNum }),
+      })
+
+      const responseData = await response.json()
+
+      if (response.ok) {
+        if (isSaved) {
+          setSavedCourses(prev => {
+            const newSet = new Set(prev)
+            newSet.delete(courseIdNum)
+            return newSet
+          })
+          console.log('Course unsaved successfully')
+        } else {
+          setSavedCourses(prev => new Set(prev).add(courseIdNum))
+          console.log('Course saved successfully')
+        }
+      } else {
+        console.error('Save failed:', responseData)
+        alert(responseData.error || 'Fehler beim Speichern des Kurses')
+      }
+    } catch (error) {
+      console.error('Error toggling save:', error)
+      alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.')
+    } finally {
+      setSavingCourses(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(typeof courseId === 'string' ? parseInt(courseId, 10) : courseId)
+        return newSet
+      })
+    }
+  }
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -744,6 +858,12 @@ export default function CoursesPage() {
                       }
                       
                       const imageUrl = getCourseImage()
+                      const providerName = provider?.company_name || provider?.name || course.provider
+                      
+                      // Ensure course.id is a number for comparison
+                      const courseIdNum = typeof course.id === 'string' ? parseInt(course.id, 10) : course.id
+                      const isSaved = savedCourses.has(courseIdNum)
+                      const isSaving = savingCourses.has(courseIdNum)
                       
                       return imageUrl ? (
                         <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 overflow-hidden relative">
@@ -770,12 +890,56 @@ export default function CoursesPage() {
                               }
                             }}
                           />
+                          {/* Heart Icon - Desktop Only, Top Right */}
+                          <button
+                            onClick={(e) => toggleSaveCourse(courseIdNum, e)}
+                            disabled={isSaving}
+                            className={`hidden lg:flex absolute top-3 right-3 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full items-center justify-center shadow-lg transition-all duration-200 z-10 ${
+                              isSaved 
+                                ? 'text-red-500 hover:bg-red-50' 
+                                : 'text-gray-400 hover:text-red-400 hover:bg-red-50'
+                            } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+                            title={isSaved ? 'Kurs entfernen' : 'Kurs speichern'}
+                          >
+                            {isSaving ? (
+                              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : (
+                              <svg className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                            )}
+                          </button>
                         </div>
                       ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
+                        <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center relative">
                           <svg className="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
+                          {/* Heart Icon - Desktop Only, Top Right */}
+                          <button
+                            onClick={(e) => toggleSaveCourse(courseIdNum, e)}
+                            disabled={isSaving}
+                            className={`hidden lg:flex absolute top-3 right-3 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full items-center justify-center shadow-lg transition-all duration-200 z-10 ${
+                              isSaved 
+                                ? 'text-red-500 hover:bg-red-50' 
+                                : 'text-gray-400 hover:text-red-400 hover:bg-red-50'
+                            } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+                            title={isSaved ? 'Kurs entfernen' : 'Kurs speichern'}
+                          >
+                            {isSaving ? (
+                              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : (
+                              <svg className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                            )}
+                          </button>
                         </div>
                       )
                     })()}
@@ -807,7 +971,7 @@ export default function CoursesPage() {
                               )}
                               {/* Provider Name */}
                               <div className="flex-1 min-w-0">
-                                <div className="text-sm font-semibold text-gray-900 truncate">
+                                <div className="text-base font-semibold text-gray-900 line-clamp-2 bg-gradient-to-r from-cyan-50 to-emerald-50 px-3 py-1.5 rounded-lg border border-cyan-200 lg:transition-all lg:cursor-default" title={providerName}>
                                   {providerName || 'Anbieter'}
                                 </div>
                                 {course.funding_type && (
