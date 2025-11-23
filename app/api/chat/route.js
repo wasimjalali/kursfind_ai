@@ -3921,72 +3921,67 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
         console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
         console.log('💾 Messages count:', messages.length);
         
-        // Get the first user message as title
+        // Get the first user message as conversation title
         const firstUserMessage = messages.find(m => m.role === 'user')
-        const title = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
-        console.log('💾 Chat title:', title);
+        const conversationTitle = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
+        console.log('💾 Conversation title:', conversationTitle);
         
-        // Check if a chat history entry already exists for this conversation
-        // We'll use a simple approach: check if there's a recent chat (within last 5 minutes)
-        // If yes, update it; if no, create a new one
+        // Check if we're continuing an existing conversation (within last 5 minutes)
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
         
-        // SECURITY: Query existing chat - MUST filter by student_id to ensure data isolation
-        // Only query chats that belong to this specific student (students.id int8)
-        const { data: existingChat, error: queryError } = await supabaseServer
+        // SECURITY: Query existing conversation - MUST filter by student_id to ensure data isolation
+        const { data: existingConversation, error: queryError } = await supabaseServer
           .from('chat_history')
-          .select('id')
-          .eq('student_id', studentId) // CRITICAL: Filter by student.id (int8) - ensures students only see/update their own chats
+          .select('conversation_id, conversation_title')
+          .eq('student_id', studentId) // CRITICAL: Filter by student.id (int8)
           .gte('created_at', fiveMinutesAgo)
           .order('created_at', { ascending: false })
           .limit(1)
-          .maybeSingle() // Use maybeSingle() instead of single() to avoid errors if no record exists
+          .maybeSingle()
         
         if (queryError) {
-          console.error('❌ Error querying existing chat:', queryError);
+          console.error('❌ Error querying existing conversation:', queryError);
         }
         
-        if (existingChat) {
-          console.log('📝 Updating existing chat history ID:', existingChat.id);
-          // SECURITY: Update existing chat history - MUST verify student_id matches
-          // This double-check ensures we never update another student's chat history
-          const { data: updateData, error: updateError } = await supabaseServer
-            .from('chat_history')
-            .update({
-              messages: messages,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', existingChat.id)
-            .eq('student_id', studentId) // CRITICAL: Additional security - ensure student_id matches (students.id int8)
-            .select()
-          
-          if (updateError) {
-            console.error('❌ Error updating chat history:', updateError);
-            console.error('Update error details:', updateError.message, updateError.code, updateError.details);
-          } else {
-            console.log('✅ Chat history updated successfully');
-          }
+        // Determine conversation_id and title
+        let conversationId = existingConversation?.conversation_id
+        let finalTitle = existingConversation?.conversation_title || conversationTitle
+        
+        if (!conversationId) {
+          // Generate new conversation_id for new conversation
+          conversationId = crypto.randomUUID()
+          console.log('➕ Creating new conversation:', conversationId);
         } else {
-          console.log('➕ Creating new chat history entry');
-          // SECURITY: Create new chat history entry - MUST use students.id (int8)
-          // chat_history.student_id references students.id (int8), not auth_user_id (uuid)
-          const { data: insertData, error: insertError } = await supabaseServer
-            .from('chat_history')
-            .insert({
-              student_id: studentId, // CRITICAL: Use students.id (int8) - foreign key to students.id, ensures data isolation
-              title: title,
-              messages: messages,
-              created_at: new Date().toISOString()
-            })
-            .select()
-          
-          if (insertError) {
-            console.error('❌ Error inserting chat history:', insertError);
-            console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
-            console.error('Insert error hint:', insertError.hint);
-          } else {
-            console.log('✅ Chat history created successfully:', insertData);
-          }
+          console.log('📝 Continuing existing conversation:', conversationId);
+        }
+        
+        // Save each message as a separate row
+        // Database structure: one row per message with conversation_id linking them
+        const messagesToInsert = messages.map(msg => ({
+          student_id: studentId, // CRITICAL: Use students.id (int8)
+          conversation_id: conversationId,
+          conversation_title: finalTitle,
+          role: msg.role, // 'user' or 'assistant'
+          content: msg.content,
+          course_context_id: courseContext?.id || null,
+          page_url: courseContext?.url || null,
+          created_at: new Date().toISOString()
+        }))
+        
+        console.log('💾 Inserting messages:', messagesToInsert.length);
+        
+        // SECURITY: Insert messages - student_id ensures data isolation
+        const { data: insertData, error: insertError } = await supabaseServer
+          .from('chat_history')
+          .insert(messagesToInsert)
+          .select()
+        
+        if (insertError) {
+          console.error('❌ Error inserting chat history:', insertError);
+          console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
+          console.error('Insert error hint:', insertError.hint);
+        } else {
+          console.log('✅ Chat history saved successfully:', insertData?.length, 'messages');
         }
       } catch (saveError) {
         // Don't fail the request if saving chat history fails

@@ -22,12 +22,13 @@ export default async function ChatHistoryPage() {
     // SECURITY: Only fetch chat history if student.id (int8) exists and is valid
     // students table: id (int8, PK) | auth_user_id (uuid)
     // chat_history table: student_id (int8, FK → students.id)
+    // NOTE: Database stores ONE ROW PER MESSAGE, grouped by conversation_id
     if (student?.id && typeof student.id === 'number') {
       // Get chat history from last 30 days - MUST filter by student.id (int8)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      const { data: history, error: historyError } = await supabase
+      const { data: chatMessages, error: historyError } = await supabase
         .from('chat_history')
         .select('*')
         .eq('student_id', student.id) // CRITICAL: Filter by students.id (int8) - ensures students only see their own chats
@@ -37,8 +38,32 @@ export default async function ChatHistoryPage() {
       if (historyError) {
         console.error('Error loading chat history:', historyError);
         chatHistory = [];
+      } else if (chatMessages && chatMessages.length > 0) {
+        // Group messages by conversation_id
+        const conversationsMap = new Map();
+        
+        chatMessages.forEach(msg => {
+          const convId = msg.conversation_id;
+          if (!conversationsMap.has(convId)) {
+            conversationsMap.set(convId, {
+              id: convId,
+              conversation_id: convId,
+              title: msg.conversation_title || 'Neue Konversation',
+              created_at: msg.created_at,
+              messages: []
+            });
+          }
+          conversationsMap.get(convId).messages.push({
+            role: msg.role,
+            content: msg.content
+          });
+        });
+        
+        // Convert map to array and sort by most recent
+        chatHistory = Array.from(conversationsMap.values())
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       } else {
-        chatHistory = history || [];
+        chatHistory = [];
       }
     } else {
       console.warn('⚠️ Invalid or missing student ID, cannot load chat history');
@@ -119,16 +144,16 @@ export default async function ChatHistoryPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-gray-900 mb-1">
-                        Kurssuche vom {new Date(chat.created_at).toLocaleDateString('de-DE', {
+                        {chat.title || chat.conversation_title || 'Neue Konversation'}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {new Date(chat.created_at).toLocaleDateString('de-DE', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
-                        })}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {messages.length} Nachrichten
+                        })} • {messages.length} Nachrichten
                       </p>
                     </div>
                   </div>

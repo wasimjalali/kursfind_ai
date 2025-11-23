@@ -71,6 +71,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       // SECURITY: MUST filter by student.id (int8) to ensure students only see their own chat history
       // students table: id (int8, PK) | auth_user_id (uuid)
       // chat_history table: student_id (int8, FK → students.id)
+      // NOTE: Database stores ONE ROW PER MESSAGE, grouped by conversation_id
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
@@ -80,13 +81,12 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         created_at_gte: thirtyDaysAgo.toISOString()
       });
       
-      const { data: chatHistory, error, count } = await supabase
+      const { data: chatMessages, error, count } = await supabase
         .from('chat_history')
         .select('*', { count: 'exact' })
         .eq('student_id', student.id) // CRITICAL: Filter by students.id (int8) - ensures data isolation per student
         .gte('created_at', thirtyDaysAgo.toISOString())
         .order('created_at', { ascending: false })
-        .limit(50); // Limit to 50 most recent conversations
       
       if (error) {
         console.error('❌ Error loading conversations:', error);
@@ -105,12 +105,42 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       }
       
       console.log('✅ Query successful!');
-      console.log('Total count:', count);
-      console.log('Loaded chat history:', chatHistory?.length || 0, 'conversations');
-      if (chatHistory && chatHistory.length > 0) {
-        console.log('Sample chat:', chatHistory[0]);
+      console.log('Total messages:', count);
+      console.log('Loaded chat messages:', chatMessages?.length || 0);
+      
+      // Group messages by conversation_id
+      const conversationsMap = new Map();
+      
+      if (chatMessages && chatMessages.length > 0) {
+        chatMessages.forEach(msg => {
+          const convId = msg.conversation_id;
+          if (!conversationsMap.has(convId)) {
+            conversationsMap.set(convId, {
+              id: convId,
+              conversation_id: convId,
+              title: msg.conversation_title || 'Neue Konversation',
+              created_at: msg.created_at,
+              messages: []
+            });
+          }
+          conversationsMap.get(convId).messages.push({
+            role: msg.role,
+            content: msg.content
+          });
+        });
       }
-      setConversations(chatHistory || []);
+      
+      // Convert map to array and sort by most recent
+      const conversationsArray = Array.from(conversationsMap.values())
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 50); // Limit to 50 most recent conversations
+      
+      console.log('Grouped into', conversationsArray.length, 'conversations');
+      if (conversationsArray.length > 0) {
+        console.log('Sample conversation:', conversationsArray[0]);
+      }
+      
+      setConversations(conversationsArray);
     } catch (error) {
       console.error('❌ Exception loading conversations:', error);
       console.error('Exception details:', error.message, error.stack);
