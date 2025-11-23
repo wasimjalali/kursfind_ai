@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import ChatCourseCard from '@/components/ChatCourseCard';
+import { supabase } from '@/lib/supabase';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -43,6 +45,7 @@ interface SearchState {
 }
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -57,6 +60,53 @@ export default function Home() {
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load conversation from URL parameter
+  useEffect(() => {
+    const chatId = searchParams.get('chat');
+    if (chatId) {
+      loadConversation(chatId);
+    }
+  }, [searchParams]);
+
+  // Load a conversation by ID
+  const loadConversation = async (conversationId: string) => {
+    try {
+      console.log('📥 Loading conversation:', conversationId);
+      setLoading(true);
+
+      // Fetch all messages for this conversation_id
+      const { data: chatMessages, error } = await supabase
+        .from('chat_history')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('❌ Error loading conversation:', error);
+        return;
+      }
+
+      if (chatMessages && chatMessages.length > 0) {
+        console.log('✅ Loaded', chatMessages.length, 'messages');
+        
+        // Convert database messages to chat format
+        const loadedMessages: Message[] = chatMessages.map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+          // Note: We don't restore courses from history, only the text
+        }));
+
+        setMessages(loadedMessages);
+      } else {
+        console.warn('⚠️ No messages found for conversation:', conversationId);
+      }
+    } catch (error) {
+      console.error('❌ Exception loading conversation:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Auto-scroll to bottom
   useEffect(() => {
