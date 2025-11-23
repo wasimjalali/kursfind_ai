@@ -8,37 +8,113 @@ import { supabase } from '@/lib/supabase';
 export default function ChatSidebar({ isOpen, setIsOpen }) {
   const [user, setUser] = useState(null);
   const [student, setStudent] = useState(null);
-  const [conversations, setConversations] = useState({
-    today: [],
-    yesterday: [],
-    last7Days: [],
-    lastMonth: []
-  });
+  const [conversations, setConversations] = useState([]);
 
   useEffect(() => {
     checkUser();
-    loadConversations();
   }, []);
 
+  useEffect(() => {
+    if (student?.id) {
+      loadConversations();
+    }
+  }, [student?.id]);
+
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    console.log('🔐 Checking user authentication...');
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError) {
+      console.error('❌ Auth error:', authError);
+      return;
+    }
+    
+    console.log('👤 User:', user ? `Logged in (${user.id})` : 'Not logged in');
     setUser(user);
 
     if (user) {
-      const { data: studentData } = await supabase
+      console.log('📋 Fetching student data for auth_user_id:', user.id);
+      const { data: studentData, error: studentError } = await supabase
         .from('students')
         .select('*')
         .eq('auth_user_id', user.id)
         .single();
       
-      setStudent(studentData);
+      if (studentError) {
+        console.error('❌ Error fetching student:', studentError);
+        console.error('Error details:', studentError.message, studentError.code);
+      } else if (studentData) {
+        console.log('✅ Student data loaded:', {
+          id: studentData.id,
+          email: studentData.email,
+          name: `${studentData.first_name} ${studentData.last_name}`
+        });
+        setStudent(studentData);
+      } else {
+        console.warn('⚠️ No student record found for user:', user.id);
+      }
     }
   };
 
   const loadConversations = async () => {
-    // Load chat history grouped by date
-    // Implementation: Fetch from chat_history table
-    // Group by date ranges
+    // SECURITY: Only load conversations if student.id (int8) is available
+    if (!student?.id || typeof student.id !== 'number') {
+      console.log('⚠️ No valid student ID available for loading conversations');
+      console.log('Student object:', student);
+      return;
+    }
+    
+    try {
+      console.log('📥 Loading chat history for student ID:', student.id, '(type:', typeof student.id, ')');
+      
+      // Get chat history from last 30 days
+      // SECURITY: MUST filter by student.id (int8) to ensure students only see their own chat history
+      // students table: id (int8, PK) | auth_user_id (uuid)
+      // chat_history table: student_id (int8, FK → students.id)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      console.log('🔍 Querying chat_history table...');
+      console.log('Query params:', {
+        student_id: student.id,
+        created_at_gte: thirtyDaysAgo.toISOString()
+      });
+      
+      const { data: chatHistory, error, count } = await supabase
+        .from('chat_history')
+        .select('*', { count: 'exact' })
+        .eq('student_id', student.id) // CRITICAL: Filter by students.id (int8) - ensures data isolation per student
+        .gte('created_at', thirtyDaysAgo.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(50); // Limit to 50 most recent conversations
+      
+      if (error) {
+        console.error('❌ Error loading conversations:', error);
+        console.error('Error details:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        });
+        
+        // Check if table exists
+        if (error.code === '42P01') {
+          console.error('🚨 TABLE DOES NOT EXIST! Run create_chat_history_table.sql in Supabase');
+        }
+        return;
+      }
+      
+      console.log('✅ Query successful!');
+      console.log('Total count:', count);
+      console.log('Loaded chat history:', chatHistory?.length || 0, 'conversations');
+      if (chatHistory && chatHistory.length > 0) {
+        console.log('Sample chat:', chatHistory[0]);
+      }
+      setConversations(chatHistory || []);
+    } catch (error) {
+      console.error('❌ Exception loading conversations:', error);
+      console.error('Exception details:', error.message, error.stack);
+    }
   };
 
   // Flat menu structure - no sections
@@ -58,8 +134,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       items.push(
         { icon: '🏠', label: 'Dashboard', href: '/student/dashboard' },
         { icon: '❤️', label: 'Gespeicherte Kurse', href: '/student/dashboard/saved' },
-        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' },
-        { icon: '⚙️', label: 'Profil', href: '/student/dashboard/profile', desktopOnly: true }
+        { icon: '📝', label: 'Bewerbungen', href: '/student/dashboard/applications' }
       );
     }
     
@@ -136,7 +211,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </div>
 
         {/* Navigation - Flat list */}
-        <nav className="flex-1 px-4 py-6 space-y-1">
+        <nav className="px-4 py-6 space-y-1">
           {getMenuItems().map((item, idx) => {
                   // Special handling for "Neue Suche" - render as button
                   if (item.newChat) {
@@ -154,21 +229,6 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                       </button>
                     );
                   }
-            
-            // Hide desktop-only items on mobile
-            if (item.desktopOnly) {
-              return (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="hidden lg:flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
-                >
-                  <span className="w-5 h-5 flex items-center justify-center text-lg">{item.icon}</span>
-                  <span className="text-base lg:text-lg font-medium">{item.label}</span>
-                </Link>
-              );
-            }
                   
                   return (
                     <Link
@@ -185,60 +245,83 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
 
         </nav>
 
-        {/* Chat History - No section header */}
-        {user && conversations.today.length > 0 && (
-          <div className="px-4 space-y-1">
-                    {conversations.today.map((conv, idx) => (
-                      <Link
-                        key={idx}
-                        href={`/chat/${conv.id}`}
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all text-base lg:text-lg text-gray-700"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        <span className="truncate">{conv.title}</span>
-                      </Link>
-                    ))}
+        {/* Chat History Section - After Bewerbungen */}
+        {user && student && (
+          <div className="flex-1 overflow-y-auto border-t border-gray-200">
+            <div className="px-4 py-3 bg-gray-100 sticky top-0 z-10">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Chat-Verlauf {conversations.length > 0 && `(${conversations.length})`}
+              </h3>
+              <div className="text-xs text-gray-400 mt-1">
+                User: {user ? '✓' : '✗'} | Student: {student?.id || 'N/A'} | Chats: {conversations.length}
+              </div>
             </div>
-          )}
+            <div className="px-4 py-2 space-y-1">
+              {conversations.length > 0 ? (
+                conversations.map((conv, idx) => {
+                  const messages = conv.messages || [];
+                  const firstUserMessage = messages.find(m => m.role === 'user');
+                  const title = firstUserMessage?.content?.substring(0, 50) || `Chat vom ${new Date(conv.created_at).toLocaleDateString('de-DE')}`;
+                  
+                  return (
+                    <Link
+                      key={conv.id || idx}
+                      href={`/suchen?chat=${conv.id}`}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all text-sm text-gray-700"
+                    >
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      <span className="truncate">{title}</span>
+                    </Link>
+                  );
+                })
+              ) : (
+                <div className="px-4 py-3 text-center">
+                  <div className="text-gray-400 text-2xl mb-2">💬</div>
+                  <div className="text-xs text-gray-500">Noch keine Chats</div>
+                  <div className="text-xs text-gray-400 mt-2">
+                    Debug: Checking student ID {student?.id}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Debug info when not showing chat history */}
+        {(!user || !student) && (
+          <div className="px-4 py-3 border-t border-gray-200 bg-yellow-50">
+            <div className="text-xs text-yellow-700">
+              <div>🔍 Debug Info:</div>
+              <div>User logged in: {user ? 'YES ✓' : 'NO ✗'}</div>
+              <div>Student data: {student ? `YES (ID: ${student.id})` : 'NO ✗'}</div>
+              <div>Auth User ID: {user?.id?.substring(0, 8) || 'N/A'}...</div>
+            </div>
+          </div>
+        )}
 
-        {/* Bottom Section - Mobile: Settings, Desktop: User Profile */}
+        {/* Bottom Section - Profile or Login */}
         <div className="p-4 border-t border-gray-200 mt-auto">
           {user && student ? (
-            <>
-              {/* Mobile: Settings Link */}
-              <Link
-                href="/student/dashboard/profile"
-                onClick={() => setIsOpen(false)}
-                className="flex lg:hidden items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <div className="flex-1 min-w-0">
-                  <div className="text-base lg:text-lg font-semibold text-gray-900">Einstellungen</div>
-                  <div className="text-sm lg:text-base text-gray-600 truncate">{student.email}</div>
-                </div>
-              </Link>
-
-              {/* Desktop: User Profile */}
-              <div className="hidden lg:flex items-center gap-3 p-2 rounded-lg hover:bg-gray-200 cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold">
+            <Link
+              href="/student/dashboard/profile"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 transition-all"
+            >
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
                 {student.first_name?.[0]?.toUpperCase() || 'U'}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-base lg:text-lg font-semibold text-gray-900 truncate">
+                <div className="text-base font-semibold text-gray-900 truncate">
                   {student.first_name} {student.last_name}
                 </div>
-                <div className="text-sm lg:text-base text-gray-600 truncate">
+                <div className="text-sm text-gray-600 truncate">
                   {student.email}
                 </div>
               </div>
-            </div>
-            </>
+            </Link>
           ) : (
             <Link
               href="/student/login"
@@ -253,3 +336,4 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     </>
   );
 }
+

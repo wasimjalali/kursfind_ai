@@ -7,8 +7,9 @@ export default async function ChatHistoryPage() {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
   
-  // Get student profile or use mock data
+  // Get student profile - require authentication
   let student = null;
+  let chatHistory = [];
   
   if (user) {
     const { data: studentData } = await supabase
@@ -17,24 +18,33 @@ export default async function ChatHistoryPage() {
       .eq('auth_user_id', user.id)
       .single();
     student = studentData;
+    
+    // SECURITY: Only fetch chat history if student.id (int8) exists and is valid
+    // students table: id (int8, PK) | auth_user_id (uuid)
+    // chat_history table: student_id (int8, FK → students.id)
+    if (student?.id && typeof student.id === 'number') {
+      // Get chat history from last 30 days - MUST filter by student.id (int8)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: history, error: historyError } = await supabase
+        .from('chat_history')
+        .select('*')
+        .eq('student_id', student.id) // CRITICAL: Filter by students.id (int8) - ensures students only see their own chats
+        .gte('created_at', thirtyDaysAgo.toISOString())
+        .order('created_at', { ascending: false });
+      
+      if (historyError) {
+        console.error('Error loading chat history:', historyError);
+        chatHistory = [];
+      } else {
+        chatHistory = history || [];
+      }
+    } else {
+      console.warn('⚠️ Invalid or missing student ID, cannot load chat history');
+      chatHistory = [];
+    }
   }
-  
-  // Use mock student data if no real student found
-  if (!student) {
-    student = {
-      id: 1,
-      email: 'demo@student.de',
-      first_name: 'Demo',
-      last_name: 'Student',
-    };
-  }
-
-  // Get chat history
-  const { data: chatHistory } = await supabase
-    .from('chat_history')
-    .select('*')
-    .eq('student_id', student.id)
-    .order('created_at', { ascending: false });
 
   return (
     <div className="p-6 space-y-6">
@@ -56,23 +66,42 @@ export default async function ChatHistoryPage() {
         </Link>
       </div>
 
-      {/* Stats */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-            <span className="text-2xl">💬</span>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-gray-900">
-              {chatHistory?.length || 0}
-            </p>
-            <p className="text-sm text-gray-600">Gespeicherte Unterhaltungen</p>
-          </div>
+      {/* Require authentication */}
+      {!user || !student ? (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+          <div className="text-6xl mb-4">🔒</div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            Anmeldung erforderlich
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Bitte melden Sie sich an, um Ihren Chat-Verlauf anzuzeigen
+          </p>
+          <Link
+            href="/student/login"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+          >
+            Jetzt anmelden
+          </Link>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <span className="text-2xl">💬</span>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">
+                  {chatHistory?.length || 0}
+                </p>
+                <p className="text-sm text-gray-600">Gespeicherte Unterhaltungen</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Chat History List */}
-      {chatHistory && chatHistory.length > 0 ? (
+          {/* Chat History List */}
+          {chatHistory && chatHistory.length > 0 ? (
         <div className="space-y-4">
           {chatHistory.map((chat) => {
             const messages = chat.messages || [];
@@ -157,22 +186,24 @@ export default async function ChatHistoryPage() {
         </div>
       )}
 
-      {/* Info Box */}
-      <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
-        <h3 className="text-lg font-bold text-purple-900 mb-3">
-          💡 Über den Chat-Verlauf
-        </h3>
-        <ul className="space-y-2 text-sm text-purple-800">
-          <li className="flex items-start gap-2">
-            <span className="text-purple-500 mt-0.5">✓</span>
-            <span>Ihre Konversationen mit dem KI-Berater werden gespeichert</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-purple-500 mt-0.5">✓</span>
-            <span>Setzen Sie frühere Suchen fort und verfeinern Sie Ihre Anfragen</span>
-          </li>
-        </ul>
-      </div>
+          {/* Info Box */}
+          <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+            <h3 className="text-lg font-bold text-purple-900 mb-3">
+              💡 Über den Chat-Verlauf
+            </h3>
+            <ul className="space-y-2 text-sm text-purple-800">
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">✓</span>
+                <span>Ihre Konversationen mit dem KI-Berater werden gespeichert</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">✓</span>
+                <span>Setzen Sie frühere Suchen fort und verfeinern Sie Ihre Anfragen</span>
+              </li>
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   );
 }

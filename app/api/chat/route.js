@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-server'
 import { extractSearchIntent } from '../ai/extract-intent'
 
 // Detect the language of the user's message
@@ -27,6 +28,44 @@ export async function POST(req) {
     
     // Support both old format (message) and new format (messages array)
     const { message, messages, courseContext } = body
+    
+    console.log('🔵 API /chat called');
+    console.log('📨 Request body:', {
+      hasMessage: !!message,
+      hasMessages: !!messages,
+      messagesLength: Array.isArray(messages) ? messages.length : 0,
+      hasCourseContext: !!courseContext
+    });
+    
+    // Get current user for chat history saving
+    // SECURITY: We use students.id (int8) not auth_user_id (uuid) for chat_history.student_id
+    // This ensures proper foreign key relationship and data isolation per student
+    const supabaseServer = await createClient()
+    const { data: { user } } = await supabaseServer.auth.getUser()
+    let studentId = null
+    
+    console.log('👤 API User check:', user ? `Logged in (${user.id})` : 'Not logged in');
+    
+    if (user) {
+      // Lookup student by auth_user_id (uuid) to get students.id (int8)
+      // students table: id (int8, PK) | auth_user_id (uuid, FK to auth.users)
+      const { data: studentData, error: studentError } = await supabaseServer
+        .from('students')
+        .select('id') // Get students.id (int8) - this is the primary key used in chat_history.student_id
+        .eq('auth_user_id', user.id) // Lookup by auth_user_id (uuid) to find the student
+        .single()
+      
+      if (studentError) {
+        console.error('❌ Error fetching student for chat history:', studentError)
+      } else if (studentData?.id) {
+        studentId = studentData.id // Use students.id (int8) - ensures proper foreign key relationship
+        console.log('✅ Student ID found for chat history:', studentId)
+      } else {
+        console.warn('⚠️ No student record found for user:', user.id)
+      }
+    } else {
+      console.log('⚠️ No user logged in, chat history will not be saved');
+    }
     
     // Get the latest user message
     const latestMessage = messages ? messages[messages.length - 1]?.content : message
@@ -3862,6 +3901,104 @@ Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.
           funding: searchIntent.funding || undefined,
           language: searchIntent.language || undefined
         }
+      }
+    }
+    
+    // Save chat history for logged-in students
+    // SECURITY: Only save if studentId is valid (students.id int8)
+    // This ensures chat_history is always linked to the correct student
+    console.log('🔍 Chat history save check:', {
+      hasStudentId: !!studentId,
+      studentIdType: typeof studentId,
+      studentIdValue: studentId,
+      hasMessages: !!messages,
+      isMessagesArray: Array.isArray(messages),
+      messagesLength: Array.isArray(messages) ? messages.length : 0
+    });
+    
+    if (studentId && typeof studentId === 'number' && messages && Array.isArray(messages) && messages.length > 0) {
+      try {
+        console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
+        console.log('💾 Messages count:', messages.length);
+        
+        // Get the first user message as title
+        const firstUserMessage = messages.find(m => m.role === 'user')
+        const title = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
+        console.log('💾 Chat title:', title);
+        
+        // Check if a chat history entry already exists for this conversation
+        // We'll use a simple approach: check if there's a recent chat (within last 5 minutes)
+        // If yes, update it; if no, create a new one
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+        
+        // SECURITY: Query existing chat - MUST filter by student_id to ensure data isolation
+        // Only query chats that belong to this specific student (students.id int8)
+        const { data: existingChat, error: queryError } = await supabaseServer
+          .from('chat_history')
+          .select('id')
+          .eq('student_id', studentId) // CRITICAL: Filter by student.id (int8) - ensures students only see/update their own chats
+          .gte('created_at', fiveMinutesAgo)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle() // Use maybeSingle() instead of single() to avoid errors if no record exists
+        
+        if (queryError) {
+          console.error('❌ Error querying existing chat:', queryError);
+        }
+        
+        if (existingChat) {
+          console.log('📝 Updating existing chat history ID:', existingChat.id);
+          // SECURITY: Update existing chat history - MUST verify student_id matches
+          // This double-check ensures we never update another student's chat history
+          const { data: updateData, error: updateError } = await supabaseServer
+            .from('chat_history')
+            .update({
+              messages: messages,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existingChat.id)
+            .eq('student_id', studentId) // CRITICAL: Additional security - ensure student_id matches (students.id int8)
+            .select()
+          
+          if (updateError) {
+            console.error('❌ Error updating chat history:', updateError);
+            console.error('Update error details:', updateError.message, updateError.code, updateError.details);
+          } else {
+            console.log('✅ Chat history updated successfully');
+          }
+        } else {
+          console.log('➕ Creating new chat history entry');
+          // SECURITY: Create new chat history entry - MUST use students.id (int8)
+          // chat_history.student_id references students.id (int8), not auth_user_id (uuid)
+          const { data: insertData, error: insertError } = await supabaseServer
+            .from('chat_history')
+            .insert({
+              student_id: studentId, // CRITICAL: Use students.id (int8) - foreign key to students.id, ensures data isolation
+              title: title,
+              messages: messages,
+              created_at: new Date().toISOString()
+            })
+            .select()
+          
+          if (insertError) {
+            console.error('❌ Error inserting chat history:', insertError);
+            console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
+            console.error('Insert error hint:', insertError.hint);
+          } else {
+            console.log('✅ Chat history created successfully:', insertData);
+          }
+        }
+      } catch (saveError) {
+        // Don't fail the request if saving chat history fails
+        console.error('❌ Exception saving chat history:', saveError);
+        console.error('Exception details:', saveError.message, saveError.stack);
+      }
+    } else {
+      if (!studentId) {
+        console.log('⚠️ No studentId available - chat history not saved');
+      }
+      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+        console.log('⚠️ No messages available - chat history not saved');
       }
     }
     
