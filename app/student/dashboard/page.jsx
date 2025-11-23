@@ -50,13 +50,14 @@ export default async function StudentDashboardPage() {
       courses (
         id,
         title,
+        slug,
         description,
         start_date,
         duration
       )
     `)
     .eq('student_id', student.id)
-    .order('created_at', { ascending: false })
+    .order('saved_at', { ascending: false })
     .limit(3);
 
   // Get latest applications (last 3)
@@ -237,7 +238,7 @@ export default async function StudentDashboardPage() {
             {recentSaved.map((saved) => (
               <Link
                 key={saved.id}
-                href={`/courses/${saved.courses.id}`}
+                href={`/kurse/${saved.courses.slug || saved.courses.id}`}
                 className="block p-4 border border-gray-200 rounded-lg hover:border-cyan-300 hover:bg-cyan-50/50 hover:shadow-sm transition-all duration-200"
               >
                 <h3 className="font-semibold text-gray-900 mb-1">

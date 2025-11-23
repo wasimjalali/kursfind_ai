@@ -34,11 +34,12 @@ export async function GET(request) {
       .from('saved_courses')
       .select(`
         id,
-        created_at,
+        saved_at,
         notes,
         courses (
           id,
           title,
+          slug,
           description,
           category,
           location,
@@ -49,7 +50,7 @@ export async function GET(request) {
         )
       `)
       .eq('student_id', student.id)
-      .order('created_at', { ascending: false });
+      .order('saved_at', { ascending: false });
 
     if (savedError) {
       console.error('Error fetching saved courses:', savedError);
