@@ -373,9 +373,109 @@ async function searchCourses(args) {
     };
   }
 
-  // STEP 4: Fallback search if no results
+  // STEP 4A: City-based fallback search if location is specified but no results
+  // ══════════════════════════════════════════════════════════════
+  // FEATURE: Smart City Fallback
+  // If user searches for courses in a specific city but none found,
+  // automatically search nearby cities and online/remote options
+  // ══════════════════════════════════════════════════════════════
+  let fallbackContext = null; // Track if we used fallback
+  
+  if ((!courses || courses.length === 0) && location && query) {
+    console.log('🏙️ No results in specified location, trying city fallback...');
+    
+    // Major German cities for fallback
+    const majorCities = ['Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt'];
+    const nearbyCities = {
+      'Hamburg': ['Bremen', 'Lübeck', 'Berlin'],
+      'Berlin': ['Potsdam', 'Leipzig', 'Hamburg'],
+      'München': ['Augsburg', 'Nürnberg', 'Stuttgart'],
+      'Köln': ['Düsseldorf', 'Bonn', 'Essen'],
+      'Frankfurt': ['Mainz', 'Wiesbaden', 'Darmstadt'],
+      'Bremen': ['Hamburg', 'Oldenburg'],
+      'Leipzig': ['Dresden', 'Halle', 'Berlin'],
+      'Dresden': ['Leipzig', 'Chemnitz'],
+      'Stuttgart': ['Karlsruhe', 'Mannheim', 'München'],
+      'Düsseldorf': ['Köln', 'Essen', 'Dortmund']
+    };
+    
+    // Get nearby cities for the searched location
+    const locationKey = Object.keys(nearbyCities).find(city => 
+      location.toLowerCase().includes(city.toLowerCase())
+    );
+    const fallbackCities = locationKey ? nearbyCities[locationKey] : majorCities;
+    
+    console.log('🔍 Fallback cities:', fallbackCities);
+    
+    // Build query for nearby cities OR remote/online
+    const cityConditions = fallbackCities.map(city => 
+      `location.ilike.%${city}%`
+    ).join(',');
+    
+    // Search in nearby cities OR online/remote courses
+    const expandedTerms = expandSearchTerms(query);
+    const searchConditions = expandedTerms.flatMap(term => [
+      `title.ilike.%${term}%`,
+      `description.ilike.%${term}%`,
+      `category.ilike.%${term}%`,
+      `subtitle.ilike.%${term}%`
+    ]).join(',');
+    
+    let fallbackQueryBuilder = supabase
+      .from('courses')
+      .select('*', { count: 'exact' })
+      .eq('status', status)
+      .or(searchConditions);
+    
+    // Location: nearby cities OR online/remote
+    fallbackQueryBuilder = fallbackQueryBuilder.or(
+      `${cityConditions},format.ilike.%online%,format.ilike.%remote%,location.ilike.%online%`
+    );
+    
+    // Apply other filters
+    if (category) {
+      fallbackQueryBuilder = fallbackQueryBuilder.ilike('category', `%${category}%`);
+    }
+    if (funding_eligible !== undefined) {
+      fallbackQueryBuilder = fallbackQueryBuilder.eq('funding_eligible', funding_eligible);
+    }
+    
+    // Sort by relevance
+    fallbackQueryBuilder = fallbackQueryBuilder
+      .order('is_featured', { ascending: false })
+      .order('view_count', { ascending: false })
+      .range(offset, offset + max_results - 1);
+    
+    const { data: cityFallbackCourses, count: cityFallbackCount } = await fallbackQueryBuilder;
+    
+    if (cityFallbackCourses && cityFallbackCourses.length > 0) {
+      courses = cityFallbackCourses;
+      count = cityFallbackCount;
+      
+      // Extract which cities/formats were found
+      const foundLocations = new Set();
+      const foundFormats = new Set();
+      cityFallbackCourses.forEach(course => {
+        if (course.location) foundLocations.add(course.location);
+        if (course.format) foundFormats.add(course.format);
+      });
+      
+      fallbackContext = {
+        originalLocation: location,
+        foundInCities: Array.from(foundLocations).slice(0, 3),
+        hasOnline: Array.from(foundFormats).some(f => 
+          f.toLowerCase().includes('online') || f.toLowerCase().includes('remote')
+        ),
+        totalResults: cityFallbackCount
+      };
+      
+      console.log('✅ City fallback found courses:', courses.length, fallbackContext);
+    }
+  }
+  
+  // STEP 4B: General fallback search if still no results
   if ((!courses || courses.length === 0) && query) {
-    console.log('🔄 No results found, trying fallback search with broader terms...');
+    console.log('🔄 No results found, trying category fallback search...');
     
     // Try broader category-based search
     const fallbackCategories = {
@@ -459,7 +559,8 @@ async function searchCourses(args) {
         total: count || 0,
         showing: coursesWithProviders.length,
         offset,
-        hasMore: count > offset + max_results
+        hasMore: count > offset + max_results,
+        fallbackContext: fallbackContext || null // Include fallback info for AI to explain
       }
     };
   }

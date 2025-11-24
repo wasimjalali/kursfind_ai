@@ -9,6 +9,12 @@ import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import ChatCourseCard from '@/components/ChatCourseCard';
 import { supabase } from '@/lib/supabase';
+import { orderCoursesByRecommendation, enhanceCourseWithRecommendationContext } from '@/lib/course-recommendation-parser';
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE FLAGS
+// ══════════════════════════════════════════════════════════════
+const ENABLE_SMART_CARD_ORDERING = true; // Enable intelligent course card ordering based on AI mentions
 
 interface Message {
   role: 'user' | 'assistant';
@@ -480,7 +486,7 @@ function ChatContent() {
                               </ReactMarkdown>
                             </div>
 
-                            {/* COURSE CARDS - NEW! */}
+                            {/* COURSE CARDS - ENHANCED WITH SMART ORDERING */}
                             {(() => {
                               const hasCourses = message.courses && Array.isArray(message.courses) && message.courses.length > 0;
                               const searchMeta = message.searchMeta;
@@ -498,23 +504,51 @@ function ChatContent() {
                                 });
                               }
                               
-                              return hasCourses && message.courses ? (
+                              // SMART CARD ORDERING: Reorder courses based on AI recommendations
+                              let coursesToDisplay = message.courses || [];
+                              if (ENABLE_SMART_CARD_ORDERING && hasCourses && message.content) {
+                                coursesToDisplay = orderCoursesByRecommendation(
+                                  message.courses || [],
+                                  message.content
+                                );
+                                console.log('🎯 Smart ordering applied:', {
+                                  original: message.courses?.map(c => c.id),
+                                  reordered: coursesToDisplay.map(c => c.id)
+                                });
+                              }
+                              
+                              return hasCourses && coursesToDisplay ? (
                                 <div className="space-y-3 mt-4">
                                   {/* Context message */}
                                   {searchMeta && searchMeta.total > 0 && (
                                     <p className="text-sm text-gray-600 mb-2">
-                                      {searchMeta.total > message.courses.length 
-                                        ? `Ich habe ${searchMeta.total} passende Kurse gefunden. Hier sind die ersten ${message.courses.length}:`
-                                        : `Ich habe ${message.courses.length} passende Kurse gefunden:`
+                                      {searchMeta.total > coursesToDisplay.length 
+                                        ? `Ich habe ${searchMeta.total} passende Kurse gefunden. Hier sind die ersten ${coursesToDisplay.length}:`
+                                        : `Ich habe ${coursesToDisplay.length} passende Kurse gefunden:`
                                       }
                                     </p>
                                   )}
                                   
-                                  {/* Course cards with full design */}
+                                  {/* Course cards with full design and smart ordering */}
                                   <div className="space-y-3">
-                                    {message.courses.map((course: any) => {
-                                      console.log('🎴 Rendering course card:', course.id, course.title);
-                                      return <ChatCourseCard key={`${course.id}-${idx}`} course={course} />;
+                                    {coursesToDisplay.map((course: any, courseIdx: number) => {
+                                      // Enhance course with recommendation context
+                                      const enhancedCourse = ENABLE_SMART_CARD_ORDERING 
+                                        ? enhanceCourseWithRecommendationContext(course, message.content)
+                                        : course;
+                                      
+                                      console.log('🎴 Rendering course card:', course.id, course.title, {
+                                        isRecommended: enhancedCourse._isRecommended,
+                                        position: courseIdx
+                                      });
+                                      
+                                      return (
+                                        <ChatCourseCard 
+                                          key={`${course.id}-${idx}-${courseIdx}`} 
+                                          course={enhancedCourse}
+                                          showRecommendedBadge={enhancedCourse._isRecommended}
+                                        />
+                                      );
                                     })}
                                   </div>
                                   
