@@ -90,14 +90,15 @@ function ChatContent() {
       if (chatMessages && chatMessages.length > 0) {
         console.log('✅ Loaded', chatMessages.length, 'messages');
         
-        // Convert database messages to chat format
+        // Convert database messages to chat format with courses
         const loadedMessages: Message[] = chatMessages.map(msg => ({
           role: msg.role as 'user' | 'assistant',
           content: msg.content,
-          // Note: We don't restore courses from history, only the text
+          courses: msg.courses || undefined, // Restore courses from history
         }));
 
         setMessages(loadedMessages);
+        console.log('📚 Restored courses for', loadedMessages.filter(m => m.courses?.length > 0).length, 'messages');
       } else {
         console.warn('⚠️ No messages found for conversation:', conversationId);
       }
@@ -441,26 +442,26 @@ function ChatContent() {
                                   p: ({node, ...props}) => (
                                     <p className="mb-3 last:mb-0 text-gray-700 leading-relaxed" {...props} />
                                   ),
-                                  // Headings
+                                  // Headings - Force black color
                                   h1: ({node, ...props}) => (
-                                    <h1 className="text-xl font-bold mb-3 text-gray-900" {...props} />
+                                    <h1 className="text-xl font-bold mb-3" style={{color: '#111827'}} {...props} />
                                   ),
                                   h2: ({node, ...props}) => (
-                                    <h2 className="text-lg font-bold mb-2 text-gray-900" {...props} />
+                                    <h2 className="text-lg font-bold mb-2" style={{color: '#111827'}} {...props} />
                                   ),
                                   h3: ({node, ...props}) => (
-                                    <h3 className="text-base font-bold mb-2 text-gray-900" {...props} />
+                                    <h3 className="text-base font-bold mb-2" style={{color: '#111827'}} {...props} />
                                   ),
                                   // Lists
                                   ul: ({node, ...props}) => (
-                                    <ul className="list-disc ml-5 my-2 space-y-1 text-gray-700" {...props} />
+                                    <ul className="ml-6 my-2 space-y-1 [&>li]:list-disc [&>li]:text-gray-900" style={{listStyleType: 'disc', listStylePosition: 'outside'}} {...props} />
                                   ),
                                   ol: ({node, ...props}) => (
-                                    <ol className="list-decimal ml-5 my-2 space-y-1 text-gray-700" {...props} />
+                                    <ol className="ml-6 my-2 space-y-1 [&>li]:list-decimal [&>li]:text-gray-900" style={{listStyleType: 'decimal', listStylePosition: 'outside'}} {...props} />
                                   ),
                                   // @ts-ignore - ReactMarkdown renders li inside ul/ol
                                   li: ({node, ...props}) => (
-                                    <li className="leading-relaxed" {...props} />
+                                    <li className="leading-relaxed ml-1 text-gray-900 marker:text-gray-900 marker:font-bold" style={{display: 'list-item'}} {...props} />
                                   ),
                                   // Links
                                   a: ({node, ...props}) => (

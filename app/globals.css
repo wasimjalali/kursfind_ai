@@ -46,6 +46,54 @@ a, button {
   transition: all 0.2s ease-in-out;
 }
 
+/* Fix for chat message formatting - bullets and numbered lists */
+.chat-message ul,
+.chat-message ol,
+ul,
+ol {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.chat-message ul li,
+ul li {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  display: list-item !important;
+  margin-bottom: 0.25rem;
+  color: #111827 !important;
+}
+
+.chat-message ol li,
+ol li {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  display: list-item !important;
+  margin-bottom: 0.25rem;
+  color: #111827 !important;
+}
+
+/* Force marker visibility */
+.chat-message ul li::marker,
+.chat-message ol li::marker,
+ul li::marker,
+ol li::marker {
+  color: #111827 !important;
+  font-weight: 700 !important;
+  font-size: 1em !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-message ul li::marker,
+  .chat-message ol li::marker,
+  ul li::marker,
+  ol li::marker {
+    color: #f3f4f6 !important;
+  }
+}
+
 /* Custom animation delays for loading dots */
 .animate-bounce-delay-200 {
   animation: bounce 1s infinite;
