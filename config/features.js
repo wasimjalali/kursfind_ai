@@ -51,6 +51,17 @@ export const FEATURES = {
   CTA_MIN_COURSES: 4,
   
   // ══════════════════════════════════════════════════════════════
+  // DASHBOARD ANIMATIONS - UX POLISH
+  // ══════════════════════════════════════════════════════════════
+  // Enable animated entrance effects for dashboard pages
+  // Includes: fade-in, slide-up, hover effects, floating cards
+  ENABLE_DASHBOARD_ANIMATIONS: true,
+  
+  // Animation timing (ms)
+  ANIMATION_DURATION: 500,
+  ANIMATION_STAGGER_DELAY: 100,
+  
+  // ══════════════════════════════════════════════════════════════
   // CITY FALLBACK SEARCH
   // ══════════════════════════════════════════════════════════════
   // Automatically searches nearby cities when no results in requested city

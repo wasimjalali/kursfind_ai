@@ -1,63 +1,92 @@
+'use client'; // Enable client-side animations
+
 import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-export default async function ApplicationsPage() {
-  const supabase = await createClient();
-  
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  // Get student profile or use mock data
-  let student = null;
-  
-  if (user) {
-    const { data: studentData } = await supabase
-      .from('students')
-      .select('*')
-      .eq('auth_user_id', user.id)
-      .single();
-    student = studentData;
-  }
-  
-  // Use mock student data if no real student found
-  if (!student) {
-    student = {
-      id: 1,
-      email: 'demo@student.de',
-      first_name: 'Demo',
-      last_name: 'Student',
-    };
-  }
+// FEATURE FLAG: Enable/disable animations
+const ENABLE_ANIMATIONS = true; // Set to false to disable all animations
 
-  // Get all applications with course and provider details
-  const { data: applications } = await supabase
-    .from('applications')
-    .select(`
-      id,
-      status,
-      created_at,
-      updated_at,
-      message,
-      courses (
-        id,
-        title,
-        description,
-        category,
-        location,
-        start_date,
-        duration,
-        image_url
-      ),
-      providers (
-        id,
-        company_name,
-        email,
-        phone,
-        city
-      )
-    `)
-    .eq('student_id', student.id)
-    .order('created_at', { ascending: false });
+export default function ApplicationsPage() {
+  const [applications, setApplications] = useState([]);
+  const [student, setStudent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [animateIn, setAnimateIn] = useState(false);
+
+  useEffect(() => {
+    async function loadData() {
+      const supabase = await createClient();
+      
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Get student profile or use mock data
+      let studentData = null;
+      
+      if (user) {
+        const { data } = await supabase
+          .from('students')
+          .select('*')
+          .eq('auth_user_id', user.id)
+          .single();
+        studentData = data;
+      }
+      
+      // Use mock student data if no real student found
+      if (!studentData) {
+        studentData = {
+          id: 1,
+          email: 'demo@student.de',
+          first_name: 'Demo',
+          last_name: 'Student',
+        };
+      }
+
+      setStudent(studentData);
+
+      // Get all applications with course and provider details
+      const { data: applicationsData } = await supabase
+        .from('applications')
+        .select(`
+          id,
+          status,
+          created_at,
+          updated_at,
+          message,
+          courses (
+            id,
+            title,
+            description,
+            category,
+            location,
+            start_date,
+            duration,
+            image_url
+          ),
+          providers (
+            id,
+            company_name,
+            email,
+            phone,
+            city
+          )
+        `)
+        .eq('student_id', studentData.id)
+        .order('created_at', { ascending: false });
+
+      setApplications(applicationsData || []);
+      setIsLoading(false);
+      
+      // Trigger entrance animations after data loads
+      if (ENABLE_ANIMATIONS) {
+        setTimeout(() => setAnimateIn(true), 50);
+      } else {
+        setAnimateIn(true);
+      }
+    }
+
+    loadData();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -103,10 +132,163 @@ export default async function ApplicationsPage() {
   const acceptedCount = applications?.filter(a => a.status === 'accepted').length || 0;
   const rejectedCount = applications?.filter(a => a.status === 'rejected').length || 0;
 
+  if (isLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Lade Bewerbungen...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
+      <style jsx>{`
+        /* ═══════════════════════════════════════════════════════════
+           ANIMATION STYLES - Applications Dashboard
+           Feature Flag: ENABLE_ANIMATIONS
+           ═══════════════════════════════════════════════════════════ */
+
+        /* Entrance animation for header - Fade in from top */
+        @keyframes slideInFromTop {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Entrance animation for cards - Fade in and scale */
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+
+        /* Staggered entrance for list items */
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Pulse animation for status icons */
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+          }
+        }
+
+        /* Glow effect for hover states */
+        @keyframes glow {
+          0%, 100% {
+            box-shadow: 0 0 5px rgba(6, 182, 212, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+          }
+        }
+
+        /* Apply animations when enabled */
+        .animate-header {
+          animation: slideInFromTop 0.4s ease-out;
+        }
+
+        .animate-stat-card {
+          animation: fadeInScale 0.5s ease-out;
+        }
+
+        .animate-application-card {
+          animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Stagger delays for stat cards */
+        .animate-stat-card:nth-child(1) { animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-stat-card:nth-child(2) { animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-stat-card:nth-child(3) { animation-delay: 0.3s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-stat-card:nth-child(4) { animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards; }
+
+        /* Stagger delays for application cards */
+        .animate-application-card:nth-child(1) { animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-application-card:nth-child(2) { animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-application-card:nth-child(3) { animation-delay: 0.7s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-application-card:nth-child(4) { animation-delay: 0.8s; opacity: 0; animation-fill-mode: forwards; }
+        .animate-application-card:nth-child(n+5) { animation-delay: 0.9s; opacity: 0; animation-fill-mode: forwards; }
+
+        /* Hover effects for interactive elements */
+        .hover-lift {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .hover-glow:hover {
+          animation: glow 2s ease-in-out infinite;
+        }
+
+        /* Status icon pulse */
+        .status-icon-pulse {
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Button hover effects */
+        .btn-hover {
+          transition: all 0.2s ease-in-out;
+        }
+
+        .btn-hover:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-hover:active {
+          transform: scale(0.98);
+        }
+
+        /* Reduced motion support - Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+          .animate-header,
+          .animate-stat-card,
+          .animate-application-card,
+          .hover-lift,
+          .status-icon-pulse,
+          .btn-hover {
+            animation: none !important;
+            transition: none !important;
+          }
+          
+          .hover-lift:hover {
+            transform: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          }
+        }
+      `}</style>
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={`flex items-center justify-between ${animateIn && ENABLE_ANIMATIONS ? 'animate-header' : ''}`}>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
             Meine Bewerbungen 📝
@@ -117,7 +299,7 @@ export default async function ApplicationsPage() {
         </div>
         <Link
           href="/courses"
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
         >
           + Neue Bewerbung
         </Link>
@@ -125,7 +307,7 @@ export default async function ApplicationsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Gesamt</p>
@@ -137,19 +319,19 @@ export default async function ApplicationsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Ausstehend</p>
               <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
             </div>
             <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">⏳</span>
+              <span className="text-2xl status-icon-pulse">⏳</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Angenommen</p>
@@ -161,7 +343,7 @@ export default async function ApplicationsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Abgelehnt</p>
@@ -177,14 +359,14 @@ export default async function ApplicationsPage() {
       {/* Applications List */}
       {applications && applications.length > 0 ? (
         <div className="space-y-4">
-          {applications.map((application) => {
+          {applications.map((application, index) => {
             const course = application.courses;
             const provider = application.providers;
             
             return (
               <div
                 key={application.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-application-card' : ''}`}
               >
                 <div className="flex items-start justify-between gap-6">
                   {/* Course Image */}
@@ -193,10 +375,10 @@ export default async function ApplicationsPage() {
                       <img
                         src={course.image_url}
                         alt={course.title}
-                        className="w-32 h-32 rounded-lg object-cover"
+                        className="w-32 h-32 rounded-lg object-cover shadow-sm"
                       />
                     ) : (
-                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center">
+                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center shadow-sm">
                         <span className="text-4xl">📚</span>
                       </div>
                     )}
@@ -215,8 +397,10 @@ export default async function ApplicationsPage() {
                           </p>
                         )}
                       </div>
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(application.status)}`}>
-                        {getStatusIcon(application.status)} {getStatusText(application.status)}
+                      <span className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${getStatusColor(application.status)}`}>
+                        <span className={application.status === 'pending' ? 'status-icon-pulse' : ''}>
+                          {getStatusIcon(application.status)}
+                        </span> {getStatusText(application.status)}
                       </span>
                     </div>
 
@@ -228,7 +412,7 @@ export default async function ApplicationsPage() {
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
                       {course?.category && (
-                        <span className="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full font-semibold">
+                        <span className="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full font-semibold transition-all hover:bg-cyan-200">
                           {course.category}
                         </span>
                       )}
@@ -251,7 +435,7 @@ export default async function ApplicationsPage() {
                     </div>
 
                     {application.message && (
-                      <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                      <div className="bg-gray-50 rounded-lg p-3 mb-3 border border-gray-100">
                         <p className="text-xs font-semibold text-gray-700 mb-1">💬 Ihre Nachricht:</p>
                         <p className="text-sm text-gray-600">{application.message}</p>
                       </div>
@@ -274,14 +458,14 @@ export default async function ApplicationsPage() {
                       <div className="flex gap-2">
                         <Link
                           href={`/courses/${course?.id}`}
-                          className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
+                          className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-all btn-hover"
                         >
                           Kurs ansehen
                         </Link>
                         {provider?.email && (
                           <a
                             href={`mailto:${provider.email}`}
-                            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all btn-hover"
                           >
                             Anbieter kontaktieren
                           </a>
@@ -296,7 +480,7 @@ export default async function ApplicationsPage() {
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="text-6xl mb-4">📝</div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
             Noch keine Bewerbungen
@@ -306,7 +490,7 @@ export default async function ApplicationsPage() {
           </p>
           <Link
             href="/courses"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
           >
             Kurse durchsuchen
           </Link>
