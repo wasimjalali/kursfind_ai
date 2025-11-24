@@ -617,6 +617,31 @@ function ChatContent() {
                                       );
                                     })}
                                   </div>
+
+                                  {/* SMART CTA: Encourage Multiple Applications (4+ courses) */}
+                                  {/* BUSINESS IMPACT: Increases application success rate & lead generation */}
+                                  {/* FEATURE_FLAG: SHOW_MULTI_APPLICATION_CTA */}
+                                  {FEATURES.SHOW_MULTI_APPLICATION_CTA && coursesToDisplay.length >= FEATURES.CTA_MIN_COURSES && (
+                                    <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 rounded-lg shadow-sm">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 text-2xl">💡</div>
+                                        <div className="flex-1">
+                                          <p className="text-sm font-semibold text-gray-800 mb-1">
+                                            {message.content.toLowerCase().includes('english') || 
+                                             message.content.toLowerCase().includes('tip') ? 
+                                              'Tip for Success:' : 
+                                              'Tipp für mehr Erfolg:'}
+                                          </p>
+                                          <p className="text-sm text-gray-700 leading-relaxed">
+                                            {message.content.toLowerCase().includes('english') || 
+                                             message.content.toLowerCase().includes('tip') ? 
+                                              'For the best chance of getting a spot, apply to at least 5–10 courses. The more applications you submit, the better your choices and your odds of landing a great course!' :
+                                              'Für die besten Chancen, bewirb dich auf mindestens 5-10 Kurse! Je mehr Bewerbungen, desto besser stehen deine Auswahlmöglichkeiten und deine Chancen auf einen Platz.'}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
                                   
                                   {/* Show More Button */}
                                   {showMoreButton && (

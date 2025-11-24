@@ -41,6 +41,16 @@ export const FEATURES = {
   DYNAMIC_BADGE_EVALUATION: true,
   
   // ══════════════════════════════════════════════════════════════
+  // SMART CTA - BUSINESS IMPACT
+  // ══════════════════════════════════════════════════════════════
+  // Show application success tip when 4+ courses displayed
+  // Increases lead generation and application success rate
+  SHOW_MULTI_APPLICATION_CTA: true,
+  
+  // Minimum courses to trigger CTA
+  CTA_MIN_COURSES: 4,
+  
+  // ══════════════════════════════════════════════════════════════
   // CITY FALLBACK SEARCH
   // ══════════════════════════════════════════════════════════════
   // Automatically searches nearby cities when no results in requested city

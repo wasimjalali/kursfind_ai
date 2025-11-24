@@ -35,28 +35,32 @@ export default function ChatCourseCard({
       };
     }
 
+    // BRAND PALETTE - Kursfind AI Badge Colors
+    // Gold: #FFC72C (Top-Wahl) - Premium, attention-grabbing
+    // Emerald: #10B981 (Empfohlen) - Trust, recommendation
+    // Cyan: #06B6D4 (Alternative) - Modern, alternative option
     switch (effectiveBadgeType) {
       case 'top-wahl':
         return {
-          gradient: 'from-yellow-400 to-amber-500',
+          gradient: 'from-yellow-400 to-amber-500', // Gold #FFC72C equivalent
           label: 'Top-Wahl',
           icon: 'star'
         };
       case 'empfehlung':
         return {
-          gradient: 'from-emerald-400 to-teal-500',
+          gradient: 'from-emerald-500 to-emerald-600', // Emerald #10B981 - Brand green
           label: 'Empfohlen',
           icon: 'check'
         };
       case 'alternative':
         return {
-          gradient: 'from-blue-400 to-cyan-500',
+          gradient: 'from-cyan-500 to-cyan-600', // Cyan #06B6D4 - Brand cyan
           label: 'Alternative',
           icon: 'plus'
         };
       default:
         return {
-          gradient: 'from-yellow-400 to-amber-500',
+          gradient: 'from-yellow-400 to-amber-500', // Gold fallback
           label: 'Top-Wahl',
           icon: 'star'
         };
