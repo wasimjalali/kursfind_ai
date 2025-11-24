@@ -133,9 +133,17 @@ export default function ChatCourseCard({
           </div>
         )}
 
-        {/* ENHANCED: Duplicate/Previously Shown Indicator */}
-        {effectiveIsDuplicate && (
-          <div className="absolute top-3 left-3 z-19 mt-10 bg-gray-600 bg-opacity-90 text-white px-2 py-0.5 rounded-full text-[10px] font-medium shadow-md">
+        {/* ENHANCED: Duplicate/Previously Shown Indicator - Smart Positioning */}
+        {/* FEATURE_FLAG: SMART_DUPLICATE_POSITIONING */}
+        {effectiveIsDuplicate && shouldShowBadge && (
+          /* Bottom-left when badge is present (avoid overlap) */
+          <div className="absolute bottom-3 left-3 z-19 bg-gray-600 bg-opacity-90 text-white px-2 py-0.5 rounded-full text-[10px] font-medium shadow-md">
+            Zuvor gezeigt
+          </div>
+        )}
+        {effectiveIsDuplicate && !shouldShowBadge && (
+          /* Top ribbon when no badge (more visible) */
+          <div className="absolute top-0 left-0 right-0 z-19 bg-gradient-to-r from-gray-500 to-gray-600 text-white px-3 py-1 text-[10px] font-medium text-center">
             Zuvor gezeigt
           </div>
         )}

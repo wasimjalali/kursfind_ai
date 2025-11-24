@@ -12,11 +12,15 @@
 
 export const FEATURES = {
   // ══════════════════════════════════════════════════════════════
-  // SMART CARD ORDERING (ENHANCED)
+  // SMART CARD ORDERING (PRECISION VERSION - v2)
   // ══════════════════════════════════════════════════════════════
   // Automatically reorders course cards based on AI recommendations
   // Cards mentioned in AI text appear first with badges
   SMART_CARD_ORDERING: true,
+  
+  // STRICT: Only ONE "Top-Wahl" badge per message (nearest to "top" phrase)
+  // Other courses get "Empfohlen" or "Alternative" badges
+  STRICT_BADGE_ASSIGNMENT: true,
   
   // Show badges on recommended courses (Top-Wahl, Empfohlen, Alternative)
   SHOW_RECOMMENDATION_BADGE: true,
@@ -27,8 +31,14 @@ export const FEATURES = {
   // Show "Previously shown" indicator on duplicate courses
   SHOW_DUPLICATE_INDICATOR: true,
   
+  // Smart positioning: bottom-left when badge present, ribbon when no badge
+  SMART_DUPLICATE_POSITIONING: true,
+  
   // Re-render course cards in follow-up messages
   ENABLE_FOLLOW_UP_CARD_RENDERING: true,
+  
+  // Re-evaluate badge logic on every render (not cached)
+  DYNAMIC_BADGE_EVALUATION: true,
   
   // ══════════════════════════════════════════════════════════════
   // CITY FALLBACK SEARCH

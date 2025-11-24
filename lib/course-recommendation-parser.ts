@@ -1,28 +1,28 @@
 /**
- * Course Recommendation Parser - ENHANCED VERSION
+ * Course Recommendation Parser - PRECISION VERSION
  * 
- * Extracts course references from AI assistant messages with:
- * - Precise badge logic (only explicitly recommended courses)
- * - Ranking extraction (Top 1, Top 2, etc.)
- * - Multi-language support (German/English)
- * - Context-aware recommendation detection
- * - Proximity-based keyword matching
+ * CRITICAL RULES:
+ * 1. Only ONE "Top-Wahl" badge per message (nearest to "top" phrases)
+ * 2. Other courses get "Empfohlen" or "Alternative" badges
+ * 3. Re-evaluate badges on every render
+ * 4. "Zuvor gezeigt" positioning based on badge presence
  * 
- * Feature Flags: SMART_CARD_ORDERING, SHOW_RECOMMENDATION_BADGE
+ * Feature Flags: SMART_CARD_ORDERING, STRICT_BADGE_ASSIGNMENT
  */
 
 export interface CourseReference {
   courseId: string;
-  position: number; // Position in text (for ordering)
-  context: string; // Surrounding text (±50 chars)
-  isRecommended: boolean; // Explicitly recommended
-  badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null; // Badge strength
-  ranking: number | null; // Extracted ranking (1, 2, 3...)
-  isDuplicate: boolean; // Shown in previous messages
+  position: number;
+  context: string;
+  isRecommended: boolean;
+  badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null;
+  ranking: number | null;
+  isDuplicate: boolean;
+  distanceFromTopPhrase: number; // NEW: Distance to nearest "top" phrase
 }
 
 /**
- * Badge types with priority (higher = stronger)
+ * Badge priorities (for conflict resolution)
  */
 const BADGE_PRIORITIES = {
   'top-wahl': 3,
@@ -32,46 +32,61 @@ const BADGE_PRIORITIES = {
 };
 
 /**
- * ENHANCED: Multi-language recommendation patterns with badge types
+ * TOP PHRASES - Only these create Top-Wahl candidates
  */
-const RECOMMENDATION_PATTERNS = [
-  // TOP-WAHL (Strongest)
-  { pattern: 'top recommendation', badge: 'top-wahl' as const, lang: 'en' },
-  { pattern: 'top-wahl', badge: 'top-wahl' as const, lang: 'de' },
-  { pattern: 'beste wahl', badge: 'top-wahl' as const, lang: 'de' },
-  { pattern: 'top choice', badge: 'top-wahl' as const, lang: 'en' },
-  { pattern: 'best option', badge: 'top-wahl' as const, lang: 'en' },
-  { pattern: 'first choice', badge: 'top-wahl' as const, lang: 'en' },
-  { pattern: 'beste option', badge: 'top-wahl' as const, lang: 'de' },
-  { pattern: 'definitely the', badge: 'top-wahl' as const, lang: 'en' },
-  
-  // EMPFEHLUNG (Strong)
-  { pattern: 'empfehle', badge: 'empfehlung' as const, lang: 'de' },
-  { pattern: 'empfehlung', badge: 'empfehlung' as const, lang: 'de' },
-  { pattern: 'recommend', badge: 'empfehlung' as const, lang: 'en' },
-  { pattern: 'perfekt für', badge: 'empfehlung' as const, lang: 'de' },
-  { pattern: 'ideal für', badge: 'empfehlung' as const, lang: 'de' },
-  { pattern: 'perfect for', badge: 'empfehlung' as const, lang: 'en' },
-  { pattern: 'ideal for', badge: 'empfehlung' as const, lang: 'en' },
-  { pattern: 'besonders gut', badge: 'empfehlung' as const, lang: 'de' },
-  
-  // ALTERNATIVE (Moderate)
-  { pattern: 'alternative', badge: 'alternative' as const, lang: 'both' },
-  { pattern: 'auch gut', badge: 'alternative' as const, lang: 'de' },
-  { pattern: 'weitere option', badge: 'alternative' as const, lang: 'de' },
-  { pattern: 'another option', badge: 'alternative' as const, lang: 'en' },
-  { pattern: 'passend', badge: 'alternative' as const, lang: 'de' },
-  { pattern: 'geeignet', badge: 'alternative' as const, lang: 'de' }
+const TOP_PHRASES = [
+  'top recommendation',
+  'top pick',
+  'top choice',
+  'top-wahl',
+  'beste wahl',
+  'best option',
+  'first choice',
+  'beste option',
+  'definitely the',
+  'meine top',
+  'my top'
 ];
 
 /**
- * ENHANCED: Ranking extraction patterns
+ * EMPFEHLUNG PHRASES - For recommended but not top
+ */
+const EMPFEHLUNG_PHRASES = [
+  'empfehle',
+  'empfehlung',
+  'recommend',
+  'perfekt für',
+  'ideal für',
+  'perfect for',
+  'ideal for',
+  'besonders gut',
+  'highly recommend',
+  'great option',
+  'excellent choice'
+];
+
+/**
+ * ALTERNATIVE PHRASES - For alternatives
+ */
+const ALTERNATIVE_PHRASES = [
+  'alternative',
+  'auch gut',
+  'weitere option',
+  'another option',
+  'passend',
+  'geeignet',
+  'also consider',
+  'ebenfalls'
+];
+
+/**
+ * Ranking patterns
  */
 const RANKING_PATTERNS = [
   /(?:top|erste|first)\s*(?:wahl|choice|option)?[\s:]*(\d+)/i,
   /(?:position|rang|rank)[\s:]*(\d+)/i,
-  /^(\d+)[\.)\s]/m, // "1. Course name" or "1) Course name"
-  /🥇.*?(\d+)/i, // Emoji rankings
+  /^(\d+)[\.)\s]/m,
+  /🥇.*?(\d+)/i,
   /🥈.*?(\d+)/i,
   /🥉.*?(\d+)/i,
   /nummer[\s:]*(\d+)/i,
@@ -79,7 +94,37 @@ const RANKING_PATTERNS = [
 ];
 
 /**
- * ENHANCED: Extract course references with precise badge logic
+ * Find distance to nearest phrase in text
+ */
+function findNearestPhraseDistance(
+  text: string,
+  targetPosition: number,
+  phrases: string[]
+): number {
+  let minDistance = Infinity;
+  const lowerText = text.toLowerCase();
+
+  for (const phrase of phrases) {
+    let searchPos = 0;
+    while (true) {
+      const foundPos = lowerText.indexOf(phrase, searchPos);
+      if (foundPos === -1) break;
+
+      const distance = Math.abs(foundPos - targetPosition);
+      if (distance < minDistance) {
+        minDistance = distance;
+      }
+
+      searchPos = foundPos + 1;
+    }
+  }
+
+  return minDistance;
+}
+
+/**
+ * ENHANCED: Extract course references with STRICT badge logic
+ * FEATURE_FLAG: STRICT_BADGE_ASSIGNMENT
  */
 export function extractCourseReferences(
   messageContent: string,
@@ -93,6 +138,7 @@ export function extractCourseReferences(
   const references: CourseReference[] = [];
   const lowerContent = messageContent.toLowerCase();
 
+  // Step 1: Find all course mentions
   availableCourses.forEach((course) => {
     if (!course) return;
 
@@ -100,31 +146,36 @@ export function extractCourseReferences(
     const courseSlug = course.slug?.toLowerCase() || '';
     const courseId = course.id?.toString() || '';
 
-    // Check if course title is mentioned in the message
     if (courseTitle && lowerContent.includes(courseTitle)) {
       const position = lowerContent.indexOf(courseTitle);
       
-      // Get context (±75 chars for better proximity detection)
-      const contextStart = Math.max(0, position - 75);
-      const contextEnd = Math.min(lowerContent.length, position + courseTitle.length + 75);
+      // Get context (±100 chars)
+      const contextStart = Math.max(0, position - 100);
+      const contextEnd = Math.min(lowerContent.length, position + courseTitle.length + 100);
       const context = messageContent.substring(contextStart, contextEnd);
       const contextLower = context.toLowerCase();
 
-      // ENHANCED: Check badge type with proximity (within ±75 chars)
-      let badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null = null;
-      let maxPriority = 0;
+      // Calculate distances to phrase types
+      const distanceToTop = findNearestPhraseDistance(lowerContent, position, TOP_PHRASES);
+      const distanceToEmpfehlung = findNearestPhraseDistance(lowerContent, position, EMPFEHLUNG_PHRASES);
+      const distanceToAlternative = findNearestPhraseDistance(lowerContent, position, ALTERNATIVE_PHRASES);
 
-      for (const { pattern, badge } of RECOMMENDATION_PATTERNS) {
-        if (contextLower.includes(pattern)) {
-          const priority = BADGE_PRIORITIES[badge];
-          if (priority > maxPriority) {
-            badgeType = badge;
-            maxPriority = priority;
-          }
+      // Initial badge assignment (will be refined later)
+      let badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null = null;
+      let minDistance = Math.min(distanceToTop, distanceToEmpfehlung, distanceToAlternative);
+
+      // Only assign badge if within 100 chars
+      if (minDistance <= 100) {
+        if (distanceToTop === minDistance) {
+          badgeType = 'top-wahl'; // Candidate for top-wahl
+        } else if (distanceToEmpfehlung === minDistance) {
+          badgeType = 'empfehlung';
+        } else if (distanceToAlternative === minDistance) {
+          badgeType = 'alternative';
         }
       }
 
-      // ENHANCED: Extract ranking
+      // Extract ranking
       let ranking: number | null = null;
       for (const regex of RANKING_PATTERNS) {
         const match = context.match(regex);
@@ -134,7 +185,6 @@ export function extractCourseReferences(
         }
       }
 
-      // Check if duplicate
       const isDuplicate = previouslyShownCourseIds.includes(courseId);
 
       references.push({
@@ -144,42 +194,48 @@ export function extractCourseReferences(
         isRecommended: badgeType !== null,
         badgeType,
         ranking,
-        isDuplicate
+        isDuplicate,
+        distanceFromTopPhrase: distanceToTop
       });
 
       console.log('🔍 Course reference found:', {
-        title: course.title,
+        title: course.title?.substring(0, 30),
         badgeType,
-        ranking,
-        isDuplicate,
-        contextSnippet: context.substring(0, 100)
-      });
-    }
-    // Also check for slug mentions (e.g., in links)
-    else if (courseSlug && lowerContent.includes(courseSlug)) {
-      const position = lowerContent.indexOf(courseSlug);
-      const isDuplicate = previouslyShownCourseIds.includes(courseId);
-
-      references.push({
-        courseId,
-        position,
-        context: '',
-        isRecommended: false,
-        badgeType: null,
-        ranking: null,
+        distanceToTop,
+        distanceToEmpfehlung,
+        distanceToAlternative,
         isDuplicate
       });
     }
   });
 
-  // Sort by ranking first, then position
+  // Step 2: CRITICAL - Ensure only ONE Top-Wahl per message
+  // Find the course CLOSEST to any "top" phrase
+  const topCandidates = references.filter(ref => ref.badgeType === 'top-wahl');
+  
+  if (topCandidates.length > 1) {
+    console.log('⚠️ Multiple Top-Wahl candidates, selecting nearest to "top" phrase');
+    
+    // Sort by distance to top phrase
+    topCandidates.sort((a, b) => a.distanceFromTopPhrase - b.distanceFromTopPhrase);
+    
+    // Keep only the first (nearest) as Top-Wahl
+    const winner = topCandidates[0];
+    
+    // Downgrade others to Empfehlung
+    topCandidates.slice(1).forEach(candidate => {
+      candidate.badgeType = 'empfehlung';
+      candidate.isRecommended = true;
+    });
+    
+    console.log('✅ Top-Wahl assigned to:', winner.courseId, 'distance:', winner.distanceFromTopPhrase);
+  }
+
+  // Sort by ranking > position
   references.sort((a, b) => {
-    // Ranked items come first
     if (a.ranking && !b.ranking) return -1;
     if (!a.ranking && b.ranking) return 1;
     if (a.ranking && b.ranking) return a.ranking - b.ranking;
-    
-    // Then by position in text
     return a.position - b.position;
   });
 
@@ -187,7 +243,7 @@ export function extractCourseReferences(
 }
 
 /**
- * ENHANCED: Reorder courses with ranking support
+ * ENHANCED: Reorder courses with strict badge logic
  */
 export function orderCoursesByRecommendation(
   courses: any[],
@@ -201,17 +257,14 @@ export function orderCoursesByRecommendation(
   const references = extractCourseReferences(messageContent, courses, previouslyShownCourseIds);
 
   if (references.length === 0) {
-    // No specific mentions, return original order
     console.log('📋 No course mentions found, using original order');
     return courses;
   }
 
-  // Create a map of courseId -> reference
   const referenceMap = new Map(
     references.map(ref => [ref.courseId, ref])
   );
 
-  // Separate courses into mentioned and not mentioned
   const mentionedCourses: any[] = [];
   const unmentionedCourses: any[] = [];
 
@@ -224,45 +277,39 @@ export function orderCoursesByRecommendation(
     }
   });
 
-  // Sort mentioned courses by ranking > recommendation > position
+  // Sort: Top-Wahl > Empfehlung > Alternative > Position
   mentionedCourses.sort((a, b) => {
     const refA = referenceMap.get(a.id?.toString() || '');
     const refB = referenceMap.get(b.id?.toString() || '');
     
-    // First: Ranked courses
+    // Ranking first
     if (refA?.ranking && !refB?.ranking) return -1;
     if (!refA?.ranking && refB?.ranking) return 1;
-    if (refA?.ranking && refB?.ranking) {
-      return refA.ranking - refB.ranking;
-    }
+    if (refA?.ranking && refB?.ranking) return refA.ranking - refB.ranking;
     
-    // Second: Recommended courses
+    // Badge priority
     const priorityA = BADGE_PRIORITIES[refA?.badgeType || null];
     const priorityB = BADGE_PRIORITIES[refB?.badgeType || null];
-    if (priorityA !== priorityB) {
-      return priorityB - priorityA; // Higher priority first
-    }
+    if (priorityA !== priorityB) return priorityB - priorityA;
     
-    // Third: Position in text
+    // Position in text
     return (refA?.position || 0) - (refB?.position || 0);
   });
 
   console.log('🎯 Smart ordering applied:', {
     mentioned: mentionedCourses.length,
-    unmentioned: unmentionedCourses.length,
-    order: mentionedCourses.map(c => ({
-      id: c.id,
-      title: c.title?.substring(0, 30),
-      ref: referenceMap.get(c.id?.toString() || '')
-    }))
+    badgeDistribution: {
+      topWahl: references.filter(r => r.badgeType === 'top-wahl').length,
+      empfohlen: references.filter(r => r.badgeType === 'empfehlung').length,
+      alternative: references.filter(r => r.badgeType === 'alternative').length
+    }
   });
 
-  // Return mentioned courses first, then unmentioned
   return [...mentionedCourses, ...unmentionedCourses];
 }
 
 /**
- * ENHANCED: Check if course should be displayed (stricter logic)
+ * Check if course should be displayed
  */
 export function shouldDisplayCourse(
   course: any,
@@ -277,7 +324,6 @@ export function shouldDisplayCourse(
   const courseTitle = course.title?.toLowerCase() || '';
   const courseSlug = course.slug?.toLowerCase() || '';
 
-  // Check if course is mentioned by title or slug
   return (
     (courseTitle && lowerContent.includes(courseTitle)) ||
     (courseSlug && lowerContent.includes(courseSlug))
@@ -285,7 +331,8 @@ export function shouldDisplayCourse(
 }
 
 /**
- * ENHANCED: Add recommendation context with badge type and ranking
+ * ENHANCED: Add recommendation context with strict badge logic
+ * ALWAYS re-evaluates on every render
  */
 export function enhanceCourseWithRecommendationContext(
   course: any,
@@ -306,7 +353,8 @@ export function enhanceCourseWithRecommendationContext(
       _badgeType: ref.badgeType,
       _ranking: ref.ranking,
       _isDuplicate: ref.isDuplicate,
-      _recommendationContext: ref.context
+      _recommendationContext: ref.context,
+      _distanceFromTopPhrase: ref.distanceFromTopPhrase
     };
   }
 
@@ -314,8 +362,7 @@ export function enhanceCourseWithRecommendationContext(
 }
 
 /**
- * ENHANCED: Extract courses mentioned in follow-up messages
- * This handles cases like "show me that course again" or "tell me more about X"
+ * Extract courses from follow-up messages
  */
 export function extractCoursesFromFollowUp(
   messageContent: string,
@@ -329,7 +376,6 @@ export function extractCoursesFromFollowUp(
   const lowerContent = messageContent.toLowerCase();
   const matchedCourses: any[] = [];
 
-  // Patterns indicating follow-up about specific courses
   const followUpPatterns = [
     'zeig',
     'show',
@@ -348,7 +394,6 @@ export function extractCoursesFromFollowUp(
   const isFollowUp = followUpPatterns.some(pattern => lowerContent.includes(pattern));
 
   if (isFollowUp) {
-    // Extract course titles mentioned
     for (const course of allAvailableCourses) {
       const courseTitle = course.title?.toLowerCase() || '';
       if (courseTitle && lowerContent.includes(courseTitle)) {
@@ -363,7 +408,7 @@ export function extractCoursesFromFollowUp(
 }
 
 /**
- * Get badge label for display
+ * Get badge label
  */
 export function getBadgeLabel(badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null, language: 'de' | 'en' = 'de'): string {
   if (!badgeType) return '';
@@ -375,4 +420,12 @@ export function getBadgeLabel(badgeType: 'top-wahl' | 'empfehlung' | 'alternativ
   };
   
   return labels[badgeType][language];
+}
+
+/**
+ * Determine "Zuvor gezeigt" position based on badge presence
+ * FEATURE_FLAG: SMART_DUPLICATE_POSITIONING
+ */
+export function getDuplicateIndicatorPosition(hasBadge: boolean): 'bottom-left' | 'top-ribbon' {
+  return hasBadge ? 'bottom-left' : 'top-ribbon';
 }
