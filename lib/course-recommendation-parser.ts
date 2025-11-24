@@ -36,12 +36,14 @@ const BADGE_PRIORITIES = {
  */
 const RECOMMENDATION_PATTERNS = [
   // TOP-WAHL (Strongest)
+  { pattern: 'top recommendation', badge: 'top-wahl' as const, lang: 'en' },
   { pattern: 'top-wahl', badge: 'top-wahl' as const, lang: 'de' },
   { pattern: 'beste wahl', badge: 'top-wahl' as const, lang: 'de' },
   { pattern: 'top choice', badge: 'top-wahl' as const, lang: 'en' },
   { pattern: 'best option', badge: 'top-wahl' as const, lang: 'en' },
   { pattern: 'first choice', badge: 'top-wahl' as const, lang: 'en' },
   { pattern: 'beste option', badge: 'top-wahl' as const, lang: 'de' },
+  { pattern: 'definitely the', badge: 'top-wahl' as const, lang: 'en' },
   
   // EMPFEHLUNG (Strong)
   { pattern: 'empfehle', badge: 'empfehlung' as const, lang: 'de' },

@@ -140,20 +140,10 @@ export default function ChatCourseCard({
           </div>
         )}
         
-        {/* Provider Logo Badge - Top Right Corner of entire card (Desktop only) */}
-        {providerLogo && providerLogo.trim() !== '' && (
-          <div className="hidden md:flex absolute top-3 right-3 z-10 w-20 h-20 bg-white rounded-xl p-2 shadow-lg border-2 border-gray-200 items-center justify-center">
-            <img 
-              src={providerLogo} 
-              alt={providerName}
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                // Hide logo if it fails to load
-                e.target.style.display = 'none';
-              }}
-            />
-          </div>
-        )}
+        {/* REMOVED: Provider Logo Badge on Desktop (too cluttered)
+            Provider name is already shown in course card details below title.
+            Mobile still shows logo for better visual identification.
+        */}
         
         {/* Mobile: Vertical layout, Desktop: Horizontal */}
         <div className="flex flex-col md:flex-row">

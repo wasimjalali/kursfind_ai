@@ -458,16 +458,42 @@ function ChatContent() {
                                   h3: ({node, ...props}) => (
                                     <h3 className="text-base font-bold mb-2" style={{color: '#111827'}} {...props} />
                                   ),
-                                  // Lists
+                                  // Lists - ENHANCED for maximum visibility
                                   ul: ({node, ...props}) => (
-                                    <ul className="ml-6 my-2 space-y-1 [&>li]:list-disc [&>li]:text-gray-900" style={{listStyleType: 'disc', listStylePosition: 'outside'}} {...props} />
+                                    <ul 
+                                      className="my-3 ml-8 space-y-1.5 text-gray-900" 
+                                      style={{
+                                        listStyleType: 'disc',
+                                        listStylePosition: 'outside',
+                                        paddingLeft: '0.5rem',
+                                        display: 'block'
+                                      }}
+                                      {...props} 
+                                    />
                                   ),
                                   ol: ({node, ...props}) => (
-                                    <ol className="ml-6 my-2 space-y-1 [&>li]:list-decimal [&>li]:text-gray-900" style={{listStyleType: 'decimal', listStylePosition: 'outside'}} {...props} />
+                                    <ol 
+                                      className="my-3 ml-8 space-y-1.5 text-gray-900" 
+                                      style={{
+                                        listStyleType: 'decimal',
+                                        listStylePosition: 'outside',
+                                        paddingLeft: '0.5rem',
+                                        display: 'block'
+                                      }}
+                                      {...props} 
+                                    />
                                   ),
                                   // @ts-ignore - ReactMarkdown renders li inside ul/ol
                                   li: ({node, ...props}) => (
-                                    <li className="leading-relaxed ml-1 text-gray-900 marker:text-gray-900 marker:font-bold" style={{display: 'list-item'}} {...props} />
+                                    <li 
+                                      className="leading-relaxed text-gray-900" 
+                                      style={{
+                                        display: 'list-item',
+                                        marginLeft: '0.25rem',
+                                        color: '#111827'
+                                      }}
+                                      {...props} 
+                                    />
                                   ),
                                   // Links
                                   a: ({node, ...props}) => (

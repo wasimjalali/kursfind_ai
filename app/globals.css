@@ -75,14 +75,26 @@ ol li {
   color: #111827 !important;
 }
 
-/* Force marker visibility */
+/* Force marker visibility with maximum specificity */
 .chat-message ul li::marker,
 .chat-message ol li::marker,
 ul li::marker,
-ol li::marker {
+ol li::marker,
+li::marker {
   color: #111827 !important;
   font-weight: 700 !important;
-  font-size: 1em !important;
+  font-size: 1.1em !important;
+  content: inherit !important;
+  display: inline-block !important;
+}
+
+/* Additional specificity for bullets */
+ul > li::before {
+  content: '' !important;
+}
+
+ol > li::before {
+  content: '' !important;
 }
 
 @media (prefers-color-scheme: dark) {
