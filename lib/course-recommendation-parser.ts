@@ -288,8 +288,10 @@ export function orderCoursesByRecommendation(
     if (refA?.ranking && refB?.ranking) return refA.ranking - refB.ranking;
     
     // Badge priority
-    const priorityA = BADGE_PRIORITIES[refA?.badgeType ?? null];
-    const priorityB = BADGE_PRIORITIES[refB?.badgeType ?? null];
+    const badgeTypeA = refA?.badgeType ?? null;
+    const badgeTypeB = refB?.badgeType ?? null;
+    const priorityA = BADGE_PRIORITIES[badgeTypeA as keyof typeof BADGE_PRIORITIES];
+    const priorityB = BADGE_PRIORITIES[badgeTypeB as keyof typeof BADGE_PRIORITIES];
     if (priorityA !== priorityB) return priorityB - priorityA;
     
     // Position in text
