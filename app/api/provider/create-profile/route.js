@@ -4,13 +4,24 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   console.log('📥 Provider profile creation request received');
   
-  // Create Supabase client using anon key
+  // Create Supabase client using SERVICE ROLE KEY (bypasses RLS)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
   // Validate that we have actual values (not empty strings)
-  if (!supabaseUrl || !supabaseAnonKey || 
-      supabaseUrl.trim() === '' || supabaseAnonKey.trim() === '') {
+  if (!supabaseUrl || supabaseUrl.trim() === '') {
+    console.error('❌ Missing Supabase URL');
+    return NextResponse.json(
+      { error: 'Server configuration error: Missing Supabase URL' },
+      { status: 500 }
+    );
+  }
+
+  // Prefer service role key (bypasses RLS), fallback to anon key (requires RLS policy)
+  const supabaseKey = supabaseServiceKey || supabaseAnonKey;
+  
+  if (!supabaseKey || supabaseKey.trim() === '') {
     console.error('❌ Missing Supabase credentials');
     return NextResponse.json(
       { error: 'Server configuration error: Missing Supabase credentials' },
@@ -18,8 +29,11 @@ export async function POST(request) {
     );
   }
 
-  // Use anon key - RLS policy allows inserts when auth_user_id exists in auth.users
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  const usingServiceRole = !!supabaseServiceKey;
+  console.log(`🔑 Using ${usingServiceRole ? 'SERVICE ROLE' : 'ANON'} key for provider creation`);
+
+  // Create Supabase client
+  const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
