@@ -1,6 +1,6 @@
 'use client'; // Enable client-side animations
 
-import { createClient } from '@/lib/supabase-server';
+import { createClient } from '@/lib/supabase-browser';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -15,7 +15,7 @@ export default function ApplicationsPage() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = await createClient();
+      const supabase = createClient();
       
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();

@@ -13,7 +13,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase-browser'
 import { useRouter } from 'next/navigation'
 import ApplicationDetailModal from './ApplicationDetailModal'
 
