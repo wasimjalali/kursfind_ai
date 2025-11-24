@@ -98,7 +98,7 @@ function ChatContent() {
         }));
 
         setMessages(loadedMessages);
-        console.log('📚 Restored courses for', loadedMessages.filter(m => m.courses?.length > 0).length, 'messages');
+        console.log('📚 Restored courses for', loadedMessages.filter(m => m.courses && m.courses.length > 0).length, 'messages');
       } else {
         console.warn('⚠️ No messages found for conversation:', conversationId);
       }
