@@ -132,21 +132,6 @@ export default function ChatCourseCard({
             {badgeConfig.label}
           </div>
         )}
-
-        {/* ENHANCED: Duplicate/Previously Shown Indicator - Smart Positioning */}
-        {/* FEATURE_FLAG: SMART_DUPLICATE_POSITIONING */}
-        {effectiveIsDuplicate && shouldShowBadge && (
-          /* Bottom-left when badge is present (avoid overlap) */
-          <div className="absolute bottom-3 left-3 z-19 bg-gray-600 bg-opacity-90 text-white px-2 py-0.5 rounded-full text-[10px] font-medium shadow-md">
-            Zuvor gezeigt
-          </div>
-        )}
-        {effectiveIsDuplicate && !shouldShowBadge && (
-          /* Top ribbon when no badge (more visible) */
-          <div className="absolute top-0 left-0 right-0 z-19 bg-gradient-to-r from-gray-500 to-gray-600 text-white px-3 py-1 text-[10px] font-medium text-center">
-            Zuvor gezeigt
-          </div>
-        )}
         
         {/* REMOVED: Provider Logo Badge on Desktop (too cluttered)
             Provider name is already shown in course card details below title.
@@ -186,6 +171,14 @@ export default function ChatCourseCard({
                   />
                 </div>
               )}
+              
+              {/* ENHANCED: "Zuvor gezeigt" on Image Cover - Bottom Left */}
+              {/* FEATURE_FLAG: SMART_DUPLICATE_POSITIONING */}
+              {effectiveIsDuplicate && (
+                <div className="absolute bottom-2 left-2 z-15 bg-gray-700 bg-opacity-90 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold shadow-lg backdrop-blur-sm">
+                  Zuvor gezeigt
+                </div>
+              )}
             </div>
           ) : (
             <div className="w-full md:w-48 h-48 md:h-auto bg-gradient-to-br from-cyan-100 to-emerald-100 flex-shrink-0 flex items-center justify-center relative">
@@ -207,6 +200,13 @@ export default function ChatCourseCard({
                       e.target.style.display = 'none';
                     }}
                   />
+                </div>
+              )}
+              
+              {/* ENHANCED: "Zuvor gezeigt" on Image Cover - Bottom Left */}
+              {effectiveIsDuplicate && (
+                <div className="absolute bottom-2 left-2 z-15 bg-gray-700 bg-opacity-90 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold shadow-lg backdrop-blur-sm">
+                  Zuvor gezeigt
                 </div>
               )}
             </div>

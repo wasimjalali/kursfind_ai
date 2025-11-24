@@ -47,14 +47,16 @@ a, button {
 }
 
 /* Fix for chat message formatting - bullets and numbered lists */
+/* ENHANCED: Force black bullets/numbers with maximum visibility */
 .chat-message ul,
 .chat-message ol,
 ul,
 ol {
-  margin-left: 1.5rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  display: block;
+  margin-left: 2rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+  padding-left: 0.5rem !important;
 }
 
 .chat-message ul li,
@@ -62,7 +64,8 @@ ul li {
   list-style-type: disc !important;
   list-style-position: outside !important;
   display: list-item !important;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.25rem !important;
+  margin-left: 0.5rem !important;
   color: #111827 !important;
 }
 
@@ -71,37 +74,41 @@ ol li {
   list-style-type: decimal !important;
   list-style-position: outside !important;
   display: list-item !important;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.25rem !important;
+  margin-left: 0.5rem !important;
   color: #111827 !important;
 }
 
-/* Force marker visibility with maximum specificity */
+/* BULLETPROOF: Force marker visibility - Solid Black #111 */
 .chat-message ul li::marker,
 .chat-message ol li::marker,
 ul li::marker,
 ol li::marker,
 li::marker {
-  color: #111827 !important;
+  color: #111 !important;
   font-weight: 700 !important;
   font-size: 1.1em !important;
+  line-height: 1.5 !important;
   content: inherit !important;
-  display: inline-block !important;
+  opacity: 1 !important;
 }
 
-/* Additional specificity for bullets */
-ul > li::before {
-  content: '' !important;
-}
-
+/* Ensure no conflicting ::before pseudo-elements */
+.chat-message ul > li::before,
+.chat-message ol > li::before,
+ul > li::before,
 ol > li::before {
-  content: '' !important;
+  content: none !important;
+  display: none !important;
 }
 
+/* Dark mode - lighter bullets for contrast */
 @media (prefers-color-scheme: dark) {
   .chat-message ul li::marker,
   .chat-message ol li::marker,
   ul li::marker,
-  ol li::marker {
+  ol li::marker,
+  li::marker {
     color: #f3f4f6 !important;
   }
 }
