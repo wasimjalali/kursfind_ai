@@ -10,11 +10,7 @@ import WelcomeScreen from '@/components/WelcomeScreen';
 import ChatCourseCard from '@/components/ChatCourseCard';
 import { supabase } from '@/lib/supabase';
 import { orderCoursesByRecommendation, enhanceCourseWithRecommendationContext } from '@/lib/course-recommendation-parser';
-
-// ══════════════════════════════════════════════════════════════
-// FEATURE FLAGS
-// ══════════════════════════════════════════════════════════════
-const ENABLE_SMART_CARD_ORDERING = true; // Enable intelligent course card ordering based on AI mentions
+import { FEATURES } from '@/config/features';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -506,7 +502,7 @@ function ChatContent() {
                               
                               // SMART CARD ORDERING: Reorder courses based on AI recommendations
                               let coursesToDisplay = message.courses || [];
-                              if (ENABLE_SMART_CARD_ORDERING && hasCourses && message.content) {
+                              if (FEATURES.SMART_CARD_ORDERING && hasCourses && message.content) {
                                 coursesToDisplay = orderCoursesByRecommendation(
                                   message.courses || [],
                                   message.content
@@ -533,7 +529,7 @@ function ChatContent() {
                                   <div className="space-y-3">
                                     {coursesToDisplay.map((course: any, courseIdx: number) => {
                                       // Enhance course with recommendation context
-                                      const enhancedCourse = ENABLE_SMART_CARD_ORDERING 
+                                      const enhancedCourse = FEATURES.SMART_CARD_ORDERING 
                                         ? enhanceCourseWithRecommendationContext(course, message.content)
                                         : course;
                                       
