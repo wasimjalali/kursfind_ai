@@ -1,26 +1,112 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import ChatCourseCard from '@/components/ChatCourseCard';
+import { supabase } from '@/lib/supabase';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   courses?: any[];  // Optional courses array for AI messages
+  searchMeta?: {
+    hasMore: boolean;
+    nextOffset: number;
+    total: number;
+    filters: {
+      query?: string;
+      category?: string;
+      format?: string;
+      location?: string;
+      funding?: string;
+      language?: string;
+    };
+  };
 }
 
-export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+interface SearchState {
+  query: string;
+  filters: {
+    query?: string;
+    category?: string;
+    format?: string;
+    location?: string;
+    funding?: string;
+    language?: string;
+  };
+  offset: number;
+  hasMore: boolean;
+  totalCount: number;
+}
+
+function ChatContent() {
+  const searchParams = useSearchParams();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [renderKey, setRenderKey] = useState(0); // Force re-render trigger
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentSearch, setCurrentSearch] = useState<SearchState>({
+    query: '',
+    filters: {},
+    offset: 0,
+    hasMore: false,
+    totalCount: 0
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load conversation from URL parameter
+  useEffect(() => {
+    const chatId = searchParams.get('chat');
+    if (chatId) {
+      loadConversation(chatId);
+    }
+  }, [searchParams]);
+
+  // Load a conversation by ID
+  const loadConversation = async (conversationId: string) => {
+    try {
+      console.log('📥 Loading conversation:', conversationId);
+      setLoading(true);
+
+      // Fetch all messages for this conversation_id
+      const { data: chatMessages, error } = await supabase
+        .from('chat_history')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('❌ Error loading conversation:', error);
+        return;
+      }
+
+      if (chatMessages && chatMessages.length > 0) {
+        console.log('✅ Loaded', chatMessages.length, 'messages');
+        
+        // Convert database messages to chat format
+        const loadedMessages: Message[] = chatMessages.map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+          // Note: We don't restore courses from history, only the text
+        }));
+
+        setMessages(loadedMessages);
+      } else {
+        console.warn('⚠️ No messages found for conversation:', conversationId);
+      }
+    } catch (error) {
+      console.error('❌ Exception loading conversation:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -37,6 +123,26 @@ export default function Home() {
     
     const userMessage = exampleQuery || input;
     if (!userMessage.trim()) return;
+
+    // Check if user is asking for "more" courses
+    const isShowMoreRequest = /mehr|weitere|show more|nächste|next/i.test(userMessage);
+    
+    if (isShowMoreRequest && currentSearch.hasMore) {
+      // Handle "show more" request
+      await handleShowMore();
+      return;
+    }
+
+    // Reset search state on new query (unless it's a "show more" request)
+    if (!isShowMoreRequest) {
+      setCurrentSearch({
+        query: '',
+        filters: {},
+        offset: 0,
+        hasMore: false,
+        totalCount: 0
+      });
+    }
 
     // Create new user message
     const newUserMessage = { role: 'user' as const, content: userMessage };
@@ -71,40 +177,54 @@ export default function Home() {
 
       const data = await response.json();
 
-      // Debug logging
-      console.log('📥 API Response received:', {
+      // Debug: Log the API response
+      console.log('📥 API Response:', {
         hasMessage: !!data.message,
-        hasResponse: !!data.response,
         hasCourses: !!data.courses,
-        coursesCount: Array.isArray(data.courses) ? data.courses.length : 0,
-        coursesType: typeof data.courses
+        coursesLength: Array.isArray(data.courses) ? data.courses.length : 0,
+        coursesType: typeof data.courses,
+        coursesIsArray: Array.isArray(data.courses),
+        hasConversationId: !!data.conversation_id
       });
+
+      // Update URL with conversation_id if provided (for new conversations)
+      if (data.conversation_id && !searchParams.get('chat')) {
+        const newUrl = `/suchen?chat=${data.conversation_id}`;
+        window.history.pushState({}, '', newUrl);
+        console.log('🔗 Updated URL with conversation_id:', data.conversation_id);
+      }
 
       // Add AI response WITH courses if available
-      const aiMessage = { 
+      const assistantMessage: Message = { 
         role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: Array.isArray(data.courses) && data.courses.length > 0 ? data.courses : []
+        courses: Array.isArray(data.courses) ? data.courses : [],  // Ensure courses is always an array
+        searchMeta: data.searchMeta  // Include search metadata if available
       };
-
+      
       console.log('💬 Assistant message created:', {
-        contentLength: aiMessage.content.length,
-        coursesCount: aiMessage.courses?.length || 0,
-        coursesIsArray: Array.isArray(aiMessage.courses)
+        contentLength: assistantMessage.content.length,
+        coursesLength: assistantMessage.courses?.length || 0,
+        courses: assistantMessage.courses,
+        searchMeta: assistantMessage.searchMeta
       });
-
-      // Update messages state
-      setMessages(prev => {
-        const updated = [...prev, aiMessage];
-        console.log('✅ Messages state updated, total messages:', updated.length);
-        return updated;
-      });
-
-      // Force re-render if courses exist
-      if (aiMessage.courses && aiMessage.courses.length > 0) {
-        console.log('🔄 Triggering force re-render for', aiMessage.courses.length, 'courses');
-        setRenderKey(prev => prev + 1);
+      
+      // Save search state if search metadata is available
+      if (data.searchMeta) {
+        setCurrentSearch({
+          query: data.searchMeta.filters.query || '',
+          filters: data.searchMeta.filters,
+          offset: data.searchMeta.nextOffset || 10,
+          hasMore: data.searchMeta.hasMore,
+          totalCount: data.searchMeta.total
+        });
       }
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Trigger sidebar reload by dispatching a custom event
+      // This will tell ChatSidebar to reload conversations
+      window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -116,22 +236,132 @@ export default function Home() {
     }
   };
 
+  const startNewChat = () => {
+    setMessages([]);
+    setInput('');
+    setSidebarOpen(false);
+    setCurrentSearch({
+      query: '',
+      filters: {},
+      offset: 0,
+      hasMore: false,
+      totalCount: 0
+    });
+    // Clear URL parameter
+    window.history.pushState({}, '', '/suchen');
+    console.log('🆕 Started new chat - cleared URL');
+  };
+
+  const handleShowMore = async () => {
+    if (!currentSearch.hasMore || isLoadingMore) return;
+    
+    setIsLoadingMore(true);
+    
+    try {
+      const response = await fetch('/api/ai/search-courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: currentSearch.filters.query || '',
+          category: currentSearch.filters.category,
+          format: currentSearch.filters.format,
+          location: currentSearch.filters.location,
+          funding: currentSearch.filters.funding,
+          language: currentSearch.filters.language,
+          maxResults: 10,
+          offset: currentSearch.offset
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.courses && data.courses.length > 0) {
+        // Append new courses to the last assistant message
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastAssistantIndex = newMessages.length - 1;
+          
+          if (lastAssistantIndex >= 0 && newMessages[lastAssistantIndex].role === 'assistant') {
+            const lastMessage = newMessages[lastAssistantIndex];
+            newMessages[lastAssistantIndex] = {
+              ...lastMessage,
+              courses: [...(lastMessage.courses || []), ...data.courses]
+            };
+          }
+          
+          return newMessages;
+        });
+
+        // Update search state
+        setCurrentSearch(prev => ({
+          ...prev,
+          offset: data.nextOffset || prev.offset + 10,
+          hasMore: data.hasMore || false
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading more courses:', error);
+      // Add error message to chat
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Entschuldigung, es gab einen Fehler beim Laden weiterer Kurse. Bitte versuchen Sie es erneut.'
+      }]);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-[#FFFBF5]">
       
-      {/* Sidebar */}
-      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      {/* MOBILE STICKY HEADER - Only visible on mobile */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 lg:hidden">
+        <div className="flex items-center justify-between h-14 px-4">
+          {/* Hamburger button - left */}
+          <button 
+            onClick={() => setSidebarOpen(true)} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* Logo - center - Larger and clickable */}
+          <Link href="/suchen">
+            <Image 
+              src="/Assets/kursfind-ai-logo.jpg" 
+              width={40} 
+              height={40} 
+              alt="Kursfind AI"
+              className="rounded-lg cursor-pointer"
+            />
+          </Link>
+          
+          {/* New Chat button - right */}
+          <button 
+            onClick={startNewChat} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="New chat"
+          >
+            <svg className="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
-      {/* Floating Open Button (when sidebar is closed) */}
+      {/* DESKTOP: Floating Hamburger Button - Top Left - Hide when sidebar is open */}
       {!sidebarOpen && (
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setSidebarOpen(true);
-          }}
-          className="fixed top-4 left-4 z-40 p-2 bg-white border-2 border-gray-300 rounded-lg shadow-lg hover:bg-gray-50 hover:border-cyan-500 transition-all"
-          aria-label="Open sidebar"
+          onClick={() => setSidebarOpen(true)} 
+          className="hidden lg:flex fixed top-4 left-4 z-50 p-3 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all border border-gray-200"
+          aria-label="Open menu"
         >
           <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -139,13 +369,26 @@ export default function Home() {
         </button>
       )}
 
-      {/* Main Content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${
-        sidebarOpen ? 'ml-[260px]' : 'ml-0'
-      }`}>
+      {/* DESKTOP: Floating New Chat Button - Top Right */}
+      <button 
+        onClick={startNewChat} 
+        className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg hover:shadow-xl transition-all font-medium shadow-lg"
+        aria-label="New chat"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Neuer Chat</span>
+      </button>
+      
+      {/* Sidebar */}
+      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
-        {/* Chat Area */}
-        <main className="flex-1 overflow-y-auto">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+
+        {/* Chat Area - Add padding-top for mobile header only */}
+        <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
           <div className="max-w-4xl mx-auto px-4 py-8">
             
             {/* Show Welcome Screen if no messages */}
@@ -161,18 +404,18 @@ export default function Home() {
                     
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
-                      <div className="max-w-3xl bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 text-gray-900 rounded-2xl rounded-tr-sm px-6 py-4 shadow-lg">
-                        <p className="text-base leading-relaxed">{message.content}</p>
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-gradient-to-r from-cyan-50 to-emerald-50 border-2 border-cyan-200 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-lg">
+                        <p className="text-sm sm:text-base leading-relaxed">{message.content}</p>
                       </div>
                     )}
                     
                     {/* AI MESSAGE - WITH MARKDOWN RENDERING */}
                     {message.role === 'assistant' && (
-                      <div className="max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-lg border border-gray-200">
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] mr-auto bg-white rounded-2xl rounded-tl-sm px-4 sm:px-6 py-3 sm:py-4 shadow-lg border border-gray-200">
                         <div className="flex items-start gap-3">
                           <div className="relative flex-shrink-0">
                             <Image 
-                              src="/Assets/Kursfind-logo.png" 
+                              src="/Assets/kursfind-ai-logo.jpg" 
                               width={32} 
                               height={32}
                               className="rounded-lg animate-pulse"
@@ -183,12 +426,12 @@ export default function Home() {
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
                             {/* MARKDOWN CONTENT */}
-                            <div className="prose prose-sm max-w-none mb-4">
+                            <div className="prose prose-sm max-w-none mb-4 prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:!text-gray-900 prose-li:text-gray-700">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text
+                                  // Bold text - ensure it's dark and visible (use !important to override prose defaults)
                                   strong: ({node, ...props}) => (
-                                    <strong className="font-bold text-gray-900" {...props} />
+                                    <strong className="font-bold !text-gray-900" style={{ color: '#111827' }} {...props} />
                                   ),
                                   // Italic text
                                   em: ({node, ...props}) => (
@@ -237,17 +480,80 @@ export default function Home() {
                             </div>
 
                             {/* COURSE CARDS - NEW! */}
-                            {message.courses && message.courses.length > 0 && (
-                              <div className="space-y-3 mt-4" key={`courses-${renderKey}`}>
-                                {(() => {
-                                  console.log('🎴 Rendering', message.courses.length, 'course cards');
-                                  return message.courses.map((course: any, index: number) => {
-                                    console.log('  - Course', index + 1, ':', course.id, course.title);
-                                    return <ChatCourseCard key={`${course.id}-${renderKey}-${index}`} course={course} />;
-                                  });
-                                })()}
-                              </div>
-                            )}
+                            {(() => {
+                              const hasCourses = message.courses && Array.isArray(message.courses) && message.courses.length > 0;
+                              const searchMeta = message.searchMeta;
+                              // Show "Show More" button only on the last assistant message with courses and if there are more results
+                              const isLastMessage = idx === messages.length - 1;
+                              // Show "Show More" button if there are more results available
+                              const showMoreButton = (searchMeta?.hasMore || currentSearch.hasMore) && isLastMessage;
+                              
+                              if (!hasCourses && message.role === 'assistant') {
+                                console.log('🔍 No courses to render:', {
+                                  hasCoursesProp: !!message.courses,
+                                  coursesType: typeof message.courses,
+                                  coursesIsArray: Array.isArray(message.courses),
+                                  coursesLength: message.courses?.length || 0
+                                });
+                              }
+                              
+                              return hasCourses && message.courses ? (
+                                <div className="space-y-3 mt-4">
+                                  {/* Context message */}
+                                  {searchMeta && searchMeta.total > 0 && (
+                                    <p className="text-sm text-gray-600 mb-2">
+                                      {searchMeta.total > message.courses.length 
+                                        ? `Ich habe ${searchMeta.total} passende Kurse gefunden. Hier sind die ersten ${message.courses.length}:`
+                                        : `Ich habe ${message.courses.length} passende Kurse gefunden:`
+                                      }
+                                    </p>
+                                  )}
+                                  
+                                  {/* Course cards with full design */}
+                                  <div className="space-y-3">
+                                    {message.courses.map((course: any) => {
+                                      console.log('🎴 Rendering course card:', course.id, course.title);
+                                      return <ChatCourseCard key={`${course.id}-${idx}`} course={course} />;
+                                    })}
+                                  </div>
+                                  
+                                  {/* Show More Button */}
+                                  {showMoreButton && (
+                                    <div className="mt-4 flex items-center justify-center">
+                                      <button
+                                        onClick={handleShowMore}
+                                        disabled={isLoadingMore}
+                                        className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg hover:from-cyan-600 hover:to-emerald-600 transition-all font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                      >
+                                        {isLoadingMore ? (
+                                          <>
+                                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span>Lade weitere Kurse...</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <span>
+                                              {currentSearch.totalCount > 0 
+                                                ? `Weitere ${Math.max(0, currentSearch.totalCount - currentSearch.offset)} Kurse anzeigen`
+                                                : searchMeta?.total 
+                                                  ? `Weitere ${Math.max(0, searchMeta.total - (message.courses?.length || 0))} Kurse anzeigen`
+                                                  : 'Weitere Kurse anzeigen'
+                                              }
+                                            </span>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                          </>
+                                        )}
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : null;
+                            })()}
                           </div>
                         </div>
                       </div>
@@ -305,7 +611,7 @@ export default function Home() {
                   // Shift+Enter allows new line (default behavior)
                 }}
                 placeholder="z.B. Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein..."
-                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 focus:outline-none shadow-lg text-gray-900 placeholder-gray-500 leading-relaxed"
+                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 focus:outline-none shadow-lg text-gray-900 placeholder-gray-500 leading-relaxed bg-[#FFFBF5]"
                 disabled={loading}
                 rows={1}
               />
@@ -327,5 +633,20 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Lade Chat...</p>
+        </div>
+      </div>
+    }>
+      <ChatContent />
+    </Suspense>
   );
 }

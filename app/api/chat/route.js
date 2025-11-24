@@ -1,4 +1,6 @@
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-server'
+import { extractSearchIntent } from '../ai/extract-intent'
 
 // Detect the language of the user's message
 function detectLanguage(text) {
@@ -27,6 +29,44 @@ export async function POST(req) {
     // Support both old format (message) and new format (messages array)
     const { message, messages, courseContext } = body
     
+    console.log('🔵 API /chat called');
+    console.log('📨 Request body:', {
+      hasMessage: !!message,
+      hasMessages: !!messages,
+      messagesLength: Array.isArray(messages) ? messages.length : 0,
+      hasCourseContext: !!courseContext
+    });
+    
+    // Get current user for chat history saving
+    // SECURITY: We use students.id (int8) not auth_user_id (uuid) for chat_history.student_id
+    // This ensures proper foreign key relationship and data isolation per student
+    const supabaseServer = await createClient()
+    const { data: { user } } = await supabaseServer.auth.getUser()
+    let studentId = null
+    
+    console.log('👤 API User check:', user ? `Logged in (${user.id})` : 'Not logged in');
+    
+    if (user) {
+      // Lookup student by auth_user_id (uuid) to get students.id (int8)
+      // students table: id (int8, PK) | auth_user_id (uuid, FK to auth.users)
+      const { data: studentData, error: studentError } = await supabaseServer
+        .from('students')
+        .select('id') // Get students.id (int8) - this is the primary key used in chat_history.student_id
+        .eq('auth_user_id', user.id) // Lookup by auth_user_id (uuid) to find the student
+        .single()
+      
+      if (studentError) {
+        console.error('❌ Error fetching student for chat history:', studentError)
+      } else if (studentData?.id) {
+        studentId = studentData.id // Use students.id (int8) - ensures proper foreign key relationship
+        console.log('✅ Student ID found for chat history:', studentId)
+      } else {
+        console.warn('⚠️ No student record found for user:', user.id)
+      }
+    } else {
+      console.log('⚠️ No user logged in, chat history will not be saved');
+    }
+    
     // Get the latest user message
     const latestMessage = messages ? messages[messages.length - 1]?.content : message
 
@@ -34,8 +74,10 @@ export async function POST(req) {
 
     let courses = []
     let shouldShowCourses = false
+    let totalCount = 0  // Total count of courses in database
     let aiSystemPrompt = ''
     let aiUserPrompt = ''
+    let searchIntent = null  // Search intent for "Show More" functionality
 
     if (isCourseQuestion) {
       // Detect user's language
@@ -186,72 +228,126 @@ Antworte auf DEUTSCH.`
         searchTerms.includes('how many') ||
         searchTerms.includes('wie viele')
 
+      // Extract user intent from message (available for both search and non-search)
       if (isCourseSearch) {
         shouldShowCourses = true
+        console.log('🔍 Course search detected, will use smart search')
         
-        console.log('🔍 Course search detected, querying database BEFORE AI response...')
+        // Extract user intent from message
+        searchIntent = extractSearchIntent(latestMessage)
+        console.log('🎯 Extracted search intent:', searchIntent)
         
-        // 🔴 CRITICAL FIX: Search database FIRST, before AI generates response
-        // Build search intent from user message
-        const searchIntent = {
-          query: latestMessage,
-          maxResults: 10  // Get up to 10 courses for better selection
-        }
+        // Check if user is asking ONLY about count/total (don't show courses, just answer)
+        const isCountQuestion = (searchTerms.includes('total') || searchTerms.includes('alle') || 
+                                 searchTerms.includes('how many') || searchTerms.includes('wie viele')) &&
+                                !searchTerms.includes('show') && !searchTerms.includes('zeig') &&
+                                !searchTerms.includes('find') && !searchTerms.includes('suche')
         
-        // Extract specific filters from search terms
-        if (searchTerms.includes('berlin')) {
-          searchIntent.location = 'Berlin'
-        } else if (searchTerms.includes('münchen') || searchTerms.includes('munich')) {
-          searchIntent.location = 'München'
-        } else if (searchTerms.includes('hamburg')) {
-          searchIntent.location = 'Hamburg'
-        } else if (searchTerms.includes('köln') || searchTerms.includes('cologne')) {
-          searchIntent.location = 'Köln'
-        } else if (searchTerms.includes('frankfurt')) {
-          searchIntent.location = 'Frankfurt'
-        }
-        
-        // Extract category/topic
-        if (searchTerms.includes('marketing')) {
-          searchIntent.category = 'Marketing'
-        } else if (searchTerms.includes('web') || searchTerms.includes('entwicklung') || searchTerms.includes('developer')) {
-          searchIntent.category = 'Web Development'
-        } else if (searchTerms.includes('data') || searchTerms.includes('daten')) {
-          searchIntent.category = 'Data Science'
-        } else if (searchTerms.includes('design') || searchTerms.includes('ux') || searchTerms.includes('ui')) {
-          searchIntent.category = 'Design'
-        } else if (searchTerms.includes('python')) {
-          searchIntent.category = 'Python'
-        } else if (searchTerms.includes('javascript') || searchTerms.includes('js')) {
-          searchIntent.category = 'JavaScript'
-        }
-        
-        // Call the smart search API
-        try {
-          const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'
-          const searchResponse = await fetch(`${baseUrl}/api/ai/search-courses`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(searchIntent)
-          })
-          
-          if (searchResponse.ok) {
-            const searchData = await searchResponse.json()
-            courses = searchData.courses || []
-            courses.totalCount = searchData.total || 0
-            courses.hasMore = searchData.hasMore || false
+        if (!isCountQuestion) {
+          // Use smart search API
+          try {
+            const searchResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/ai/search-courses`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                query: searchIntent.query,
+                category: searchIntent.category,
+                format: searchIntent.format,
+                location: searchIntent.location,
+                funding: searchIntent.funding,
+                language: searchIntent.language,
+                maxResults: 10,
+                offset: 0
+              })
+            })
             
-            console.log(`✅ Database search complete: Found ${courses.length} courses to show (${courses.totalCount} total match)`)
-          } else {
-            console.error('❌ Search API failed, falling back to empty results')
-            courses = []
-            courses.totalCount = 0
+            if (searchResponse.ok) {
+              const searchData = await searchResponse.json()
+              courses = searchData.courses || []
+              totalCount = searchData.total || 0
+              console.log('✅ Smart search results:', {
+                found: courses.length,
+                total: totalCount,
+                hasMore: searchData.hasMore
+              })
+              // Store search metadata for "Show More" functionality
+              if (searchIntent) {
+                searchIntent.hasMore = searchData.hasMore
+                searchIntent.nextOffset = searchData.nextOffset || 10
+                searchIntent.total = totalCount
+              }
+            } else {
+              console.warn('Smart search API failed, falling back to basic search')
+              // Fallback to basic search if API fails
+              const { count: countResult } = await supabase
+                .from('courses')
+                .select('*', { count: 'exact', head: true })
+              totalCount = countResult || 0
+              
+              let query = supabase.from('courses').select(`
+                *,
+                providers!courses_provider_id_fkey(
+                  provider_id,
+                  company_name,
+                  logo_url,
+                  name:company_name
+                )
+              `).limit(10)
+              
+              const { data, error } = await query
+              if (!error && data) {
+                courses = data
+              }
+            }
+          } catch (apiError) {
+            console.error('Error calling smart search API:', apiError)
+            // Fallback to basic search
+            const { count: countResult } = await supabase
+              .from('courses')
+              .select('*', { count: 'exact', head: true })
+            totalCount = countResult || 0
+            
+            let query = supabase.from('courses').select(`
+              *,
+              providers!courses_provider_id_fkey(
+                provider_id,
+                company_name,
+                logo_url,
+                name:company_name
+              )
+            `).limit(10)
+            
+            const { data, error } = await query
+            if (!error && data) {
+              courses = data
+            }
           }
-        } catch (error) {
-          console.error('❌ Search API error:', error)
+        } else {
+          // Just get count for count questions
+          const { count: countResult } = await supabase
+            .from('courses')
+            .select('*', { count: 'exact', head: true })
+          totalCount = countResult || 0
           courses = []
-          courses.totalCount = 0
         }
+
+        // Log search results
+        if (courses.length > 0) {
+          console.log('✅ Courses fetched successfully:', courses.length, 'courses')
+          const firstCourse = courses[0]
+          console.log('📋 First course sample:', {
+            id: firstCourse.id,
+            title: firstCourse.title,
+            category: firstCourse.category,
+            location: firstCourse.location,
+            hasProvider: !!firstCourse.providers
+          })
+        } else {
+          console.log('⚠️ No courses found for search intent:', searchIntent)
+        }
+        
+        // Store total count for AI to reference
+        // Note: totalCount is used in courseSummary generation, not returned to frontend
       }
 
       const courseSummary = shouldShowCourses && courses.length > 0
@@ -3425,12 +3521,8 @@ Beispiel: "Data Scientists verdienen in Deutschland durchschnittlich 55.000-75.0
 ✅ Sei präzise und auf den Punkt
 
 ═══════════════════════════════════════════════════════════════
-📋 <TRAINING_EXAMPLES> - NICHT ALS ECHTE KURSE VERWENDEN!
+📋 BEISPIELE FÜR PERFEKTE ANTWORTEN
 ═══════════════════════════════════════════════════════════════
-
-🔴 WARNUNG: Die folgenden Beispiele dienen NUR zur Illustration des richtigen Formats.
-Dies sind KEINE echten Kurse aus der Datenbank!
-Verwende NIEMALS Kurse aus diesem Abschnitt in deinen Antworten!
 
 ❌ FALSCH (zu lang, vergisst Hauptaufgabe):
 User: "Data Science Bootcamp?"
@@ -3461,9 +3553,6 @@ AI: "Für Anfänger ohne Vorkenntnisse empfehle ich Kurse, die mit Python-Grundl
 ✅ RICHTIG (Finanzierungsfrage):
 User: "Kann ich das über Bildungsgutschein finanzieren?"
 AI: "Ja, die meisten Kurse auf Kursfind AI sind AZAV-zertifiziert und über Bildungsgutschein der Agentur für Arbeit oder des Jobcenters förderfähig. Du brauchst: 1) Beratungstermin vereinbaren, 2) Notwendigkeit nachweisen, 3) Gutschein beantragen. Welche Kurse interessieren dich?"
-
-</TRAINING_EXAMPLES>
-═══════════════════════════════════════════════════════════════
 
 ═══════════════════════════════════════════════════════════════
 🎯 EXPERTISE-BEREICHE (Nur wenn gefragt)
@@ -3515,134 +3604,86 @@ Bei komplexen Themen: Kurze Zusammenfassung, dann fragen: "Möchtest du eine det
 🎴 IMPORTANT: COURSE DISPLAY INSTRUCTIONS
 ═══════════════════════════════════════════════════════════════
 
-🚨 CRITICAL: COURSES ARE DISPLAYED AUTOMATICALLY!
-═══════════════════════════════════════════════════════════════
+When you find relevant courses to recommend, you MUST use this special format:
 
-DO NOT USE [SHOW_COURSES] MARKER - IT'S DEPRECATED!
+FORMAT TO USE:
+First, write your introductory text (1-2 sentences).
+Then write exactly: [SHOW_COURSES]
+Then list course IDs in JSON format: {"courseIds": [1, 2, 3]}
+Then write your follow-up text/questions.
 
-The system automatically displays course cards based on the database query results.
-Your role is to provide context and guidance, not to manually list courses.
+EXAMPLE OUTPUT:
+"Ich habe 3 passende Data Science Bootcamps für dich gefunden:
 
-WHAT YOU SHOULD DO:
-- State how many courses were found (exact number)
-- Give brief guidance on which type suits different learners
-- Ask clarifying questions to help users choose
-- Keep responses SHORT (2-3 sentences) - details are in the cards
+[SHOW_COURSES]
+{"courseIds": [1, 5, 12]}
 
-WHAT YOU SHOULD NOT DO:
-- Use [SHOW_COURSES] marker (deprecated)
-- List course IDs manually
-- Repeat course details (they're in the cards)
-- Say vague terms like "mehrere" or "einige" - say exact number
+Möchtest du wissen, welcher für Anfänger geeignet ist?"
 
-CORRECT EXAMPLE:
-"Ich habe 5 passende Data Science Bootcamps gefunden. Die Kurskarten erscheinen unter dieser Nachricht.
-
-Für Anfänger empfehle ich die Fullstack-Programme, für Fortgeschrittene die ML-Spezialisierungen. Hast du bereits Programmiererfahrung?"`
+CRITICAL RULES:
+- Always use [SHOW_COURSES] marker when recommending courses
+- Always include course IDs in JSON format
+- Maximum 3-4 courses per response
+- Only show courses that exist in the database
+- Keep your text short and conversational`
 
       // For new messages array format, inject course context into system prompt
       if (messages && shouldShowCourses) {
-        const totalCount = courses.totalCount || 0
+        // totalCount is available from the query above
+        // searchIntent is already extracted above if isCourseSearch is true
+        const currentSearchIntent = searchIntent || extractSearchIntent(latestMessage)
         
         if (courses.length > 0) {
+          const appliedFilters = []
+          if (currentSearchIntent?.category) appliedFilters.push(`Kategorie: ${currentSearchIntent.category}`)
+          if (currentSearchIntent?.location) appliedFilters.push(`Standort: ${currentSearchIntent.location}`)
+          if (currentSearchIntent?.format) appliedFilters.push(`Format: ${currentSearchIntent.format}`)
+          if (currentSearchIntent?.funding) appliedFilters.push(`Finanzierung: ${currentSearchIntent.funding}`)
+          if (currentSearchIntent?.language) appliedFilters.push(`Sprache: ${currentSearchIntent.language}`)
+          if (currentSearchIntent?.query) appliedFilters.push(`Suchbegriff: ${currentSearchIntent.query}`)
+          
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
 📚 LIVE-DATENBANK: VERFÜGBARE KURSE GEFUNDEN!
 ═══════════════════════════════════════════════════════════════
 
-🔴 KRITISCH: Diese ${courses.length} Kurse werden AUTOMATISCH als Karten angezeigt!
-Sie wurden GERADE EBEN aus unserer Supabase-Datenbank abgerufen!
+🔴 WICHTIG: Diese Kurse wurden GERADE EBEN aus unserer Supabase-Datenbank abgerufen!
+Sie sind ECHT, AKTUELL und können direkt gebucht werden!
 
 DATABASE INFO:
 - Total courses in database: ${totalCount}
-- Matching courses that WILL BE DISPLAYED: ${courses.length}
-- These course cards will appear BELOW your message
+- Matching courses found: ${courses.length}
+${appliedFilters.length > 0 ? `- Angewendete Filter: ${appliedFilters.join(', ')}` : ''}
 
-GEFUNDENE KURSE (die dem Nutzer angezeigt werden):
-${courses.map(c => `ID: ${c.id} - "${c.title}" in ${c.location || 'N/A'}${c.provider ? ' by ' + c.provider : ''}`).join('\n')}
+GEFUNDENE KURSE (verwende diese IDs beim Empfehlen):
+${courses.map(c => {
+  const provider = Array.isArray(c.providers) ? c.providers[0] : c.providers
+  const providerName = provider?.company_name || provider?.name || c.provider || 'Anbieter'
+  return `ID: ${c.id} - "${c.title}" by ${providerName} in ${c.location || 'N/A'}${c.category ? ` (${c.category})` : ''}`
+}).join('\n')}
 
-�🔴🔴 KRITISCHE REGEL - NIEMALS VERGESSEN! 🔴🔴🔴
-═══════════════════════════════════════════════════════════════
-
-DU DARFST NUR KURSE ZEIGEN, DIE IN DER OBIGEN LISTE STEHEN!
-
-- Diese ${courses.length} Kurse kommen aus der echten Datenbank
-- Diese IDs (${courses.map(c => c.id).join(', ')}) sind die EINZIGEN Kurse, die existieren
-- NIEMALS Kurse aus <TRAINING_EXAMPLES> verwenden
-- NIEMALS eigene Kurs-IDs erfinden
-- NIEMALS sagen "Ich zeige dir Kurs ID 10, 16, 23" - diese existieren nicht!
-- Wenn keine Kurse gefunden wurden, ehrlich sagen "Keine Kurse gefunden"
-
-DIESE KURSE WERDEN AUTOMATISCH ANGEZEIGT - Du musst sie NICHT auflisten!
-
-═══════════════════════════════════════════════════════════════
-
-�🚨 ABSOLUTE REQUIREMENTS - MUST FOLLOW EXACTLY:
-1. 🔴 START YOUR RESPONSE WITH THIS EXACT SENTENCE:
-   "Ich habe ${courses.length} passende Kurs${courses.length !== 1 ? 'e' : ''} gefunden:"
-   
-2. 🔴 NEVER say different numbers like "3 Kurse" when ${courses.length} courses exist
-   - If ${courses.length} = 5, you MUST say "5 Kurse"
-   - If ${courses.length} = 1, you MUST say "1 Kurs"
-   - NEVER use vague terms like "mehrere", "einige", "ein paar"
-   
-3. The course cards will appear AUTOMATICALLY below your message
-   
-4. Keep your response SHORT (2-3 sentences max) - details are in the cards
-   
-5. Give brief guidance on which courses suit different learners
-   
-6. DO NOT use [SHOW_COURSES] marker (deprecated and will break the system)
-
-EXAMPLE RESPONSE STRUCTURE:
-"Ich habe ${courses.length} passende ${courses[0]?.title?.includes('Web') ? 'Web-Entwicklung' : courses[0]?.title?.includes('Data') ? 'Data Science' : courses[0]?.title?.includes('Marketing') ? 'Marketing' : ''} Kurs${courses.length !== 1 ? 'e' : ''} gefunden: Die Kurskarten erscheinen gleich unter dieser Nachricht.
-
-${courses.length > 3 ? 'Die meisten sind Vollzeit-Bootcamps.' : 'Diese Kurse decken verschiedene Niveaus ab.'} Welches Format passt besser zu dir?"
-
-🔴 CRITICAL: Your response MUST start with "Ich habe ${courses.length} passende Kurse gefunden:" - this ensures accuracy!
+DEINE AUFGABE:
+1. Zeige diese Kurse dem Nutzer (mit [SHOW_COURSES] Format)
+2. Empfehle die passendsten basierend auf der Anfrage
+3. Sage NIEMALS "Ich kann nicht suchen" - Die Suche ist bereits erfolgt!
+4. Stelle sicher, dass die gezeigten Kurse zur Anfrage passen (z.B. nur IT-Kurse wenn nach IT gefragt wurde)
+5. Wenn mehr als 10 Kurse gefunden wurden, erwähne: "Es gibt noch X weitere Kurse. Möchtest du mehr sehen?"
+6. Beginne mit einer kontextuellen Einleitung: "Ich habe ${courses.length} passende ${currentSearchIntent?.category ? currentSearchIntent.category + ' ' : ''}Kurs${courses.length > 1 ? 'e' : ''} für dich gefunden:"
 
 KURS-DETAILS:
 ${courseSummary}
 
-Nutze diese Info für deine Empfehlung, aber WIEDERHOLE NICHT alle Details - die stehen in den Karten!`
+Nutze diese Kurse in deiner Antwort. Analysiere sie aus Expertensicht und gib konkrete Empfehlungen.`
         } else {
-          // No courses found matching the criteria OR user just asked for count
+          // User asked about count/total but we don't need to show courses
           aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
-📊 KEINE KURSE GEFUNDEN / NUR STATISTIK
+📊 DATENBANK-STATISTIK
 ═══════════════════════════════════════════════════════════════
 
 DATABASE INFO:
-- Total courses in database: ${totalCount}
-- Matching courses found: 0
+- Total courses available: ${totalCount}
 
-🚨 WICHTIG: KEINE Kurskarten werden angezeigt!
-
-🔴🔴🔴 KRITISCHE REGEL - WENN KEINE KURSE GEFUNDEN 🔴🔴🔴
-═══════════════════════════════════════════════════════════════
-
-Die Datenbank hat 0 passende Kurse gefunden!
-
-- NIEMALS Kurse aus <TRAINING_EXAMPLES> als Alternative anbieten
-- NIEMALS eigene Kurs-IDs erfinden (z.B. "Versuch mal Kurs 10, 16, 23")
-- NIEMALS sagen "Ich zeige dir diese Kurse:" wenn keine existieren
-- Sei EHRLICH: "Keine Kurse gefunden"
-
-═══════════════════════════════════════════════════════════════
-
-DEINE AUFGABE:
-Wenn der Nutzer nach spezifischen Kursen gefragt hat (z.B. "Zeig mir Pflegehelfer Kurse"):
-- Erkläre, dass aktuell keine Kurse zu diesen Kriterien verfügbar sind
-- Biete Alternativen an (andere Standorte, Formate, verwandte Themen)
-- Frage, was am wichtigsten ist (Standort? Thema? Format?)
-
-Wenn der Nutzer nur nach der Anzahl gefragt hat (z.B. "Wie viele Kurse gibt es?"):
-- Antworte mit der genauen Zahl: ${totalCount} Kurse
-- Biete an, spezifische Kurse zu zeigen
-
-BEISPIELE:
-Für Suche: "Leider habe ich keine Pflegehelfer-Kurse in Berlin gefunden. Darf ich Alternativen vorschlagen?"
-Für Count: "Insgesamt haben wir ${totalCount} Kurse in der Datenbank. Nach welchen Kursen suchst du?"
-
-SAGE NIEMALS "Ich zeige dir die Kurse" wenn keine gefunden wurden!`
+Der Nutzer fragt nach der Anzahl oder Verfügbarkeit von Kursen.
+Antworte mit der genauen Zahl (${totalCount} Kurse) und biete an, spezifische Kurse zu zeigen wenn gewünscht.`
         }
       }
 
@@ -3696,32 +3737,6 @@ ${shouldShowCourses && courses.length === 0 ? 'Hinweis: Keine passenden Kurse in
 Gib praktische, konkrete Ratschläge aus deiner Expertise. Antworte auf DEUTSCH.`)
     }
 
-    // 🔴 Track previously shown course IDs for conversation memory
-    let shownCourseIds = []
-    if (messages && messages.length > 0) {
-      messages.forEach(msg => {
-        if (msg.role === 'assistant' && msg.courses && Array.isArray(msg.courses)) {
-          shownCourseIds.push(...msg.courses.map(c => c.id))
-        }
-      })
-      console.log(`📝 Conversation memory: Previously shown ${shownCourseIds.length} course IDs: [${shownCourseIds.join(', ')}]`)
-    }
-    
-    // Add conversation memory to system prompt if we have shown courses before
-    if (shownCourseIds.length > 0) {
-      aiSystemPrompt += `\n\n═══════════════════════════════════════════════════════════════
-📝 KONVERSATIONS-SPEICHER
-═══════════════════════════════════════════════════════════════
-
-In dieser Konversation wurden bereits folgende Kurse gezeigt:
-Kurs-IDs: [${shownCourseIds.join(', ')}]
-
-🔴 REGEL: Versuche in Folge-Antworten KEINE bereits gezeigten Kurse zu wiederholen,
-es sei denn der Nutzer fragt explizit danach.
-
-═══════════════════════════════════════════════════════════════`
-    }
-
     const aiResponse = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
@@ -3749,16 +3764,290 @@ es sei denn der Nutzer fragt explizit danach.
     }
 
     const aiData = await aiResponse.json()
-    const aiMessage = aiData.choices[0].message.content
+    let aiMessage = aiData.choices[0].message.content
 
-    // 🔴 CRITICAL: Courses were already fetched BEFORE AI response
-    // No need to parse markers or fetch again - just return what we have
-    console.log(`✅ AI response generated. Attaching ${shouldShowCourses && courses ? courses.length : 0} courses`)
+    // Parse AI response to extract course IDs
+    const coursePattern = /\[SHOW_COURSES\]\s*\n?\s*(\{[^}]+\})/
+    const match = aiMessage.match(coursePattern)
+    
+    let coursesToShow = []
+    
+    if (match) {
+      try {
+        const courseData = JSON.parse(match[1])
+        const courseIds = courseData.courseIds
+        
+        // Fetch full course details for the IDs including provider data
+        let { data: matchedCourses, error } = await supabase
+          .from('courses')
+          .select(`
+            *,
+            language,
+            subtitle,
+            duration_hours,
+            providers(
+              provider_id,
+              company_name,
+              logo_url,
+              name:company_name
+            )
+          `)
+          .in('id', courseIds)
+        
+        // If provider join fails, fetch providers separately
+        if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
+          console.warn('Provider join failed for coursesToShow, fetching separately:', error.message)
+          const { data: coursesWithoutProviders } = await supabase
+            .from('courses')
+            .select('*, language, subtitle, duration_hours')
+            .in('id', courseIds)
+          
+          if (coursesWithoutProviders) {
+            // Fetch providers separately for each course
+            matchedCourses = await Promise.all(
+              coursesWithoutProviders.map(async (course) => {
+                if (course.provider_id) {
+                  const { data: providerData } = await supabase
+                    .from('providers')
+                    .select('provider_id, company_name, logo_url')
+                    .eq('provider_id', course.provider_id)
+                    .single()
+                  
+                  if (providerData) {
+                    return {
+                      ...course,
+                      providers: {
+                        provider_id: providerData.provider_id,
+                        company_name: providerData.company_name,
+                        logo_url: providerData.logo_url,
+                        name: providerData.company_name
+                      }
+                    }
+                  }
+                }
+                return course
+              })
+            )
+            error = null
+          }
+        }
+        
+        if (!error && matchedCourses) {
+          coursesToShow = matchedCourses
+          console.log('✅ coursesToShow fetched with providers:', coursesToShow.length, 'courses')
+          if (coursesToShow.length > 0 && coursesToShow[0].providers) {
+            console.log('📋 Sample provider:', coursesToShow[0].providers.company_name)
+          }
+        }
+        
+        // Remove the [SHOW_COURSES] marker from message
+        aiMessage = aiMessage.replace(coursePattern, '').trim()
+        
+      } catch (e) {
+        console.error('Error parsing course IDs:', e)
+      }
+    }
 
-    return Response.json({
-      message: aiMessage,
-      courses: shouldShowCourses ? courses : null
+    // Determine which courses to return
+    // Priority: coursesToShow (from AI parsing) > courses (from search) > null
+    let coursesToReturn = null
+    
+    if (coursesToShow.length > 0) {
+      // AI explicitly requested specific courses via [SHOW_COURSES] marker
+      coursesToReturn = coursesToShow
+      console.log('✅ Returning courses from AI parsing:', coursesToShow.length)
+    } else if (shouldShowCourses && Array.isArray(courses)) {
+      // Return courses from search if shouldShowCourses is true
+      // Return courses array even if empty - frontend will handle it
+      coursesToReturn = courses
+      if (courses.length > 0) {
+        console.log('✅ Returning courses from search:', courses.length, 'courses')
+        console.log('📋 Sample course IDs:', courses.slice(0, 3).map(c => c.id))
+      } else {
+        console.log('⚠️ shouldShowCourses is true but courses array is empty')
+      }
+    }
+    
+    // Debug logging
+    console.log('📤 Final course return debug:', {
+      coursesToShowLength: coursesToShow.length,
+      shouldShowCourses,
+      coursesLength: Array.isArray(courses) ? courses.length : 0,
+      coursesToReturnLength: coursesToReturn?.length || 0,
+      coursesIsArray: Array.isArray(courses),
+      coursesType: typeof courses,
+      coursesToReturnType: typeof coursesToReturn,
+      coursesToReturnIsArray: Array.isArray(coursesToReturn)
     })
+    
+    // Prepare response with search metadata if available
+    const responseData = {
+      message: aiMessage,
+      courses: coursesToReturn || [],  // Return courses array or empty array
+      response: aiMessage  // Also include as 'response' for compatibility
+    }
+    
+    // Include search metadata if this was a course search
+    if (shouldShowCourses && searchIntent && typeof searchIntent.hasMore !== 'undefined') {
+      responseData.searchMeta = {
+        hasMore: searchIntent.hasMore || false,
+        nextOffset: searchIntent.nextOffset || 10,
+        total: searchIntent.total || totalCount || 0,
+        filters: {
+          query: searchIntent.query || '',
+          category: searchIntent.category || undefined,
+          format: searchIntent.format || undefined,
+          location: searchIntent.location || undefined,
+          funding: searchIntent.funding || undefined,
+          language: searchIntent.language || undefined
+        }
+      }
+    }
+    
+    // Save chat history for logged-in students
+    // SECURITY: Only save if studentId is valid (students.id int8)
+    // This ensures chat_history is always linked to the correct student
+    
+    // IMPORTANT: Add AI response to messages array before saving
+    // The messages array from frontend only includes up to the user's question
+    // We need to add the AI response so it gets saved to the database
+    const messagesWithAIResponse = messages ? [...messages, { role: 'assistant', content: aiMessage }] : [];
+    
+    console.log('🔍 Chat history save check:', {
+      hasStudentId: !!studentId,
+      studentIdType: typeof studentId,
+      studentIdValue: studentId,
+      hasMessages: !!messagesWithAIResponse,
+      isMessagesArray: Array.isArray(messagesWithAIResponse),
+      messagesLength: messagesWithAIResponse.length,
+      includesAIResponse: true
+    });
+    
+    if (studentId && typeof studentId === 'number' && messagesWithAIResponse && Array.isArray(messagesWithAIResponse) && messagesWithAIResponse.length > 0) {
+      try {
+        console.log('💾 ✅ All conditions met! Attempting to save chat history for student ID:', studentId, '(type:', typeof studentId, ')');
+        console.log('💾 Messages count:', messagesWithAIResponse.length);
+        
+        // Get the first user message as conversation title (for new conversations)
+        const firstUserMessage = messagesWithAIResponse.find(m => m.role === 'user')
+        const conversationTitle = firstUserMessage?.content?.substring(0, 100) || 'Neue Konversation'
+        console.log('💾 Conversation title:', conversationTitle);
+        console.log('💾 Total messages in request:', messagesWithAIResponse.length);
+        
+        // Check if we're continuing an existing conversation
+        // Look for messages in the last 10 minutes to determine if this is the same session
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+        
+        // SECURITY: Query existing conversation - MUST filter by student_id to ensure data isolation
+        const { data: existingConversation, error: queryError } = await supabaseServer
+          .from('chat_history')
+          .select('conversation_id, conversation_title')
+          .eq('student_id', studentId) // CRITICAL: Filter by student.id (int8)
+          .gte('created_at', tenMinutesAgo)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        
+        if (queryError) {
+          console.error('❌ Error querying existing conversation:', queryError);
+        }
+        
+        // Determine if we should create a new conversation or continue existing one
+        // NEW conversation if:
+        // 1. No existing conversation found (first message)
+        // 2. Messages array length is 2 (indicates "Neue Suche" was clicked - first exchange)
+        const isNewConversation = !existingConversation || messagesWithAIResponse.length === 2;
+        
+        let conversationId;
+        let finalTitle;
+        
+        if (isNewConversation) {
+          // Generate new conversation_id for new conversation
+          conversationId = crypto.randomUUID()
+          finalTitle = conversationTitle
+          console.log('➕ Creating NEW conversation:', conversationId);
+          console.log('   Reason:', !existingConversation ? 'No existing conversation' : 'Fresh start (messagesWithAIResponse.length === 2)');
+          
+          // For NEW conversation, save ALL messages
+          var messagesToSave = messagesWithAIResponse;
+        } else {
+          // Continue existing conversation
+          conversationId = existingConversation.conversation_id
+          finalTitle = existingConversation.conversation_title
+          console.log('📝 Continuing existing conversation:', conversationId);
+          
+          // For CONTINUING conversation, check which messages are already saved
+          // Get count of messages already in database for this conversation
+          const { count: existingMessageCount } = await supabaseServer
+            .from('chat_history')
+            .select('*', { count: 'exact', head: true })
+            .eq('conversation_id', conversationId)
+          
+          console.log('💾 Messages already in DB:', existingMessageCount);
+          console.log('💾 Messages in current request:', messagesWithAIResponse.length);
+          
+          // Save only the NEW messages (messages that aren't in DB yet)
+          // Example: If DB has 4 messages and request has 6, save the last 2
+          const newMessageCount = messagesWithAIResponse.length - (existingMessageCount || 0);
+          var messagesToSave = newMessageCount > 0 ? messagesWithAIResponse.slice(-newMessageCount) : [];
+          
+          console.log('💾 NEW messages to save:', messagesToSave.length);
+        }
+        
+        // If no new messages to save, skip insert
+        if (messagesToSave.length === 0) {
+          console.log('⚠️ No new messages to save - all messages already in database');
+          // Don't return early - still need to add conversation_id to response
+        } else {
+        
+        // Prepare messages for insert
+        // Database structure: one row per message with conversation_id linking them
+        const messagesToInsert = messagesToSave.map(msg => ({
+          student_id: studentId, // CRITICAL: Use students.id (int8)
+          conversation_id: conversationId,
+          conversation_title: finalTitle,
+          role: msg.role, // 'user' or 'assistant'
+          content: msg.content,
+          course_context_id: courseContext?.id || null,
+          page_url: courseContext?.url || null,
+          created_at: new Date().toISOString()
+        }))
+        
+          console.log('💾 Inserting messages:', messagesToInsert.length);
+          console.log('💾 Message roles:', messagesToInsert.map(m => m.role).join(', '));
+          
+          // SECURITY: Insert messages - student_id ensures data isolation
+          const { data: insertData, error: insertError } = await supabaseServer
+            .from('chat_history')
+            .insert(messagesToInsert)
+            .select()
+          
+          if (insertError) {
+            console.error('❌ Error inserting chat history:', insertError);
+            console.error('Insert error details:', insertError.message, insertError.code, insertError.details);
+            console.error('Insert error hint:', insertError.hint);
+          } else {
+            console.log('✅ Chat history saved successfully:', insertData?.length, 'messages');
+          }
+        }
+        
+        // Add conversation_id to response so frontend can update URL
+        responseData.conversation_id = conversationId;
+      } catch (saveError) {
+        // Don't fail the request if saving chat history fails
+        console.error('❌ Exception saving chat history:', saveError);
+        console.error('Exception details:', saveError.message, saveError.stack);
+      }
+    } else {
+      if (!studentId) {
+        console.log('⚠️ No studentId available - chat history not saved');
+      }
+      if (!messagesWithAIResponse || !Array.isArray(messagesWithAIResponse) || messagesWithAIResponse.length === 0) {
+        console.log('⚠️ No messages available - chat history not saved');
+      }
+    }
+    
+    return Response.json(responseData)
 
   } catch (error) {
     console.error('API Error:', error)
