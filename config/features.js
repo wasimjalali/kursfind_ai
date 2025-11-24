@@ -12,14 +12,23 @@
 
 export const FEATURES = {
   // ══════════════════════════════════════════════════════════════
-  // SMART CARD ORDERING
+  // SMART CARD ORDERING (ENHANCED)
   // ══════════════════════════════════════════════════════════════
   // Automatically reorders course cards based on AI recommendations
   // Cards mentioned in AI text appear first with badges
   SMART_CARD_ORDERING: true,
   
-  // Show "Top-Wahl" badge on recommended courses
+  // Show badges on recommended courses (Top-Wahl, Empfohlen, Alternative)
   SHOW_RECOMMENDATION_BADGE: true,
+  
+  // Show ranking badges (🥇 Top 1, 🥈 Top 2, etc.)
+  SHOW_RANKING_BADGES: true,
+  
+  // Show "Previously shown" indicator on duplicate courses
+  SHOW_DUPLICATE_INDICATOR: true,
+  
+  // Re-render course cards in follow-up messages
+  ENABLE_FOLLOW_UP_CARD_RENDERING: true,
   
   // ══════════════════════════════════════════════════════════════
   // CITY FALLBACK SEARCH

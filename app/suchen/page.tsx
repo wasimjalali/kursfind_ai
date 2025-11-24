@@ -9,7 +9,11 @@ import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import ChatCourseCard from '@/components/ChatCourseCard';
 import { supabase } from '@/lib/supabase';
-import { orderCoursesByRecommendation, enhanceCourseWithRecommendationContext } from '@/lib/course-recommendation-parser';
+import { 
+  orderCoursesByRecommendation, 
+  enhanceCourseWithRecommendationContext,
+  extractCoursesFromFollowUp 
+} from '@/lib/course-recommendation-parser';
 import { FEATURES } from '@/config/features';
 
 interface Message {
@@ -500,20 +504,50 @@ function ChatContent() {
                                 });
                               }
                               
+                              // ENHANCED: Track previously shown courses
+                              const previouslyShownCourseIds = messages
+                                .slice(0, idx)
+                                .filter(m => m.courses && m.courses.length > 0)
+                                .flatMap(m => m.courses || [])
+                                .map(c => c.id?.toString() || '');
+                              
                               // SMART CARD ORDERING: Reorder courses based on AI recommendations
                               let coursesToDisplay = message.courses || [];
                               if (FEATURES.SMART_CARD_ORDERING && hasCourses && message.content) {
                                 coursesToDisplay = orderCoursesByRecommendation(
                                   message.courses || [],
-                                  message.content
+                                  message.content,
+                                  previouslyShownCourseIds
                                 );
                                 console.log('🎯 Smart ordering applied:', {
                                   original: message.courses?.map(c => c.id),
-                                  reordered: coursesToDisplay.map(c => c.id)
+                                  reordered: coursesToDisplay.map(c => c.id),
+                                  previouslyShown: previouslyShownCourseIds.length
                                 });
                               }
                               
-                              return hasCourses && coursesToDisplay ? (
+                              // ENHANCED: Check if this is a follow-up with no courses but mentions existing ones
+                              if (!hasCourses && message.role === 'assistant' && message.content) {
+                                const allPreviousCourses = messages
+                                  .slice(0, idx)
+                                  .filter(m => m.courses && m.courses.length > 0)
+                                  .flatMap(m => m.courses || []);
+                                
+                                const followUpCourses = extractCoursesFromFollowUp(
+                                  message.content,
+                                  allPreviousCourses,
+                                  messages.slice(0, idx)
+                                );
+                                
+                                if (followUpCourses.length > 0) {
+                                  console.log('🔄 Follow-up detected, re-showing courses:', followUpCourses.length);
+                                  coursesToDisplay = followUpCourses;
+                                }
+                              }
+                              
+                              const shouldRenderCards = coursesToDisplay && coursesToDisplay.length > 0;
+                              
+                              return shouldRenderCards ? (
                                 <div className="space-y-3 mt-4">
                                   {/* Context message */}
                                   {searchMeta && searchMeta.total > 0 && (
@@ -530,11 +564,18 @@ function ChatContent() {
                                     {coursesToDisplay.map((course: any, courseIdx: number) => {
                                       // Enhance course with recommendation context
                                       const enhancedCourse = FEATURES.SMART_CARD_ORDERING 
-                                        ? enhanceCourseWithRecommendationContext(course, message.content)
+                                        ? enhanceCourseWithRecommendationContext(
+                                            course, 
+                                            message.content,
+                                            previouslyShownCourseIds
+                                          )
                                         : course;
                                       
                                       console.log('🎴 Rendering course card:', course.id, course.title, {
                                         isRecommended: enhancedCourse._isRecommended,
+                                        badgeType: enhancedCourse._badgeType,
+                                        ranking: enhancedCourse._ranking,
+                                        isDuplicate: enhancedCourse._isDuplicate,
                                         position: courseIdx
                                       });
                                       
@@ -543,6 +584,9 @@ function ChatContent() {
                                           key={`${course.id}-${idx}-${courseIdx}`} 
                                           course={enhancedCourse}
                                           showRecommendedBadge={enhancedCourse._isRecommended}
+                                          badgeType={enhancedCourse._badgeType}
+                                          ranking={enhancedCourse._ranking}
+                                          isDuplicate={enhancedCourse._isDuplicate}
                                         />
                                       );
                                     })}

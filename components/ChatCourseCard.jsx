@@ -3,12 +3,85 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function ChatCourseCard({ course, showRecommendedBadge = false }) {
+export default function ChatCourseCard({ 
+  course, 
+  showRecommendedBadge = false,
+  badgeType = null, // 'top-wahl' | 'empfehlung' | 'alternative'
+  ranking = null, // 1, 2, 3...
+  isDuplicate = false // Previously shown indicator
+}) {
   const [imageError, setImageError] = useState(false);
   
   const handleClick = () => {
     // Track click event
     console.log('Course clicked:', course.id, course.title);
+  };
+
+  // ENHANCED: Determine badge display
+  const effectiveBadgeType = course._badgeType || badgeType;
+  const effectiveRanking = course._ranking || ranking;
+  const effectiveIsDuplicate = course._isDuplicate || isDuplicate;
+  const shouldShowBadge = showRecommendedBadge || effectiveBadgeType || effectiveRanking;
+
+  // ENHANCED: Get badge styles and labels
+  const getBadgeConfig = () => {
+    if (effectiveRanking) {
+      // Ranking badge (priority)
+      const rankingEmoji = effectiveRanking === 1 ? '🥇' : effectiveRanking === 2 ? '🥈' : effectiveRanking === 3 ? '🥉' : '🏅';
+      return {
+        gradient: 'from-purple-500 to-pink-500',
+        label: `${rankingEmoji} Top ${effectiveRanking}`,
+        icon: null
+      };
+    }
+
+    switch (effectiveBadgeType) {
+      case 'top-wahl':
+        return {
+          gradient: 'from-yellow-400 to-amber-500',
+          label: 'Top-Wahl',
+          icon: 'star'
+        };
+      case 'empfehlung':
+        return {
+          gradient: 'from-emerald-400 to-teal-500',
+          label: 'Empfohlen',
+          icon: 'check'
+        };
+      case 'alternative':
+        return {
+          gradient: 'from-blue-400 to-cyan-500',
+          label: 'Alternative',
+          icon: 'plus'
+        };
+      default:
+        return {
+          gradient: 'from-yellow-400 to-amber-500',
+          label: 'Top-Wahl',
+          icon: 'star'
+        };
+    }
+  };
+
+  const badgeConfig = getBadgeConfig();
+
+  // Icon SVGs
+  const icons = {
+    star: (
+      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+    ),
+    check: (
+      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    ),
+    plus: (
+      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+      </svg>
+    )
   };
 
   // Handle providers as array or object (from Supabase JOIN)
@@ -48,15 +121,22 @@ export default function ChatCourseCard({ course, showRecommendedBadge = false })
       onClick={handleClick}
       className="block group hover:scale-[1.01] md:hover:scale-[1.02] transition-all duration-200"
     >
-      <div className="bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl hover:border-cyan-300 transition-all relative">
+      <div className={`bg-gradient-to-br from-white to-gray-50 border-2 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all relative ${
+        effectiveIsDuplicate ? 'border-gray-300 opacity-95' : 'border-gray-200 hover:border-cyan-300'
+      }`}>
         
-        {/* AI Recommended Badge - Top Left Corner */}
-        {showRecommendedBadge && (
-          <div className="absolute top-3 left-3 z-20 bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            Top-Wahl
+        {/* ENHANCED: AI Recommendation Badge - Top Left Corner */}
+        {shouldShowBadge && (
+          <div className={`absolute top-3 left-3 z-20 bg-gradient-to-r ${badgeConfig.gradient} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
+            {badgeConfig.icon && icons[badgeConfig.icon]}
+            {badgeConfig.label}
+          </div>
+        )}
+
+        {/* ENHANCED: Duplicate/Previously Shown Indicator */}
+        {effectiveIsDuplicate && (
+          <div className="absolute top-3 left-3 z-19 mt-10 bg-gray-600 bg-opacity-90 text-white px-2 py-0.5 rounded-full text-[10px] font-medium shadow-md">
+            Zuvor gezeigt
           </div>
         )}
         
