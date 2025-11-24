@@ -114,7 +114,7 @@ export function orderCoursesByRecommendation(
   const unmentionedCourses: any[] = [];
 
   courses.forEach(course => {
-    const courseId = course.id?.toString();
+    const courseId = course.id?.toString() || '';
     if (referenceMap.has(courseId)) {
       mentionedCourses.push(course);
     } else {
@@ -124,8 +124,8 @@ export function orderCoursesByRecommendation(
 
   // Sort mentioned courses by their position in text
   mentionedCourses.sort((a, b) => {
-    const refA = referenceMap.get(a.id?.toString());
-    const refB = referenceMap.get(b.id?.toString());
+    const refA = referenceMap.get(a.id?.toString() || '');
+    const refB = referenceMap.get(b.id?.toString() || '');
     
     // Recommended courses come first
     if (refA?.isRecommended !== refB?.isRecommended) {
