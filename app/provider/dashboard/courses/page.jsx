@@ -4,22 +4,27 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 async function getProviderCourses(providerId) {
-  const supabase = await createClient();
-  
-  // Query courses table
-  // provider_id in your table is TEXT, so compare as text
-  const { data, error } = await supabase
-    .from('courses')
-    .select('*')
-    .eq('provider_id', providerId)
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching courses:', error);
+  try {
+    const supabase = await createClient();
+    
+    // Query courses table
+    // provider_id in your table is TEXT, so compare as text
+    const { data, error } = await supabase
+      .from('courses')
+      .select('*')
+      .eq('provider_id', providerId)
+      .order('created_at', { ascending: false});
+    
+    if (error) {
+      console.error('Error fetching courses:', error);
+      return [];
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error('Exception in getProviderCourses:', error);
     return [];
   }
-  
-  return data || [];
 }
 
 export default async function CoursesPage() {
