@@ -3,17 +3,8 @@
  * Executes the actual database queries for each function definition
  */
 
-import { createClient } from '@supabase/supabase-js'
-
-// Initialize Supabase client for server-side API routes
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase credentials in function-handlers')
-}
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-server'
 
 /**
  * Keyword expansion for better search recall
@@ -266,21 +257,11 @@ async function searchCourses(args) {
     sort_by = 'relevance'
   } = args;
 
-  // Fetch courses with provider data
-  // Note: Using simple join without FK name since courses.provider_id (TEXT) 
-  // references providers.provider_id (TEXT), not a standard BIGINT FK
+  // Fetch courses WITHOUT provider join - we'll fetch providers separately
+  // because there's no FK relationship defined in the database schema
   let queryBuilder = supabase
     .from('courses')
-    .select(`
-      *,
-      providers(
-        provider_id,
-        company_name,
-        logo_url,
-        city,
-        Certification
-      )
-    `, { count: 'exact' });
+    .select('*', { count: 'exact' });
 
   // Apply filters
   if (status) {
@@ -360,7 +341,7 @@ async function searchCourses(args) {
       queryBuilder = queryBuilder.order('start_date', { ascending: true, nullsFirst: false });
       break;
     case 'view_count':
-      queryBuilder = queryBuilder.order('views_count', { ascending: false });
+      queryBuilder = queryBuilder.order('view_count', { ascending: false });
       break;
     case 'application_count':
       queryBuilder = queryBuilder.order('application_count', { ascending: false });
@@ -374,7 +355,7 @@ async function searchCourses(args) {
       // 2. View count (popularity)
       // 3. Application count (proven interest)
       queryBuilder = queryBuilder.order('is_featured', { ascending: false });
-      queryBuilder = queryBuilder.order('views_count', { ascending: false });
+      queryBuilder = queryBuilder.order('view_count', { ascending: false });
       queryBuilder = queryBuilder.order('application_count', { ascending: false });
   }
 
@@ -461,7 +442,7 @@ async function searchCourses(args) {
     // Sort by relevance
     fallbackQueryBuilder = fallbackQueryBuilder
       .order('is_featured', { ascending: false })
-      .order('views_count', { ascending: false })
+      .order('view_count', { ascending: false })
       .range(offset, offset + max_results - 1);
     
     const { data: cityFallbackCourses, count: cityFallbackCount } = await fallbackQueryBuilder;
@@ -532,7 +513,7 @@ async function searchCourses(args) {
         .eq('status', status)
         .ilike('category', `%${fallbackCategory}%`)
         .order('is_featured', { ascending: false })
-        .order('views_count', { ascending: false })
+        .order('view_count', { ascending: false })
         .range(offset, offset + max_results - 1);
       
       if (fallbackCourses && fallbackCourses.length > 0) {
@@ -606,11 +587,8 @@ async function searchCourses(args) {
 async function getCourseDetails(args) {
   const { course_id, include_provider = true, include_similar = false } = args;
 
-  // Try to find by ID first, then by slug
-  let query = supabase.from('courses').select(`
-    *,
-    ${include_provider ? `providers!courses_provider_id_fkey(*)` : ''}
-  `);
+  // Fetch course WITHOUT FK join - we'll fetch provider separately
+  let query = supabase.from('courses').select('*');
 
   // Check if course_id is numeric (ID) or string (slug)
   if (/^\d+$/.test(course_id)) {
@@ -626,6 +604,19 @@ async function getCourseDetails(args) {
       success: false,
       error: error.message
     };
+  }
+
+  // Fetch provider separately if requested
+  if (include_provider && course && course.provider_id) {
+    const { data: provider } = await supabase
+      .from('providers')
+      .select('*')
+      .eq('provider_id', course.provider_id)
+      .single();
+    
+    if (provider) {
+      course.providers = provider;
+    }
   }
 
   const result = {
@@ -662,12 +653,10 @@ async function searchProviders(args) {
     max_results = 10
   } = args;
 
+  // Fetch providers without FK join - we'll count courses separately if needed
   let queryBuilder = supabase
     .from('providers')
-    .select(`
-      *,
-      courses:courses!courses_provider_id_fkey(count)
-    `);
+    .select('*');
 
   if (query) {
     queryBuilder = queryBuilder.or(
@@ -817,14 +806,15 @@ async function searchStudentApplications(args, context) {
     };
   }
 
+  // Fetch applications with related data - use simple joins
   let queryBuilder = supabase
     .from('applications')
     .select(`
       *,
-      courses!applications_course_id_fkey(
+      courses(
         id, title, location, duration, format, start_date, slug
       ),
-      providers!applications_provider_id_fkey(
+      providers(
         id, company_name, email, phone, website
       )
     `)
@@ -975,16 +965,14 @@ async function searchSavedCourses(args, context) {
     };
   }
 
+  // Fetch saved courses - join to courses table but not providers (no FK exists)
   let queryBuilder = supabase
     .from('saved_courses')
     .select(`
       *,
-      courses!saved_courses_course_id_fkey(
+      courses(
         id, title, subtitle, location, duration, format, start_date,
-        funding_types, category, provider_id, slug, image_url,
-        providers!courses_provider_id_fkey(
-          company_name, logo_url
-        )
+        funding_types, category, provider_id, slug, image_url
       )
     `)
     .eq('student_id', student_id);
@@ -1205,14 +1193,10 @@ async function getCourseStatistics(args) {
 async function compareCourses(args) {
   const { course_ids, comparison_fields } = args;
 
+  // Fetch courses without FK join
   const { data: courses, error } = await supabase
     .from('courses')
-    .select(`
-      *,
-      providers!courses_provider_id_fkey(
-        company_name, city, certifications
-      )
-    `)
+    .select('*')
     .in('id', course_ids);
 
   if (error) {
@@ -1222,9 +1206,24 @@ async function compareCourses(args) {
     };
   }
 
+  // Fetch providers separately for each course
+  const coursesWithProviders = await Promise.all(
+    (courses || []).map(async (course) => {
+      if (course.provider_id) {
+        const { data: provider } = await supabase
+          .from('providers')
+          .select('company_name, city, Certification')
+          .eq('provider_id', course.provider_id)
+          .single();
+        return { ...course, providers: provider };
+      }
+      return course;
+    })
+  );
+
   // Build comparison object
   const comparison = {
-    courses: courses?.map(c => ({
+    courses: coursesWithProviders.map(c => ({
       id: c.id,
       title: c.title,
       duration: c.duration,
@@ -1315,13 +1314,10 @@ async function recommendCourses(args, context) {
     max_results = 5
   } = args;
 
-  // Start with base query
+  // Start with base query - no FK join, fetch providers separately
   let queryBuilder = supabase
     .from('courses')
-    .select(`
-      *,
-      providers!courses_provider_id_fkey(company_name, logo_url)
-    `)
+    .select('*')
     .eq('status', 'active');
 
   // Apply constraints

@@ -535,16 +535,16 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           console.log('Career paths parsed:', careerPathsArray);
           
           return careerPathsArray.length > 0 && (
-            <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Ihre Karrieremöglichkeiten
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Ihre Karrieremöglichkeiten
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {careerPathsArray.map((career, index) => (
-                  <div 
-                    key={index}
-                    className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-lg p-6 border border-cyan-100 hover:shadow-md transition-shadow"
-                  >
+                <div 
+                  key={index}
+                  className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-lg p-6 border border-cyan-100 hover:shadow-md transition-shadow"
+                >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-1">
                         <svg className="w-6 h-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -554,13 +554,13 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900">
                           {career}
-                        </h3>
+                  </h3>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
+          </div>
           );
         })()}
 
@@ -752,9 +752,9 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             {/* Logo - Left aligned on mobile (after title), left on desktop */}
             {provider?.logo_url && provider.logo_url.trim() !== '' ? (
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg border border-gray-200 bg-white p-2 self-start flex-shrink-0 flex items-center justify-center overflow-hidden">
-                <img 
-                  src={provider.logo_url} 
-                  alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
+              <img 
+                src={provider.logo_url} 
+                alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
                   className="max-w-full max-h-full object-contain"
                   onError={(e) => {
                     console.error('Logo failed to load:', provider.logo_url);

@@ -67,24 +67,24 @@ export default function ProviderSignup() {
             <ol className="space-y-3 text-gray-700">
               <li className="flex items-start">
                 <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-cyan-600 text-white rounded-full font-bold text-sm mr-3">1</span>
-                <div>
+            <div>
                   <strong>Bewerbungsformular ausfüllen:</strong> Klicken Sie auf den Button unten und geben Sie Ihre Unternehmensdaten ein.
-                </div>
+            </div>
               </li>
               <li className="flex items-start">
                 <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-cyan-600 text-white rounded-full font-bold text-sm mr-3">2</span>
-                <div>
+            <div>
                   <strong>Verifizierung:</strong> Unser Team prüft Ihre Angaben und kontaktiert Sie für weitere Details.
-                </div>
+            </div>
               </li>
               <li className="flex items-start">
                 <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-cyan-600 text-white rounded-full font-bold text-sm mr-3">3</span>
-                <div>
+            <div>
                   <strong>Kontoerstellung:</strong> Nach erfolgreicher Prüfung erstellen wir Ihr Konto und senden Ihnen einen Link zum Festlegen Ihres Passworts.
                 </div>
               </li>
             </ol>
-          </div>
+            </div>
 
           {/* CTA Button */}
           {!showForm ? (
@@ -110,8 +110,8 @@ export default function ProviderSignup() {
                     </svg>
                     Formular schließen
                   </button>
-                </div>
-                
+            </div>
+
                 {/* SendPulse Form Container */}
                 <div className="sp-form-container">
                   <style dangerouslySetInnerHTML={{__html: `
@@ -253,13 +253,13 @@ export default function ProviderSignup() {
                               <label>
                                 <input type="checkbox" sp-type="checkbox" name="sform[Z2RwclRlcm1z]" value="yes" sp-tips="%7B%22required%22%3A%22Required%20field%22%7D" required />
                                 <span>Consent to collect and store data (GDPR compliance) <strong>*</strong></span>
-                              </label>
+              </label>
                             </div>
                           </div>
                           <div className="sp-field sp-button-container" sp-id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735">
                             <button id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735" className="sp-button">Become our Partner</button>
-                          </div>
-                        </form>
+            </div>
+          </form>
                       </div>
                     </div>
                   </div>

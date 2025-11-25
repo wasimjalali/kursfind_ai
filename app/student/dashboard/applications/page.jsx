@@ -16,63 +16,63 @@ export default function ApplicationsPage() {
   useEffect(() => {
     async function loadData() {
       const supabase = createClient();
-      
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      // Get student profile or use mock data
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  // Get student profile or use mock data
       let studentData = null;
-      
-      if (user) {
+  
+  if (user) {
         const { data } = await supabase
-          .from('students')
-          .select('*')
-          .eq('auth_user_id', user.id)
-          .single();
+      .from('students')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .single();
         studentData = data;
-      }
-      
-      // Use mock student data if no real student found
+  }
+  
+  // Use mock student data if no real student found
       if (!studentData) {
         studentData = {
-          id: 1,
-          email: 'demo@student.de',
-          first_name: 'Demo',
-          last_name: 'Student',
-        };
-      }
+      id: 1,
+      email: 'demo@student.de',
+      first_name: 'Demo',
+      last_name: 'Student',
+    };
+  }
 
       setStudent(studentData);
 
-      // Get all applications with course and provider details
+  // Get all applications with course and provider details
       const { data: applicationsData } = await supabase
-        .from('applications')
-        .select(`
-          id,
-          status,
-          created_at,
-          updated_at,
-          message,
-          courses (
-            id,
-            title,
-            description,
-            category,
-            location,
-            start_date,
-            duration,
-            image_url
-          ),
-          providers (
-            id,
-            company_name,
-            email,
-            phone,
-            city
-          )
-        `)
+    .from('applications')
+    .select(`
+      id,
+      status,
+      created_at,
+      updated_at,
+      message,
+      courses (
+        id,
+        title,
+        description,
+        category,
+        location,
+        start_date,
+        duration,
+        image_url
+      ),
+      providers (
+        id,
+        company_name,
+        email,
+        phone,
+        city
+      )
+    `)
         .eq('student_id', studentData.id)
-        .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false });
 
       setApplications(applicationsData || []);
       setIsLoading(false);

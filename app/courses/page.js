@@ -44,15 +44,15 @@ export default function CoursesPage() {
       // Fetch courses first, then providers separately (more reliable)
       console.log('🔍 Fetching courses...')
       let { data, error } = await supabase
-        .from('courses')
-        .select('*, language')
-        .order('created_at', { ascending: false })
-      
+            .from('courses')
+            .select('*, language')
+            .order('created_at', { ascending: false })
+
       if (error) {
         console.error('❌ Error fetching courses:', error)
         throw error
       }
-      
+
       console.log(`✅ Fetched ${data?.length || 0} courses`)
       
       if (data && data.length > 0) {
@@ -61,15 +61,15 @@ export default function CoursesPage() {
         console.log(`🏢 Found ${providerIds.length} unique provider IDs:`, providerIds)
         
         let processedData = data
-        
-        if (providerIds.length > 0) {
-          // Fetch all providers in one query
-          console.log('🔍 Fetching providers from database...')
-          const { data: allProviders, error: providersError } = await supabase
-            .from('providers')
-            .select('provider_id, company_name, logo_url, description, Certification, phone, email, website, contact_name, city')
-            .in('provider_id', providerIds)
           
+          if (providerIds.length > 0) {
+            // Fetch all providers in one query
+          console.log('🔍 Fetching providers from database...')
+            const { data: allProviders, error: providersError } = await supabase
+              .from('providers')
+            .select('provider_id, company_name, logo_url, description, Certification, phone, email, website, contact_name, city')
+              .in('provider_id', providerIds)
+            
           if (providersError) {
             console.warn('⚠️ Error fetching providers:', providersError.message || providersError)
             // Continue without provider data - cards will show fallback
@@ -77,22 +77,22 @@ export default function CoursesPage() {
             console.log(`✅ Fetched ${allProviders.length} providers`)
             console.log('📊 Provider data:', allProviders)
             
-            // Create a map for quick lookup
-            const providersMap = new Map(allProviders.map(p => [p.provider_id, p]))
+              // Create a map for quick lookup
+              const providersMap = new Map(allProviders.map(p => [p.provider_id, p]))
             console.log('🗺️ Provider map keys:', Array.from(providersMap.keys()))
-            
-            // Attach providers to courses
+              
+              // Attach providers to courses
             processedData = data.map(course => {
-              const provider = providersMap.get(course.provider_id)
-              if (provider) {
+                  const provider = providersMap.get(course.provider_id)
+                  if (provider) {
                 console.log(`✅ Matched provider for course "${course.title}": ${provider.company_name}`)
               } else {
                 console.warn(`⚠️ No provider found for course "${course.title}" with provider_id: "${course.provider_id}"`)
               }
-              return {
-                ...course,
+                    return {
+                      ...course,
                 providers: provider || null
-              }
+                    }
             })
           } else {
             console.warn('⚠️ No providers returned from database')
