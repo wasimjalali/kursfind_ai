@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
 
 export default function ProfileClient({ initialStudent, authUserId }) {
   const router = useRouter();
@@ -21,6 +22,21 @@ export default function ProfileClient({ initialStudent, authUserId }) {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout error:', error);
+      setMessage({ 
+        type: 'error', 
+        text: 'Fehler beim Abmelden' 
+      });
+    }
+  };
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -347,6 +363,19 @@ export default function ProfileClient({ initialStudent, authUserId }) {
         </h3>
 
         <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">Abmelden</h4>
+              <p className="text-sm text-gray-600">Von Ihrem Konto abmelden</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Abmelden
+            </button>
+          </div>
+
           <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
             <div>
               <h4 className="font-semibold text-gray-900 mb-1">Passwort ändern</h4>
