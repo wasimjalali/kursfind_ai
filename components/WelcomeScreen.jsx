@@ -26,24 +26,24 @@ export default function WelcomeScreen({ onExampleClick }) {
   }, []);
   const examples = [
     {
-      icon: '🎓',
-      title: 'Webentwicklung Kurs',
-      query: 'Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein'
+      icon: '🛒',
+      title: 'E-Commerce Bootcamp',
+      query: 'Ich suche ein E-Commerce Bootcamp in Berlin oder Remote mit Bildungsgutschein'
     },
     {
-      icon: '📊',
-      title: 'Data Science',
-      query: 'Zeige mir Data Science Bootcamps in Hamburg'
+      icon: '📱',
+      title: 'Digital Marketing',
+      query: 'Zeige mir Digital Marketing Bootcamps Online oder Remote mit Bildungsgutschein'
+    },
+    {
+      icon: '💻',
+      title: 'IT & Programmierung',
+      query: 'Ich möchte Programmierung lernen, welche IT-Kurse mit Bildungsgutschein gibt es?'
     },
     {
       icon: '🎨',
-      title: 'UX/UI Design',
-      query: 'Ich möchte UX/UI Design lernen, welche Kurse empfiehlst du?'
-    },
-    {
-      icon: '💼',
-      title: 'Projektmanagement',
-      query: 'Projektmanagement Zertifizierung mit AVGS Förderung'
+      title: 'Webdesign & UX',
+      query: 'Webdesign und UX/UI Design Kurse in Berlin oder Remote mit Bildungsgutschein'
     }
   ];
 
