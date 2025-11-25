@@ -432,13 +432,13 @@ function ChatContent() {
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
-                            {/* MARKDOWN CONTENT */}
-                            <div className="prose prose-sm max-w-none mb-4 prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:!text-gray-900 prose-li:text-gray-700">
+                            {/* MARKDOWN CONTENT - Enhanced styling for bullet points */}
+                            <div className="prose prose-sm max-w-none mb-4">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text - ensure it's dark and visible (use !important to override prose defaults)
+                                  // Bold text - ensure it's dark and visible
                                   strong: ({node, ...props}) => (
-                                    <strong className="font-bold !text-gray-900" style={{ color: '#111827' }} {...props} />
+                                    <strong className="font-bold text-gray-900" {...props} />
                                   ),
                                   // Italic text
                                   em: ({node, ...props}) => (
@@ -450,50 +450,46 @@ function ChatContent() {
                                   ),
                                   // Headings - Force black color
                                   h1: ({node, ...props}) => (
-                                    <h1 className="text-xl font-bold mb-3" style={{color: '#111827'}} {...props} />
+                                    <h1 className="text-xl font-bold mb-3 text-gray-900" {...props} />
                                   ),
                                   h2: ({node, ...props}) => (
-                                    <h2 className="text-lg font-bold mb-2" style={{color: '#111827'}} {...props} />
+                                    <h2 className="text-lg font-bold mb-2 text-gray-900" {...props} />
                                   ),
                                   h3: ({node, ...props}) => (
-                                    <h3 className="text-base font-bold mb-2" style={{color: '#111827'}} {...props} />
+                                    <h3 className="text-base font-bold mb-2 text-gray-900" {...props} />
                                   ),
-                                  // Lists - ENHANCED for maximum visibility
+                                  // Lists - FIXED: Proper bullet point styling with visible markers
                                   ul: ({node, ...props}) => (
                                     <ul 
-                                      className="my-3 ml-8 space-y-1.5 text-gray-900" 
+                                      className="my-3 pl-6 space-y-2"
                                       style={{
                                         listStyleType: 'disc',
                                         listStylePosition: 'outside',
-                                        paddingLeft: '0.5rem',
-                                        display: 'block'
                                       }}
                                       {...props} 
                                     />
                                   ),
                                   ol: ({node, ...props}) => (
                                     <ol 
-                                      className="my-3 ml-8 space-y-1.5 text-gray-900" 
+                                      className="my-3 pl-6 space-y-2"
                                       style={{
                                         listStyleType: 'decimal',
                                         listStylePosition: 'outside',
-                                        paddingLeft: '0.5rem',
-                                        display: 'block'
                                       }}
                                       {...props} 
                                     />
                                   ),
-                                  // @ts-ignore - ReactMarkdown renders li inside ul/ol
-                                  li: ({node, ...props}) => (
+                                  // List items - FIXED: Proper display and color
+                                  li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-relaxed text-gray-900" 
+                                      className="text-gray-700 leading-relaxed pl-1"
                                       style={{
                                         display: 'list-item',
-                                        marginLeft: '0.25rem',
-                                        color: '#111827'
                                       }}
-                                      {...props} 
-                                    />
+                                      {...props}
+                                    >
+                                      {children}
+                                    </li>
                                   ),
                                   // Links
                                   a: ({node, ...props}) => (
