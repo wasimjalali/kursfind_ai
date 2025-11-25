@@ -257,11 +257,18 @@ async function searchCourses(args) {
     sort_by = 'relevance'
   } = args;
 
-  // First try with provider join, if it fails, fetch providers separately
+  // Fetch courses with provider data
   let queryBuilder = supabase
     .from('courses')
     .select(`
-      *
+      *,
+      providers!courses_provider_id_fkey(
+        provider_id,
+        company_name,
+        logo_url,
+        city,
+        Certification
+      )
     `, { count: 'exact' });
 
   // Apply filters
@@ -532,7 +539,7 @@ async function searchCourses(args) {
         if (course.provider_id) {
           const { data: provider } = await supabase
             .from('providers')
-            .select('id, company_name, logo_url, city, certifications')
+            .select('id, provider_id, company_name, logo_url, city, Certification')
             .eq('provider_id', course.provider_id)
             .single();
           
