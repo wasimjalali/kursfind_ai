@@ -17,17 +17,20 @@ function expandSearchTerms(query) {
   // Synonym mapping for common course topics
   const synonymMap = {
     // Programming languages
-    'python': ['python', 'programming', 'coding', 'entwicklung'],
+    'python': ['python', 'programming', 'coding', 'entwicklung', 'data'],
     'javascript': ['javascript', 'js', 'web development', 'frontend', 'webentwicklung'],
     'java': ['java', 'programming', 'entwicklung'],
     'php': ['php', 'web development', 'backend'],
     'c#': ['c#', 'csharp', 'dotnet', '.net'],
+    'programmierung': ['programmierung', 'programming', 'coding', 'entwicklung', 'software'],
+    'coding': ['coding', 'programming', 'programmierung', 'entwicklung'],
     
     // Design
-    'ux': ['ux', 'ui', 'user experience', 'design', 'interface'],
-    'ui': ['ui', 'ux', 'user interface', 'design', 'interface'],
-    'design': ['design', 'ux', 'ui', 'grafik', 'gestaltung'],
+    'ux': ['ux', 'ui', 'user experience', 'design', 'interface', 'webdesign'],
+    'ui': ['ui', 'ux', 'user interface', 'design', 'interface', 'webdesign'],
+    'design': ['design', 'ux', 'ui', 'grafik', 'gestaltung', 'webdesign'],
     'grafik': ['grafik', 'design', 'graphics', 'gestaltung'],
+    'webdesign': ['webdesign', 'web design', 'ux', 'ui', 'design', 'frontend'],
     
     // Web Development
     'web development': ['web development', 'webentwicklung', 'web', 'frontend', 'backend', 'fullstack', 'full stack'],
@@ -39,53 +42,76 @@ function expandSearchTerms(query) {
     'full stack': ['full stack', 'fullstack', 'web development', 'web'],
     
     // Data & Analytics
-    'data science': ['data science', 'data analytics', 'machine learning', 'ai', 'datenanalyse'],
+    'data science': ['data science', 'data analytics', 'machine learning', 'ai', 'datenanalyse', 'data'],
     'data analytics': ['data analytics', 'data science', 'business intelligence', 'datenanalyse'],
     'machine learning': ['machine learning', 'ml', 'ai', 'data science', 'künstliche intelligenz'],
     'ai': ['ai', 'artificial intelligence', 'machine learning', 'künstliche intelligenz'],
+    'data': ['data', 'data science', 'data analytics', 'daten', 'datenanalyse'],
     
-    // Marketing & E-Commerce
-    'ecommerce': ['ecommerce', 'e-commerce', 'online business', 'digital marketing', 'amazon', 'shopify'],
-    'e-commerce': ['e-commerce', 'ecommerce', 'online business', 'digital marketing', 'amazon', 'shopify'],
-    'digital marketing': ['digital marketing', 'online marketing', 'marketing', 'seo', 'sem', 'e-commerce'],
+    // Marketing & E-Commerce - EXPANDED
+    'ecommerce': ['ecommerce', 'e-commerce', 'e commerce', 'online business', 'digital marketing', 'amazon', 'shopify', 'online handel', 'onlinehandel'],
+    'e-commerce': ['e-commerce', 'ecommerce', 'e commerce', 'online business', 'digital marketing', 'amazon', 'shopify', 'online handel', 'onlinehandel'],
+    'e commerce': ['e commerce', 'e-commerce', 'ecommerce', 'online business', 'digital marketing', 'amazon', 'shopify'],
+    'commerce': ['commerce', 'e-commerce', 'ecommerce', 'online business', 'handel'],
+    'online handel': ['online handel', 'onlinehandel', 'e-commerce', 'ecommerce', 'digital marketing'],
+    'onlinehandel': ['onlinehandel', 'online handel', 'e-commerce', 'ecommerce', 'digital marketing'],
+    'digital marketing': ['digital marketing', 'online marketing', 'marketing', 'seo', 'sem', 'e-commerce', 'social media'],
     'online marketing': ['online marketing', 'digital marketing', 'marketing', 'seo', 'e-commerce'],
+    'marketing': ['marketing', 'digital marketing', 'online marketing', 'social media', 'seo'],
     'seo': ['seo', 'search engine optimization', 'online marketing', 'marketing'],
-    'amazon': ['amazon', 'fba', 'e-commerce', 'ecommerce', 'online business'],
-    'shopify': ['shopify', 'e-commerce', 'ecommerce', 'online store'],
+    'amazon': ['amazon', 'fba', 'e-commerce', 'ecommerce', 'online business', 'marketplace'],
+    'shopify': ['shopify', 'e-commerce', 'ecommerce', 'online store', 'online shop'],
+    'social media': ['social media', 'marketing', 'digital marketing', 'instagram', 'facebook', 'linkedin'],
     
     // Project Management
     'project management': ['project management', 'projektmanagement', 'agile', 'scrum'],
+    'projektmanagement': ['projektmanagement', 'project management', 'agile', 'scrum'],
     'agile': ['agile', 'scrum', 'project management', 'projektmanagement'],
     'scrum': ['scrum', 'agile', 'project management'],
     
     // IT & Tech
+    'it': ['it', 'tech', 'technology', 'informationstechnologie', 'software', 'programming'],
+    'tech': ['tech', 'it', 'technology', 'software'],
     'cybersecurity': ['cybersecurity', 'security', 'it security', 'sicherheit'],
     'cloud': ['cloud', 'aws', 'azure', 'cloud computing'],
     'devops': ['devops', 'ci/cd', 'automation', 'deployment'],
+    'software': ['software', 'programming', 'entwicklung', 'it'],
     
     // Healthcare
-    'pflege': ['pflege', 'healthcare', 'nursing', 'gesundheit'],
+    'pflege': ['pflege', 'healthcare', 'nursing', 'gesundheit', 'krankenpflege'],
     'healthcare': ['healthcare', 'pflege', 'health', 'gesundheit'],
+    'gesundheit': ['gesundheit', 'healthcare', 'pflege', 'health'],
     
     // Business
-    'business': ['business', 'management', 'betriebswirtschaft', 'bwl'],
-    'management': ['management', 'business', 'führung', 'leadership']
+    'business': ['business', 'management', 'betriebswirtschaft', 'bwl', 'wirtschaft'],
+    'management': ['management', 'business', 'führung', 'leadership'],
+    'bwl': ['bwl', 'betriebswirtschaft', 'business', 'wirtschaft'],
+    
+    // Bootcamp specific
+    'bootcamp': ['bootcamp', 'intensivkurs', 'weiterbildung', 'training'],
+    'weiterbildung': ['weiterbildung', 'fortbildung', 'training', 'kurs', 'bootcamp'],
+    'kurs': ['kurs', 'course', 'weiterbildung', 'training', 'schulung'],
+    'schulung': ['schulung', 'training', 'kurs', 'weiterbildung']
   };
   
-  // Check if query matches any synonym key
+  // Check if query matches any synonym key (check ALL matches, not just first)
+  const matchedSynonyms = new Set();
+  
   for (const [key, synonyms] of Object.entries(synonymMap)) {
     if (lowerQuery.includes(key)) {
       synonyms.forEach(syn => {
         if (!terms.some(t => t.toLowerCase() === syn.toLowerCase())) {
-          terms.push(syn);
+          matchedSynonyms.add(syn);
         }
       });
-      break; // Only expand first match to avoid too many terms
     }
   }
   
-  // Limit to 5 terms max to avoid overly broad searches
-  return terms.slice(0, 5);
+  // Add all matched synonyms
+  matchedSynonyms.forEach(syn => terms.push(syn));
+  
+  // Limit to 8 terms max to avoid overly broad searches but allow more flexibility
+  return terms.slice(0, 8);
 }
 
 /**

@@ -611,6 +611,45 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     console.log('🔧 Function definitions available:', functionDefinitions.length);
 
     // ═══════════════════════════════════════════════════════════════
+    // DETECT IF USER IS ASKING ABOUT COURSES (FOR FORCED FUNCTION CALLING)
+    // ═══════════════════════════════════════════════════════════════
+    
+    const courseKeywords = [
+      // German keywords
+      'kurs', 'kurse', 'bootcamp', 'weiterbildung', 'ausbildung', 'schulung',
+      'zeig', 'zeige', 'finde', 'suche', 'gibt es', 'welche', 'empfehle',
+      'bildungsgutschein', 'förderung', 'gefördert',
+      // English keywords
+      'course', 'courses', 'training', 'show', 'find', 'search', 'looking for',
+      'recommend', 'suggestion', 'learn', 'study',
+      // Topics that imply course search
+      'e-commerce', 'ecommerce', 'marketing', 'digital', 'web', 'programming',
+      'design', 'ux', 'ui', 'data', 'it', 'tech', 'online', 'remote', 'berlin',
+      'hamburg', 'münchen', 'köln', 'frankfurt'
+    ];
+    
+    const userAsksAboutCourses = latestMessage && courseKeywords.some(keyword => 
+      latestMessage.toLowerCase().includes(keyword)
+    );
+    
+    // Determine tool_choice strategy:
+    // - 'required' = FORCE function call (for course questions)
+    // - 'auto' = AI decides (for general questions)
+    // - undefined = no function calling (for course detail widget)
+    let toolChoice = 'auto';
+    let toolsToUse = functionDefinitions;
+    
+    if (isCourseQuestion) {
+      // Course detail widget - no function calling needed
+      toolChoice = undefined;
+      toolsToUse = undefined;
+    } else if (userAsksAboutCourses) {
+      // User is asking about courses - FORCE function calling
+      toolChoice = { type: 'function', function: { name: 'search_courses' } };
+      console.log('🎯 Detected course question - FORCING search_courses call');
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
     // FIRST API CALL - AI DECIDES IF IT NEEDS FUNCTIONS
     // ═══════════════════════════════════════════════════════════════
     
@@ -623,8 +662,8 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: conversationMessages,
-        tools: isCourseQuestion ? undefined : functionDefinitions, // Only enable functions for general chat
-        tool_choice: isCourseQuestion ? undefined : 'auto',
+        tools: toolsToUse,
+        tool_choice: toolChoice,
         temperature: 0.7,
         max_tokens: isCourseQuestion ? 800 : 1500
       })
@@ -654,14 +693,19 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     let parsedToolCalls = [];
     
     if (assistantMessage.content && typeof assistantMessage.content === 'string') {
-      const toolCallPattern = /<｜tool▁call▁begin｜>([^<]+)<｜tool▁sep｜>({[^}]+})<｜tool▁call▁end｜>/g;
+      // Improved regex to handle nested JSON objects
+      // Match function name followed by JSON object (handles nested braces)
+      const toolCallPattern = /<｜tool▁call▁begin｜>([^<]+)<｜tool▁sep｜>(\{[\s\S]*?\})<｜tool▁call▁end｜>/g;
       let match;
       
       while ((match = toolCallPattern.exec(assistantMessage.content)) !== null) {
         const functionName = match[1].trim();
-        const functionArgs = match[2].trim();
+        let functionArgs = match[2].trim();
         
         try {
+          // Validate JSON before adding
+          JSON.parse(functionArgs);
+          
           parsedToolCalls.push({
             id: `call_${Date.now()}_${parsedToolCalls.length}`,
             type: 'function',
@@ -672,7 +716,26 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
           });
           console.log('🔍 Parsed DeepSeek tool call:', functionName, functionArgs);
         } catch (e) {
-          console.error('❌ Error parsing tool call:', e);
+          console.error('❌ Error parsing tool call JSON:', e.message, 'Raw:', functionArgs);
+          
+          // Try to extract valid JSON from potentially malformed response
+          try {
+            const jsonMatch = functionArgs.match(/\{[^{}]*\}/);
+            if (jsonMatch) {
+              JSON.parse(jsonMatch[0]); // Validate
+              parsedToolCalls.push({
+                id: `call_${Date.now()}_${parsedToolCalls.length}`,
+                type: 'function',
+                function: {
+                  name: functionName,
+                  arguments: jsonMatch[0]
+                }
+              });
+              console.log('🔧 Recovered tool call with extracted JSON:', functionName);
+            }
+          } catch (e2) {
+            console.error('❌ Could not recover tool call:', e2.message);
+          }
         }
       }
     }
@@ -694,8 +757,45 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     let coursesToReturn = [];
     let functionCallResults = [];
 
-    if (toolCalls && toolCalls.length > 0) {
-      console.log('🔧 AI requested', toolCalls.length, 'function calls');
+    // ═══════════════════════════════════════════════════════════════
+    // FALLBACK: Force search_courses if user asked about courses but AI didn't call function
+    // ═══════════════════════════════════════════════════════════════
+    
+    let effectiveToolCalls = toolCalls;
+    
+    if ((!toolCalls || toolCalls.length === 0) && userAsksAboutCourses && !isCourseQuestion) {
+      console.log('⚠️ AI did not call search_courses but user asked about courses - FORCING fallback search');
+      
+      // Extract search parameters from user message
+      const extractedQuery = latestMessage
+        .replace(/ich suche|ich möchte|zeig mir|show me|find|finde|suche|looking for|courses|kurse|bootcamp/gi, '')
+        .replace(/mit bildungsgutschein|with funding|gefördert|förderung/gi, '')
+        .replace(/in berlin|in hamburg|in münchen|in köln|in frankfurt|online|remote/gi, '')
+        .trim();
+      
+      // Extract location if mentioned
+      const locationMatch = latestMessage.match(/in\s+(berlin|hamburg|münchen|köln|frankfurt|online|remote)/i);
+      const extractedLocation = locationMatch ? locationMatch[1] : null;
+      
+      // Create synthetic tool call
+      effectiveToolCalls = [{
+        id: `fallback_${Date.now()}`,
+        type: 'function',
+        function: {
+          name: 'search_courses',
+          arguments: JSON.stringify({
+            query: extractedQuery || latestMessage.substring(0, 100),
+            location: extractedLocation,
+            max_results: 6
+          })
+        }
+      }];
+      
+      console.log('🔄 Created fallback search_courses call:', effectiveToolCalls[0].function.arguments);
+    }
+
+    if (effectiveToolCalls && effectiveToolCalls.length > 0) {
+      console.log('🔧 Processing', effectiveToolCalls.length, 'function calls');
       
       // Remove DeepSeek's custom tool call tokens from message content
       let cleanedContent = assistantMessage.content || '';
@@ -705,11 +805,11 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       conversationMessages.push({
         role: 'assistant',
         content: cleanedContent || null,
-        tool_calls: toolCalls
+        tool_calls: effectiveToolCalls
       });
       
       // Execute each function call
-      for (const toolCall of toolCalls) {
+      for (const toolCall of effectiveToolCalls) {
         const functionName = toolCall.function.name;
         const functionArgs = JSON.parse(toolCall.function.arguments);
         
