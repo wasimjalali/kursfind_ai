@@ -1,8 +1,47 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+/**
+ * ADMIN-ONLY PROVIDER CREATION ENDPOINT
+ * 
+ * This endpoint is now restricted to administrative use only.
+ * Provider accounts must be manually created by administrators after verification.
+ * 
+ * Security: Requires ADMIN_API_KEY for authentication.
+ * Self-serve provider signup has been disabled.
+ */
 export async function POST(request) {
   console.log('📥 Provider profile creation request received');
+  
+  // ============================================
+  // ADMIN AUTHENTICATION CHECK
+  // ============================================
+  const adminApiKey = request.headers.get('x-admin-api-key');
+  const expectedAdminKey = process.env.ADMIN_API_KEY;
+  
+  if (!expectedAdminKey) {
+    console.error('❌ ADMIN_API_KEY not configured in environment');
+    return NextResponse.json(
+      { 
+        error: 'Provider signup is now invite-only. Please apply through our application form.',
+        info: 'Self-serve registration has been disabled. Contact support for access.'
+      },
+      { status: 403 }
+    );
+  }
+  
+  if (!adminApiKey || adminApiKey !== expectedAdminKey) {
+    console.warn('🚫 Unauthorized provider creation attempt - missing or invalid admin key');
+    return NextResponse.json(
+      { 
+        error: 'Provider signup is now invite-only. Please apply through our application form.',
+        info: 'This endpoint is restricted to administrators only.'
+      },
+      { status: 403 }
+    );
+  }
+  
+  console.log('✅ Admin authentication successful');
   
   // Create Supabase client using SERVICE ROLE KEY (bypasses RLS)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';

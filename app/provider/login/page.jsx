@@ -132,11 +132,11 @@ export default function ProviderLogin() {
             </button>
           </form>
 
-          {/* Signup Link */}
+          {/* Info about invite-only access */}
           <div className="mt-6 text-center text-sm text-gray-600">
             Noch kein Konto?{' '}
             <Link href="/provider/signup" className="text-cyan-600 hover:text-cyan-700 font-semibold">
-              Jetzt registrieren
+              Zugang beantragen
             </Link>
           </div>
         </div>
