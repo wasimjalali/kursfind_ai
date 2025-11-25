@@ -41,7 +41,10 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError) {
-      console.error('❌ Auth error:', authError);
+      // Suppress "Auth session missing" error - this is expected after logout
+      if (authError.name !== 'AuthSessionMissingError') {
+        console.error('❌ Auth error:', authError);
+      }
       return;
     }
     

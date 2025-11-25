@@ -26,15 +26,17 @@ export default function ProfileClient({ initialStudent, authUserId }) {
   // Handle logout
   const handleLogout = async () => {
     try {
+      setLoading(true);
       await supabase.auth.signOut();
-      router.push('/');
-      router.refresh();
+      // Use window.location for a clean redirect that clears all state
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
       setMessage({ 
         type: 'error', 
         text: 'Fehler beim Abmelden' 
       });
+      setLoading(false);
     }
   };
 
