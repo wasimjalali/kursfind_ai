@@ -148,6 +148,11 @@ export default function ProviderSignup() {
                       height: 44px; 
                       width: 100%;
                       transition: all 0.2s;
+                      color: #111827;
+                    }
+                    .sp-form[sp-id="250261"] .sp-form-control::placeholder {
+                      color: #9ca3af;
+                      opacity: 1;
                     }
                     .sp-form[sp-id="250261"] .sp-form-control:focus { 
                       outline: none;
