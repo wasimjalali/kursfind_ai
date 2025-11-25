@@ -67,7 +67,7 @@ export default function CoursesPage() {
           console.log('🔍 Fetching providers from database...')
           const { data: allProviders, error: providersError } = await supabase
             .from('providers')
-            .select('provider_id, company_name, logo_url, description, certifications, phone, email, website, contact_name, city')
+            .select('provider_id, company_name, logo_url, description, Certification, phone, email, website, contact_name, city')
             .in('provider_id', providerIds)
           
           if (providersError) {
