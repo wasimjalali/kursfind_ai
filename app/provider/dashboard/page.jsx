@@ -6,14 +6,9 @@ import { redirect } from 'next/navigation';
 export default async function ProviderDashboard() {
   const provider = await getCurrentProvider();
   
-  // DEMO MODE: Use demo provider if not authenticated
-  const demoProvider = {
-    id: 1,
-    provider_id: 'bildungszentrum-koeln',
-    company_name: 'Bildungszentrum Köln'
-  };
-  
-  const activeProvider = provider || demoProvider;
+  if (!provider) {
+    redirect('/provider/login');
+  }
   
   const supabase = await createClient();
 
@@ -22,7 +17,7 @@ export default async function ProviderDashboard() {
   const { data: courses } = await supabase
     .from('courses')
     .select('id, title, views_count, clicks_count, is_active, created_at')
-    .eq('provider_id', activeProvider.provider_id)
+    .eq('provider_id', provider.provider_id)
     .order('created_at', { ascending: false })
     .limit(5);
 
@@ -37,7 +32,7 @@ export default async function ProviderDashboard() {
       {/* Welcome Message */}
       <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-2xl p-8 shadow-lg">
         <h2 className="text-2xl lg:text-3xl font-bold mb-2">
-          Willkommen, {activeProvider?.company_name}!
+          Willkommen, {provider?.company_name}!
         </h2>
         <p className="text-cyan-50 text-base lg:text-lg">
           Hier ist eine Übersicht über Ihre Kurse und Performance.

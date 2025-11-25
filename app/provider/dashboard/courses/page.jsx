@@ -31,17 +31,12 @@ export default async function CoursesPage() {
   // Get authenticated provider
   const provider = await getCurrentProvider();
   
-  // DEMO MODE: Use demo provider if not authenticated
-  const demoProvider = {
-    id: 1,
-    provider_id: 'bildungszentrum-koeln',
-    company_name: 'Bildungszentrum Köln'
-  };
-  
-  const activeProvider = provider || demoProvider;
+  if (!provider) {
+    redirect('/provider/login');
+  }
   
   // Get courses - use provider.provider_id (the TEXT slug)
-  const courses = await getProviderCourses(activeProvider.provider_id || activeProvider.id.toString());
+  const courses = await getProviderCourses(provider.provider_id || provider.id.toString());
   
   // Calculate stats
   const totalCourses = courses.length;

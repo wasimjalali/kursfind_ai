@@ -82,27 +82,28 @@ export default function ApplicationsPage() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       )
       
-      // DEMO MODE: Use hardcoded provider ID
-      let providerId = 1; // Default demo provider
-      
-      // Try to get authenticated user
+      // Get authenticated user
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       
-      // If authenticated, get their provider profile
-      if (user && !authError) {
-        const { data: provider, error: providerError } = await supabase
-          .from('providers')
-          .select('id')
-          .eq('auth_user_id', user.id)
-          .single()
-        
-        if (provider && !providerError) {
-          providerId = provider.id
-        }
+      // Redirect to login if not authenticated
+      if (!user || authError) {
+        router.push('/provider/login')
+        return
       }
       
-      // Continue with either authenticated or demo provider ID
-      console.log('Using provider ID:', providerId)
+      // Get provider profile
+      const { data: provider, error: providerError } = await supabase
+        .from('providers')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      
+      if (!provider || providerError) {
+        router.push('/provider/login')
+        return
+      }
+      
+      const providerId = provider.id
       
       // Fetch applications for this provider
       const { data, error } = await supabase

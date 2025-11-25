@@ -24,42 +24,22 @@ async function getCourse(id, providerId) {
 export default async function EditCoursePage({ params }) {
   const provider = await getCurrentProvider();
   
-  // ADD DEBUG LOGS
-  console.log('Edit page - Provider:', provider ? 'Found' : 'NOT FOUND')
-  if (provider) {
-    console.log('Provider ID:', provider.id)
-    console.log('Provider slug:', provider.provider_id)
+  if (!provider) {
+    redirect('/provider/login');
   }
-  
-  // DEMO MODE: Use demo provider if not authenticated
-  const demoProvider = {
-    id: 1,
-    provider_id: 'bildungszentrum-koeln',
-    company_name: 'Bildungszentrum Köln'
-  };
-  
-  const activeProvider = provider || demoProvider;
-  
-  console.log('Active Provider:', activeProvider.provider_id || activeProvider.id)
 
   const { id } = await params;
-  
-  console.log('Editing course ID:', id)
 
   // Get course
-  const course = await getCourse(id, activeProvider.provider_id || activeProvider.id.toString());
-
-  // ADD DEBUG LOG
-  console.log('Edit page - Course:', course ? 'Found' : 'NOT FOUND')
+  const course = await getCourse(id, provider.provider_id || provider.id.toString());
   
   if (!course) {
-    console.log('Course not found for id:', id)
     notFound();
   }
   
   // Security check: Ensure this course belongs to this provider
   const courseProviderId = course.provider_id?.toString();
-  const currentProviderId = (activeProvider.provider_id || activeProvider.id)?.toString();
+  const currentProviderId = (provider.provider_id || provider.id)?.toString();
   
   if (courseProviderId !== currentProviderId) {
     notFound();
@@ -82,7 +62,7 @@ export default async function EditCoursePage({ params }) {
           <p className="text-base lg:text-lg text-gray-600 mt-1">Aktualisieren Sie die Kursinformationen</p>
         </div>
         
-        <EditCourseForm course={course} provider={activeProvider} />
+        <EditCourseForm course={course} provider={provider} />
       </div>
     </div>
   );

@@ -4,16 +4,13 @@ import { useState } from 'react';
 import ProviderSidebar from '@/components/provider/ProviderSidebar';
 import ProviderHeader from '@/components/provider/ProviderHeader';
 
-export default function ProviderDashboardClient({ provider, children, demoBanner }) {
+export default function ProviderDashboardClient({ provider, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header - Full Width, Sticky */}
       <ProviderHeader provider={provider} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      
-      {/* Demo Mode Banner */}
-      {demoBanner}
       
       <div className="flex">
         {/* Sidebar - Below Header, Toggleable */}

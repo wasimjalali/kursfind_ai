@@ -5,14 +5,9 @@ import { redirect } from 'next/navigation';
 export default async function AnalyticsPage() {
   const provider = await getCurrentProvider();
   
-  // DEMO MODE: Use demo provider if not authenticated
-  const demoProvider = {
-    id: 1,
-    provider_id: 'bildungszentrum-koeln',
-    company_name: 'Bildungszentrum Köln'
-  };
-  
-  const activeProvider = provider || demoProvider;
+  if (!provider) {
+    redirect('/provider/login');
+  }
 
   const supabase = await createClient();
 
@@ -21,7 +16,7 @@ export default async function AnalyticsPage() {
   const { data: courses } = await supabase
     .from('courses')
     .select('id, title, views_count, clicks_count')
-    .eq('provider_id', activeProvider.provider_id)
+    .eq('provider_id', provider.provider_id)
     .order('views_count', { ascending: false });
 
   const totalViews = courses?.reduce((sum, course) => sum + (course.views_count || 0), 0) || 0;

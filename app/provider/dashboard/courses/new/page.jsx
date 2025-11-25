@@ -1,26 +1,14 @@
 import { getCurrentProvider } from '@/lib/supabase-server';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import NewCourseForm from '@/components/provider/NewCourseForm';
 
 export default async function NewCoursePage() {
   const provider = await getCurrentProvider();
   
-  // DEMO MODE: Use demo provider if not authenticated (same as layout)
-  const demoProvider = {
-    id: 1,
-    provider_id: 'bildungszentrum-koeln',
-    company_name: 'Bildungszentrum Köln',
-    email: 'demo@bildungszentrum-koeln.de',
-    contact_name: 'Demo Provider',
-    phone: '+49 221 123456'
-  };
-  
-  const activeProvider = provider || demoProvider;
-  
-  // Comment out redirect for demo mode (same as layout)
-  // if (!provider) {
-  //   redirect('/provider/login');
-  // }
+  if (!provider) {
+    redirect('/provider/login');
+  }
 
   return (
     <div className="space-y-6">
@@ -39,7 +27,7 @@ export default async function NewCoursePage() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-8">
-        <NewCourseForm provider={activeProvider} />
+        <NewCourseForm provider={provider} />
       </div>
     </div>
   );
