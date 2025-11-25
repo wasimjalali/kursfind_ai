@@ -36,12 +36,26 @@ export default function ProviderLogin() {
       console.log('User:', data.user?.email);
       console.log('Session:', data.session ? 'Active' : 'None');
 
-      // Wait a moment for session to be fully established
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Verify the provider exists in the database
+      const { data: providerData, error: providerError } = await supabase
+        .from('providers')
+        .select('id, company_name')
+        .eq('auth_user_id', data.user.id)
+        .single();
 
-      // Force a full page reload to set cookies properly
+      if (providerError || !providerData) {
+        console.error('❌ Provider not found in database:', providerError);
+        throw new Error('Kein Provider-Konto gefunden. Bitte kontaktieren Sie den Support.');
+      }
+
+      console.log('✅ Provider found:', providerData.company_name);
+
+      // Wait for session to be fully established
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // Use router.push instead of window.location for better Next.js integration
       console.log('🔄 Redirecting to dashboard...');
-      window.location.href = '/provider/dashboard';
+      router.push('/provider/dashboard');
 
     } catch (error) {
       console.error('Full error:', error);
