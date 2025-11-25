@@ -37,21 +37,21 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
           )}
         </button>
 
-        {/* Logo */}
+        {/* Logo - Enlarged 2x */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
             <Image 
               src="/Assets/kursfind-ai-logo.jpg" 
               alt="Kursfind AI" 
-              width={40} 
-              height={40}
+              width={80} 
+              height={80}
               className="rounded-lg"
             />
             <div>
-              <div className="font-bold text-lg bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+              <div className="font-bold text-2xl text-gray-900">
                 Kursfind AI
               </div>
-              <div className="text-xs text-gray-600">Provider Portal</div>
+              <div className="text-sm text-gray-600">Provider Portal</div>
             </div>
           </Link>
         </div>
