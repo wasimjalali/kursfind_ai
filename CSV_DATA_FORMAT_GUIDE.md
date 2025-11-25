@@ -247,6 +247,12 @@ Before importing your CSV, verify:
 ### Issue: Provider name/logo not on course cards
 **Fix**: Ensure `provider_id` in courses matches `provider_id` in providers table exactly
 
+### Issue: Provider name not showing in AI chat
+**Fix**: Provider data is fetched via JOIN on `provider_id`. Ensure:
+- `provider_id` in courses table matches `provider_id` in providers table (TEXT type)
+- Provider record exists in providers table
+- `company_name` is filled in providers table
+
 ---
 
 ## 📤 Import Steps
