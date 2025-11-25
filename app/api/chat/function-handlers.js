@@ -3,8 +3,17 @@
  * Executes the actual database queries for each function definition
  */
 
-import { supabase } from '@/lib/supabase'
-import { createClient } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
+
+// Initialize Supabase client for server-side API routes
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing Supabase credentials in function-handlers')
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 /**
  * Keyword expansion for better search recall
