@@ -19,11 +19,22 @@ export async function DELETE(request) {
       );
     }
 
-    // Use service role key for admin operations
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // First, verify authentication with anon key
+    const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
+    const { data: { user }, error: authError } = await supabaseAnon.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Nicht authentifiziert. Bitte melden Sie sich an.' },
+        { status: 401 }
+      );
+    }
+
+    // SECURITY: Use authenticated user's ID, NOT from request body
+    const auth_user_id = user.id;
 
     const body = await request.json();
-    const { auth_user_id, confirmation } = body;
+    const { confirmation } = body;
 
     // Validate confirmation
     if (confirmation !== 'DELETE') {
@@ -33,12 +44,8 @@ export async function DELETE(request) {
       );
     }
 
-    if (!auth_user_id) {
-      return NextResponse.json(
-        { error: 'Benutzer-ID fehlt' },
-        { status: 400 }
-      );
-    }
+    // Use service role key for admin operations (deleting user)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get student ID first
     const { data: student, error: studentError } = await supabase

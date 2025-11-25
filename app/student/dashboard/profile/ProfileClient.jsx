@@ -45,10 +45,7 @@ export default function ProfileClient({ initialStudent, authUserId }) {
       const response = await fetch('/api/student/update-profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          auth_user_id: authUserId
-        })
+        body: JSON.stringify(formData)
       });
 
       const data = await response.json();
@@ -106,7 +103,6 @@ export default function ProfileClient({ initialStudent, authUserId }) {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('auth_user_id', authUserId);
 
       const response = await fetch('/api/student/upload-avatar', {
         method: 'POST',
@@ -157,7 +153,6 @@ export default function ProfileClient({ initialStudent, authUserId }) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          auth_user_id: authUserId,
           confirmation: deleteConfirmation
         })
       });

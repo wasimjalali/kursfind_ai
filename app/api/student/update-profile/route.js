@@ -21,22 +21,18 @@ export async function PUT(request) {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     
-    // Get authenticated user
-    const authHeader = request.headers.get('authorization');
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-      
-      if (authError || !user) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
+    // CRITICAL: Get and verify authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Nicht authentifiziert. Bitte melden Sie sich an.' },
+        { status: 401 }
+      );
     }
 
     const body = await request.json();
-    const { first_name, last_name, phone, auth_user_id } = body;
+    const { first_name, last_name, phone } = body;
 
     // Validate required fields
     if (!first_name || !last_name) {
@@ -46,12 +42,8 @@ export async function PUT(request) {
       );
     }
 
-    if (!auth_user_id) {
-      return NextResponse.json(
-        { error: 'Benutzer-ID fehlt' },
-        { status: 400 }
-      );
-    }
+    // SECURITY: Use authenticated user's ID, NOT from request body
+    const auth_user_id = user.id;
 
     // Update student profile
     const { data, error } = await supabase

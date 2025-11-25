@@ -21,21 +21,26 @@ export async function POST(request) {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+    // CRITICAL: Get and verify authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Nicht authentifiziert. Bitte melden Sie sich an.' },
+        { status: 401 }
+      );
+    }
+
+    // SECURITY: Use authenticated user's ID, NOT from request
+    const auth_user_id = user.id;
+
     // Parse form data
     const formData = await request.formData();
     const file = formData.get('file');
-    const auth_user_id = formData.get('auth_user_id');
 
     if (!file) {
       return NextResponse.json(
         { error: 'Keine Datei hochgeladen' },
-        { status: 400 }
-      );
-    }
-
-    if (!auth_user_id) {
-      return NextResponse.json(
-        { error: 'Benutzer-ID fehlt' },
         { status: 400 }
       );
     }
