@@ -71,7 +71,8 @@ export default function CoursesPage() {
             .in('provider_id', providerIds)
           
           if (providersError) {
-            console.error('❌ Error fetching providers:', providersError)
+            console.warn('⚠️ Error fetching providers:', providersError.message || providersError)
+            // Continue without provider data - cards will show fallback
           } else if (allProviders && allProviders.length > 0) {
             console.log(`✅ Fetched ${allProviders.length} providers`)
             console.log('📊 Provider data:', allProviders)
