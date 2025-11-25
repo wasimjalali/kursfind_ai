@@ -13,29 +13,10 @@ async function getCourseData(identifier) {
   // Try to determine if it's an ID (number) or slug (string)
   const isNumericId = /^\d+$/.test(identifier)
   
-  // Query course with LEFT JOIN to providers table (so courses without providers still work)
+  // Fetch course first (without join to avoid FK issues)
   let query = supabase
     .from('courses')
-    .select(`
-      *,
-      language,
-      providers(
-        provider_id,
-        company_name,
-        logo_url,
-        description,
-        certifications,
-        Certification,
-        phone,
-        email,
-        website,
-        contact_name,
-        city,
-        short_description,
-        trustpilot_url,
-        google_reviews_url
-      )
-    `)
+    .select('*, language')
   
   if (isNumericId) {
     console.log('Querying by ID:', identifier)
@@ -45,85 +26,46 @@ async function getCourseData(identifier) {
     query = query.eq('slug', identifier).eq('status', 'active')
   }
   
-  let { data: courseData, error: courseError } = await query.single()
+  const { data: course, error: courseError } = await query.single()
 
-  // If join fails, try fetching course and provider separately as fallback
-  if (courseError && (courseError.code === 'PGRST116' || courseError.message?.includes('relation') || courseError.message?.includes('foreign key'))) {
-    console.warn('Provider join failed, fetching separately:', courseError.message)
-    
-    // Fetch course first
-    let fallbackQuery = supabase.from('courses').select('*, language')
-    if (isNumericId) {
-      fallbackQuery = fallbackQuery.eq('id', parseInt(identifier))
-    } else {
-      fallbackQuery = fallbackQuery.eq('slug', identifier).eq('status', 'active')
-    }
-    
-    const { data: course, error: courseErr } = await fallbackQuery.single()
-    
-    if (courseErr || !course) {
-      console.error('Course fetch error:', courseErr, 'Identifier:', identifier)
-      return null
-    }
-    
-    // Fetch provider separately
-    const { data: providerData, error: providerErr } = await supabase
-      .from('providers')
-      .select('*, Certification')
-      .eq('provider_id', course.provider_id)
-      .single()
-    
-    if (providerErr) {
-      console.warn('Provider fetch error:', providerErr)
-    }
-    
-    // Map provider data to match expected structure
-    const provider = providerData ? {
-      ...providerData,
-      name: providerData.company_name,
-      short_description: providerData.short_description || providerData.description,
-      provider_description: providerData.description,
-      Certification: providerData.Certification
-    } : null
-    
-    // Fetch provider FAQs
-    const providerId = provider?.provider_id || course.provider_id
-    const { data: faqs, error: faqError } = await supabase
-      .from('provider_faqs')
-      .select('*')
-      .eq('provider_id', providerId)
-      .eq('is_active', true)
-      .order('display_order', { ascending: true })
-    
-    console.log('FAQs query result (fallback):', { count: faqs?.length, error: faqError })
-    
-    return {
-      course,
-      provider,
-      providerFaqs: faqs || []
-    }
-  }
+  console.log('Course query result:', { 
+    hasData: !!course, 
+    courseId: course?.id,
+    error: courseError
+  })
 
-  if (courseError || !courseData) {
+  if (courseError || !course) {
     console.error('Course fetch error:', courseError, 'Identifier:', identifier)
     return null
   }
 
-  // Extract course and provider from joined result
-  const { providers, ...course } = courseData
-  const provider = providers ? {
-    ...providers,
-    // Map company_name to name for backward compatibility
-    name: providers.company_name,
-    // Map description to short_description if short_description is not available
-    short_description: providers.short_description || providers.description,
-    // Map description to provider_description for context
-    provider_description: providers.description
+  // Fetch provider separately (more reliable than JOIN)
+  const { data: providerData, error: providerErr } = await supabase
+    .from('providers')
+    .select('*, Certification')
+    .eq('provider_id', course.provider_id)
+    .single()
+  
+  if (providerErr) {
+    console.warn('Provider fetch error:', providerErr, 'Course provider_id:', course.provider_id)
+  }
+
+  // Map provider data to match expected structure
+  const provider = providerData ? {
+    ...providerData,
+    name: providerData.company_name,
+    short_description: providerData.short_description || providerData.description,
+    provider_description: providerData.description,
+    Certification: providerData.Certification
   } : null
 
-  console.log('Provider data:', provider)
+  console.log('Provider data:', { 
+    found: !!provider, 
+    name: provider?.name,
+    provider_id: provider?.provider_id 
+  })
 
-  // Fetch provider FAQs using provider_id from the joined result
+  // Fetch provider FAQs
   const providerId = provider?.provider_id || course.provider_id
   const { data: faqs, error: faqError } = await supabase
     .from('provider_faqs')
