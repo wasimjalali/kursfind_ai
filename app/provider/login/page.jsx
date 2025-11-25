@@ -32,9 +32,15 @@ export default function ProviderLogin() {
         throw error;
       }
 
-      console.log('Login successful:', data);
+      console.log('✅ Login successful:', data);
+      console.log('User:', data.user?.email);
+      console.log('Session:', data.session ? 'Active' : 'None');
+
+      // Wait a moment for session to be fully established
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Force a full page reload to set cookies properly
+      console.log('🔄 Redirecting to dashboard...');
       window.location.href = '/provider/dashboard';
 
     } catch (error) {

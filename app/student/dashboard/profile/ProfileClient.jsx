@@ -27,14 +27,35 @@ export default function ProfileClient({ initialStudent, authUserId }) {
   const handleLogout = async () => {
     try {
       setLoading(true);
-      await supabase.auth.signOut();
+      console.log('🔓 Logging out student...');
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('❌ Logout error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Logout successful');
+      
+      // Clear any local storage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('supabase.auth.token');
+        sessionStorage.clear();
+      }
+      
+      // Wait a moment to ensure session is cleared
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       // Use window.location for a clean redirect that clears all state
+      console.log('🔄 Redirecting to homepage...');
       window.location.href = '/';
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('❌ Logout error:', error);
       setMessage({ 
         type: 'error', 
-        text: 'Fehler beim Abmelden' 
+        text: error.message || 'Fehler beim Abmelden' 
       });
       setLoading(false);
     }
