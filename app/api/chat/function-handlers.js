@@ -258,11 +258,13 @@ async function searchCourses(args) {
   } = args;
 
   // Fetch courses with provider data
+  // Note: Using simple join without FK name since courses.provider_id (TEXT) 
+  // references providers.provider_id (TEXT), not a standard BIGINT FK
   let queryBuilder = supabase
     .from('courses')
     .select(`
       *,
-      providers!courses_provider_id_fkey(
+      providers(
         provider_id,
         company_name,
         logo_url,
@@ -349,7 +351,7 @@ async function searchCourses(args) {
       queryBuilder = queryBuilder.order('start_date', { ascending: true, nullsFirst: false });
       break;
     case 'view_count':
-      queryBuilder = queryBuilder.order('view_count', { ascending: false });
+      queryBuilder = queryBuilder.order('views_count', { ascending: false });
       break;
     case 'application_count':
       queryBuilder = queryBuilder.order('application_count', { ascending: false });
@@ -363,7 +365,7 @@ async function searchCourses(args) {
       // 2. View count (popularity)
       // 3. Application count (proven interest)
       queryBuilder = queryBuilder.order('is_featured', { ascending: false });
-      queryBuilder = queryBuilder.order('view_count', { ascending: false });
+      queryBuilder = queryBuilder.order('views_count', { ascending: false });
       queryBuilder = queryBuilder.order('application_count', { ascending: false });
   }
 
@@ -450,7 +452,7 @@ async function searchCourses(args) {
     // Sort by relevance
     fallbackQueryBuilder = fallbackQueryBuilder
       .order('is_featured', { ascending: false })
-      .order('view_count', { ascending: false })
+      .order('views_count', { ascending: false })
       .range(offset, offset + max_results - 1);
     
     const { data: cityFallbackCourses, count: cityFallbackCount } = await fallbackQueryBuilder;
@@ -521,7 +523,7 @@ async function searchCourses(args) {
         .eq('status', status)
         .ilike('category', `%${fallbackCategory}%`)
         .order('is_featured', { ascending: false })
-        .order('view_count', { ascending: false })
+        .order('views_count', { ascending: false })
         .range(offset, offset + max_results - 1);
       
       if (fallbackCourses && fallbackCourses.length > 0) {
