@@ -16,8 +16,33 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
     }
   }, [course, provider, providerFaqs])
 
+  // Track course view on page load
+  useEffect(() => {
+    if (course?.id) {
+      fetch('/api/courses/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: course.id, action: 'view' })
+      }).catch(err => console.error('Failed to track view:', err))
+    }
+  }, [course?.id])
+
   const [expandedModule, setExpandedModule] = useState(null)
   const [showApplicationModal, setShowApplicationModal] = useState(false)
+
+  // Track application click
+  const handleApplicationClick = () => {
+    // Track click
+    if (course?.id) {
+      fetch('/api/courses/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: course.id, action: 'click' })
+      }).catch(err => console.error('Failed to track click:', err))
+    }
+    // Show application modal
+    setShowApplicationModal(true)
+  }
   
   // Chat state
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -221,7 +246,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
 
           <div className="flex flex-wrap gap-4 items-center">
             <button 
-              onClick={() => setShowApplicationModal(true)}
+              onClick={handleApplicationClick}
               className="bg-white text-cyan-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all duration-200"
             >
               Jetzt bewerben →
@@ -1080,7 +1105,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
       {provider && (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 z-50">
           <button
-            onClick={() => setShowApplicationModal(true)}
+            onClick={handleApplicationClick}
             className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2"
           >
             Jetzt bewerben
