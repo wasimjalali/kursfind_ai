@@ -9,89 +9,230 @@ import { createClient } from '@/lib/supabase-server'
 /**
  * Keyword expansion for better search recall
  * Expands search terms with synonyms and related concepts
+ * 
+ * OPTIMIZED FOR:
+ * - German vocational training (Weiterbildung) market
+ * - Bildungsgutschein-funded courses
+ * - Bootcamp-style intensive training
+ * - Both German and English speakers
+ * 
+ * NOTE FOR SCALING: When platform grows to 1000+ courses, consider:
+ * 1. Moving to Elasticsearch/Algolia for full-text search
+ * 2. Implementing vector embeddings for semantic search
+ * 3. Using AI-powered query expansion (GPT/Claude for query understanding)
+ * 4. Building category-specific synonym dictionaries
+ * 5. Implementing user search history for personalized expansion
  */
 function expandSearchTerms(query) {
   const lowerQuery = query.toLowerCase().trim();
   const terms = [query]; // Always include original
   
-  // Synonym mapping for common course topics
+  // Comprehensive synonym mapping for German vocational training market
   const synonymMap = {
-    // Programming languages
-    'python': ['python', 'programming', 'coding', 'entwicklung', 'data'],
-    'javascript': ['javascript', 'js', 'web development', 'frontend', 'webentwicklung'],
-    'java': ['java', 'programming', 'entwicklung'],
-    'php': ['php', 'web development', 'backend'],
-    'c#': ['c#', 'csharp', 'dotnet', '.net'],
-    'programmierung': ['programmierung', 'programming', 'coding', 'entwicklung', 'software'],
-    'coding': ['coding', 'programming', 'programmierung', 'entwicklung'],
+    // ═══════════════════════════════════════════════════════════════
+    // PROGRAMMING & SOFTWARE DEVELOPMENT
+    // ═══════════════════════════════════════════════════════════════
+    'python': ['python', 'programming', 'coding', 'entwicklung', 'data science', 'machine learning', 'backend'],
+    'javascript': ['javascript', 'js', 'web development', 'frontend', 'webentwicklung', 'react', 'node', 'typescript'],
+    'java': ['java', 'programming', 'entwicklung', 'backend', 'enterprise'],
+    'php': ['php', 'web development', 'backend', 'wordpress', 'laravel'],
+    'c#': ['c#', 'csharp', 'dotnet', '.net', 'microsoft', 'unity'],
+    'sql': ['sql', 'database', 'datenbank', 'mysql', 'postgresql', 'data'],
+    'react': ['react', 'javascript', 'frontend', 'web development', 'webentwicklung'],
+    'node': ['node', 'nodejs', 'javascript', 'backend', 'api'],
+    'typescript': ['typescript', 'javascript', 'frontend', 'web development'],
+    
+    // German programming terms
+    'programmierung': ['programmierung', 'programming', 'coding', 'entwicklung', 'software', 'softwareentwicklung'],
+    'softwareentwicklung': ['softwareentwicklung', 'software development', 'programming', 'programmierung', 'entwicklung'],
+    'coding': ['coding', 'programming', 'programmierung', 'entwicklung', 'software'],
+    'entwicklung': ['entwicklung', 'development', 'programming', 'software'],
+    'entwickler': ['entwickler', 'developer', 'programming', 'software'],
+    
+    // ═══════════════════════════════════════════════════════════════
+    // WEB DEVELOPMENT & DESIGN
+    // ═══════════════════════════════════════════════════════════════
+    'web development': ['web development', 'webentwicklung', 'web', 'frontend', 'backend', 'fullstack', 'website'],
+    'webentwicklung': ['webentwicklung', 'web development', 'web', 'frontend', 'backend', 'website'],
+    'web': ['web', 'web development', 'webentwicklung', 'frontend', 'backend', 'fullstack', 'website'],
+    'frontend': ['frontend', 'web development', 'web', 'javascript', 'react', 'vue', 'html', 'css', 'ui'],
+    'backend': ['backend', 'web development', 'web', 'api', 'server', 'database', 'node', 'python'],
+    'fullstack': ['fullstack', 'full stack', 'full-stack', 'web development', 'frontend', 'backend'],
+    'full stack': ['full stack', 'fullstack', 'full-stack', 'web development'],
+    'website': ['website', 'web', 'webentwicklung', 'webdesign', 'homepage'],
     
     // Design
-    'ux': ['ux', 'ui', 'user experience', 'design', 'interface', 'webdesign'],
-    'ui': ['ui', 'ux', 'user interface', 'design', 'interface', 'webdesign'],
-    'design': ['design', 'ux', 'ui', 'grafik', 'gestaltung', 'webdesign'],
-    'grafik': ['grafik', 'design', 'graphics', 'gestaltung'],
-    'webdesign': ['webdesign', 'web design', 'ux', 'ui', 'design', 'frontend'],
+    'ux': ['ux', 'ui', 'ux/ui', 'user experience', 'design', 'interface', 'webdesign', 'usability'],
+    'ui': ['ui', 'ux', 'ux/ui', 'user interface', 'design', 'interface', 'webdesign', 'frontend'],
+    'ux/ui': ['ux/ui', 'ux', 'ui', 'design', 'user experience', 'user interface', 'webdesign'],
+    'design': ['design', 'ux', 'ui', 'grafik', 'gestaltung', 'webdesign', 'grafikdesign', 'mediendesign'],
+    'grafik': ['grafik', 'graphic', 'design', 'graphics', 'gestaltung', 'grafikdesign'],
+    'grafikdesign': ['grafikdesign', 'graphic design', 'design', 'grafik', 'mediendesign'],
+    'webdesign': ['webdesign', 'web design', 'ux', 'ui', 'design', 'frontend', 'website'],
+    'mediendesign': ['mediendesign', 'media design', 'design', 'grafik', 'digital'],
     
-    // Web Development
-    'web development': ['web development', 'webentwicklung', 'web', 'frontend', 'backend', 'fullstack', 'full stack'],
-    'webentwicklung': ['webentwicklung', 'web development', 'web', 'frontend', 'backend'],
-    'web': ['web', 'web development', 'webentwicklung', 'frontend', 'backend', 'fullstack'],
-    'frontend': ['frontend', 'web development', 'web', 'javascript', 'react', 'vue'],
-    'backend': ['backend', 'web development', 'web', 'api', 'server'],
-    'fullstack': ['fullstack', 'full stack', 'web development', 'web', 'frontend', 'backend'],
-    'full stack': ['full stack', 'fullstack', 'web development', 'web'],
+    // ═══════════════════════════════════════════════════════════════
+    // DATA & ANALYTICS
+    // ═══════════════════════════════════════════════════════════════
+    'data science': ['data science', 'data analytics', 'machine learning', 'ai', 'datenanalyse', 'data', 'python', 'statistik'],
+    'data analytics': ['data analytics', 'data science', 'business intelligence', 'datenanalyse', 'bi', 'tableau', 'power bi'],
+    'datenanalyse': ['datenanalyse', 'data analytics', 'data science', 'analyse', 'statistik', 'bi'],
+    'machine learning': ['machine learning', 'ml', 'ai', 'data science', 'künstliche intelligenz', 'deep learning', 'python'],
+    'ai': ['ai', 'artificial intelligence', 'machine learning', 'künstliche intelligenz', 'ki', 'deep learning'],
+    'ki': ['ki', 'künstliche intelligenz', 'ai', 'artificial intelligence', 'machine learning'],
+    'künstliche intelligenz': ['künstliche intelligenz', 'ki', 'ai', 'artificial intelligence', 'machine learning'],
+    'data': ['data', 'data science', 'data analytics', 'daten', 'datenanalyse', 'database'],
+    'business intelligence': ['business intelligence', 'bi', 'data analytics', 'datenanalyse', 'tableau', 'power bi'],
+    'bi': ['bi', 'business intelligence', 'data analytics', 'datenanalyse'],
     
-    // Data & Analytics
-    'data science': ['data science', 'data analytics', 'machine learning', 'ai', 'datenanalyse', 'data'],
-    'data analytics': ['data analytics', 'data science', 'business intelligence', 'datenanalyse'],
-    'machine learning': ['machine learning', 'ml', 'ai', 'data science', 'künstliche intelligenz'],
-    'ai': ['ai', 'artificial intelligence', 'machine learning', 'künstliche intelligenz'],
-    'data': ['data', 'data science', 'data analytics', 'daten', 'datenanalyse'],
-    
-    // Marketing & E-Commerce - EXPANDED
-    'ecommerce': ['ecommerce', 'e-commerce', 'e commerce', 'online business', 'digital marketing', 'amazon', 'shopify', 'online handel', 'onlinehandel'],
+    // ═══════════════════════════════════════════════════════════════
+    // E-COMMERCE & DIGITAL MARKETING (Core for Kursfind)
+    // ═══════════════════════════════════════════════════════════════
+    'ecommerce': ['ecommerce', 'e-commerce', 'e commerce', 'online business', 'digital marketing', 'amazon', 'shopify', 'online handel', 'onlinehandel', 'online shop'],
     'e-commerce': ['e-commerce', 'ecommerce', 'e commerce', 'online business', 'digital marketing', 'amazon', 'shopify', 'online handel', 'onlinehandel'],
     'e commerce': ['e commerce', 'e-commerce', 'ecommerce', 'online business', 'digital marketing', 'amazon', 'shopify'],
-    'commerce': ['commerce', 'e-commerce', 'ecommerce', 'online business', 'handel'],
-    'online handel': ['online handel', 'onlinehandel', 'e-commerce', 'ecommerce', 'digital marketing'],
+    'commerce': ['commerce', 'e-commerce', 'ecommerce', 'online business', 'handel', 'online handel'],
+    'online handel': ['online handel', 'onlinehandel', 'e-commerce', 'ecommerce', 'digital marketing', 'amazon'],
     'onlinehandel': ['onlinehandel', 'online handel', 'e-commerce', 'ecommerce', 'digital marketing'],
-    'digital marketing': ['digital marketing', 'online marketing', 'marketing', 'seo', 'sem', 'e-commerce', 'social media'],
-    'online marketing': ['online marketing', 'digital marketing', 'marketing', 'seo', 'e-commerce'],
-    'marketing': ['marketing', 'digital marketing', 'online marketing', 'social media', 'seo'],
-    'seo': ['seo', 'search engine optimization', 'online marketing', 'marketing'],
-    'amazon': ['amazon', 'fba', 'e-commerce', 'ecommerce', 'online business', 'marketplace'],
-    'shopify': ['shopify', 'e-commerce', 'ecommerce', 'online store', 'online shop'],
-    'social media': ['social media', 'marketing', 'digital marketing', 'instagram', 'facebook', 'linkedin'],
+    'online shop': ['online shop', 'onlineshop', 'e-commerce', 'ecommerce', 'shopify', 'woocommerce'],
+    'onlineshop': ['onlineshop', 'online shop', 'e-commerce', 'ecommerce', 'shopify'],
     
-    // Project Management
-    'project management': ['project management', 'projektmanagement', 'agile', 'scrum'],
-    'projektmanagement': ['projektmanagement', 'project management', 'agile', 'scrum'],
-    'agile': ['agile', 'scrum', 'project management', 'projektmanagement'],
-    'scrum': ['scrum', 'agile', 'project management'],
+    // Digital Marketing
+    'digital marketing': ['digital marketing', 'online marketing', 'marketing', 'seo', 'sem', 'e-commerce', 'social media', 'performance marketing'],
+    'online marketing': ['online marketing', 'digital marketing', 'marketing', 'seo', 'e-commerce', 'social media'],
+    'marketing': ['marketing', 'digital marketing', 'online marketing', 'social media', 'seo', 'content marketing'],
+    'seo': ['seo', 'search engine optimization', 'suchmaschinenoptimierung', 'online marketing', 'marketing', 'google'],
+    'suchmaschinenoptimierung': ['suchmaschinenoptimierung', 'seo', 'search engine optimization', 'online marketing'],
+    'sem': ['sem', 'search engine marketing', 'google ads', 'ppc', 'online marketing'],
+    'google ads': ['google ads', 'sem', 'ppc', 'online marketing', 'advertising', 'werbung'],
+    'social media': ['social media', 'marketing', 'digital marketing', 'instagram', 'facebook', 'linkedin', 'tiktok', 'content'],
+    'content marketing': ['content marketing', 'marketing', 'digital marketing', 'social media', 'copywriting'],
+    'performance marketing': ['performance marketing', 'digital marketing', 'online marketing', 'google ads', 'facebook ads'],
     
-    // IT & Tech
-    'it': ['it', 'tech', 'technology', 'informationstechnologie', 'software', 'programming'],
-    'tech': ['tech', 'it', 'technology', 'software'],
-    'cybersecurity': ['cybersecurity', 'security', 'it security', 'sicherheit'],
-    'cloud': ['cloud', 'aws', 'azure', 'cloud computing'],
-    'devops': ['devops', 'ci/cd', 'automation', 'deployment'],
-    'software': ['software', 'programming', 'entwicklung', 'it'],
+    // E-Commerce Platforms
+    'amazon': ['amazon', 'fba', 'amazon fba', 'e-commerce', 'ecommerce', 'online business', 'marketplace', 'seller'],
+    'amazon fba': ['amazon fba', 'fba', 'amazon', 'e-commerce', 'fulfillment', 'seller'],
+    'fba': ['fba', 'amazon fba', 'amazon', 'e-commerce', 'fulfillment'],
+    'shopify': ['shopify', 'e-commerce', 'ecommerce', 'online store', 'online shop', 'dropshipping'],
+    'woocommerce': ['woocommerce', 'wordpress', 'e-commerce', 'online shop'],
+    'dropshipping': ['dropshipping', 'e-commerce', 'ecommerce', 'shopify', 'online business'],
     
-    // Healthcare
-    'pflege': ['pflege', 'healthcare', 'nursing', 'gesundheit', 'krankenpflege'],
-    'healthcare': ['healthcare', 'pflege', 'health', 'gesundheit'],
-    'gesundheit': ['gesundheit', 'healthcare', 'pflege', 'health'],
+    // ═══════════════════════════════════════════════════════════════
+    // PROJECT MANAGEMENT & AGILE
+    // ═══════════════════════════════════════════════════════════════
+    'project management': ['project management', 'projektmanagement', 'agile', 'scrum', 'pmp', 'prince2'],
+    'projektmanagement': ['projektmanagement', 'project management', 'agile', 'scrum', 'pmp'],
+    'agile': ['agile', 'scrum', 'project management', 'projektmanagement', 'kanban', 'sprint'],
+    'scrum': ['scrum', 'agile', 'project management', 'scrum master', 'product owner'],
+    'scrum master': ['scrum master', 'scrum', 'agile', 'projektmanagement'],
+    'product owner': ['product owner', 'scrum', 'agile', 'projektmanagement', 'po'],
+    'kanban': ['kanban', 'agile', 'project management', 'lean'],
+    'pmp': ['pmp', 'project management', 'projektmanagement', 'pmi', 'zertifizierung'],
     
-    // Business
-    'business': ['business', 'management', 'betriebswirtschaft', 'bwl', 'wirtschaft'],
-    'management': ['management', 'business', 'führung', 'leadership'],
-    'bwl': ['bwl', 'betriebswirtschaft', 'business', 'wirtschaft'],
+    // ═══════════════════════════════════════════════════════════════
+    // IT & TECH INFRASTRUCTURE
+    // ═══════════════════════════════════════════════════════════════
+    'it': ['it', 'tech', 'technology', 'informationstechnologie', 'software', 'programming', 'edv'],
+    'tech': ['tech', 'it', 'technology', 'software', 'digital'],
+    'edv': ['edv', 'it', 'computer', 'informationstechnologie'],
+    'cybersecurity': ['cybersecurity', 'cyber security', 'security', 'it security', 'sicherheit', 'informationssicherheit'],
+    'it security': ['it security', 'cybersecurity', 'security', 'sicherheit', 'informationssicherheit'],
+    'informationssicherheit': ['informationssicherheit', 'it security', 'cybersecurity', 'security'],
+    'cloud': ['cloud', 'aws', 'azure', 'cloud computing', 'devops', 'google cloud'],
+    'aws': ['aws', 'amazon web services', 'cloud', 'devops', 'cloud computing'],
+    'azure': ['azure', 'microsoft azure', 'cloud', 'devops', 'cloud computing'],
+    'devops': ['devops', 'ci/cd', 'automation', 'deployment', 'cloud', 'docker', 'kubernetes'],
+    'docker': ['docker', 'devops', 'container', 'kubernetes', 'deployment'],
+    'kubernetes': ['kubernetes', 'k8s', 'devops', 'container', 'docker'],
+    'linux': ['linux', 'system administration', 'devops', 'server', 'ubuntu'],
+    'netzwerk': ['netzwerk', 'network', 'it', 'cisco', 'infrastruktur'],
+    'network': ['network', 'netzwerk', 'it', 'cisco', 'infrastructure'],
     
-    // Bootcamp specific
-    'bootcamp': ['bootcamp', 'intensivkurs', 'weiterbildung', 'training'],
-    'weiterbildung': ['weiterbildung', 'fortbildung', 'training', 'kurs', 'bootcamp'],
-    'kurs': ['kurs', 'course', 'weiterbildung', 'training', 'schulung'],
-    'schulung': ['schulung', 'training', 'kurs', 'weiterbildung']
+    // ═══════════════════════════════════════════════════════════════
+    // HEALTHCARE & SOCIAL (Pflege - high demand in Germany)
+    // ═══════════════════════════════════════════════════════════════
+    'pflege': ['pflege', 'healthcare', 'nursing', 'gesundheit', 'krankenpflege', 'altenpflege', 'pflegefachkraft'],
+    'krankenpflege': ['krankenpflege', 'pflege', 'nursing', 'gesundheit', 'krankenhaus'],
+    'altenpflege': ['altenpflege', 'pflege', 'senior care', 'gesundheit'],
+    'pflegefachkraft': ['pflegefachkraft', 'pflege', 'nursing', 'fachkraft'],
+    'healthcare': ['healthcare', 'pflege', 'health', 'gesundheit', 'medical'],
+    'gesundheit': ['gesundheit', 'healthcare', 'pflege', 'health', 'medizin'],
+    'gesundheitswesen': ['gesundheitswesen', 'healthcare', 'pflege', 'gesundheit'],
+    'medizin': ['medizin', 'medical', 'healthcare', 'gesundheit'],
+    'soziale arbeit': ['soziale arbeit', 'social work', 'sozialarbeit', 'pädagogik'],
+    'sozialarbeit': ['sozialarbeit', 'soziale arbeit', 'social work', 'pädagogik'],
+    'pädagogik': ['pädagogik', 'education', 'erziehung', 'soziale arbeit'],
+    
+    // ═══════════════════════════════════════════════════════════════
+    // BUSINESS & MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════
+    'business': ['business', 'management', 'betriebswirtschaft', 'bwl', 'wirtschaft', 'unternehmen'],
+    'management': ['management', 'business', 'führung', 'leadership', 'betriebswirtschaft'],
+    'bwl': ['bwl', 'betriebswirtschaft', 'business', 'wirtschaft', 'business administration'],
+    'betriebswirtschaft': ['betriebswirtschaft', 'bwl', 'business', 'wirtschaft'],
+    'wirtschaft': ['wirtschaft', 'business', 'bwl', 'ökonomie', 'economy'],
+    'führung': ['führung', 'leadership', 'management', 'führungskraft'],
+    'leadership': ['leadership', 'führung', 'management', 'führungskraft'],
+    'personalmanagement': ['personalmanagement', 'hr', 'human resources', 'personal'],
+    'hr': ['hr', 'human resources', 'personalmanagement', 'personal', 'recruiting'],
+    'buchhaltung': ['buchhaltung', 'accounting', 'finanzen', 'rechnungswesen', 'fibu'],
+    'accounting': ['accounting', 'buchhaltung', 'finanzen', 'rechnungswesen'],
+    'finanzen': ['finanzen', 'finance', 'buchhaltung', 'controlling'],
+    'controlling': ['controlling', 'finanzen', 'finance', 'buchhaltung'],
+    
+    // ═══════════════════════════════════════════════════════════════
+    // GERMAN VOCATIONAL TRAINING SPECIFIC
+    // ═══════════════════════════════════════════════════════════════
+    'bootcamp': ['bootcamp', 'intensivkurs', 'weiterbildung', 'training', 'crash course', 'intensiv'],
+    'weiterbildung': ['weiterbildung', 'fortbildung', 'training', 'kurs', 'bootcamp', 'qualifizierung', 'umschulung'],
+    'fortbildung': ['fortbildung', 'weiterbildung', 'training', 'schulung', 'qualifizierung'],
+    'umschulung': ['umschulung', 'retraining', 'weiterbildung', 'berufswechsel', 'neuorientierung'],
+    'qualifizierung': ['qualifizierung', 'weiterbildung', 'fortbildung', 'zertifizierung'],
+    'kurs': ['kurs', 'course', 'weiterbildung', 'training', 'schulung', 'lehrgang'],
+    'schulung': ['schulung', 'training', 'kurs', 'weiterbildung', 'seminar'],
+    'lehrgang': ['lehrgang', 'kurs', 'weiterbildung', 'ausbildung'],
+    'seminar': ['seminar', 'schulung', 'workshop', 'kurs'],
+    'zertifizierung': ['zertifizierung', 'certification', 'zertifikat', 'prüfung'],
+    'zertifikat': ['zertifikat', 'certificate', 'zertifizierung', 'abschluss'],
+    
+    // Funding types
+    'bildungsgutschein': ['bildungsgutschein', 'förderung', 'agentur für arbeit', 'arbeitsamt', 'gefördert'],
+    'förderung': ['förderung', 'bildungsgutschein', 'funding', 'gefördert', 'finanzierung'],
+    'gefördert': ['gefördert', 'förderung', 'bildungsgutschein', 'funded'],
+    'avgs': ['avgs', 'aktivierungs- und vermittlungsgutschein', 'coaching', 'beratung'],
+    
+    // ═══════════════════════════════════════════════════════════════
+    // LOCATIONS (German cities with training centers)
+    // ═══════════════════════════════════════════════════════════════
+    'berlin': ['berlin', 'online', 'remote', 'präsenz'],
+    'hamburg': ['hamburg', 'online', 'remote', 'präsenz'],
+    'münchen': ['münchen', 'munich', 'online', 'remote', 'präsenz'],
+    'köln': ['köln', 'cologne', 'online', 'remote', 'präsenz'],
+    'frankfurt': ['frankfurt', 'online', 'remote', 'präsenz'],
+    'düsseldorf': ['düsseldorf', 'online', 'remote', 'präsenz'],
+    'stuttgart': ['stuttgart', 'online', 'remote', 'präsenz'],
+    'leipzig': ['leipzig', 'online', 'remote', 'präsenz'],
+    'dresden': ['dresden', 'online', 'remote', 'präsenz'],
+    
+    // Format
+    'online': ['online', 'remote', 'digital', 'virtuell', 'live-online'],
+    'remote': ['remote', 'online', 'digital', 'virtuell', 'homeoffice'],
+    'präsenz': ['präsenz', 'vor ort', 'classroom', 'in person'],
+    'hybrid': ['hybrid', 'blended', 'online', 'präsenz'],
+    'vollzeit': ['vollzeit', 'full-time', 'intensiv', 'ganztags'],
+    'teilzeit': ['teilzeit', 'part-time', 'berufsbegleitend'],
+    'berufsbegleitend': ['berufsbegleitend', 'teilzeit', 'abends', 'wochenende'],
+    
+    // ═══════════════════════════════════════════════════════════════
+    // CAREER GOALS & JOB TITLES
+    // ═══════════════════════════════════════════════════════════════
+    'developer': ['developer', 'entwickler', 'programmer', 'programmierer', 'software'],
+    'web developer': ['web developer', 'webentwickler', 'frontend', 'backend', 'fullstack'],
+    'data analyst': ['data analyst', 'datenanalyst', 'data analytics', 'business intelligence'],
+    'data scientist': ['data scientist', 'data science', 'machine learning', 'ai'],
+    'product manager': ['product manager', 'produktmanager', 'product owner', 'management'],
+    'ux designer': ['ux designer', 'ux', 'ui', 'design', 'user experience'],
+    'marketing manager': ['marketing manager', 'marketing', 'digital marketing', 'online marketing'],
   };
   
   // Check if query matches any synonym key (check ALL matches, not just first)
@@ -110,8 +251,8 @@ function expandSearchTerms(query) {
   // Add all matched synonyms
   matchedSynonyms.forEach(syn => terms.push(syn));
   
-  // Limit to 8 terms max to avoid overly broad searches but allow more flexibility
-  return terms.slice(0, 8);
+  // Limit to 10 terms for comprehensive search while maintaining performance
+  return terms.slice(0, 10);
 }
 
 /**

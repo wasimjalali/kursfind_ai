@@ -432,31 +432,55 @@ function ChatContent() {
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
-                            {/* MARKDOWN CONTENT - Enhanced styling for bullet points */}
-                            <div className="prose prose-sm max-w-none mb-4">
+                            {/* MARKDOWN CONTENT - Enhanced styling for all text elements */}
+                            <div className="prose prose-sm max-w-none mb-4 text-gray-700">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text - ensure it's dark and visible
+                                  // Bold text - FIXED: Use inline style to override any inherited styles
                                   strong: ({node, ...props}) => (
-                                    <strong className="font-bold text-gray-900" {...props} />
+                                    <strong 
+                                      className="font-bold" 
+                                      style={{ color: '#1f2937', fontWeight: 700 }} 
+                                      {...props} 
+                                    />
                                   ),
                                   // Italic text
                                   em: ({node, ...props}) => (
-                                    <em className="italic text-gray-700" {...props} />
+                                    <em 
+                                      className="italic" 
+                                      style={{ color: '#374151' }} 
+                                      {...props} 
+                                    />
                                   ),
-                                  // Paragraphs
+                                  // Paragraphs - FIXED: Ensure text color is always visible
                                   p: ({node, ...props}) => (
-                                    <p className="mb-3 last:mb-0 text-gray-700 leading-relaxed" {...props} />
+                                    <p 
+                                      className="mb-3 last:mb-0 leading-relaxed" 
+                                      style={{ color: '#374151' }} 
+                                      {...props} 
+                                    />
                                   ),
-                                  // Headings - Force black color
+                                  // Headings - Force dark color with inline styles
                                   h1: ({node, ...props}) => (
-                                    <h1 className="text-xl font-bold mb-3 text-gray-900" {...props} />
+                                    <h1 
+                                      className="text-xl font-bold mb-3" 
+                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      {...props} 
+                                    />
                                   ),
                                   h2: ({node, ...props}) => (
-                                    <h2 className="text-lg font-bold mb-2 text-gray-900" {...props} />
+                                    <h2 
+                                      className="text-lg font-bold mb-2" 
+                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      {...props} 
+                                    />
                                   ),
                                   h3: ({node, ...props}) => (
-                                    <h3 className="text-base font-bold mb-2 text-gray-900" {...props} />
+                                    <h3 
+                                      className="text-base font-bold mb-2" 
+                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      {...props} 
+                                    />
                                   ),
                                   // Lists - FIXED: Proper bullet point styling with visible markers
                                   ul: ({node, ...props}) => (
@@ -465,6 +489,7 @@ function ChatContent() {
                                       style={{
                                         listStyleType: 'disc',
                                         listStylePosition: 'outside',
+                                        color: '#374151',
                                       }}
                                       {...props} 
                                     />
@@ -475,6 +500,7 @@ function ChatContent() {
                                       style={{
                                         listStyleType: 'decimal',
                                         listStylePosition: 'outside',
+                                        color: '#374151',
                                       }}
                                       {...props} 
                                     />
@@ -482,25 +508,30 @@ function ChatContent() {
                                   // List items - FIXED: Proper display and color
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="text-gray-700 leading-relaxed pl-1"
+                                      className="leading-relaxed pl-1"
                                       style={{
                                         display: 'list-item',
+                                        color: '#374151',
                                       }}
                                       {...props}
                                     >
                                       {children}
                                     </li>
                                   ),
-                                  // Links
+                                  // Links - Visible color
                                   a: ({node, ...props}) => (
-                                    <a className="text-cyan-600 hover:text-cyan-700 underline font-medium" {...props} />
+                                    <a 
+                                      className="underline font-medium" 
+                                      style={{ color: '#0891b2' }} 
+                                      {...props} 
+                                    />
                                   ),
-                                  // Code
+                                  // Code - Dark text
                                   code: ({node, ...props}: any) => {
                                     const inline = !props.className?.includes('language-');
                                     return inline 
-                                      ? <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800" {...props} />
-                                      : <code className="block bg-gray-100 p-3 rounded-lg text-sm font-mono text-gray-800 overflow-x-auto" {...props} />;
+                                      ? <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono" style={{ color: '#1f2937' }} {...props} />
+                                      : <code className="block bg-gray-100 p-3 rounded-lg text-sm font-mono overflow-x-auto" style={{ color: '#1f2937' }} {...props} />;
                                   },
                                 }}
                               >
