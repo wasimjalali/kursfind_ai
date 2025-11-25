@@ -346,7 +346,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   Zusätzliche Leistungen & Benefits
                 </h2>
               </div>
-              <div className="p-8 space-y-6">
+              <div className="p-8">
                 {(() => {
                   // Parse benefits - handle string or array
                   let benefitsArray = [];
@@ -356,79 +356,27 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     benefitsArray = course.benefits.filter(Boolean);
                   }
                   
-                  const orderedBenefits = ['Inklusiver Laptop', 'Jobcoaching', 'Job Garantie']
-                    .filter(benefitName => benefitsArray.includes(benefitName));
-                  
+                  // Display all benefits in a grid
                   return (
-                    <>
-                      {/* Laptop - Large Featured Benefit */}
-                      {orderedBenefits.includes('Inklusiver Laptop') && (
-                        <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 p-6 sm:p-10 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-2xl border-2 border-cyan-200">
-                          <div className="flex-1 text-center sm:text-left">
-                            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                              Inklusiver Laptop
-                            </h3>
-                            <p className="text-gray-600 text-lg sm:text-xl">
-                              Kostenloser Laptop
-                            </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {benefitsArray.map((benefit, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-start gap-4 p-6 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl border border-cyan-100 hover:border-cyan-200 transition-colors"
+                        >
+                          <div className="flex-shrink-0">
+                            <svg className="w-8 h-8 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
                           </div>
-                          <div className="hidden sm:block flex-shrink-0 overflow-hidden rounded-2xl">
-                            <div className="px-[10px]">
-                              <Image
-                                src="/Assets/laptop-new.png"
-                                alt="Inklusiver Laptop"
-                                width={350}
-                                height={213}
-                                unoptimized
-                                className="object-contain rounded-2xl"
-                                style={{ marginLeft: '-10px', marginRight: '-10px' }}
-                              />
-                            </div>
+                          <div>
+                            <h3 className="text-base font-semibold text-gray-900">
+                              {benefit}
+                            </h3>
                           </div>
                         </div>
-                      )}
-                      
-                      {/* Bottom Row - Jobcoaching and Job Garantie with Icons */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Jobcoaching */}
-                        {orderedBenefits.includes('Jobcoaching') && (
-                          <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl border border-cyan-100">
-                            <div className="flex-shrink-0">
-                              <svg className="w-12 h-12 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                Jobcoaching
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                Persönliches Coaching für Ihre Karriere
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Job Garantie */}
-                        {orderedBenefits.includes('Job Garantie') && (
-                          <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl border border-cyan-100">
-                            <div className="flex-shrink-0">
-                              <svg className="w-12 h-12 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                Job Garantie
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                Garantierte Jobvermittlung nach Abschluss
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </>
+                      ))}
+                    </div>
                   );
                 })()}
               </div>
