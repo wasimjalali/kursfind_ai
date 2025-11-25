@@ -18,11 +18,11 @@ export default async function ProviderDashboard() {
   const supabase = await createClient();
 
   // Get stats
-  // Use numeric provider ID for courses query
+  // Use TEXT provider_id for courses query (courses.provider_id is TEXT)
   const { data: courses } = await supabase
     .from('courses')
     .select('id, title, views_count, clicks_count, is_active, created_at')
-    .eq('provider_id', activeProvider.id)
+    .eq('provider_id', activeProvider.provider_id)
     .order('created_at', { ascending: false })
     .limit(5);
 

@@ -17,11 +17,11 @@ export default async function AnalyticsPage() {
   const supabase = await createClient();
 
   // Get all courses for this provider
-  // Use numeric provider ID for courses query
+  // Use TEXT provider_id for courses query (courses.provider_id is TEXT)
   const { data: courses } = await supabase
     .from('courses')
     .select('id, title, views_count, clicks_count')
-    .eq('provider_id', activeProvider.id)
+    .eq('provider_id', activeProvider.provider_id)
     .order('views_count', { ascending: false });
 
   const totalViews = courses?.reduce((sum, course) => sum + (course.views_count || 0), 0) || 0;
