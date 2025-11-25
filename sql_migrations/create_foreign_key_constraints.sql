@@ -5,6 +5,24 @@
 -- the foreign key constraints needed for joins
 -- ============================================
 
+-- ============================================
+-- STEP 1: Check for orphaned data (optional)
+-- ============================================
+-- Run these queries first to see what will be deleted:
+
+-- Check saved_courses with non-existent course references:
+-- SELECT * FROM saved_courses WHERE course_id NOT IN (SELECT id FROM courses);
+
+-- Check applications with non-existent course references:
+-- SELECT * FROM applications WHERE course_id NOT IN (SELECT id FROM courses);
+
+-- Check applications with non-existent provider references:
+-- SELECT * FROM applications WHERE provider_id IS NOT NULL AND provider_id NOT IN (SELECT id FROM providers);
+
+-- ============================================
+-- STEP 2: Create Foreign Key Constraints
+-- ============================================
+
 -- 1. Foreign key from courses.provider_id to providers.provider_id
 -- Note: Both columns are TEXT type
 ALTER TABLE courses
@@ -18,6 +36,11 @@ ON DELETE SET NULL
 ON UPDATE CASCADE;
 
 -- 2. Foreign key from saved_courses.course_id to courses.id
+-- First, clean up orphaned records (saved courses that reference non-existent courses)
+DELETE FROM saved_courses
+WHERE course_id NOT IN (SELECT id FROM courses);
+
+-- Now create the foreign key constraint
 ALTER TABLE saved_courses
 DROP CONSTRAINT IF EXISTS saved_courses_course_id_fkey;
 
@@ -29,6 +52,11 @@ ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- 3. Foreign key from applications.course_id to courses.id
+-- First, clean up orphaned records (applications that reference non-existent courses)
+DELETE FROM applications
+WHERE course_id NOT IN (SELECT id FROM courses);
+
+-- Now create the foreign key constraint
 ALTER TABLE applications
 DROP CONSTRAINT IF EXISTS applications_course_id_fkey;
 
@@ -41,6 +69,12 @@ ON UPDATE CASCADE;
 
 -- 4. Foreign key from applications.provider_id to providers.id
 -- Note: applications.provider_id is BIGINT, providers.id is BIGINT
+-- First, clean up orphaned records (applications that reference non-existent providers)
+DELETE FROM applications
+WHERE provider_id IS NOT NULL 
+  AND provider_id NOT IN (SELECT id FROM providers);
+
+-- Now create the foreign key constraint
 ALTER TABLE applications
 DROP CONSTRAINT IF EXISTS applications_provider_id_fkey;
 
