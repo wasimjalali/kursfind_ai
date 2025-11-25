@@ -41,131 +41,69 @@ export default function CoursesPage() {
         throw new Error('Supabase environment variables are not set')
       }
       
-      // Try to fetch with provider join first
+      // Fetch courses first, then providers separately (more reliable)
+      console.log('🔍 Fetching courses...')
       let { data, error } = await supabase
         .from('courses')
-        .select(`
-          *,
-          language,
-          providers!courses_provider_id_fkey(
-            provider_id,
-            company_name,
-            logo_url,
-            description,
-            certifications,
-            phone,
-            email,
-            website,
-            contact_name,
-            city
-          )
-        `)
+        .select('*, language')
         .order('created_at', { ascending: false })
-
-      // If join fails, try with simpler syntax
-      if (error && (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('foreign key'))) {
-        console.warn('Provider join with FK name failed, trying without FK name:', error.message)
-        const retryResult = await supabase
-          .from('courses')
-          .select(`
-            *,
-            language,
-            providers(
-              provider_id,
-              company_name,
-              logo_url,
-              description,
-              certifications,
-              phone,
-              email,
-              website,
-              contact_name,
-              city
-            )
-          `)
-          .order('created_at', { ascending: false })
-        
-        if (!retryResult.error) {
-          data = retryResult.data
-          error = null
-        } else {
-          console.warn('Provider join failed, fetching courses without join:', retryResult.error.message)
-          const fallbackResult = await supabase
-            .from('courses')
-            .select('*, language')
-            .order('created_at', { ascending: false })
-          
-          if (fallbackResult.error) {
-            throw fallbackResult.error
-          }
-          
-          data = fallbackResult.data
-          error = null
-        }
-      }
-
+      
       if (error) {
-        console.error('Supabase query error:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        })
+        console.error('❌ Error fetching courses:', error)
         throw error
       }
-
-      if (data) {
-        // Process data: handle providers as array or object, and fetch separately if needed
-        let processedData = data.map((course) => {
-          // If providers is already joined, use it
-          if (course.providers) {
-            // Handle providers as array (one-to-many) or object (one-to-one)
-            const provider = Array.isArray(course.providers) ? course.providers[0] : course.providers
-            return {
-              ...course,
-              providers: provider || null
-            }
-          }
-          return course
-        })
+      
+      console.log(`✅ Fetched ${data?.length || 0} courses`)
+      
+      if (data && data.length > 0) {
+        // Fetch all unique provider_ids from courses
+        const providerIds = [...new Set(data.map(c => c.provider_id).filter(Boolean))]
+        console.log(`🏢 Found ${providerIds.length} unique provider IDs:`, providerIds)
         
-        // Check if any courses are missing provider data
-        const coursesNeedingProviders = processedData.filter(c => !c.providers && c.provider_id)
+        let processedData = data
         
-        if (coursesNeedingProviders.length > 0) {
-          // Fetch all unique provider_ids at once
-          const providerIds = [...new Set(coursesNeedingProviders.map(c => c.provider_id).filter(Boolean))]
+        if (providerIds.length > 0) {
+          // Fetch all providers in one query
+          console.log('🔍 Fetching providers from database...')
+          const { data: allProviders, error: providersError } = await supabase
+            .from('providers')
+            .select('provider_id, company_name, logo_url, description, certifications, phone, email, website, contact_name, city')
+            .in('provider_id', providerIds)
           
-          if (providerIds.length > 0) {
-            // Fetch all providers in one query
-            const { data: allProviders, error: providersError } = await supabase
-              .from('providers')
-              .select('provider_id, company_name, logo_url, description, certifications, phone, email, website, contact_name, city')
-              .in('provider_id', providerIds)
+          if (providersError) {
+            console.error('❌ Error fetching providers:', providersError)
+          } else if (allProviders && allProviders.length > 0) {
+            console.log(`✅ Fetched ${allProviders.length} providers`)
+            console.log('📊 Provider data:', allProviders)
             
-            if (!providersError && allProviders) {
-              // Create a map for quick lookup
-              const providersMap = new Map(allProviders.map(p => [p.provider_id, p]))
-              
-              // Attach providers to courses
-              processedData = processedData.map(course => {
-                if (!course.providers && course.provider_id) {
-                  const provider = providersMap.get(course.provider_id)
-                  if (provider) {
-                    return {
-                      ...course,
-                      providers: provider
-                    }
-                  }
-                }
-                return course
-              })
-            }
+            // Create a map for quick lookup
+            const providersMap = new Map(allProviders.map(p => [p.provider_id, p]))
+            console.log('🗺️ Provider map keys:', Array.from(providersMap.keys()))
+            
+            // Attach providers to courses
+            processedData = data.map(course => {
+              const provider = providersMap.get(course.provider_id)
+              if (provider) {
+                console.log(`✅ Matched provider for course "${course.title}": ${provider.company_name}`)
+              } else {
+                console.warn(`⚠️ No provider found for course "${course.title}" with provider_id: "${course.provider_id}"`)
+              }
+              return {
+                ...course,
+                providers: provider || null
+              }
+            })
+          } else {
+            console.warn('⚠️ No providers returned from database')
           }
         }
         
-        console.log('Processed courses data sample:', processedData[0])
-        console.log('Provider data in sample:', processedData[0]?.providers)
+        console.log('📦 Sample course with provider:', {
+          title: processedData[0]?.title,
+          provider_id: processedData[0]?.provider_id,
+          provider_name: processedData[0]?.providers?.company_name,
+          provider_logo: processedData[0]?.providers?.logo_url
+        })
         
         setAllCourses(processedData)
         setFilteredCourses(processedData)
