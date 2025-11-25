@@ -213,7 +213,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             <option value="">Bitte wählen</option>
             <option value="JobCenter">JobCenter</option>
             <option value="Agentur für Arbeit">Agentur für Arbeit</option>
-            <option value="Nicht registriert">Nicht registriert / Nein</option>
+            <option value="Nicht registriert">Nicht registriert</option>
           </select>
         </div>
 

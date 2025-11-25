@@ -20,10 +20,15 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
     console.log('==============================')
     
     if (course?.benefits) {
+      console.log('Benefits type:', typeof course.benefits)
+      console.log('Benefits value:', course.benefits)
       const benefitsArray = typeof course.benefits === 'string' 
         ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
-        : [];
+        : Array.isArray(course.benefits) 
+          ? course.benefits 
+          : [];
       console.log('Parsed benefits array:', benefitsArray)
+      console.log('Benefits array length:', benefitsArray.length)
     }
     
     if (course?.curriculum) {
@@ -316,11 +321,23 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           </div>
 
           {/* Additional Benefits Section */}
-          {course.benefits && course.benefits.trim() !== '' && (() => {
-            // Parse benefits from comma-separated string to array
-            const benefitsArray = typeof course.benefits === 'string' 
-              ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
-              : [];
+          {course.benefits && (() => {
+            // Parse benefits - handle string, array, or other formats
+            let benefitsArray = [];
+            
+            if (typeof course.benefits === 'string' && course.benefits.trim() !== '') {
+              benefitsArray = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+            } else if (Array.isArray(course.benefits)) {
+              benefitsArray = course.benefits.filter(Boolean);
+            }
+            
+            console.log('🎁 Benefits check:', { 
+              type: typeof course.benefits, 
+              value: course.benefits,
+              array: benefitsArray,
+              length: benefitsArray.length 
+            });
+            
             return benefitsArray.length > 0;
           })() && (
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
@@ -331,9 +348,14 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </div>
               <div className="p-8 space-y-6">
                 {(() => {
-                  const benefitsArray = typeof course.benefits === 'string'
-                    ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
-                    : [];
+                  // Parse benefits - handle string or array
+                  let benefitsArray = [];
+                  if (typeof course.benefits === 'string') {
+                    benefitsArray = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+                  } else if (Array.isArray(course.benefits)) {
+                    benefitsArray = course.benefits.filter(Boolean);
+                  }
+                  
                   const orderedBenefits = ['Inklusiver Laptop', 'Jobcoaching', 'Job Garantie']
                     .filter(benefitName => benefitsArray.includes(benefitName));
                   
