@@ -70,6 +70,9 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
       setSelectedChats(new Set());
       setSelectMode(false);
 
+      // Dispatch event to notify sidebar and other components
+      window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
+
       // Refresh the page to update data
       router.refresh();
     } catch (error) {
@@ -93,6 +96,10 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
 
       if (response.ok) {
         setChatHistory(chatHistory.filter(chat => chat.conversation_id !== conversationId));
+        
+        // Dispatch event to notify sidebar and other components
+        window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
+        
         router.refresh();
       } else {
         alert('Fehler beim Löschen des Chats');

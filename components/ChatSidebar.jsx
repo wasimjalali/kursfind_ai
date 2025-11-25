@@ -336,26 +336,45 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                       </Link>
                       <button
                         onClick={async (e) => {
+                          e.preventDefault();
                           e.stopPropagation();
+                          
+                          // Use the correct conversation ID (could be id or conversation_id)
+                          const conversationIdToDelete = conv.conversation_id || conv.id;
+                          console.log('🗑️ Attempting to delete conversation:', conversationIdToDelete);
+                          
                           if (confirm('Möchten Sie diesen Chat wirklich löschen?')) {
                             try {
                               const response = await fetch('/api/student/delete-chat', {
                                 method: 'DELETE',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ conversation_id: conv.conversation_id })
+                                body: JSON.stringify({ conversation_id: conversationIdToDelete })
                               });
+                              
+                              const result = await response.json();
+                              console.log('🗑️ Delete response:', response.status, result);
+                              
                               if (response.ok) {
-                                loadConversations(); // Reload conversations
+                                // Immediately remove from local state for instant UI update
+                                setConversations(prev => prev.filter(c => 
+                                  (c.conversation_id || c.id) !== conversationIdToDelete
+                                ));
+                                
+                                // Dispatch event to notify other components (like dashboard)
+                                window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
+                                
+                                console.log('✅ Chat deleted successfully');
                               } else {
-                                alert('Fehler beim Löschen des Chats');
+                                console.error('❌ Delete failed:', result);
+                                alert('Fehler beim Löschen des Chats: ' + (result.error || 'Unbekannter Fehler'));
                               }
                             } catch (error) {
-                              console.error('Error deleting chat:', error);
+                              console.error('❌ Error deleting chat:', error);
                               alert('Fehler beim Löschen des Chats');
                             }
                           }
                         }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 rounded text-red-500"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-100 rounded text-red-500"
                         title="Chat löschen"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
