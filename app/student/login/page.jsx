@@ -23,6 +23,11 @@ export default function StudentLogin() {
     setLoading(true);
 
     try {
+      // Check if Supabase is configured
+      if (!supabase) {
+        throw new Error('Supabase client ist nicht konfiguriert. Bitte kontaktieren Sie den Support.');
+      }
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
@@ -30,6 +35,14 @@ export default function StudentLogin() {
 
       if (signInError) {
         console.error('Sign in error:', signInError);
+        
+        // Provide user-friendly error messages
+        if (signInError.message?.includes('Invalid login credentials')) {
+          throw new Error('E-Mail oder Passwort ungültig');
+        } else if (signInError.message?.includes('Email not confirmed')) {
+          throw new Error('Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse');
+        }
+        
         throw signInError;
       }
 
