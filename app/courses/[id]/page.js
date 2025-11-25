@@ -13,13 +13,13 @@ async function getCourseData(identifier) {
   // Try to determine if it's an ID (number) or slug (string)
   const isNumericId = /^\d+$/.test(identifier)
   
-  // Query course with JOIN to providers table using Supabase PostgREST syntax
+  // Query course with LEFT JOIN to providers table (so courses without providers still work)
   let query = supabase
     .from('courses')
     .select(`
       *,
       language,
-      providers!inner(
+      providers(
         provider_id,
         company_name,
         logo_url,
@@ -29,7 +29,6 @@ async function getCourseData(identifier) {
         phone,
         email,
         website,
-        faq,
         contact_name,
         city,
         short_description,

@@ -696,18 +696,16 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         )}
 
         {/* FAQ Section - Provider Level */}
-        {/* Priority: Use provider.faq from JOIN if available, otherwise use providerFaqs from separate table */}
-        {((provider?.faq && Array.isArray(provider.faq) && provider.faq.length > 0) || (providerFaqs && providerFaqs.length > 0)) && (
+        {/* Using provider_faqs table only (cleaner, more manageable) */}
+        {providerFaqs && providerFaqs.length > 0 && (
           <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Häufig gestellte Fragen
             </h2>
             <div className="space-y-4">
-              {/* Use provider.faq if available, otherwise fall back to providerFaqs */}
-              {(provider?.faq && Array.isArray(provider.faq) && provider.faq.length > 0 ? provider.faq : providerFaqs).map((faq, index) => {
-                // Handle both formats: provider.faq (may be objects or strings) and providerFaqs (has question/answer)
-                const question = faq.question || faq.title || (typeof faq === 'string' ? faq : 'Frage')
-                const answer = faq.answer || faq.content || (typeof faq === 'object' ? JSON.stringify(faq) : faq)
+              {providerFaqs.map((faq, index) => {
+                const question = faq.question || 'Frage'
+                const answer = faq.answer || ''
                 const faqId = faq.id || index
                 
                 return (
