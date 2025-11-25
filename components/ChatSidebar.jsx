@@ -45,30 +45,40 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       return;
     }
     
-    console.log('👤 User:', user ? `Logged in (${user.id})` : 'Not logged in');
+    if (!user) {
+      console.log('👤 User: Not logged in (guest mode)');
+      return;
+    }
+    
+    console.log('👤 User: Logged in', user.id);
     setUser(user);
 
-    if (user) {
-      console.log('📋 Fetching student data for auth_user_id:', user.id);
-      const { data: studentData, error: studentError } = await supabase
-        .from('students')
-        .select('*')
-        .eq('auth_user_id', user.id)
-        .single();
-      
-      if (studentError) {
-        console.error('❌ Error fetching student:', studentError);
-        console.error('Error details:', studentError.message, studentError.code);
-      } else if (studentData) {
-        console.log('✅ Student data loaded:', {
-          id: studentData.id,
-          email: studentData.email,
-          name: `${studentData.first_name} ${studentData.last_name}`
-        });
-        setStudent(studentData);
-      } else {
+    console.log('📋 Fetching student data for auth_user_id:', user.id);
+    const { data: studentData, error: studentError } = await supabase
+      .from('students')
+      .select('*')
+      .eq('auth_user_id', user.id)
+      .single();
+    
+    if (studentError) {
+      // PGRST116 = No rows returned (student record doesn't exist)
+      if (studentError.code === 'PGRST116') {
         console.warn('⚠️ No student record found for user:', user.id);
+        console.warn('   The user may need to complete student signup.');
+      } else {
+        console.error('❌ Error fetching student data:');
+        console.error('   Code:', studentError.code);
+        console.error('   Message:', studentError.message);
+        console.error('   Details:', studentError.details);
+        console.error('   Hint:', studentError.hint);
       }
+    } else if (studentData) {
+      console.log('✅ Student data loaded:', {
+        id: studentData.id,
+        email: studentData.email,
+        name: `${studentData.first_name} ${studentData.last_name}`
+      });
+      setStudent(studentData);
     }
   };
 
