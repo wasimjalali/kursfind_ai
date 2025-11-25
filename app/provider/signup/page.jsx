@@ -268,8 +268,8 @@ export default function ProviderSignup() {
           <div className="border-t border-gray-200 pt-6">
             <p className="text-center text-gray-600 text-sm">
               Fragen zum Bewerbungsprozess?<br />
-              <a href="mailto:providers@kursfind.de" className="text-cyan-600 hover:text-cyan-700 font-semibold">
-                providers@kursfind.de
+              <a href="mailto:partner@kursfind.de" className="text-cyan-600 hover:text-cyan-700 font-semibold">
+                partner@kursfind.de
               </a>
             </p>
           </div>
