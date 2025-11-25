@@ -8,11 +8,27 @@ import ApplicationForm from './ApplicationForm'
 export default function CoursePageClient({ course, provider, providerFaqs }) {
   // Debug: Log the data received
   useEffect(() => {
-    console.log('CoursePageClient Data:', { course, provider, providerFaqs })
-    console.log('Benefits column value:', course.benefits)
-    if (course.benefits) {
-      const benefitsArray = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+    console.log('=== CoursePageClient Debug ===')
+    console.log('Course:', course)
+    console.log('Provider:', provider)
+    console.log('Provider FAQs:', providerFaqs)
+    console.log('---')
+    console.log('Benefits:', course?.benefits)
+    console.log('Curriculum:', course?.curriculum)
+    console.log('Provider Name:', provider?.company_name || provider?.name)
+    console.log('Provider Logo URL:', provider?.logo_url)
+    console.log('==============================')
+    
+    if (course?.benefits) {
+      const benefitsArray = typeof course.benefits === 'string' 
+        ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
+        : [];
       console.log('Parsed benefits array:', benefitsArray)
+    }
+    
+    if (course?.curriculum) {
+      console.log('Curriculum type:', typeof course.curriculum)
+      console.log('Curriculum modules:', course.curriculum?.modules)
     }
   }, [course, provider, providerFaqs])
 
@@ -300,9 +316,11 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           </div>
 
           {/* Additional Benefits Section */}
-          {course.benefits && (() => {
+          {course.benefits && course.benefits.trim() !== '' && (() => {
             // Parse benefits from comma-separated string to array
-            const benefitsArray = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+            const benefitsArray = typeof course.benefits === 'string' 
+              ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
+              : [];
             return benefitsArray.length > 0;
           })() && (
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
@@ -313,7 +331,9 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </div>
               <div className="p-8 space-y-6">
                 {(() => {
-                  const benefitsArray = course.benefits.split(',').map(b => b.trim()).filter(Boolean);
+                  const benefitsArray = typeof course.benefits === 'string'
+                    ? course.benefits.split(',').map(b => b.trim()).filter(Boolean)
+                    : [];
                   const orderedBenefits = ['Inklusiver Laptop', 'Jobcoaching', 'Job Garantie']
                     .filter(benefitName => benefitsArray.includes(benefitName));
                   
@@ -446,11 +466,12 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         )}
 
         {/* Curriculum Section */}
-        {course.curriculum?.modules && course.curriculum.modules.length > 0 && (
+        {((course.curriculum?.modules && course.curriculum.modules.length > 0) || 
+          (typeof course.curriculum === 'object' && course.curriculum !== null && Object.keys(course.curriculum).length > 0)) && (
           <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Curriculum</h2>
             <div className="space-y-4">
-              {course.curriculum.modules.map((module, index) => (
+              {(course.curriculum?.modules || []).map((module, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setExpandedModule(expandedModule === index ? null : index)}
@@ -718,12 +739,25 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             </h3>
             
             {/* Logo - Left aligned on mobile (after title), left on desktop */}
-            {provider?.logo_url && (
-              <img 
-                src={provider.logo_url} 
-                alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
-                className="w-24 h-24 md:w-32 md:h-32 object-contain rounded-lg border border-gray-200 bg-white p-2 self-start flex-shrink-0"
-              />
+            {provider?.logo_url && provider.logo_url.trim() !== '' ? (
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg border border-gray-200 bg-white p-2 self-start flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={provider.logo_url} 
+                  alt={provider?.company_name || provider?.name || course.provider || 'Provider Logo'}
+                  className="max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    console.error('Logo failed to load:', provider.logo_url);
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = `<div class="text-gray-400 text-center text-xs">Logo nicht verfügbar</div>`;
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg border border-gray-200 bg-gradient-to-br from-cyan-100 to-emerald-100 p-2 self-start flex-shrink-0 flex items-center justify-center">
+                <span className="text-2xl md:text-3xl font-bold text-gray-600">
+                  {(provider?.company_name || provider?.name || course.provider || 'P')[0]}
+                </span>
+              </div>
             )}
             
             {/* Content */}
