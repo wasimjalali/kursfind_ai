@@ -142,12 +142,12 @@ export default function ChatCourseCard({
             Mobile still shows logo for better visual identification.
         */}
         
-        {/* Mobile: Vertical layout, Desktop: Horizontal */}
-        <div className="flex flex-col md:flex-row">
+        {/* Always Vertical layout (like mobile) for better image visibility */}
+        <div className="flex flex-col">
           
-          {/* Image with fallback - mobile: full width top, desktop: left side */}
+          {/* Image with fallback - full width on top */}
           {imageUrl ? (
-            <div className="w-full md:w-48 h-48 md:h-auto bg-gradient-to-br from-cyan-100 to-emerald-100 flex-shrink-0 relative">
+            <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex-shrink-0 relative">
               <img 
                 src={imageUrl} 
                 alt={course.title}
@@ -161,9 +161,9 @@ export default function ChatCourseCard({
                   }
                 }}
               />
-              {/* Provider Logo Badge - Top Right Corner of image (Mobile only) */}
+              {/* Provider Logo Badge - Top Right Corner of image */}
               {providerLogo && providerLogo.trim() !== '' && (
-                <div className="md:hidden absolute top-3 right-3 z-10 w-16 h-16 bg-white rounded-xl p-2 shadow-lg border-2 border-gray-200 flex items-center justify-center">
+                <div className="absolute top-3 right-3 z-10 w-14 h-14 bg-white rounded-lg p-1.5 shadow-lg border-2 border-gray-200 flex items-center justify-center">
                   <img 
                     src={providerLogo} 
                     alt={providerName}
@@ -185,16 +185,16 @@ export default function ChatCourseCard({
               )}
             </div>
           ) : (
-            <div className="w-full md:w-48 h-48 md:h-auto bg-gradient-to-br from-cyan-100 to-emerald-100 flex-shrink-0 flex items-center justify-center relative">
+            <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 flex-shrink-0 flex items-center justify-center relative">
               {/* Placeholder if no course image and no provider logo */}
               {!providerLogo && (
                 <svg className="w-16 h-16 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               )}
-              {/* Provider Logo Badge - Top Right Corner of placeholder (Mobile only) */}
+              {/* Provider Logo Badge - Top Right Corner of placeholder */}
               {providerLogo && providerLogo.trim() !== '' && (
-                <div className="md:hidden absolute top-3 right-3 z-10 w-16 h-16 bg-white rounded-xl p-2 shadow-lg border-2 border-gray-200 flex items-center justify-center">
+                <div className="absolute top-3 right-3 z-10 w-14 h-14 bg-white rounded-lg p-1.5 shadow-lg border-2 border-gray-200 flex items-center justify-center">
                   <img 
                     src={providerLogo} 
                     alt={providerName}

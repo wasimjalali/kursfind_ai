@@ -585,8 +585,8 @@ function ChatContent() {
                                     </p>
                                   )}
                                   
-                                  {/* Course cards with full design and smart ordering */}
-                                  <div className="space-y-3">
+                                  {/* Course cards with full design and smart ordering - Grid layout: 2 cols on desktop, 1 on mobile */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {coursesToDisplay.map((course: any, courseIdx: number) => {
                                       // Enhance course with recommendation context
                                       const enhancedCourse = FEATURES.SMART_CARD_ORDERING 
