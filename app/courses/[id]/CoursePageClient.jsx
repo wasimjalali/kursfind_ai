@@ -518,40 +518,51 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         )}
 
         {/* Career Opportunities Section */}
-        {course.career_paths?.roles && course.career_paths.roles.length > 0 && (
-          <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Ihre Karrieremöglichkeiten
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {course.career_paths.roles.map((role, index) => (
-                <div 
-                  key={index}
-                  className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-lg p-6 border border-cyan-100 hover:shadow-md transition-shadow"
-                >
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    {role.title}
-                  </h3>
-                  {(role.salary_min || role.salary_max) && (
-                    <p className="text-cyan-600 font-semibold mb-3">
-                      {role.salary_min && role.salary_max 
-                        ? `${role.salary_min.toLocaleString('de-DE')} € - ${role.salary_max.toLocaleString('de-DE')} €`
-                        : role.salary_min 
-                          ? `ab ${role.salary_min.toLocaleString('de-DE')} €`
-                          : `bis ${role.salary_max.toLocaleString('de-DE')} €`
-                      }
-                    </p>
-                  )}
-                  {role.description && (
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {role.description}
-                    </p>
-                  )}
-                </div>
-              ))}
+        {(() => {
+          // Handle career_paths as either array of strings or object with roles
+          let careerPathsArray = [];
+          
+          if (Array.isArray(course.career_paths)) {
+            // If it's already an array of strings
+            careerPathsArray = course.career_paths;
+          } else if (course.career_paths?.roles && Array.isArray(course.career_paths.roles)) {
+            // If it's an object with roles array (objects)
+            careerPathsArray = course.career_paths.roles.map(role => 
+              typeof role === 'string' ? role : role.title
+            );
+          }
+          
+          console.log('Career paths parsed:', careerPathsArray);
+          
+          return careerPathsArray.length > 0 && (
+            <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Ihre Karrieremöglichkeiten
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {careerPathsArray.map((career, index) => (
+                  <div 
+                    key={index}
+                    className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-lg p-6 border border-cyan-100 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-1">
+                        <svg className="w-6 h-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {career}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Certificate Information Section */}
         {course.certificate_type && (
