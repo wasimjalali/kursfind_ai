@@ -68,26 +68,41 @@ export async function POST(request) {
     )
 
     // Get student_id if user is logged in
-    // Use anon key to get actual user session
-    const anonSupabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
-    
-    const { data: { user } } = await anonSupabase.auth.getUser()
+    // Extract auth token from request header
+    const authHeader = request.headers.get('authorization')
     let studentId = null
     
-    console.log('Auth user:', user?.id)
+    console.log('Auth header present:', !!authHeader)
     
-    if (user) {
-      const { data: studentData, error: studentError } = await supabase
-        .from('students')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single()
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '')
       
-      console.log('Student lookup:', { studentData, studentError })
-      studentId = studentData?.id || null
+      // Create client with user's token
+      const userSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        {
+          global: {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        }
+      )
+      
+      const { data: { user }, error: userError } = await userSupabase.auth.getUser()
+      console.log('Auth user:', user?.id, 'Error:', userError)
+      
+      if (user) {
+        const { data: studentData, error: studentError } = await supabase
+          .from('students')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single()
+        
+        console.log('Student lookup:', { studentData, studentError })
+        studentId = studentData?.id || null
+      }
     }
     
     console.log('Final student_id:', studentId)

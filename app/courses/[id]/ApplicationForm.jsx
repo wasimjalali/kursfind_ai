@@ -50,10 +50,15 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
     setSubmitStatus(null)
 
     try {
+      // Get auth token from client
+      const supabase = (await import('@/lib/supabase-browser')).createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      
       const response = await fetch('/api/applications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
         },
         body: JSON.stringify({
           ...formData,
