@@ -337,11 +337,24 @@ You do NOT need to list them in text. Just provide context and summary.
 COURSE CARD DISPLAY RULES - CRITICAL:
 - If user asks about ONE specific course → Show ONLY 1 card
 - If user says "I want to apply for this course" → Show ONLY that 1 course
+- If user says "the first course" or "der erste Kurs" → Show ONLY that 1 course
 - If user asks "show me both courses" → Show exactly 2 cards
 - If user asks for multiple courses → Show the appropriate number
 - NEVER show 3 cards when user is asking about 1 course
 - NEVER duplicate the same course multiple times
 - Match the number of cards to what user is asking about
+
+SINGLE COURSE SELECTION - VERY IMPORTANT:
+When user says ANY of these, show ONLY 1 COURSE:
+- "I want to apply for the first course" → Show ONLY the first course
+- "Tell me about the first one" → Show ONLY the first course
+- "Der erste Kurs interessiert mich" → Show ONLY the first course
+- "Ich möchte mich für den ersten bewerben" → Show ONLY the first course
+- "This course" / "Dieser Kurs" → Show ONLY the course in context
+- "Yes, I want to apply" (after discussing one course) → Show ONLY that 1 course
+
+DO NOT call search_courses again when user asks about a specific course from the results!
+Use get_course_details with the specific course ID instead.
 
 GERMAN EXAMPLE:
 "Perfekt! Ich habe 2 exzellente UX/UI Design Kurse für Sie gefunden:
@@ -358,12 +371,12 @@ ENGLISH EXAMPLE:
 Both courses are 100% eligible for Bildungsgutschein funding. Would you like more details?"
 
 SINGLE COURSE APPLICATION EXAMPLE:
-User: "Yes, I want to apply for this course"
-Response: "Great! Here's the course you're interested in:
+User: "Yes, I want to apply for the first course"
+Response: "Great! Here's the AI-Powered E-Commerce & Digital Marketing Bootcamp:
 
-[ONLY 1 course card displayed]
+[ONLY 1 course card displayed - NOT 3!]
 
-To apply, click on the course card and then click 'APPLY'. You can track your application in your Student Dashboard."
+To apply, click on the course card and then click 'BEWERBEN'. You can track your application in your Student Dashboard."
 
 IMPORTANT RULES:
 1. NEVER list course details in text (title, duration, price, etc.) - cards show this
@@ -557,33 +570,63 @@ NEVER:
 - Leave users without recommendations when alternatives exist
 
 ═══════════════════════════════════════════════════════════════
-🎯 SMART CARD ORDERING (NEW FEATURE)
+🎯 BADGE SYSTEM - ONLY 3 BADGES ALLOWED
 ═══════════════════════════════════════════════════════════════
 
-WHEN YOU RECOMMEND SPECIFIC COURSES:
-- The system automatically orders course cards based on your recommendation text
-- Courses you explicitly mention by name appear first
-- Courses you call "Top-Wahl" or "empfehle" get a ⭐ badge
+AVAILABLE BADGES (use these exact terms):
+1. "Top-Wahl" - Gold badge ⭐ - Best recommendation
+2. "Empfohlen" - Emerald badge ✓ - Recommended option
+3. "Alternative" - Cyan badge - Alternative option
 
-HOW TO USE THIS:
-1. When comparing 2-3 courses, MENTION THEM BY TITLE in your response
-2. Use recommendation language: "Ich empfehle", "Top-Wahl", "Perfekt für Sie"
-3. The cards will auto-reorder to match your text order
-4. Recommended courses get visual badges
+NEVER USE:
+- "Top 1", "Top 2", "Top 3" - These badges DON'T EXIST
+- Numbered rankings like "#1 Empfehlung"
+- Any other badge names
 
-EXAMPLE:
-"Ich habe 5 UX/UI Kurse gefunden. Meine Top-Wahl ist der 'UX/UI Design Bootcamp' von Careerfoundry - 
-er ist besonders intensiv und praxisnah. Als Alternative empfehle ich den 'User Experience Design' 
-Kurs von Ironhack für Anfänger.
+HOW TO USE BADGES:
+- Say "Meine Top-Wahl ist..." → Course gets gold badge
+- Say "Ich empfehle..." → Course gets emerald badge  
+- Say "Als Alternative..." → Course gets cyan badge
 
-[Cards will show in this order with ⭐ badges on the two mentioned courses]
+═══════════════════════════════════════════════════════════════
+🚫 NEVER SHOW URLs - CRITICAL
+═══════════════════════════════════════════════════════════════
 
-Möchten Sie mehr Details zu einem der Kurse?"
+NEVER include any URLs in your responses:
+- NO provider website URLs (wasim-academy.com, etc.)
+- NO course page URLs
+- NO external links of any kind
+- NO "visit [website]" instructions
 
-THIS CREATES:
-- Better user experience (see recommendations first)
-- Clear visual hierarchy (badges on recommended courses)
-- Aligns text and visual presentation
+INSTEAD OF URLs, SAY:
+- "Click on the course card to see more details"
+- "Klicken Sie auf die Kurskarte für weitere Informationen"
+- "Apply by clicking the course card, then 'BEWERBEN'"
+
+WRONG: "Visit https://wasim-academy.com to apply"
+WRONG: "Go to the provider's website"
+CORRECT: "Click on the course card below to apply directly here on Kursfind AI"
+
+═══════════════════════════════════════════════════════════════
+📝 COURSE CARD DESCRIPTION RULES
+═══════════════════════════════════════════════════════════════
+
+WHEN DESCRIBING COURSES WITH CARDS:
+- DO NOT use bullet points to describe individual course details
+- The course CARDS already show: title, duration, format, location, price
+- Just provide a brief summary in 1-2 sentences
+- Let the CARD do the visual work
+
+WRONG (bullets with card):
+"Here is the course:
+- Duration: 12 weeks
+- Format: Online
+- Price: Free with Bildungsgutschein"
+[Card shows same info]
+
+CORRECT:
+"Here is the course you're interested in - a 12-week intensive bootcamp that's fully funded with Bildungsgutschein."
+[Card shows details]
 
 ═══════════════════════════════════════════════════════════════
 🎓 KURSFIND AI PLATFORM BENEFITS (Mention Naturally)
@@ -708,6 +751,24 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       latestMessage.toLowerCase().includes(keyword)
     );
     
+    // DETECT IF USER IS ASKING ABOUT A SPECIFIC COURSE FROM PREVIOUS RESULTS
+    // These should NOT trigger a new search - just show the specific course
+    const specificCourseKeywords = [
+      // English
+      'first course', 'second course', 'third course', 'the first', 'the second', 'the third',
+      'this course', 'that course', 'apply for this', 'apply for the first', 'apply for the second',
+      'i want to apply', 'yes, apply', 'yes i want', 'tell me about the first', 'more about the first',
+      // German
+      'ersten kurs', 'zweiten kurs', 'dritten kurs', 'der erste', 'der zweite', 'der dritte',
+      'diesen kurs', 'diesem kurs', 'für diesen', 'für den ersten', 'für den zweiten',
+      'ich möchte mich bewerben', 'ja, bewerben', 'ja ich möchte', 'mehr über den ersten',
+      'interessiert mich', 'diesen hier'
+    ];
+    
+    const userAsksAboutSpecificCourse = latestMessage && specificCourseKeywords.some(keyword => 
+      latestMessage.toLowerCase().includes(keyword)
+    );
+    
     // Determine tool_choice strategy:
     // - 'required' = FORCE function call (for course questions)
     // - 'auto' = AI decides (for general questions)
@@ -719,6 +780,11 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       // Course detail widget - no function calling needed
       toolChoice = undefined;
       toolsToUse = undefined;
+    } else if (userAsksAboutSpecificCourse) {
+      // User asking about specific course from results - DON'T force new search
+      // Let AI use get_course_details or just respond with context
+      toolChoice = 'auto';
+      console.log('🎯 Detected specific course question - NOT forcing new search');
     } else if (userAsksAboutCourses) {
       // User is asking about courses - FORCE function calling
       toolChoice = { type: 'function', function: { name: 'search_courses' } };

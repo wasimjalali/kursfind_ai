@@ -23,33 +23,34 @@ export default function ChatCourseCard({
   const effectiveIsDuplicate = course._isDuplicate || isDuplicate;
   const shouldShowBadge = showRecommendedBadge || effectiveBadgeType || effectiveRanking;
 
-  // ENHANCED: Get badge styles and labels
+  // BADGE SYSTEM - ONLY 3 BADGES ALLOWED
+  // 1. Top-Wahl (Gold) - Best recommendation
+  // 2. Empfohlen (Emerald) - Recommended
+  // 3. Alternative (Cyan) - Alternative option
+  // NO "Top 1", "Top 2", "Top 3" badges - these don't exist!
   const getBadgeConfig = () => {
-    if (effectiveRanking) {
-      // Ranking badge (priority)
-      const rankingEmoji = effectiveRanking === 1 ? '🥇' : effectiveRanking === 2 ? '🥈' : effectiveRanking === 3 ? '🥉' : '🏅';
-      return {
-        gradient: 'from-purple-500 to-pink-500',
-        label: `${rankingEmoji} Top ${effectiveRanking}`,
-        icon: null
-      };
-    }
-
     // BRAND PALETTE - Kursfind AI Badge Colors
     // Gold: #FFC72C (Top-Wahl) - Premium, attention-grabbing
     // Emerald: #10B981 (Empfohlen) - Trust, recommendation
     // Cyan: #06B6D4 (Alternative) - Modern, alternative option
-    switch (effectiveBadgeType) {
+    
+    // Map ranking to badge types (if ranking is used, convert to badge type)
+    let badgeToUse = effectiveBadgeType;
+    if (effectiveRanking === 1) badgeToUse = 'top-wahl';
+    else if (effectiveRanking === 2) badgeToUse = 'empfehlung';
+    else if (effectiveRanking >= 3) badgeToUse = 'alternative';
+    
+    switch (badgeToUse) {
       case 'top-wahl':
         return {
           gradient: 'from-yellow-400 to-amber-500', // Gold #FFC72C equivalent
-          label: 'Top-Wahl',
+          label: 'Top-Wahl ⭐',
           icon: 'star'
         };
       case 'empfehlung':
         return {
           gradient: 'from-emerald-500 to-emerald-600', // Emerald #10B981 - Brand green
-          label: 'Empfohlen',
+          label: 'Empfohlen ✓',
           icon: 'check'
         };
       case 'alternative':
@@ -59,11 +60,8 @@ export default function ChatCourseCard({
           icon: 'plus'
         };
       default:
-        return {
-          gradient: 'from-yellow-400 to-amber-500', // Gold fallback
-          label: 'Top-Wahl',
-          icon: 'star'
-        };
+        // No badge if type not recognized
+        return null;
     }
   };
 
@@ -129,8 +127,9 @@ export default function ChatCourseCard({
         effectiveIsDuplicate ? 'border-gray-300 opacity-95' : 'border-gray-200 hover:border-cyan-300'
       }`}>
         
-        {/* ENHANCED: AI Recommendation Badge - Top Left Corner */}
-        {shouldShowBadge && (
+        {/* AI Recommendation Badge - Top Left Corner */}
+        {/* ONLY 3 BADGES: Top-Wahl (Gold), Empfohlen (Emerald), Alternative (Cyan) */}
+        {shouldShowBadge && badgeConfig && (
           <div className={`absolute top-3 left-3 z-20 bg-gradient-to-r ${badgeConfig.gradient} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
             {badgeConfig.icon && icons[badgeConfig.icon]}
             {badgeConfig.label}
