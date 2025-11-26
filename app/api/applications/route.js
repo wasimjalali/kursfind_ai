@@ -61,10 +61,10 @@ export async function POST(request) {
     }
 
 
-    // Initialize Supabase client
+    // Initialize Supabase client with service role to bypass RLS
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     )
 
     // Prepare data for database insert (camelCase to snake_case)
