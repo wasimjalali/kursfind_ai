@@ -3,9 +3,17 @@ import { createClient } from '@/lib/supabase-server'
 import { extractSearchIntent } from '../ai/extract-intent'
 import { functionDefinitions } from './function-definitions'
 import { executeFunctionCall } from './function-handlers'
+import { 
+  callLLMWithFallback, 
+  getToolCallsFromResponse, 
+  getMessageContent,
+  parseDeepSeekToolCalls,
+  cleanDeepSeekTokens
+} from '@/lib/ai-client'
 
 // ═══════════════════════════════════════════════════════════════
 // FUNCTION CALLING ENABLED CHAT ROUTE
+// Using GPT-4o-mini (Primary) with DeepSeek (Fallback)
 // ═══════════════════════════════════════════════════════════════
 
 // Detect the language of the user's message
@@ -651,34 +659,28 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     
     // ═══════════════════════════════════════════════════════════════
     // FIRST API CALL - AI DECIDES IF IT NEEDS FUNCTIONS
+    // Using GPT-4o-mini (Primary) with DeepSeek (Fallback)
     // ═══════════════════════════════════════════════════════════════
     
-    const firstApiCall = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: conversationMessages,
-        tools: toolsToUse,
+    console.log('🚀 Making first LLM API call...');
+    
+    const firstResponse = await callLLMWithFallback(
+      conversationMessages,
+      toolsToUse,
+      {
         tool_choice: toolChoice,
         temperature: 0.7,
         max_tokens: isCourseQuestion ? 800 : 1500
-      })
-    });
+      }
+    );
 
-    if (!firstApiCall.ok) {
-      const errorText = await firstApiCall.text();
-      console.error('❌ DeepSeek API error:', errorText);
-      throw new Error(`DeepSeek API failed: ${firstApiCall.status} ${errorText}`);
-    }
-
-    const firstResponse = await firstApiCall.json();
     const assistantMessage = firstResponse.choices[0].message;
+    const modelUsed = firstResponse._modelUsed || 'unknown';
+    const fallbackUsed = firstResponse._fallbackUsed || false;
 
     console.log('📥 First API response:', {
+      modelUsed,
+      fallbackUsed,
       hasContent: !!assistantMessage.content,
       contentPreview: assistantMessage.content?.substring(0, 100),
       hasToolCalls: !!assistantMessage.tool_calls,
@@ -686,74 +688,28 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     });
 
     // ═══════════════════════════════════════════════════════════════
-    // PARSE DEEPSEEK'S CUSTOM FUNCTION CALLING FORMAT
+    // GET TOOL CALLS (handles both OpenAI and DeepSeek formats)
     // ═══════════════════════════════════════════════════════════════
     
-    // DeepSeek uses custom tokens: <｜tool▁calls▁begin｜><｜tool▁call▁begin｜>function_name<｜tool▁sep｜>{"args"}<｜tool▁call▁end｜><｜tool▁calls▁end｜>
-    let parsedToolCalls = [];
+    let toolCalls = getToolCallsFromResponse(firstResponse);
     
-    if (assistantMessage.content && typeof assistantMessage.content === 'string') {
-      // Improved regex to handle nested JSON objects
-      // Match function name followed by JSON object (handles nested braces)
-      const toolCallPattern = /<｜tool▁call▁begin｜>([^<]+)<｜tool▁sep｜>(\{[\s\S]*?\})<｜tool▁call▁end｜>/g;
-      let match;
-      
-      while ((match = toolCallPattern.exec(assistantMessage.content)) !== null) {
-        const functionName = match[1].trim();
-        let functionArgs = match[2].trim();
-        
-        try {
-          // Validate JSON before adding
-          JSON.parse(functionArgs);
-          
-          parsedToolCalls.push({
-            id: `call_${Date.now()}_${parsedToolCalls.length}`,
-            type: 'function',
-            function: {
-              name: functionName,
-              arguments: functionArgs
-            }
-          });
-          console.log('🔍 Parsed DeepSeek tool call:', functionName, functionArgs);
-        } catch (e) {
-          console.error('❌ Error parsing tool call JSON:', e.message, 'Raw:', functionArgs);
-          
-          // Try to extract valid JSON from potentially malformed response
-          try {
-            const jsonMatch = functionArgs.match(/\{[^{}]*\}/);
-            if (jsonMatch) {
-              JSON.parse(jsonMatch[0]); // Validate
-              parsedToolCalls.push({
-                id: `call_${Date.now()}_${parsedToolCalls.length}`,
-                type: 'function',
-                function: {
-                  name: functionName,
-                  arguments: jsonMatch[0]
-                }
-              });
-              console.log('🔧 Recovered tool call with extracted JSON:', functionName);
-            }
-          } catch (e2) {
-            console.error('❌ Could not recover tool call:', e2.message);
-          }
-        }
-      }
+    // If DeepSeek fallback was used and no tool calls found via helper,
+    // try parsing custom format from content
+    if (toolCalls.length === 0 && fallbackUsed && assistantMessage.content) {
+      toolCalls = parseDeepSeekToolCalls(assistantMessage.content);
     }
-    
-    // Use parsed tool calls if found, otherwise check standard format
-    const toolCalls = parsedToolCalls.length > 0 ? parsedToolCalls : assistantMessage.tool_calls;
 
     console.log('🔧 Tool calls detected:', {
-      parsedCount: parsedToolCalls.length,
-      standardCount: assistantMessage.tool_calls?.length || 0,
-      finalCount: toolCalls?.length || 0
+      count: toolCalls.length,
+      modelUsed,
+      fallbackUsed
     });
 
     // ═══════════════════════════════════════════════════════════════
     // CHECK IF AI WANTS TO CALL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════
     
-    let finalAIMessage = assistantMessage.content;
+    let finalAIMessage = getMessageContent(firstResponse);
     let coursesToReturn = [];
     let functionCallResults = [];
 
@@ -797,9 +753,10 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     if (effectiveToolCalls && effectiveToolCalls.length > 0) {
       console.log('🔧 Processing', effectiveToolCalls.length, 'function calls');
       
-      // Remove DeepSeek's custom tool call tokens from message content
-      let cleanedContent = assistantMessage.content || '';
-      cleanedContent = cleanedContent.replace(/<｜tool▁calls▁begin｜>.*?<｜tool▁calls▁end｜>/gs, '').trim();
+      // Clean content for adding to conversation
+      let cleanedContent = fallbackUsed 
+        ? cleanDeepSeekTokens(assistantMessage.content || '')
+        : (assistantMessage.content || '');
       
       // Add assistant's function call request to conversation
       conversationMessages.push({
@@ -884,48 +841,28 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       
       // ═══════════════════════════════════════════════════════════════
       // SECOND API CALL - WITH FUNCTION RESULTS
+      // Using GPT-4o-mini (Primary) with DeepSeek (Fallback)
       // ═══════════════════════════════════════════════════════════════
       
-      console.log('🔄 Making second API call with function results...');
+      console.log('🔄 Making second LLM API call with function results...');
       
-      const secondApiCall = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: conversationMessages,
+      const secondResponse = await callLLMWithFallback(
+        conversationMessages,
+        undefined, // No tools for second call
+        {
           temperature: 0.7,
           max_tokens: 1500
-        })
-      });
+        }
+      );
 
-      if (!secondApiCall.ok) {
-        const errorText = await secondApiCall.text();
-        console.error('❌ Second DeepSeek API error:', errorText);
-        throw new Error(`DeepSeek API failed on second call: ${secondApiCall.status}`);
-      }
-
-      const secondResponse = await secondApiCall.json();
-      finalAIMessage = secondResponse.choices[0].message.content;
-      
-      // Clean up any remaining DeepSeek tokens from final message
-      if (finalAIMessage) {
-        finalAIMessage = finalAIMessage.replace(/<｜tool▁calls▁begin｜>.*?<｜tool▁calls▁end｜>/gs, '').trim();
-      }
+      finalAIMessage = getMessageContent(secondResponse);
       
       console.log('✅ Final AI message generated from function results');
+      console.log('[LLM] Second call used model:', secondResponse._modelUsed);
       
     } else {
       // No function calls needed - use direct response
       console.log('💬 No function calls needed - using direct response');
-      
-      // Clean up any DeepSeek tokens from direct response
-      if (finalAIMessage) {
-        finalAIMessage = finalAIMessage.replace(/<｜tool▁calls▁begin｜>.*?<｜tool▁calls▁end｜>/gs, '').trim();
-      }
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1014,7 +951,9 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       response: finalAIMessage,
       courses: coursesToReturn,
       conversation_id: conversationId,
-      function_calls: functionCallResults.length > 0 ? functionCallResults : undefined
+      function_calls: functionCallResults.length > 0 ? functionCallResults : undefined,
+      _model: modelUsed, // Include model info for debugging
+      _fallback: fallbackUsed
     };
 
     console.log('📤 Response prepared:', {
@@ -1022,7 +961,9 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
       coursesCount: coursesToReturn?.length || 0,
       coursesIsArray: Array.isArray(coursesToReturn),
       hasFunctionCalls: functionCallResults.length > 0,
-      conversationId: conversationId
+      conversationId: conversationId,
+      modelUsed,
+      fallbackUsed
     });
     
     console.log('📦 Final responseData:', {

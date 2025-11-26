@@ -1,6 +1,9 @@
 /**
- * OpenAI/DeepSeek Compatible Function Definitions
+ * OpenAI-Compatible Function Definitions for LLM Function Calling
  * Based on Kursfind AI Supabase Schema
+ * 
+ * Primary Model: GPT-4o-mini (OpenAI)
+ * Fallback Model: DeepSeek Chat (V3)
  * 
  * These functions enable the AI to query the database intelligently
  * during chat conversations.
@@ -601,25 +604,21 @@ export const functionDefinitions = [
  * USAGE EXAMPLE IN CHAT ROUTE:
  * 
  * import { functionDefinitions } from './function-definitions'
+ * import { callLLMWithFallback, getToolCallsFromResponse, getMessageContent } from '@/lib/ai-client'
  * 
- * const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
- *   method: 'POST',
- *   headers: {
- *     'Content-Type': 'application/json',
- *     'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
- *   },
- *   body: JSON.stringify({
- *     model: 'deepseek-chat',
- *     messages: conversationMessages,
- *     tools: functionDefinitions,  // <-- Add function definitions here
- *     tool_choice: 'auto',
- *     temperature: 0.7
- *   })
- * })
+ * // First call - AI decides if it needs functions
+ * const response = await callLLMWithFallback(
+ *   conversationMessages,
+ *   functionDefinitions,
+ *   { tool_choice: 'auto', temperature: 0.7 }
+ * )
+ * 
+ * // Get tool calls (handles both OpenAI and DeepSeek formats)
+ * const toolCalls = getToolCallsFromResponse(response)
  * 
  * // Handle function calls in response
- * if (responseData.choices[0].message.tool_calls) {
- *   for (const toolCall of responseData.choices[0].message.tool_calls) {
+ * if (toolCalls.length > 0) {
+ *   for (const toolCall of toolCalls) {
  *     const functionName = toolCall.function.name
  *     const functionArgs = JSON.parse(toolCall.function.arguments)
  *     
@@ -634,19 +633,14 @@ export const functionDefinitions = [
  *     })
  *   }
  *   
- *   // Make another API call with function results
- *   const finalResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
- *     method: 'POST',
- *     headers: {
- *       'Content-Type': 'application/json',
- *       'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
- *     },
- *     body: JSON.stringify({
- *       model: 'deepseek-chat',
- *       messages: conversationMessages,
- *       temperature: 0.7
- *     })
- *   })
+ *   // Second call with function results
+ *   const finalResponse = await callLLMWithFallback(
+ *     conversationMessages,
+ *     undefined, // No tools for second call
+ *     { temperature: 0.7 }
+ *   )
+ *   
+ *   const finalMessage = getMessageContent(finalResponse)
  * }
  */
 
