@@ -65,8 +65,12 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         })
       })
 
+      const result = await response.json()
+      console.log('Application response:', result)
+
       if (!response.ok) {
-        throw new Error('Submission failed')
+        console.error('Application error:', result)
+        throw new Error(result.error || 'Submission failed')
       }
 
       setSubmitStatus('success')
