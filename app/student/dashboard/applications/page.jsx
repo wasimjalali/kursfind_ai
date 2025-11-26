@@ -47,24 +47,38 @@ export default function ApplicationsPage() {
 
       setStudent(studentData);
 
-  // Get all applications with course and provider details
+  // Get all applications
   console.log('Fetching applications for student_id:', studentData.id)
 const { data: applicationsData, error: appError } = await supabase
     .from('applications')
-    .select(`
-      id,
-      status,
-      applied_at,
-      updated_at,
-      message,
-      course_id,
-      provider_id
-    `)
+    .select('*')
         .eq('student_id', studentData.id)
     .order('applied_at', { ascending: false });
   
   console.log('Applications data:', applicationsData)
   console.log('Applications error:', appError)
+  
+  // Get course and provider details separately if we have applications
+  if (applicationsData && applicationsData.length > 0) {
+    const courseIds = [...new Set(applicationsData.map(app => app.course_id).filter(Boolean))]
+    const providerIds = [...new Set(applicationsData.map(app => app.provider_id).filter(Boolean))]
+    
+    const { data: coursesData } = await supabase
+      .from('courses')
+      .select('id, title, description, category, location, start_date, duration, image_url')
+      .in('id', courseIds)
+    
+    const { data: providersData } = await supabase
+      .from('providers')
+      .select('id, company_name, email, phone, city')
+      .in('id', providerIds)
+    
+    // Merge data
+    applicationsData.forEach(app => {
+      app.courses = coursesData?.find(c => c.id === app.course_id)
+      app.providers = providersData?.find(p => p.id === app.provider_id)
+    })
+  }
 
       setApplications(applicationsData || []);
       setIsLoading(false);

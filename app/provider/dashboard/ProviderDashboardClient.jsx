@@ -12,15 +12,7 @@ export default function ProviderDashboardClient({ provider, children }) {
       {/* Header - Full Width, Sticky */}
       <ProviderHeader provider={provider} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
-      {/* Overlay when sidebar is open - only covers area outside sidebar */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-30 z-30 top-[73px]"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
-      {/* Sidebar - Overlay, not pushing content */}
+      {/* Sidebar - Overlay, no dark background */}
       <ProviderSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       {/* Main Content - Always full width */}
