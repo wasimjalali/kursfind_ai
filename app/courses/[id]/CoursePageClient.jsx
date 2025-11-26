@@ -1229,7 +1229,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             {/* Application Form */}
             <div className="p-6">
               <ApplicationForm 
-                courseId={course.course_id || course.id}
+                courseId={course.id}
                 courseName={course.title}
                 providerId={provider.id}
                 providerName={provider.company_name || provider.name}
