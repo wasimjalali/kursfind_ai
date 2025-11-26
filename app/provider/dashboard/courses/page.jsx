@@ -40,8 +40,9 @@ export default async function CoursesPage() {
   const courses = await getProviderCourses(provider.provider_id || provider.id.toString());
   
   // Calculate stats
+  // Handle is_active as both boolean and string (database might store as TEXT 'true'/'false')
   const totalCourses = courses.length;
-  const activeCourses = courses.filter(c => c.is_active).length;
+  const activeCourses = courses.filter(c => c.is_active === true || c.is_active === 'true').length;
   const totalViews = courses.reduce((sum, c) => sum + (c.view_count || 0), 0);
   
   return (

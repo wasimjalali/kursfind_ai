@@ -64,7 +64,7 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
         <div className="bg-white rounded-xl shadow-sm border p-6">
           <p className="text-sm lg:text-base text-gray-600 mb-2">Aktive Kurse</p>
           <p className="text-3xl lg:text-4xl font-bold text-green-600">
-            {courses.filter(c => c.is_active).length}
+            {courses.filter(c => c.is_active === true || c.is_active === 'true').length}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-6">
@@ -135,9 +135,9 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs lg:text-sm font-medium ${
-                      course.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                      (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                     }`}>
-                      {course.is_active ? 'Aktiv' : 'Inaktiv'}
+                      {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm lg:text-base text-gray-900">{course.view_count || 0}</td>
@@ -182,7 +182,7 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="font-medium text-gray-900">{courseToDelete.title}</p>
               <p className="text-sm text-gray-500 mt-1">
-                {courseToDelete.view_count || 0} Aufrufe • {courseToDelete.is_active ? 'Aktiv' : 'Inaktiv'}
+                {courseToDelete.view_count || 0} Aufrufe • {(courseToDelete.is_active === true || courseToDelete.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
               </p>
             </div>
             

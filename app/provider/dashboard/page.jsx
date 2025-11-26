@@ -23,7 +23,8 @@ export default async function ProviderDashboard() {
   const totalCourses = courses?.length || 0;
   const totalViews = courses?.reduce((sum, course) => sum + (course.view_count || 0), 0) || 0;
   const totalClicks = courses?.reduce((sum, course) => sum + (course.click_count || 0), 0) || 0;
-  const activeCourses = courses?.filter(c => c.is_active).length || 0;
+  // Handle is_active as both boolean and string (database might store as TEXT 'true'/'false')
+  const activeCourses = courses?.filter(c => c.is_active === true || c.is_active === 'true').length || 0;
   
   // Get recent courses for display (limit 5)
   const recentCourses = courses?.slice(0, 5) || [];
@@ -168,11 +169,11 @@ export default async function ProviderDashboard() {
                         {course.title}
                       </h4>
                       <span className={`px-2 py-1 rounded-full text-xs lg:text-sm font-semibold ${
-                        course.is_active 
+                        (course.is_active === true || course.is_active === 'true')
                           ? 'bg-green-100 text-green-700' 
                           : 'bg-gray-100 text-gray-700'
                       }`}>
-                        {course.is_active ? 'Aktiv' : 'Inaktiv'}
+                        {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm lg:text-base text-gray-600">
