@@ -2,6 +2,8 @@ import { getCurrentProvider } from '@/lib/supabase-server';
 import ProviderDashboardClient from './ProviderDashboardClient';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }) {
   const provider = await getCurrentProvider();
   
