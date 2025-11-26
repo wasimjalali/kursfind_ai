@@ -98,12 +98,16 @@ export default function ApplicationsPage() {
         .eq('auth_user_id', user.id)
         .single()
       
+      console.log('Provider data:', provider)
+      
       if (!provider || providerError) {
+        console.error('Provider error:', providerError)
         router.push('/provider/login')
         return
       }
       
       const providerId = provider.id
+      console.log('Fetching applications for provider_id:', providerId)
       
       // Fetch applications for this provider
       const { data, error } = await supabase
@@ -111,6 +115,9 @@ export default function ApplicationsPage() {
         .select('*')
         .eq('provider_id', providerId)
         .order('applied_at', { ascending: false })
+      
+      console.log('Applications data:', data)
+      console.log('Applications error:', error)
       
       if (!error && data) {
         // Get course titles for all applications
