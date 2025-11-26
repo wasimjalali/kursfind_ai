@@ -198,14 +198,8 @@ export function extractCourseReferences(
         distanceFromTopPhrase: distanceToTop
       });
 
-      console.log('🔍 Course reference found:', {
-        title: course.title?.substring(0, 30),
-        badgeType,
-        distanceToTop,
-        distanceToEmpfehlung,
-        distanceToAlternative,
-        isDuplicate
-      });
+      // Debug logging disabled for production
+      // console.log('🔍 Course reference found:', { title: course.title?.substring(0, 30), badgeType });
     }
   });
 
@@ -214,21 +208,15 @@ export function extractCourseReferences(
   const topCandidates = references.filter(ref => ref.badgeType === 'top-wahl');
   
   if (topCandidates.length > 1) {
-    console.log('⚠️ Multiple Top-Wahl candidates, selecting nearest to "top" phrase');
-    
     // Sort by distance to top phrase
     topCandidates.sort((a, b) => a.distanceFromTopPhrase - b.distanceFromTopPhrase);
     
     // Keep only the first (nearest) as Top-Wahl
-    const winner = topCandidates[0];
-    
     // Downgrade others to Empfehlung
     topCandidates.slice(1).forEach(candidate => {
       candidate.badgeType = 'empfehlung';
       candidate.isRecommended = true;
     });
-    
-    console.log('✅ Top-Wahl assigned to:', winner.courseId, 'distance:', winner.distanceFromTopPhrase);
   }
 
   // Sort by ranking > position
@@ -257,7 +245,6 @@ export function orderCoursesByRecommendation(
   const references = extractCourseReferences(messageContent, courses, previouslyShownCourseIds);
 
   if (references.length === 0) {
-    console.log('📋 No course mentions found, using original order');
     return courses;
   }
 
@@ -296,15 +283,6 @@ export function orderCoursesByRecommendation(
     
     // Position in text
     return (refA?.position || 0) - (refB?.position || 0);
-  });
-
-  console.log('🎯 Smart ordering applied:', {
-    mentioned: mentionedCourses.length,
-    badgeDistribution: {
-      topWahl: references.filter(r => r.badgeType === 'top-wahl').length,
-      empfohlen: references.filter(r => r.badgeType === 'empfehlung').length,
-      alternative: references.filter(r => r.badgeType === 'alternative').length
-    }
   });
 
   return [...mentionedCourses, ...unmentionedCourses];
@@ -403,7 +381,6 @@ export function extractCoursesFromFollowUp(
       }
     }
 
-    console.log('🔄 Follow-up detected, matched courses:', matchedCourses.length);
   }
 
   return matchedCourses;

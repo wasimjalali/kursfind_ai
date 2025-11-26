@@ -624,14 +624,6 @@ function ChatContent() {
                                           )
                                         : course;
                                       
-                                      console.log('🎴 Rendering course card:', course.id, course.title, {
-                                        isRecommended: enhancedCourse._isRecommended,
-                                        badgeType: enhancedCourse._badgeType,
-                                        ranking: enhancedCourse._ranking,
-                                        isDuplicate: enhancedCourse._isDuplicate,
-                                        position: courseIdx
-                                      });
-                                      
                                       return (
                                         <ChatCourseCard 
                                           key={`${course.id}-${idx}-${courseIdx}`} 
