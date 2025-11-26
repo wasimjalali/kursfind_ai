@@ -20,11 +20,8 @@ export async function POST(request) {
       'email',
       'phone',
       'courseId',
-      'courseName',
       'providerId',
-      'providerName',
       'fundingType',
-      'registrationStatus',
       'gdprConsent'
     ]
 
@@ -63,17 +60,6 @@ export async function POST(request) {
       )
     }
 
-    // Validate registration status
-    const validRegistrationStatuses = ['JobCenter', 'Agentur für Arbeit', 'Nicht registriert']
-    if (!validRegistrationStatuses.includes(body.registrationStatus)) {
-      return Response.json(
-        { 
-          success: false, 
-          error: 'Ungültiger Registrierungsstatus' 
-        },
-        { status: 400 }
-      )
-    }
 
     // Initialize Supabase client
     const supabase = createClient(
@@ -88,12 +74,8 @@ export async function POST(request) {
       email: body.email,
       phone: body.phone,
       course_id: body.courseId,
-      course_name: body.courseName,
       provider_id: body.providerId,
-      provider_name: body.providerName,
       funding_type: body.fundingType,
-      registration_status: body.registrationStatus,
-      preferred_start_date: body.preferredStartDate || null,
       message: body.message || null,
       gdpr_consent: body.gdprConsent,
       marketing_consent: body.marketingConsent || false,
@@ -101,8 +83,7 @@ export async function POST(request) {
       status: 'new',
       provider_viewed: false,
       source: 'course_page',
-      submitted_at: new Date().toISOString()
-      // created_at is handled automatically by Supabase
+      applied_at: new Date().toISOString()
     }
 
     // Insert into Supabase
