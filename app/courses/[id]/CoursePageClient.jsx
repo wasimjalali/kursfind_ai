@@ -44,7 +44,10 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ courseId: course.id, action: 'view' })
-      }).catch(err => console.error('Failed to track view:', err))
+      })
+      .then(res => res.json())
+      .then(data => console.log('View tracked:', data))
+      .catch(err => console.error('Failed to track view:', err))
     }
   }, [course?.id])
 
@@ -59,7 +62,10 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ courseId: course.id, action: 'click' })
-      }).catch(err => console.error('Failed to track click:', err))
+      })
+      .then(res => res.json())
+      .then(data => console.log('Click tracked:', data))
+      .catch(err => console.error('Failed to track click:', err))
     }
     // Show application modal
     setShowApplicationModal(true)
