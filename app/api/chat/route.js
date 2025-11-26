@@ -217,15 +217,29 @@ CRITICAL RULES:
 4. You CAN search the database - never say you cannot
 
 ═══════════════════════════════════════════════════════════════
-🌍 LANGUAGE DETECTION & RESPONSE
+🌍 LANGUAGE DETECTION & RESPONSE - CRITICAL
 ═══════════════════════════════════════════════════════════════
 
-ALWAYS respond in the SAME language as the user's question:
+DETECT AND MATCH USER'S LANGUAGE IN EACH MESSAGE:
+- Analyze the CURRENT message language, not previous messages
 - German question → German response
-- English question → English response
+- English question → English response  
 - Turkish question → Turkish response
 - Arabic question → Arabic response
-- If user switches languages mid-conversation, switch immediately
+
+MID-CONVERSATION LANGUAGE SWITCH - CRITICAL:
+- If user switches from German to English → IMMEDIATELY respond in English
+- If user writes "Yes, how can I apply?" → Respond in ENGLISH
+- If user writes "Ja, wie kann ich mich bewerben?" → Respond in GERMAN
+- NEVER continue in the previous language if user switched
+- Each message is analyzed independently for language
+
+LANGUAGE DETECTION EXAMPLES:
+- "Yes, I want to apply" → ENGLISH response
+- "Tell me more" → ENGLISH response
+- "Show me courses" → ENGLISH response
+- "Ja, zeig mir mehr" → GERMAN response
+- "Ich möchte mich bewerben" → GERMAN response
 
 ═══════════════════════════════════════════════════════════════
 🔧 FUNCTION CALLING CAPABILITIES
@@ -320,6 +334,15 @@ HOW TO USE FUNCTION RESULTS:
 CRITICAL: When courses are found, they are AUTOMATICALLY displayed as cards by the system.
 You do NOT need to list them in text. Just provide context and summary.
 
+COURSE CARD DISPLAY RULES - CRITICAL:
+- If user asks about ONE specific course → Show ONLY 1 card
+- If user says "I want to apply for this course" → Show ONLY that 1 course
+- If user asks "show me both courses" → Show exactly 2 cards
+- If user asks for multiple courses → Show the appropriate number
+- NEVER show 3 cards when user is asking about 1 course
+- NEVER duplicate the same course multiple times
+- Match the number of cards to what user is asking about
+
 GERMAN EXAMPLE:
 "Perfekt! Ich habe 2 exzellente UX/UI Design Kurse für Sie gefunden:
 
@@ -334,28 +357,54 @@ ENGLISH EXAMPLE:
 
 Both courses are 100% eligible for Bildungsgutschein funding. Would you like more details?"
 
+SINGLE COURSE APPLICATION EXAMPLE:
+User: "Yes, I want to apply for this course"
+Response: "Great! Here's the course you're interested in:
+
+[ONLY 1 course card displayed]
+
+To apply, click on the course card and then click 'APPLY'. You can track your application in your Student Dashboard."
+
 IMPORTANT RULES:
 1. NEVER list course details in text (title, duration, price, etc.) - cards show this
 2. ALWAYS mention how many courses were found
 3. Provide brief summary of what makes them suitable
 4. Course cards appear automatically - you just provide context
-5. For bullet points, use markdown format:
-   - Use "- " (dash space) at the start of each line for bullet points
-   - Use "1. ", "2. ", "3. " for numbered lists
-   - Each bullet point MUST be on its own line
-   - Leave a blank line before and after lists
-6. Keep responses concise - let the course cards do the talking
+5. Keep responses concise - let the course cards do the talking
 
-FORMATTING EXAMPLE:
-"Perfekt! Ich habe 3 E-Commerce Kurse gefunden:
+FORMATTING RULES - AVOID BULLET OVERLOAD:
+- Maximum 4-5 bullet points in a row, then switch format
+- For longer content, use NUMBERED LISTS (1. 2. 3.) instead of bullets
+- Use **bold headers** to break up sections
+- Alternate between bullets (•) and numbers (1. 2. 3.) for variety
+- For step-by-step processes: ALWAYS use numbered lists
+- For feature lists: Use bullets (max 5 items)
+- For detailed explanations: Use paragraphs with bold keywords
 
-Die wichtigsten Vorteile:
+FORMATTING EXAMPLES:
 
+SHORT LIST (bullets OK):
+"Die wichtigsten Vorteile:
 - 100% förderbar mit Bildungsgutschein
-- Standorte in Berlin und Online verfügbar
-- Praxisorientierte Bootcamp-Formate
+- Online verfügbar
+- Praxisorientiert"
 
-Möchten Sie mehr Details?"
+LONGER CONTENT (use numbers + sections):
+"**Bewerbungsprozess:**
+
+1. Klicken Sie auf die Kurskarte
+2. Füllen Sie das Bewerbungsformular aus
+3. Erhalten Sie eine Bestätigung per E-Mail
+
+**Nächste Schritte:**
+
+1. Termin bei der Agentur für Arbeit vereinbaren
+2. Bildungsgutschein beantragen"
+
+COURSE DETAILS (use bold + short paragraphs):
+"**Dauer:** 12 Wochen Vollzeit (420 UE)
+**Format:** 100% live online
+**Inhalte:** Amazon FBA, Excel, Social Media Marketing, KI-Tools"
 
 ═══════════════════════════════════════════════════════════════
 💬 RESPONSE LENGTH GUIDELINES
@@ -817,20 +866,36 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
             result: functionResult
           });
           
-          // If this was a course search, extract courses for frontend
-          if (functionName === 'search_courses' && functionResult.success) {
-            if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
-              coursesToReturn = functionResult.data.courses;
-              console.log('📚 Courses extracted for frontend:', coursesToReturn.length);
-              if (coursesToReturn.length > 0) {
-                console.log('📋 Sample course:', {
-                  id: coursesToReturn[0].id,
-                  title: coursesToReturn[0].title,
-                  hasProvider: !!coursesToReturn[0].providers
-                });
+          // Extract courses for frontend from various function types
+          if (functionResult.success) {
+            if (functionName === 'search_courses') {
+              // Multiple courses from search
+              if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
+                coursesToReturn = functionResult.data.courses;
+                console.log('📚 Courses extracted from search:', coursesToReturn.length);
+              } else {
+                console.warn('⚠️ search_courses succeeded but no courses array found');
               }
-            } else {
-              console.warn('⚠️ search_courses succeeded but no courses array found');
+            } else if (functionName === 'get_course_details') {
+              // Single course from details - wrap in array for frontend
+              if (functionResult.data?.course) {
+                coursesToReturn = [functionResult.data.course];
+                console.log('📚 Single course extracted from get_course_details:', coursesToReturn[0].title);
+              }
+            } else if (functionName === 'recommend_courses') {
+              // Recommendations
+              if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
+                coursesToReturn = functionResult.data.courses;
+                console.log('📚 Courses extracted from recommendations:', coursesToReturn.length);
+              }
+            }
+            
+            if (coursesToReturn.length > 0) {
+              console.log('📋 First course:', {
+                id: coursesToReturn[0].id,
+                title: coursesToReturn[0].title,
+                hasProvider: !!coursesToReturn[0].providers
+              });
             }
           }
           
@@ -962,13 +1027,34 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     }
 
     // ═══════════════════════════════════════════════════════════════
+    // DEDUPLICATE COURSES - Prevent showing same course multiple times
+    // ═══════════════════════════════════════════════════════════════
+    
+    let uniqueCourses = coursesToReturn;
+    if (Array.isArray(coursesToReturn) && coursesToReturn.length > 0) {
+      const seenIds = new Set();
+      uniqueCourses = coursesToReturn.filter(course => {
+        if (!course.id || seenIds.has(course.id)) {
+          console.log('🔄 Removing duplicate course:', course.id, course.title);
+          return false;
+        }
+        seenIds.add(course.id);
+        return true;
+      });
+      
+      if (uniqueCourses.length !== coursesToReturn.length) {
+        console.log('✅ Deduplicated courses:', coursesToReturn.length, '→', uniqueCourses.length);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // PREPARE RESPONSE
     // ═══════════════════════════════════════════════════════════════
     
     const responseData = {
       message: finalAIMessage,
       response: finalAIMessage,
-      courses: coursesToReturn,
+      courses: uniqueCourses,
       conversation_id: conversationId,
       function_calls: functionCallResults.length > 0 ? functionCallResults : undefined,
       _model: modelUsed, // Include model info for debugging
