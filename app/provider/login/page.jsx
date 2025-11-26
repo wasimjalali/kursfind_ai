@@ -50,8 +50,8 @@ export default function ProviderLogin() {
 
       console.log('✅ Provider found:', providerData.company_name);
 
-      // Wait for session to be fully established
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Wait longer for session to be fully established on Vercel
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Use window.location.href for reliable redirect on Vercel
       console.log('🔄 Redirecting to dashboard...');
