@@ -9,6 +9,13 @@ export default async function ProfilePage() {
     redirect('/provider/login');
   }
 
+  // Parse certifications from comma-separated string to array
+  const parseCertifications = (certString) => {
+    if (!certString) return [];
+    if (Array.isArray(certString)) return certString;
+    return certString.split(',').map(c => c.trim()).filter(Boolean);
+  };
+
   const initialData = {
     company_name: provider.company_name || '',
     contact_name: provider.contact_name || '',
@@ -20,7 +27,8 @@ export default async function ProfilePage() {
     city: provider.city || '',
     postal_code: provider.postal_code || '',
     logo_url: provider.logo_url || '',
-    certifications: provider.certifications || [],
+    // Database column is "Certification" (singular, capital C), parse as comma-separated string
+    certifications: parseCertifications(provider.Certification || provider.certifications),
     faq: provider.faq || [],
   };
 

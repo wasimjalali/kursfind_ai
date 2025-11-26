@@ -15,12 +15,12 @@ export default async function AnalyticsPage() {
   // Use TEXT provider_id for courses query (courses.provider_id is TEXT)
   const { data: courses } = await supabase
     .from('courses')
-    .select('id, title, views_count, clicks_count')
+    .select('id, title, view_count, click_count')
     .eq('provider_id', provider.provider_id)
-    .order('views_count', { ascending: false });
+    .order('view_count', { ascending: false });
 
-  const totalViews = courses?.reduce((sum, course) => sum + (course.views_count || 0), 0) || 0;
-  const totalClicks = courses?.reduce((sum, course) => sum + (course.clicks_count || 0), 0) || 0;
+  const totalViews = courses?.reduce((sum, course) => sum + (course.view_count || 0), 0) || 0;
+  const totalClicks = courses?.reduce((sum, course) => sum + (course.click_count || 0), 0) || 0;
   const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(2) : 0;
 
   return (
@@ -88,10 +88,10 @@ export default async function AnalyticsPage() {
                 </div>
                 <div className="flex items-center gap-6 text-sm lg:text-base">
                   <div className="text-gray-600">
-                    <span className="font-semibold text-gray-900">{course.views_count || 0}</span> Aufrufe
+                    <span className="font-semibold text-gray-900">{course.view_count || 0}</span> Aufrufe
                   </div>
                   <div className="text-gray-600">
-                    <span className="font-semibold text-gray-900">{course.clicks_count || 0}</span> Klicks
+                    <span className="font-semibold text-gray-900">{course.click_count || 0}</span> Klicks
                   </div>
                 </div>
               </div>

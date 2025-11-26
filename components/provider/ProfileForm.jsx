@@ -164,6 +164,7 @@ export default function ProfileForm({ initialData }) {
       );
 
       // Update provider profile
+      // Note: Database column is "Certification" (singular, capital C) - stores as comma-separated string
       const { error: updateError } = await supabase
         .from('providers')
         .update({
@@ -177,7 +178,8 @@ export default function ProfileForm({ initialData }) {
           city: formData.city?.trim() || null,
           postal_code: formData.postal_code?.trim() || null,
           logo_url: logoUrl || null,
-          certifications: formData.certifications.length > 0 ? formData.certifications : null,
+          // Save as comma-separated string to "Certification" column (singular, capital C)
+          Certification: formData.certifications.length > 0 ? formData.certifications.join(', ') : null,
           faq: validFaq.length > 0 ? validFaq : null,
           updated_at: new Date().toISOString()
         })
