@@ -155,9 +155,22 @@ async function fixProvider() {
 
     // Step 4: Create provider record
     console.log('\nStep 4: Creating provider record...');
+    
+    // First, let's check what the next ID should be
+    const { data: maxIdData } = await supabase
+      .from('providers')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    
+    const nextId = maxIdData ? maxIdData.id + 1 : 1;
+    console.log(`   Next available ID: ${nextId}`);
+    
     const { data: providerData, error: providerError } = await supabase
       .from('providers')
       .insert([{
+        id: nextId,
         auth_user_id: authUser.id,
         email: email.trim().toLowerCase(),
         company_name: companyName.trim(),
