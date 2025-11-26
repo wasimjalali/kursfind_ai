@@ -1,47 +1,88 @@
 import { createClient } from '@supabase/supabase-js'
 
+/**
+ * PUT /api/applications/[id]
+ * 
+ * Updates an application status (for providers)
+ */
 export async function PUT(request, { params }) {
   try {
     const { id } = params
     const body = await request.json()
     
+    // Initialize Supabase with service role to bypass RLS
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     )
     
-    // Prepare update data
+    // Verify provider is authenticated
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    const token = authHeader.replace('Bearer ', '')
+    const userSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      }
+    )
+    
+    const { data: { user } } = await userSupabase.auth.getUser()
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    // Get provider
+    const { data: provider } = await supabase
+      .from('providers')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single()
+    
+    if (!provider) {
+      return Response.json({ error: 'Provider not found' }, { status: 404 })
+    }
+    
+    // Verify application belongs to this provider
+    const { data: application } = await supabase
+      .from('applications')
+      .select('provider_id')
+      .eq('id', id)
+      .single()
+    
+    if (!application || application.provider_id !== provider.id) {
+      return Response.json({ error: 'Application not found or unauthorized' }, { status: 404 })
+    }
+    
+    // Update application
     const updateData = {
       updated_at: new Date().toISOString()
     }
     
-    // If status is being updated
     if (body.status) {
       updateData.status = body.status
-      updateData.provider_viewed = true
-      updateData.provider_viewed_at = new Date().toISOString()
-      
-      // If marking as contacted, set last_contacted_at
-      if (body.status === 'contacted') {
-        updateData.last_contacted_at = new Date().toISOString()
-      }
     }
     
-    // If explicitly marking as viewed
     if (body.provider_viewed !== undefined) {
       updateData.provider_viewed = body.provider_viewed
-      if (body.provider_viewed && !updateData.provider_viewed_at) {
+      if (body.provider_viewed) {
         updateData.provider_viewed_at = new Date().toISOString()
       }
     }
     
-    // If adding notes
     if (body.provider_notes !== undefined) {
       updateData.provider_notes = body.provider_notes
     }
     
-    // Update in database
-    const { data, error } = await supabase
+    const { data: updatedApplication, error } = await supabase
       .from('applications')
       .update(updateData)
       .eq('id', id)
@@ -50,74 +91,13 @@ export async function PUT(request, { params }) {
     
     if (error) {
       console.error('Update error:', error)
-      return Response.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      )
+      return Response.json({ error: 'Failed to update application' }, { status: 500 })
     }
     
-    return Response.json({ success: true, data })
+    return Response.json({ success: true, data: updatedApplication })
     
   } catch (error) {
-    console.error('API error:', error)
-    return Response.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function GET(request, { params }) {
-  try {
-    const { id } = params
-    
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    )
-    
-    const { data, error } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('id', id)
-      .single()
-    
-    if (error) {
-      return Response.json(
-        { success: false, error: 'Not found' },
-        { status: 404 }
-      )
-    }
-    
-    // Map fields to match expected format
-    const mappedData = {
-      id: data.id,
-      first_name: data.first_name,
-      last_name: data.last_name,
-      email: data.email,
-      phone: data.phone,
-      course_title: data.course_name,
-      course_id: data.course_id,
-      provider_id: data.provider_id,
-      funding_type: data.funding_type,
-      status: data.status || 'new',
-      provider_viewed: data.provider_viewed || false,
-      applied_at: data.submitted_at,
-      registration_status: data.registration_status,
-      message: data.message,
-      preferred_start_date: data.preferred_start_date,
-      provider_notes: data.provider_notes,
-      provider_viewed_at: data.provider_viewed_at,
-      last_contacted_at: data.last_contacted_at,
-      updated_at: data.updated_at
-    }
-    
-    return Response.json({ success: true, data: mappedData })
-    
-  } catch (error) {
-    return Response.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Error updating application:', error)
+    return Response.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

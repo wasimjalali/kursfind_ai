@@ -12,9 +12,17 @@ export default function ApplicationDetailModal({ application, isOpen, onClose, o
     setIsUpdating(true)
     
     try {
+      // Get auth token
+      const { createClient } = await import('@/lib/supabase-browser')
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      
       const response = await fetch(`/api/applications/${application.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
+        },
         body: JSON.stringify({ 
           status: newStatus,
           provider_viewed: true
@@ -24,9 +32,14 @@ export default function ApplicationDetailModal({ application, isOpen, onClose, o
       if (response.ok) {
         onStatusUpdate()
         onClose()
+      } else {
+        const error = await response.json()
+        console.error('Update failed:', error)
+        alert('Fehler beim Aktualisieren des Status')
       }
     } catch (error) {
       console.error('Error updating status:', error)
+      alert('Fehler beim Aktualisieren des Status')
     }
     
     setIsUpdating(false)
