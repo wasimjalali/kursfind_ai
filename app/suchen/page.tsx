@@ -433,7 +433,8 @@ function ChatContent() {
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
                             {/* MARKDOWN CONTENT - Enhanced styling for all text elements */}
-                            <div className="prose prose-sm max-w-none mb-4 text-gray-700">
+                            {/* Mobile: Override prose list padding with tighter values */}
+                            <div className="prose prose-sm max-w-none mb-4 text-gray-700 prose-ul:pl-3 prose-ol:pl-3 sm:prose-ul:pl-5 sm:prose-ol:pl-5 prose-li:pl-0 prose-li:my-0.5">
                               <ReactMarkdown
                                 components={{
                                   // Bold text - FIXED: Use inline style to override any inherited styles
@@ -482,13 +483,12 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // Lists - FIXED: Reduced padding on mobile for better readability
+                                  // Lists - FIXED: Minimal padding on mobile, use 'inside' position
                                   ul: ({node, ...props}) => (
                                     <ul 
-                                      className="my-2 sm:my-3 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2"
+                                      className="my-2 sm:my-3 pl-3 sm:pl-5 space-y-1 sm:space-y-2 [&_ul]:pl-3 [&_ul]:sm:pl-4 [&_ol]:pl-3 [&_ol]:sm:pl-4"
                                       style={{
                                         listStyleType: 'disc',
-                                        listStylePosition: 'outside',
                                         color: '#374151',
                                       }}
                                       {...props} 
@@ -496,19 +496,18 @@ function ChatContent() {
                                   ),
                                   ol: ({node, ...props}) => (
                                     <ol 
-                                      className="my-2 sm:my-3 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2"
+                                      className="my-2 sm:my-3 pl-3 sm:pl-5 space-y-1 sm:space-y-2 [&_ul]:pl-3 [&_ul]:sm:pl-4 [&_ol]:pl-3 [&_ol]:sm:pl-4"
                                       style={{
                                         listStyleType: 'decimal',
-                                        listStylePosition: 'outside',
                                         color: '#374151',
                                       }}
                                       {...props} 
                                     />
                                   ),
-                                  // List items - FIXED: Reduced padding on mobile
+                                  // List items - FIXED: No extra padding, tighter line height on mobile
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-relaxed pl-0.5 sm:pl-1"
+                                      className="leading-snug sm:leading-relaxed"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',
