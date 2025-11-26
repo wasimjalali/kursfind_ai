@@ -452,40 +452,40 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // Paragraphs - FIXED: Ensure text color is always visible
+                                  // Paragraphs - FIXED: Ensure text color is always visible, tighter on mobile
                                   p: ({node, ...props}) => (
                                     <p 
-                                      className="mb-3 last:mb-0 leading-relaxed" 
+                                      className="mb-2 sm:mb-3 last:mb-0 leading-relaxed text-sm sm:text-base" 
                                       style={{ color: '#374151' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Headings - Force dark color with inline styles
+                                  // Headings - Force dark color with inline styles, smaller on mobile
                                   h1: ({node, ...props}) => (
                                     <h1 
-                                      className="text-xl font-bold mb-3" 
+                                      className="text-lg sm:text-xl font-bold mb-2 sm:mb-3" 
                                       style={{ color: '#111827', fontWeight: 700 }} 
                                       {...props} 
                                     />
                                   ),
                                   h2: ({node, ...props}) => (
                                     <h2 
-                                      className="text-lg font-bold mb-2" 
+                                      className="text-base sm:text-lg font-bold mb-1.5 sm:mb-2" 
                                       style={{ color: '#111827', fontWeight: 700 }} 
                                       {...props} 
                                     />
                                   ),
                                   h3: ({node, ...props}) => (
                                     <h3 
-                                      className="text-base font-bold mb-2" 
+                                      className="text-sm sm:text-base font-bold mb-1.5 sm:mb-2" 
                                       style={{ color: '#111827', fontWeight: 700 }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Lists - FIXED: Proper bullet point styling with visible markers
+                                  // Lists - FIXED: Reduced padding on mobile for better readability
                                   ul: ({node, ...props}) => (
                                     <ul 
-                                      className="my-3 pl-6 space-y-2"
+                                      className="my-2 sm:my-3 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2"
                                       style={{
                                         listStyleType: 'disc',
                                         listStylePosition: 'outside',
@@ -496,7 +496,7 @@ function ChatContent() {
                                   ),
                                   ol: ({node, ...props}) => (
                                     <ol 
-                                      className="my-3 pl-6 space-y-2"
+                                      className="my-2 sm:my-3 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2"
                                       style={{
                                         listStyleType: 'decimal',
                                         listStylePosition: 'outside',
@@ -505,10 +505,10 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // List items - FIXED: Proper display and color
+                                  // List items - FIXED: Reduced padding on mobile
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-relaxed pl-1"
+                                      className="leading-relaxed pl-0.5 sm:pl-1"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',

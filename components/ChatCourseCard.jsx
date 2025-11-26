@@ -161,20 +161,10 @@ export default function ChatCourseCard({
                   }
                 }}
               />
-              {/* Provider Logo Badge - Top Right Corner of image (Mobile Only) */}
-              {providerLogo && providerLogo.trim() !== '' && (
-                <div className="md:hidden absolute top-3 right-3 z-10 w-14 h-14 bg-white rounded-lg p-1.5 shadow-lg border-2 border-gray-200 flex items-center justify-center">
-                  <img 
-                    src={providerLogo} 
-                    alt={providerName}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      // Hide logo if it fails to load
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
+              {/* REMOVED: Provider Logo Badge on Mobile
+                  Provider name is already shown as a badge below the image.
+                  This reduces visual clutter on mobile screens and gives more space to the course image.
+              */}
               
               {/* ENHANCED: "Zuvor gezeigt" on Image Cover - Bottom Left */}
               {/* FEATURE_FLAG: SMART_DUPLICATE_POSITIONING */}
@@ -192,20 +182,7 @@ export default function ChatCourseCard({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               )}
-              {/* Provider Logo Badge - Top Right Corner of placeholder (Mobile Only) */}
-              {providerLogo && providerLogo.trim() !== '' && (
-                <div className="md:hidden absolute top-3 right-3 z-10 w-14 h-14 bg-white rounded-lg p-1.5 shadow-lg border-2 border-gray-200 flex items-center justify-center">
-                  <img 
-                    src={providerLogo} 
-                    alt={providerName}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      // Hide logo if it fails to load
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
+              {/* REMOVED: Provider Logo Badge on Mobile placeholder as well */}
               
               {/* ENHANCED: "Zuvor gezeigt" on Image Cover - Bottom Left */}
               {effectiveIsDuplicate && (
