@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createBrowserClient } from '@supabase/ssr';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -15,6 +15,12 @@ export default function ProviderLogin() {
     email: '',
     password: '',
   });
+
+  // Create Supabase client with proper cookie handling
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,12 +56,13 @@ export default function ProviderLogin() {
 
       console.log('✅ Provider found:', providerData.company_name);
 
-      // Wait longer for session to be fully established on Vercel
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Use window.location.href for reliable redirect on Vercel
+      // Force a hard navigation to ensure cookies are sent
       console.log('🔄 Redirecting to dashboard...');
-      window.location.href = '/provider/dashboard';
+      
+      // Use setTimeout to ensure the auth state is fully committed
+      setTimeout(() => {
+        window.location.href = '/provider/dashboard';
+      }, 500);
 
     } catch (error) {
       console.error('Full error:', error);
