@@ -68,17 +68,29 @@ export async function POST(request) {
     )
 
     // Get student_id if user is logged in
-    const { data: { user } } = await supabase.auth.getUser()
+    // Use anon key to get actual user session
+    const anonSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+    
+    const { data: { user } } = await anonSupabase.auth.getUser()
     let studentId = null
     
+    console.log('Auth user:', user?.id)
+    
     if (user) {
-      const { data: studentData } = await supabase
+      const { data: studentData, error: studentError } = await supabase
         .from('students')
         .select('id')
         .eq('auth_user_id', user.id)
         .single()
+      
+      console.log('Student lookup:', { studentData, studentError })
       studentId = studentData?.id || null
     }
+    
+    console.log('Final student_id:', studentId)
 
     // Prepare data for database insert (camelCase to snake_case)
     const applicationData = {

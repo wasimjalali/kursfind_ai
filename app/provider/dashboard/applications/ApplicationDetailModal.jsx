@@ -107,12 +107,12 @@ export default function ApplicationDetailModal({ application, isOpen, onClose, o
           <div className="mt-4 grid grid-cols-2 gap-4 text-sm lg:text-base">
             <div>
               <span className="text-gray-600">Förderung:</span>
-              <p className="font-medium">{application.funding_type}</p>
+              <p className="font-medium text-gray-900">{application.funding_type}</p>
             </div>
             {application.preferred_start_date && (
               <div>
                 <span className="text-gray-600">Gewünschter Start:</span>
-                <p className="font-medium">
+                <p className="font-medium text-gray-900">
                   {new Date(application.preferred_start_date).toLocaleDateString('de-DE')}
                 </p>
               </div>
@@ -120,7 +120,7 @@ export default function ApplicationDetailModal({ application, isOpen, onClose, o
             {application.has_funding_approved !== null && (
               <div>
                 <span className="text-gray-600">Förderung genehmigt:</span>
-                <p className="font-medium">
+                <p className="font-medium text-gray-900">
                   {application.has_funding_approved ? '✅ Ja' : '❌ Nein'}
                 </p>
               </div>
