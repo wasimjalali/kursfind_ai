@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import NewCourseForm from '@/components/provider/NewCourseForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewCoursePage() {
   const provider = await getCurrentProvider();
   

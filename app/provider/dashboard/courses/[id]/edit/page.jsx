@@ -4,6 +4,8 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import EditCourseForm from '@/components/provider/EditCourseForm';
 
+export const dynamic = 'force-dynamic';
+
 async function getCourse(id, providerId) {
   const supabase = await createClient();
   
