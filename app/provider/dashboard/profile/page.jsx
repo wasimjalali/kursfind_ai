@@ -2,6 +2,8 @@ import { getCurrentProvider, createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import ProfileForm from '@/components/provider/ProfileForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
   const provider = await getCurrentProvider();
   

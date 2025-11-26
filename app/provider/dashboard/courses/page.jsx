@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import CoursesClient from './CoursesClient';
 
+export const dynamic = 'force-dynamic';
+
 async function getProviderCourses(providerId) {
   try {
     const supabase = await createClient();
