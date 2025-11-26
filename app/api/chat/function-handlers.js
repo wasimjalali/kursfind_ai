@@ -6,6 +6,45 @@
 import { supabase } from '@/lib/supabase'
 import { createClient } from '@/lib/supabase-server'
 
+// ═══════════════════════════════════════════════════════════════
+// SANITIZE DATA - Remove URLs and sensitive fields before sending to AI
+// This prevents the AI from showing provider website URLs to users
+// ═══════════════════════════════════════════════════════════════
+function sanitizeForAI(data) {
+  if (!data) return data;
+  
+  // Fields to remove (contain URLs or sensitive info)
+  const fieldsToRemove = [
+    'website', 'website_url', 'provider_url', 'external_url',
+    'application_url', 'registration_url', 'signup_url',
+    'facebook', 'instagram', 'linkedin', 'twitter', 'social_media',
+    'api_key', 'secret', 'password', 'token'
+  ];
+  
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeForAI(item));
+  }
+  
+  if (typeof data === 'object') {
+    const sanitized = {};
+    for (const [key, value] of Object.entries(data)) {
+      // Skip fields that should be removed
+      if (fieldsToRemove.includes(key.toLowerCase())) {
+        continue;
+      }
+      // Recursively sanitize nested objects (like providers)
+      if (typeof value === 'object' && value !== null) {
+        sanitized[key] = sanitizeForAI(value);
+      } else {
+        sanitized[key] = value;
+      }
+    }
+    return sanitized;
+  }
+  
+  return data;
+}
+
 /**
  * Keyword expansion for better search recall
  * Expands search terms with synonyms and related concepts
@@ -730,12 +769,15 @@ async function searchCourses(args) {
 
     console.log('✅ Found courses:', coursesWithReasons.length);
     
+    // SANITIZE: Remove website URLs and sensitive data before sending to AI
+    const sanitizedCourses = sanitizeForAI(coursesWithReasons);
+    
     return {
       success: true,
       data: {
-        courses: coursesWithReasons,
+        courses: sanitizedCourses,
         total: count || 0,
-        showing: coursesWithReasons.length,
+        showing: sanitizedCourses.length,
         offset,
         hasMore: count > offset + max_results,
         fallbackContext: fallbackContext || null // Include fallback info for AI to explain
@@ -788,9 +830,12 @@ async function getCourseDetails(args) {
     };
   }
 
+  // SANITIZE: Remove website URLs and sensitive data before sending to AI
+  const sanitizedCourse = sanitizeForAI(course);
+
   const result = {
     success: true,
-    data: { course }
+    data: { course: sanitizedCourse }
   };
 
   // Get similar courses if requested
@@ -865,11 +910,14 @@ async function searchProviders(args) {
     filteredProviders = filteredProviders.filter(p => p.courses?.[0]?.count > 0);
   }
 
+  // SANITIZE: Remove website URLs and sensitive data before sending to AI
+  const sanitizedProviders = sanitizeForAI(filteredProviders);
+
   return {
     success: true,
     data: {
-      providers: filteredProviders,
-      total: filteredProviders.length
+      providers: sanitizedProviders,
+      total: sanitizedProviders.length
     }
   };
 }
@@ -903,9 +951,12 @@ async function getProviderDetails(args) {
     };
   }
 
+  // SANITIZE: Remove website URLs and sensitive data before sending to AI
+  const sanitizedProvider = sanitizeForAI(provider);
+
   const result = {
     success: true,
-    data: { provider }
+    data: { provider: sanitizedProvider }
   };
 
   // Get courses
@@ -1544,11 +1595,14 @@ async function recommendCourses(args, context) {
     };
   }
 
+  // SANITIZE: Remove website URLs and sensitive data before sending to AI
+  const sanitizedCourses = sanitizeForAI(courses || []);
+
   return {
     success: true,
     data: {
-      recommendations: courses || [],
-      total: courses?.length || 0,
+      recommendations: sanitizedCourses,
+      total: sanitizedCourses.length,
       reasoning: career_goal 
         ? `Courses matched to career goal: ${career_goal}`
         : `Courses matched to interests: ${studentInterests.join(', ')}`

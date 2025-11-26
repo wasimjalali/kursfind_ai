@@ -1112,6 +1112,33 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
         console.log('✅ Deduplicated courses:', coursesToReturn.length, '→', uniqueCourses.length);
       }
     }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // LIMIT COURSES FOR SPECIFIC REQUESTS - Show only 1 when user asks for specific course
+    // ═══════════════════════════════════════════════════════════════
+    
+    if (userAsksAboutSpecificCourse && uniqueCourses.length > 1) {
+      // User asked about a specific course (first, second, this one, etc.)
+      // Try to determine which one they want based on their message
+      const lowerMessage = latestMessage.toLowerCase();
+      
+      let courseIndex = 0; // Default to first
+      if (lowerMessage.includes('second') || lowerMessage.includes('zweite') || lowerMessage.includes('2.')) {
+        courseIndex = 1;
+      } else if (lowerMessage.includes('third') || lowerMessage.includes('dritte') || lowerMessage.includes('3.')) {
+        courseIndex = 2;
+      }
+      
+      // Only show the specific course requested
+      if (courseIndex < uniqueCourses.length) {
+        console.log(`🎯 User asked for specific course (index ${courseIndex}), limiting from ${uniqueCourses.length} to 1`);
+        uniqueCourses = [uniqueCourses[courseIndex]];
+      } else {
+        // If requested index doesn't exist, show first one
+        console.log(`🎯 User asked for course at index ${courseIndex} but only ${uniqueCourses.length} available, showing first`);
+        uniqueCourses = [uniqueCourses[0]];
+      }
+    }
 
     // ═══════════════════════════════════════════════════════════════
     // PREPARE RESPONSE
