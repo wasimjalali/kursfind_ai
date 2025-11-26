@@ -96,10 +96,12 @@ const { data: applicationsData, error: appError } = await supabase
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+      case 'new':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'contacted':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'accepted':
-        return 'bg-green-100 text-green-800 border-green-200';
+      case 'converted':
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'rejected':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
@@ -109,10 +111,12 @@ const { data: applicationsData, error: appError } = await supabase
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'pending':
-        return 'Ausstehend';
-      case 'accepted':
-        return 'Angenommen';
+      case 'new':
+        return 'Neu';
+      case 'contacted':
+        return 'Kontaktiert';
+      case 'converted':
+        return 'Konvertiert';
       case 'rejected':
         return 'Abgelehnt';
       default:
@@ -122,9 +126,11 @@ const { data: applicationsData, error: appError } = await supabase
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending':
-        return '⏳';
-      case 'accepted':
+      case 'new':
+        return '🆕';
+      case 'contacted':
+        return '📞';
+      case 'converted':
         return '✅';
       case 'rejected':
         return '❌';
@@ -134,8 +140,8 @@ const { data: applicationsData, error: appError } = await supabase
   };
 
   // Count by status
-  const pendingCount = applications?.filter(a => a.status === 'pending').length || 0;
-  const acceptedCount = applications?.filter(a => a.status === 'accepted').length || 0;
+  const pendingCount = applications?.filter(a => a.status === 'new').length || 0;
+  const acceptedCount = applications?.filter(a => a.status === 'converted').length || 0;
   const rejectedCount = applications?.filter(a => a.status === 'rejected').length || 0;
 
   if (isLoading) {
