@@ -601,7 +601,16 @@ async function searchCourses(args) {
     
     let fallbackQueryBuilder = supabase
       .from('courses')
-      .select('*', { count: 'exact' })
+      .select(`
+        *,
+        providers!courses_provider_id_fkey(
+          provider_id,
+          company_name,
+          logo_url,
+          city,
+          Certification
+        )
+      `, { count: 'exact' })
       .eq('status', status)
       .or(searchConditions);
     
@@ -688,7 +697,16 @@ async function searchCourses(args) {
       
       const { data: fallbackCourses, count: fallbackCount } = await supabase
         .from('courses')
-        .select('*', { count: 'exact' })
+        .select(`
+          *,
+          providers!courses_provider_id_fkey(
+            provider_id,
+            company_name,
+            logo_url,
+            city,
+            Certification
+          )
+        `, { count: 'exact' })
         .eq('status', status)
         .ilike('category', `%${fallbackCategory}%`)
         .order('is_featured', { ascending: false })
