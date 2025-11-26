@@ -20,6 +20,8 @@ export default function ApplicationsPage() {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
   
+  console.log('Student user:', user)
+  
   // Get student profile or use mock data
       let studentData = null;
   
@@ -30,6 +32,7 @@ export default function ApplicationsPage() {
       .eq('auth_user_id', user.id)
       .single();
         studentData = data;
+        console.log('Student data:', studentData)
   }
   
   // Use mock student data if no real student found
@@ -45,34 +48,23 @@ export default function ApplicationsPage() {
       setStudent(studentData);
 
   // Get all applications with course and provider details
-      const { data: applicationsData } = await supabase
+  console.log('Fetching applications for student_id:', studentData.id)
+const { data: applicationsData, error: appError } = await supabase
     .from('applications')
     .select(`
       id,
       status,
-      created_at,
+      applied_at,
       updated_at,
       message,
-      courses (
-        id,
-        title,
-        description,
-        category,
-        location,
-        start_date,
-        duration,
-        image_url
-      ),
-      providers (
-        id,
-        company_name,
-        email,
-        phone,
-        city
-      )
+      course_id,
+      provider_id
     `)
         .eq('student_id', studentData.id)
-    .order('created_at', { ascending: false });
+    .order('applied_at', { ascending: false });
+  
+  console.log('Applications data:', applicationsData)
+  console.log('Applications error:', appError)
 
       setApplications(applicationsData || []);
       setIsLoading(false);
