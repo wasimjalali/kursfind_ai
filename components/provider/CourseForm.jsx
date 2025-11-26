@@ -50,8 +50,9 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
   });
 
   // Separate state for funding types as array
+  // Read from funding_types (plural) column in database
   const [fundingTypes, setFundingTypes] = useState(
-    parseFundingTypes(course?.funding_type) || []
+    parseFundingTypes(course?.funding_types) || []
   );
 
   // Separate state for benefits as array
@@ -201,7 +202,7 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
       const courseData = {
         ...formData,
         slug: isEditing ? course.slug : slug, // Don't change slug when editing
-        funding_type: fundingTypes.length > 0 ? fundingTypes.join(', ') : null,
+        // Save funding_types as array (database column is funding_types, not funding_type)
         funding_types: fundingTypes.length > 0 ? fundingTypes : null,
         benefits: benefits.length > 0 ? benefits.join(', ') : null,
         image_url: imageUrl,
