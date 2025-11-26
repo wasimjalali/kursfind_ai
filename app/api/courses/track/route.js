@@ -38,7 +38,7 @@ export async function POST(request) {
     // Call appropriate database function
     if (action === 'view') {
       const { error } = await supabase.rpc('increment_course_views', {
-        course_id: parseInt(courseId)
+        course_id_input: parseInt(courseId)
       })
 
       if (error) {
@@ -50,7 +50,7 @@ export async function POST(request) {
       }
     } else if (action === 'click') {
       const { error } = await supabase.rpc('increment_course_clicks', {
-        course_id: parseInt(courseId)
+        course_id_input: parseInt(courseId)
       })
 
       if (error) {

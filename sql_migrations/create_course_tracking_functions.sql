@@ -12,7 +12,7 @@ DROP FUNCTION IF EXISTS increment_course_clicks(bigint);
 -- ============================================
 -- Function: Increment Course Views
 -- ============================================
-CREATE OR REPLACE FUNCTION increment_course_views(course_id bigint)
+CREATE OR REPLACE FUNCTION increment_course_views(course_id_input bigint)
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -22,14 +22,14 @@ BEGIN
   SET 
     view_count = COALESCE(view_count, 0) + 1,
     updated_at = NOW()
-  WHERE id = course_id;
+  WHERE id = course_id_input;
 END;
 $$;
 
 -- ============================================
 -- Function: Increment Course Clicks
 -- ============================================
-CREATE OR REPLACE FUNCTION increment_course_clicks(course_id bigint)
+CREATE OR REPLACE FUNCTION increment_course_clicks(course_id_input bigint)
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -39,7 +39,7 @@ BEGIN
   SET 
     click_count = COALESCE(click_count, 0) + 1,
     updated_at = NOW()
-  WHERE id = course_id;
+  WHERE id = course_id_input;
 END;
 $$;
 
