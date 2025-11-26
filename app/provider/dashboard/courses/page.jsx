@@ -48,20 +48,20 @@ export default async function CoursesPage() {
   const totalViews = courses.reduce((sum, c) => sum + (c.view_count || 0), 0);
   
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto">
         
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        {/* Header - Mobile Optimized */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">Meine Kurse</h1>
-            <p className="text-base lg:text-lg text-gray-600 mt-1">Verwalten Sie Ihre Kursangebote</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Meine Kurse</h1>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1">Verwalten Sie Ihre Kursangebote</p>
           </div>
           <Link
             href="/provider/dashboard/courses/new"
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow text-base lg:text-lg"
+            className="w-full sm:w-auto text-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow text-sm sm:text-base"
           >
-            + Neuen Kurs hinzufügen
+            + Neuen Kurs
           </Link>
         </div>
 

@@ -55,21 +55,21 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
 
   return (
     <>
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm lg:text-base text-gray-600 mb-2">Gesamt Kurse</p>
-          <p className="text-3xl lg:text-4xl font-bold text-gray-900">{courses.length}</p>
+      {/* Stats Cards - Mobile Optimized */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Gesamt</p>
+          <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{courses.length}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm lg:text-base text-gray-600 mb-2">Aktive Kurse</p>
-          <p className="text-3xl lg:text-4xl font-bold text-green-600">
+        <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Aktiv</p>
+          <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-green-600">
             {courses.filter(c => c.is_active === true || c.is_active === 'true').length}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <p className="text-sm lg:text-base text-gray-600 mb-2">Gesamt Aufrufe</p>
-          <p className="text-3xl lg:text-4xl font-bold text-cyan-600">
+        <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Aufrufe</p>
+          <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-cyan-600">
             {courses.reduce((sum, c) => sum + (c.view_count || 0), 0)}
           </p>
         </div>
@@ -92,74 +92,83 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Kurs</th>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Dauer</th>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Ort</th>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Start</th>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase">Aufrufe</th>
-                <th className="px-6 py-3 text-right text-xs lg:text-sm font-medium text-gray-500 uppercase">Aktionen</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {courses.map((course) => (
-                <tr key={course.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {course.image_url ? (
-                        <img
-                          src={course.image_url}
-                          alt={course.title}
-                          className="w-16 h-16 object-cover rounded-lg border"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg border flex items-center justify-center">
-                          <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-medium text-base lg:text-lg text-gray-900">{course.title}</p>
-                        <p className="text-sm lg:text-base text-gray-500 line-clamp-1">{course.description}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm lg:text-base text-gray-900">{course.duration || '-'}</td>
-                  <td className="px-6 py-4 text-sm lg:text-base text-gray-900">{course.location || '-'}</td>
-                  <td className="px-6 py-4 text-sm lg:text-base text-gray-900">
-                    {course.start_date ? new Date(course.start_date).toLocaleDateString('de-DE') : '-'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs lg:text-sm font-medium ${
-                      (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
-                      {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm lg:text-base text-gray-900">{course.view_count || 0}</td>
-                  <td className="px-6 py-4 text-right text-sm lg:text-base font-medium">
-                    <Link
-                      href={`/provider/dashboard/courses/${course.id}/edit`}
-                      className="text-cyan-600 hover:text-cyan-700 mr-4"
-                    >
-                      Bearbeiten
-                    </Link>
-                    <button 
-                      onClick={() => handleDeleteClick(course)}
-                      disabled={deletingId === course.id}
-                      className="text-red-600 hover:text-red-700 disabled:opacity-50"
-                    >
-                      {deletingId === course.id ? 'Löschen...' : 'Löschen'}
-                    </button>
-                  </td>
+          {/* Scrollable table container for mobile */}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Kurs</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Dauer</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden sm:table-cell">Ort</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Start</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Status</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">Aufrufe</th>
+                  <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Aktionen</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {courses.map((course) => (
+                  <tr key={course.id} className="hover:bg-gray-50">
+                    <td className="px-4 sm:px-6 py-4">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        {course.image_url ? (
+                          <img
+                            src={course.image_url}
+                            alt={course.title}
+                            className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg border flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg border flex items-center justify-center flex-shrink-0">
+                            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm sm:text-base text-gray-900 line-clamp-2">{course.title}</p>
+                          <p className="text-xs sm:text-sm text-gray-500 line-clamp-1 hidden sm:block">{course.description}</p>
+                          {/* Show status on mobile inline */}
+                          <span className={`inline-block mt-1 md:hidden px-2 py-0.5 rounded-full text-xs font-medium ${
+                            (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap">{course.duration || '-'}</td>
+                    <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden sm:table-cell">{course.location || '-'}</td>
+                    <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 whitespace-nowrap hidden md:table-cell">
+                      {course.start_date ? new Date(course.start_date).toLocaleDateString('de-DE') : '-'}
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
+                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                        (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                      }`}>
+                        {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
+                      </span>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">{course.view_count || 0}</td>
+                    <td className="px-4 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium whitespace-nowrap">
+                      <Link
+                        href={`/provider/dashboard/courses/${course.id}/edit`}
+                        className="text-cyan-600 hover:text-cyan-700 mr-2 sm:mr-4"
+                      >
+                        ✏️ <span className="hidden sm:inline">Bearbeiten</span>
+                      </Link>
+                      <button 
+                        onClick={() => handleDeleteClick(course)}
+                        disabled={deletingId === course.id}
+                        className="text-red-600 hover:text-red-700 disabled:opacity-50"
+                      >
+                        🗑️ <span className="hidden sm:inline">{deletingId === course.id ? 'Löschen...' : 'Löschen'}</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
