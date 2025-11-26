@@ -432,15 +432,14 @@ function ChatContent() {
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-gray-900 mb-2">Kursfind AI</div>
                             
-                            {/* MARKDOWN CONTENT - Enhanced styling for all text elements */}
-                            {/* Mobile: Override prose list padding with tighter values */}
-                            <div className="prose prose-sm max-w-none mb-4 text-gray-700 prose-ul:pl-3 prose-ol:pl-3 sm:prose-ul:pl-5 sm:prose-ol:pl-5 prose-li:pl-0 prose-li:my-0.5">
+                            {/* MARKDOWN CONTENT - Consistent text sizing and visible list markers */}
+                            <div className="prose prose-sm max-w-none mb-4">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text - FIXED: Use inline style to override any inherited styles
+                                  // Bold text - Consistent size with paragraph
                                   strong: ({node, ...props}) => (
                                     <strong 
-                                      className="font-bold" 
+                                      className="font-bold text-[15px] sm:text-base" 
                                       style={{ color: '#1f2937', fontWeight: 700 }} 
                                       {...props} 
                                     />
@@ -448,20 +447,20 @@ function ChatContent() {
                                   // Italic text
                                   em: ({node, ...props}) => (
                                     <em 
-                                      className="italic" 
+                                      className="italic text-[15px] sm:text-base" 
                                       style={{ color: '#374151' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Paragraphs - FIXED: Ensure text color is always visible, tighter on mobile
+                                  // Paragraphs - Consistent 15px on mobile, 16px on desktop
                                   p: ({node, ...props}) => (
                                     <p 
-                                      className="mb-2 sm:mb-3 last:mb-0 leading-relaxed text-sm sm:text-base" 
+                                      className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed text-[15px] sm:text-base" 
                                       style={{ color: '#374151' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Headings - Force dark color with inline styles, smaller on mobile
+                                  // Headings - Slightly larger than body text
                                   h1: ({node, ...props}) => (
                                     <h1 
                                       className="text-lg sm:text-xl font-bold mb-2 sm:mb-3" 
@@ -471,43 +470,45 @@ function ChatContent() {
                                   ),
                                   h2: ({node, ...props}) => (
                                     <h2 
-                                      className="text-base sm:text-lg font-bold mb-1.5 sm:mb-2" 
+                                      className="text-[17px] sm:text-lg font-bold mb-2 sm:mb-2.5" 
                                       style={{ color: '#111827', fontWeight: 700 }} 
                                       {...props} 
                                     />
                                   ),
                                   h3: ({node, ...props}) => (
                                     <h3 
-                                      className="text-sm sm:text-base font-bold mb-1.5 sm:mb-2" 
+                                      className="text-[16px] sm:text-base font-bold mb-1.5 sm:mb-2" 
                                       style={{ color: '#111827', fontWeight: 700 }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Lists - FIXED: Minimal padding on mobile, use 'inside' position
+                                  // Lists - FIXED: Visible markers with explicit dark color
                                   ul: ({node, ...props}) => (
                                     <ul 
-                                      className="my-2 sm:my-3 pl-3 sm:pl-5 space-y-1 sm:space-y-2 [&_ul]:pl-3 [&_ul]:sm:pl-4 [&_ol]:pl-3 [&_ol]:sm:pl-4"
+                                      className="my-2 sm:my-3 ml-4 sm:ml-5 space-y-1.5 sm:space-y-2 list-disc"
                                       style={{
-                                        listStyleType: 'disc',
                                         color: '#374151',
+                                        listStyleType: 'disc',
+                                        listStylePosition: 'outside',
                                       }}
                                       {...props} 
                                     />
                                   ),
                                   ol: ({node, ...props}) => (
                                     <ol 
-                                      className="my-2 sm:my-3 pl-3 sm:pl-5 space-y-1 sm:space-y-2 [&_ul]:pl-3 [&_ul]:sm:pl-4 [&_ol]:pl-3 [&_ol]:sm:pl-4"
+                                      className="my-2 sm:my-3 ml-4 sm:ml-5 space-y-1.5 sm:space-y-2 list-decimal"
                                       style={{
-                                        listStyleType: 'decimal',
                                         color: '#374151',
+                                        listStyleType: 'decimal',
+                                        listStylePosition: 'outside',
                                       }}
                                       {...props} 
                                     />
                                   ),
-                                  // List items - FIXED: No extra padding, tighter line height on mobile
+                                  // List items - FIXED: Explicit marker color and consistent text size
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-snug sm:leading-relaxed"
+                                      className="leading-relaxed text-[15px] sm:text-base marker:text-gray-600 marker:font-normal"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',
@@ -517,10 +518,10 @@ function ChatContent() {
                                       {children}
                                     </li>
                                   ),
-                                  // Links - Visible color
+                                  // Links - Visible cyan color
                                   a: ({node, ...props}) => (
                                     <a 
-                                      className="underline font-medium" 
+                                      className="underline font-medium text-[15px] sm:text-base" 
                                       style={{ color: '#0891b2' }} 
                                       {...props} 
                                     />
