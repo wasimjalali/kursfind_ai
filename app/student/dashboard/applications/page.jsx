@@ -116,7 +116,7 @@ const { data: applicationsData, error: appError } = await supabase
       case 'contacted':
         return 'Kontaktiert';
       case 'converted':
-        return 'Konvertiert';
+        return 'Angenommen';
       case 'rejected':
         return 'Abgelehnt';
       default:

@@ -166,13 +166,13 @@ export default function ApplicationDetailModal({ application, isOpen, onClose, o
             )}
             
             {(application.status === 'contacted' || application.status === 'new') && (
-              <button
-                onClick={() => handleStatusChange('converted')}
-                disabled={isUpdating}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
-              >
-                {isUpdating ? 'Wird aktualisiert...' : 'Als konvertiert markieren'}
-              </button>
+            <button
+              onClick={() => handleStatusChange('converted')}
+              disabled={isUpdating}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
+            >
+              {isUpdating ? 'Wird aktualisiert...' : 'Als angenommen markieren'}
+            </button>
             )}
             
             <button

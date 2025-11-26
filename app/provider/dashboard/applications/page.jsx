@@ -31,7 +31,7 @@ function getStatusLabel(status) {
   switch(status) {
     case 'new': return 'Neu'
     case 'contacted': return 'Kontaktiert'
-    case 'converted': return 'Konvertiert'
+    case 'converted': return 'Angenommen'
     case 'rejected': return 'Abgelehnt'
     default: return status
   }
