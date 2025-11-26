@@ -113,6 +113,18 @@ export default function ApplicationsPage() {
         .order('applied_at', { ascending: false })
       
       if (!error && data) {
+        // Get course titles for all applications
+        const courseIds = [...new Set(data.map(app => app.course_id).filter(Boolean))]
+        const { data: coursesData } = await supabase
+          .from('courses')
+          .select('id, title')
+          .in('id', courseIds)
+        
+        const coursesMap = {}
+        coursesData?.forEach(course => {
+          coursesMap[course.id] = course.title
+        })
+        
         // Map to match expected field names
         const mappedData = data.map(app => ({
           id: app.id,
@@ -120,7 +132,7 @@ export default function ApplicationsPage() {
           last_name: app.last_name,
           email: app.email,
           phone: app.phone,
-          course_title: app.course_name,
+          course_title: coursesMap[app.course_id] || 'Unbekannter Kurs',
           course_id: app.course_id,
           provider_id: app.provider_id,
           funding_type: app.funding_type,
