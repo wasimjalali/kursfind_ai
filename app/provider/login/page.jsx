@@ -53,9 +53,9 @@ export default function ProviderLogin() {
       // Wait for session to be fully established
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // Use router.push instead of window.location for better Next.js integration
+      // Use window.location.href for reliable redirect on Vercel
       console.log('🔄 Redirecting to dashboard...');
-      router.push('/provider/dashboard');
+      window.location.href = '/provider/dashboard';
 
     } catch (error) {
       console.error('Full error:', error);
