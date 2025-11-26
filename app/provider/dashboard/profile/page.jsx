@@ -1,4 +1,4 @@
-import { getCurrentProvider } from '@/lib/supabase-server';
+import { getCurrentProvider, createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import ProfileForm from '@/components/provider/ProfileForm';
 
@@ -16,6 +16,15 @@ export default async function ProfilePage() {
     return certString.split(',').map(c => c.trim()).filter(Boolean);
   };
 
+  // Get FAQs from provider_faqs table (separate from providers table)
+  const supabase = await createClient();
+  const { data: faqs } = await supabase
+    .from('provider_faqs')
+    .select('question, answer, is_active, display_order')
+    .eq('provider_id', provider.provider_id)
+    .eq('is_active', true)
+    .order('display_order', { ascending: true });
+
   const initialData = {
     company_name: provider.company_name || '',
     contact_name: provider.contact_name || '',
@@ -29,7 +38,8 @@ export default async function ProfilePage() {
     logo_url: provider.logo_url || '',
     // Database column is "Certification" (singular, capital C), parse as comma-separated string
     certifications: parseCertifications(provider.Certification || provider.certifications),
-    faq: provider.faq || [],
+    // FAQs from provider_faqs table
+    faq: faqs || [],
   };
 
   return (

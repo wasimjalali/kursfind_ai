@@ -1,39 +1,64 @@
 -- ============================================
--- Course View/Click Tracking Functions
+-- Create Course Tracking Functions
 -- ============================================
--- Run this in Supabase SQL Editor to enable
--- real-time tracking of course views and clicks
+-- These functions increment view_count and click_count
+-- for real-time analytics tracking
 -- ============================================
 
--- Function: Increment course views
-CREATE OR REPLACE FUNCTION increment_course_views(course_id BIGINT)
-RETURNS VOID AS $$
+-- Drop existing functions if they exist
+DROP FUNCTION IF EXISTS increment_course_views(bigint);
+DROP FUNCTION IF EXISTS increment_course_clicks(bigint);
+
+-- ============================================
+-- Function: Increment Course Views
+-- ============================================
+CREATE OR REPLACE FUNCTION increment_course_views(course_id bigint)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
 BEGIN
-  UPDATE courses 
-  SET views_count = COALESCE(views_count, 0) + 1,
-      updated_at = NOW()
+  UPDATE courses
+  SET 
+    view_count = COALESCE(view_count, 0) + 1,
+    updated_at = NOW()
   WHERE id = course_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
--- Function: Increment course clicks
-CREATE OR REPLACE FUNCTION increment_course_clicks(course_id BIGINT)
-RETURNS VOID AS $$
+-- ============================================
+-- Function: Increment Course Clicks
+-- ============================================
+CREATE OR REPLACE FUNCTION increment_course_clicks(course_id bigint)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
 BEGIN
-  UPDATE courses 
-  SET clicks_count = COALESCE(clicks_count, 0) + 1,
-      updated_at = NOW()
+  UPDATE courses
+  SET 
+    click_count = COALESCE(click_count, 0) + 1,
+    updated_at = NOW()
   WHERE id = course_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Grant execute permissions to authenticated and anon users
-GRANT EXECUTE ON FUNCTION increment_course_views(BIGINT) TO authenticated, anon;
-GRANT EXECUTE ON FUNCTION increment_course_clicks(BIGINT) TO authenticated, anon;
+$$;
 
 -- ============================================
--- Verification Query
+-- Grant execute permissions to authenticated users
 -- ============================================
--- Run this to verify functions were created:
--- SELECT proname, prosecdef FROM pg_proc WHERE proname LIKE 'increment_course%';
+GRANT EXECUTE ON FUNCTION increment_course_views(bigint) TO authenticated;
+GRANT EXECUTE ON FUNCTION increment_course_clicks(bigint) TO authenticated;
 
+-- Also grant to anon users (for public course browsing)
+GRANT EXECUTE ON FUNCTION increment_course_views(bigint) TO anon;
+GRANT EXECUTE ON FUNCTION increment_course_clicks(bigint) TO anon;
+
+-- ============================================
+-- Verification
+-- ============================================
+-- Test the functions (optional)
+-- SELECT increment_course_views(1);
+-- SELECT increment_course_clicks(1);
+
+-- Check the results
+-- SELECT id, title, view_count, click_count FROM courses WHERE id = 1;

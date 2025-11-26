@@ -9,16 +9,28 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
   
   const [currentProvider, setCurrentProvider] = useState(provider);
   
-  // Parse funding types from comma-separated string to array
-  const parseFundingTypes = (fundingString) => {
-    if (!fundingString) return [];
-    return fundingString.split(',').map(f => f.trim());
+  // Parse funding types from comma-separated string or array to array
+  const parseFundingTypes = (fundingData) => {
+    if (!fundingData) return [];
+    // If already an array, return it
+    if (Array.isArray(fundingData)) return fundingData;
+    // If string, split by comma
+    if (typeof fundingData === 'string') {
+      return fundingData.split(',').map(f => f.trim());
+    }
+    return [];
   };
 
-  // Parse benefits from comma-separated string to array
-  const parseBenefits = (benefitsString) => {
-    if (!benefitsString) return [];
-    return benefitsString.split(',').map(b => b.trim());
+  // Parse benefits from comma-separated string or array to array
+  const parseBenefits = (benefitsData) => {
+    if (!benefitsData) return [];
+    // If already an array, return it
+    if (Array.isArray(benefitsData)) return benefitsData;
+    // If string, split by comma
+    if (typeof benefitsData === 'string') {
+      return benefitsData.split(',').map(b => b.trim());
+    }
+    return [];
   };
 
   const [formData, setFormData] = useState({

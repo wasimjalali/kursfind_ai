@@ -165,6 +165,7 @@ export default function ProfileForm({ initialData }) {
 
       // Update provider profile
       // Note: Database column is "Certification" (singular, capital C) - stores as comma-separated string
+      // Note: FAQ is stored in separate provider_faqs table, not in providers table
       const { error: updateError } = await supabase
         .from('providers')
         .update({
@@ -180,10 +181,40 @@ export default function ProfileForm({ initialData }) {
           logo_url: logoUrl || null,
           // Save as comma-separated string to "Certification" column (singular, capital C)
           Certification: formData.certifications.length > 0 ? formData.certifications.join(', ') : null,
-          faq: validFaq.length > 0 ? validFaq : null,
           updated_at: new Date().toISOString()
         })
         .eq('auth_user_id', user.id);
+      
+      // Handle FAQs separately in provider_faqs table
+      if (validFaq.length > 0) {
+        // Get provider ID
+        const { data: providerData } = await supabase
+          .from('providers')
+          .select('provider_id')
+          .eq('auth_user_id', user.id)
+          .single();
+        
+        if (providerData) {
+          // Delete existing FAQs
+          await supabase
+            .from('provider_faqs')
+            .delete()
+            .eq('provider_id', providerData.provider_id);
+          
+          // Insert new FAQs
+          const faqsToInsert = validFaq.map((faq, index) => ({
+            provider_id: providerData.provider_id,
+            question: faq.question,
+            answer: faq.answer,
+            is_active: true,
+            display_order: index + 1
+          }));
+          
+          await supabase
+            .from('provider_faqs')
+            .insert(faqsToInsert);
+        }
+      }
 
       if (updateError) {
         console.error('Update error:', updateError);
