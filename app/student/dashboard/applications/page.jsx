@@ -156,7 +156,7 @@ const { data: applicationsData, error: appError } = await supabase
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <style jsx>{`
         /* ═══════════════════════════════════════════════════════════
            ANIMATION STYLES - Applications Dashboard
@@ -299,78 +299,78 @@ const { data: applicationsData, error: appError } = await supabase
         }
       `}</style>
 
-      {/* Header */}
-      <div className={`flex items-center justify-between ${animateIn && ENABLE_ANIMATIONS ? 'animate-header' : ''}`}>
+      {/* Header - Mobile Optimized */}
+      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${animateIn && ENABLE_ANIMATIONS ? 'animate-header' : ''}`}>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             Meine Bewerbungen 📝
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
             Verwalten und verfolgen Sie Ihre Kursbewerbungen
           </p>
         </div>
         <Link
           href="/courses"
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
+          className="w-full sm:w-auto text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
         >
           + Neue Bewerbung
         </Link>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
-          <div className="flex items-center justify-between">
+      {/* Stats Cards - Mobile Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Gesamt</p>
-              <p className="text-3xl font-bold text-gray-900">{applications?.length || 0}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Gesamt</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{applications?.length || 0}</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">📝</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <span className="text-xl sm:text-2xl">📝</span>
             </div>
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
-          <div className="flex items-center justify-between">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Ausstehend</p>
-              <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Ausstehend</p>
+              <p className="text-2xl sm:text-3xl font-bold text-yellow-600">{pendingCount}</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-              <span className="text-2xl status-icon-pulse">⏳</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+              <span className="text-xl sm:text-2xl status-icon-pulse">⏳</span>
             </div>
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
-          <div className="flex items-center justify-between">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Angenommen</p>
-              <p className="text-3xl font-bold text-green-600">{acceptedCount}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Angenommen</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-600">{acceptedCount}</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">✅</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
+              <span className="text-xl sm:text-2xl">✅</span>
             </div>
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
-          <div className="flex items-center justify-between">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Abgelehnt</p>
-              <p className="text-3xl font-bold text-red-600">{rejectedCount}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Abgelehnt</p>
+              <p className="text-2xl sm:text-3xl font-bold text-red-600">{rejectedCount}</p>
             </div>
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">❌</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center">
+              <span className="text-xl sm:text-2xl">❌</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Applications List */}
+      {/* Applications Grid - Card Layout like Saved Courses */}
       {applications && applications.length > 0 ? (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {applications.map((application, index) => {
             const course = application.courses;
             const provider = application.providers;
@@ -378,112 +378,107 @@ const { data: applicationsData, error: appError } = await supabase
             return (
               <div
                 key={application.id}
-                className={`bg-white rounded-xl shadow-md border border-gray-100 p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-application-card' : ''}`}
+                className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group ${animateIn && ENABLE_ANIMATIONS ? 'animate-application-card' : ''}`}
               >
-                <div className="flex items-start justify-between gap-6">
-                  {/* Course Image */}
-                  <div className="flex-shrink-0">
-                    {course?.image_url ? (
-                      <img
-                        src={course.image_url}
-                        alt={course.title}
-                        className="w-32 h-32 rounded-lg object-cover shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-100 to-emerald-100 flex items-center justify-center shadow-sm">
-                        <span className="text-4xl">📚</span>
+                {/* Course Image with Status Badge */}
+                <div className="relative h-40 sm:h-48 bg-gradient-to-br from-cyan-100 to-emerald-100">
+                  {course?.image_url ? (
+                    <img
+                      src={course.image_url}
+                      alt={course.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-5xl">📚</span>
+                    </div>
+                  )}
+                  {/* Status Badge - Top Right */}
+                  <div className="absolute top-3 right-3">
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-lg ${getStatusColor(application.status)}`}>
+                      {getStatusIcon(application.status)} {getStatusText(application.status)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card Content */}
+                <div className="p-4 sm:p-5 space-y-3">
+                  {/* Category Badge */}
+                  {course?.category && (
+                    <span className="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-semibold rounded-full">
+                      {course.category}
+                    </span>
+                  )}
+
+                  {/* Title */}
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 line-clamp-2">
+                    {course?.title || 'Kurs nicht gefunden'}
+                  </h3>
+
+                  {/* Provider */}
+                  {provider && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <span>📍</span>
+                      <span className="font-medium">{provider.company_name}</span>
+                      {provider.city && <span>• {provider.city}</span>}
+                    </div>
+                  )}
+
+                  {/* Course Details */}
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+                    {course?.location && (
+                      <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        {course.location}
+                      </div>
+                    )}
+                    {course?.start_date && (
+                      <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Start: {new Date(course.start_date).toLocaleDateString('de-DE')}
                       </div>
                     )}
                   </div>
 
-                  {/* Application Details */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                          {course?.title || 'Kurs nicht gefunden'}
-                        </h3>
-                        {provider && (
-                          <p className="text-sm text-gray-600">
-                            📍 {provider.company_name} • {provider.city}
-                          </p>
-                        )}
-                      </div>
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all ${getStatusColor(application.status)}`}>
-                        <span className={application.status === 'pending' ? 'status-icon-pulse' : ''}>
-                          {getStatusIcon(application.status)}
-                        </span> {getStatusText(application.status)}
-                      </span>
+                  {/* Message Preview */}
+                  {application.message && (
+                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                      <p className="text-xs font-semibold text-gray-700 mb-1">💬 Ihre Nachricht:</p>
+                      <p className="text-xs text-gray-600 line-clamp-2">{application.message}</p>
                     </div>
+                  )}
 
-                    {course?.description && (
-                      <p className="text-gray-600 mb-3 line-clamp-2">
-                        {course.description}
-                      </p>
+                  {/* Dates */}
+                  <p className="text-xs text-gray-500">
+                    Eingereicht: {application.created_at ? new Date(application.created_at).toLocaleDateString('de-DE') : 'Invalid Date'}
+                    {application.updated_at && application.updated_at !== application.created_at && (
+                      <span> • Aktualisiert: {new Date(application.updated_at).toLocaleDateString('de-DE')}</span>
                     )}
+                  </p>
+                </div>
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                      {course?.category && (
-                        <span className="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full font-semibold transition-all hover:bg-cyan-200">
-                          {course.category}
-                        </span>
-                      )}
-                      {course?.location && (
-                        <span className="flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          </svg>
-                          {course.location}
-                        </span>
-                      )}
-                      {course?.start_date && (
-                        <span className="flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          Start: {new Date(course.start_date).toLocaleDateString('de-DE')}
-                        </span>
-                      )}
-                    </div>
-
-                    {application.message && (
-                      <div className="bg-gray-50 rounded-lg p-3 mb-3 border border-gray-100">
-                        <p className="text-xs font-semibold text-gray-700 mb-1">💬 Ihre Nachricht:</p>
-                        <p className="text-sm text-gray-600">{application.message}</p>
-                      </div>
+                {/* Action Buttons */}
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                  <div className="flex gap-2 pt-3 border-t border-gray-100">
+                    <Link
+                      href={`/courses/${course?.id}`}
+                      className="flex-1 py-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-center font-semibold rounded-lg hover:shadow-lg transition-shadow text-sm"
+                    >
+                      Kurs ansehen
+                    </Link>
+                    {provider?.email && (
+                      <a
+                        href={`mailto:${provider.email}`}
+                        className="px-4 py-2.5 border-2 border-gray-300 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                        title="Anbieter kontaktieren"
+                      >
+                        ✉️
+                      </a>
                     )}
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-400">
-                        Eingereicht: {new Date(application.created_at).toLocaleDateString('de-DE', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
-                        {application.updated_at !== application.created_at && (
-                          <span className="ml-2">
-                            • Aktualisiert: {new Date(application.updated_at).toLocaleDateString('de-DE')}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/courses/${course?.id}`}
-                          className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-all btn-hover"
-                        >
-                          Kurs ansehen
-                        </Link>
-                        {provider?.email && (
-                          <a
-                            href={`mailto:${provider.email}`}
-                            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all btn-hover"
-                          >
-                            Anbieter kontaktieren
-                          </a>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -492,12 +487,12 @@ const { data: applicationsData, error: appError } = await supabase
         </div>
       ) : (
         /* Empty State */
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
-          <div className="text-6xl mb-4">📝</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-8 sm:p-12 text-center ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+          <div className="text-5xl sm:text-6xl mb-4">📝</div>
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
             Noch keine Bewerbungen
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm sm:text-base text-gray-600 mb-6">
             Durchsuchen Sie Kurse und bewerben Sie sich für Weiterbildungen
           </p>
           <Link

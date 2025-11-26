@@ -112,11 +112,11 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
 
   return (
     <>
-      {/* Stats and Actions */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between">
+      {/* Stats and Actions - Mobile Optimized */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <span className="text-2xl">💬</span>
             </div>
             <div>
@@ -128,29 +128,29 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
           </div>
 
           {chatHistory && chatHistory.length > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {selectMode && (
                 <>
                   <button
                     onClick={selectAll}
-                    className="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-3 py-2 text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    {selectedChats.size === chatHistory.length ? 'Alle abwählen' : 'Alle auswählen'}
+                    {selectedChats.size === chatHistory.length ? 'Abwählen' : 'Alle'}
                   </button>
                   {selectedChats.size > 0 && (
                     <button
                       onClick={deleteSelectedChats}
                       disabled={isDeleting}
-                      className="px-4 py-2 text-sm font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+                      className="px-3 py-2 text-xs sm:text-sm font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
                     >
-                      {isDeleting ? 'Löschen...' : `${selectedChats.size} löschen`}
+                      {isDeleting ? '...' : `${selectedChats.size} löschen`}
                     </button>
                   )}
                 </>
               )}
               <button
                 onClick={toggleSelectMode}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                className={`px-3 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors ${
                   selectMode
                     ? 'text-gray-700 border border-gray-300 hover:bg-gray-50'
                     : 'text-cyan-600 border border-cyan-300 hover:bg-cyan-50'
@@ -163,7 +163,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
         </div>
       </div>
 
-      {/* Chat History List */}
+      {/* Chat History List - Mobile Optimized */}
       {chatHistory && chatHistory.length > 0 ? (
         <div className="space-y-4">
           {chatHistory.map((chat) => {
@@ -180,79 +180,71 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                     : 'border-gray-200 hover:shadow-md'
                 }`}
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start gap-3 flex-1">
-                      {selectMode && (
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleChatSelection(chat.conversation_id)}
-                          className="mt-1 w-5 h-5 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500"
-                        />
-                      )}
-                      <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-lg">🤖</span>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">
-                          {chat.title || chat.conversation_title || 'Neue Konversation'}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {new Date(chat.created_at).toLocaleDateString('de-DE', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })} • {messages.length} Nachrichten
-                        </p>
-                      </div>
+                <div className="p-4 sm:p-6">
+                  {/* Header row with checkbox and icon */}
+                  <div className="flex items-start gap-3 mb-3">
+                    {selectMode && (
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleChatSelection(chat.conversation_id)}
+                        className="mt-1 w-5 h-5 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500 flex-shrink-0"
+                      />
+                    )}
+                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-lg">🤖</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {!selectMode && (
-                        <>
-                          <Link
-                            href={`/suchen?chat=${chat.conversation_id}`}
-                            className="px-4 py-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
-                          >
-                            Fortsetzen →
-                          </Link>
-                          <button
-                            onClick={() => deleteSingleChat(chat.conversation_id)}
-                            className="px-3 py-2 text-sm font-semibold text-red-600 hover:text-red-700 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
-                            title="Chat löschen"
-                          >
-                            🗑️
-                          </button>
-                        </>
-                      )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 line-clamp-2">
+                        {chat.title || chat.conversation_title || 'Neue Konversation'}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-600">
+                        {new Date(chat.created_at).toLocaleDateString('de-DE', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })} • {messages.length} Nachrichten
+                      </p>
                     </div>
                   </div>
 
                   {/* Last Message Preview */}
                   {lastMessage && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-xs font-semibold text-gray-500 mb-2">
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3">
+                      <p className="text-xs font-semibold text-gray-500 mb-1">
                         Letzte Nachricht:
                       </p>
-                      <p className="text-sm text-gray-700 line-clamp-3">
+                      <p className="text-xs sm:text-sm text-gray-700 line-clamp-2 sm:line-clamp-3">
                         {typeof lastMessage === 'string' ? lastMessage : lastMessage.content || lastMessage.text}
                       </p>
                     </div>
                   )}
 
                   {/* Metadata */}
-                  <div className="mt-4 flex items-center gap-4 text-xs text-gray-400">
-                    <span>
-                      Erstellt: {new Date(chat.created_at).toLocaleDateString('de-DE')}
-                    </span>
-                    {chat.updated_at && (
-                      <span>
-                        • Zuletzt aktualisiert: {new Date(chat.updated_at).toLocaleDateString('de-DE')}
-                      </span>
-                    )}
+                  <div className="text-xs text-gray-400 mb-3">
+                    Erstellt: {new Date(chat.created_at).toLocaleDateString('de-DE')}
                   </div>
+
+                  {/* Action Buttons - Mobile Optimized */}
+                  {!selectMode && (
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/suchen?chat=${chat.conversation_id}`}
+                        className="flex-1 py-2.5 text-center text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
+                      >
+                        Fortsetzen →
+                      </Link>
+                      <button
+                        onClick={() => deleteSingleChat(chat.conversation_id)}
+                        className="px-4 py-2.5 text-sm font-semibold text-red-600 hover:text-red-700 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Chat löschen"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -260,12 +252,12 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <div className="text-6xl mb-4">💬</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12 text-center">
+          <div className="text-5xl sm:text-6xl mb-4">💬</div>
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
             Noch keine Unterhaltungen
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm sm:text-base text-gray-600 mb-6">
             Starten Sie eine KI-gestützte Kurssuche, um passende Weiterbildungen zu finden
           </p>
           <Link
@@ -277,12 +269,12 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
         </div>
       )}
 
-      {/* Info Box */}
-      <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
-        <h3 className="text-lg font-bold text-purple-900 mb-3">
+      {/* Info Box - Mobile Optimized */}
+      <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-bold text-purple-900 mb-3">
           💡 Über den Chat-Verlauf
         </h3>
-        <ul className="space-y-2 text-sm text-purple-800">
+        <ul className="space-y-2 text-xs sm:text-sm text-purple-800">
           <li className="flex items-start gap-2">
             <span className="text-purple-500 mt-0.5">✓</span>
             <span>Ihre Konversationen mit dem KI-Berater werden gespeichert</span>

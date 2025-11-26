@@ -15,9 +15,9 @@ export default function ProviderDashboardClient({ provider, children }) {
       {/* Sidebar - Overlay, no dark background */}
       <ProviderSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      {/* Main Content - Always full width */}
-      <main className="w-full pt-[73px]">
-        <div className="p-6">
+      {/* Main Content - Always full width, responsive padding */}
+      <main className="w-full pt-[60px] sm:pt-[73px]">
+        <div className="p-4 sm:p-6">
           {children}
         </div>
       </main>
