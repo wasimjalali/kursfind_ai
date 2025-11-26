@@ -67,8 +67,22 @@ export async function POST(request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     )
 
+    // Get student_id if user is logged in
+    const { data: { user } } = await supabase.auth.getUser()
+    let studentId = null
+    
+    if (user) {
+      const { data: studentData } = await supabase
+        .from('students')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      studentId = studentData?.id || null
+    }
+
     // Prepare data for database insert (camelCase to snake_case)
     const applicationData = {
+      student_id: studentId,
       first_name: body.firstName,
       last_name: body.lastName,
       email: body.email,

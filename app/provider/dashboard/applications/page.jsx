@@ -110,7 +110,7 @@ export default function ApplicationsPage() {
         .from('applications')
         .select('*')
         .eq('provider_id', providerId)
-        .order('submitted_at', { ascending: false })
+        .order('applied_at', { ascending: false })
       
       if (!error && data) {
         // Map to match expected field names
@@ -126,7 +126,7 @@ export default function ApplicationsPage() {
           funding_type: app.funding_type,
           status: app.status || 'new',
           provider_viewed: app.provider_viewed || false,
-          applied_at: app.submitted_at,
+          applied_at: app.applied_at,
           registration_status: app.registration_status,
           message: app.message,
           preferred_start_date: app.preferred_start_date,
