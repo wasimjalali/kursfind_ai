@@ -87,6 +87,7 @@ export async function POST(request) {
     }
 
     // Insert into Supabase
+    console.log('Attempting to insert:', applicationData)
     const { data, error } = await supabase
       .from('applications')
       .insert([applicationData])
@@ -94,10 +95,12 @@ export async function POST(request) {
 
     if (error) {
       console.error('Supabase insert error:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
       return Response.json(
         { 
           success: false, 
-          error: 'Fehler beim Speichern der Bewerbung. Bitte versuchen Sie es später erneut.' 
+          error: 'Fehler beim Speichern der Bewerbung. Bitte versuchen Sie es später erneut.',
+          details: error.message
         },
         { status: 500 }
       )
