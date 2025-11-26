@@ -564,19 +564,32 @@ function ChatContent() {
                                 .flatMap(m => m.courses || [])
                                 .map(c => c.id?.toString() || '');
                               
+                              // DEDUPLICATE COURSES AT FRONTEND - Safety net
+                              let deduplicatedCourses = message.courses || [];
+                              if (deduplicatedCourses.length > 0) {
+                                const seenIds = new Set<string>();
+                                const seenTitles = new Set<string>();
+                                deduplicatedCourses = deduplicatedCourses.filter((course: any) => {
+                                  const courseId = course.id?.toString();
+                                  const courseTitle = course.title?.toLowerCase().trim();
+                                  
+                                  if (courseId && seenIds.has(courseId)) return false;
+                                  if (courseTitle && seenTitles.has(courseTitle)) return false;
+                                  
+                                  if (courseId) seenIds.add(courseId);
+                                  if (courseTitle) seenTitles.add(courseTitle);
+                                  return true;
+                                });
+                              }
+                              
                               // SMART CARD ORDERING: Reorder courses based on AI recommendations
-                              let coursesToDisplay = message.courses || [];
-                              if (FEATURES.SMART_CARD_ORDERING && hasCourses && message.content) {
+                              let coursesToDisplay = deduplicatedCourses;
+                              if (FEATURES.SMART_CARD_ORDERING && deduplicatedCourses.length > 0 && message.content) {
                                 coursesToDisplay = orderCoursesByRecommendation(
-                                  message.courses || [],
+                                  deduplicatedCourses,
                                   message.content,
                                   previouslyShownCourseIds
                                 );
-                                console.log('🎯 Smart ordering applied:', {
-                                  original: message.courses?.map(c => c.id),
-                                  reordered: coursesToDisplay.map(c => c.id),
-                                  previouslyShown: previouslyShownCourseIds.length
-                                });
                               }
                               
                               // ENHANCED: Check if this is a follow-up with no courses but mentions existing ones

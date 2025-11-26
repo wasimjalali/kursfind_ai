@@ -762,12 +762,33 @@ async function searchCourses(args) {
 
   // Add match reasons to courses (providers already joined via FK)
   if (courses && courses.length > 0) {
-    const coursesWithReasons = courses.map(course => ({
+    // DEDUPLICATE at source - prevent same course appearing twice
+    const seenIds = new Set();
+    const seenTitles = new Set();
+    const uniqueCourses = courses.filter(course => {
+      const courseId = course.id?.toString();
+      const courseTitle = course.title?.toLowerCase().trim();
+      
+      if (courseId && seenIds.has(courseId)) {
+        console.log('🔄 DB returned duplicate (by ID):', courseId);
+        return false;
+      }
+      if (courseTitle && seenTitles.has(courseTitle)) {
+        console.log('🔄 DB returned duplicate (by title):', courseTitle);
+        return false;
+      }
+      
+      if (courseId) seenIds.add(courseId);
+      if (courseTitle) seenTitles.add(courseTitle);
+      return true;
+    });
+    
+    const coursesWithReasons = uniqueCourses.map(course => ({
       ...course,
       match_reason: generateMatchReason(course, query, category, location)
     }));
 
-    console.log('✅ Found courses:', coursesWithReasons.length);
+    console.log('✅ Found courses:', coursesWithReasons.length, '(after dedup)');
     
     // SANITIZE: Remove website URLs and sensitive data before sending to AI
     const sanitizedCourses = sanitizeForAI(coursesWithReasons);

@@ -1093,18 +1093,32 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // DEDUPLICATE COURSES - Prevent showing same course multiple times
+    // DEDUPLICATE COURSES - ROBUST: Multiple checks to prevent duplicates
     // ═══════════════════════════════════════════════════════════════
     
     let uniqueCourses = coursesToReturn;
     if (Array.isArray(coursesToReturn) && coursesToReturn.length > 0) {
       const seenIds = new Set();
+      const seenTitles = new Set(); // Also check by title as backup
+      
       uniqueCourses = coursesToReturn.filter(course => {
-        if (!course.id || seenIds.has(course.id)) {
-          console.log('🔄 Removing duplicate course:', course.id, course.title);
+        const courseId = course.id?.toString();
+        const courseTitle = course.title?.toLowerCase().trim();
+        
+        // Check by ID first
+        if (courseId && seenIds.has(courseId)) {
+          console.log('🔄 Removing duplicate course (by ID):', courseId, course.title);
           return false;
         }
-        seenIds.add(course.id);
+        
+        // Also check by title (in case IDs differ but it's the same course)
+        if (courseTitle && seenTitles.has(courseTitle)) {
+          console.log('🔄 Removing duplicate course (by title):', courseId, course.title);
+          return false;
+        }
+        
+        if (courseId) seenIds.add(courseId);
+        if (courseTitle) seenTitles.add(courseTitle);
         return true;
       });
       
