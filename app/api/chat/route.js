@@ -933,35 +933,33 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
           });
           
           // Extract courses for frontend from various function types
+          // NOTE: If multiple function calls return courses, we REPLACE (not merge)
+          // to avoid showing courses from different searches mixed together
           if (functionResult.success) {
+            let newCourses = [];
+            
             if (functionName === 'search_courses') {
-              // Multiple courses from search
               if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
-                coursesToReturn = functionResult.data.courses;
-                console.log('📚 Courses extracted from search:', coursesToReturn.length);
-              } else {
-                console.warn('⚠️ search_courses succeeded but no courses array found');
+                newCourses = functionResult.data.courses;
+                console.log('📚 Courses from search_courses:', newCourses.length);
               }
             } else if (functionName === 'get_course_details') {
-              // Single course from details - wrap in array for frontend
               if (functionResult.data?.course) {
-                coursesToReturn = [functionResult.data.course];
-                console.log('📚 Single course extracted from get_course_details:', coursesToReturn[0].title);
+                newCourses = [functionResult.data.course];
+                console.log('📚 Single course from get_course_details');
               }
             } else if (functionName === 'recommend_courses') {
-              // Recommendations
               if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
-                coursesToReturn = functionResult.data.courses;
-                console.log('📚 Courses extracted from recommendations:', coursesToReturn.length);
+                newCourses = functionResult.data.courses;
+                console.log('📚 Courses from recommend_courses:', newCourses.length);
               }
             }
             
-            if (coursesToReturn.length > 0) {
-              console.log('📋 First course:', {
-                id: coursesToReturn[0].id,
-                title: coursesToReturn[0].title,
-                hasProvider: !!coursesToReturn[0].providers
-              });
+            // IMPORTANT: Replace coursesToReturn with new courses (don't accumulate)
+            // This ensures we only show courses from the LAST relevant function call
+            if (newCourses.length > 0) {
+              coursesToReturn = newCourses;
+              console.log('📋 Courses set to:', coursesToReturn.length, 'courses');
             }
           }
           

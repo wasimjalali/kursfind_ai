@@ -201,18 +201,46 @@ function ChatContent() {
         console.log('🔗 Updated URL with conversation_id:', data.conversation_id);
       }
 
-      // Add AI response WITH courses if available
+      // DEDUPLICATE courses from API response BEFORE storing
+      let uniqueCoursesFromAPI: any[] = [];
+      if (Array.isArray(data.courses) && data.courses.length > 0) {
+        const seenIds = new Set<string>();
+        const seenTitles = new Set<string>();
+        uniqueCoursesFromAPI = data.courses.filter((course: any) => {
+          const courseId = course.id?.toString();
+          const courseTitle = course.title?.toLowerCase().trim();
+          
+          // Skip if we've seen this ID or title before
+          if (courseId && seenIds.has(courseId)) {
+            console.log('🔄 Frontend: Removing duplicate by ID:', courseId);
+            return false;
+          }
+          if (courseTitle && seenTitles.has(courseTitle)) {
+            console.log('🔄 Frontend: Removing duplicate by title:', courseTitle);
+            return false;
+          }
+          
+          if (courseId) seenIds.add(courseId);
+          if (courseTitle) seenTitles.add(courseTitle);
+          return true;
+        });
+        
+        if (uniqueCoursesFromAPI.length !== data.courses.length) {
+          console.log('✅ Frontend deduplication:', data.courses.length, '→', uniqueCoursesFromAPI.length);
+        }
+      }
+      
+      // Add AI response WITH deduplicated courses
       const assistantMessage: Message = { 
         role: 'assistant' as const, 
         content: data.response || data.message || 'Keine Antwort erhalten.',
-        courses: Array.isArray(data.courses) ? data.courses : [],  // Ensure courses is always an array
-        searchMeta: data.searchMeta  // Include search metadata if available
+        courses: uniqueCoursesFromAPI,
+        searchMeta: data.searchMeta
       };
       
       console.log('💬 Assistant message created:', {
         contentLength: assistantMessage.content.length,
-        coursesLength: assistantMessage.courses?.length || 0,
-        courses: assistantMessage.courses,
+        coursesCount: assistantMessage.courses?.length || 0,
         searchMeta: assistantMessage.searchMeta
       });
       
