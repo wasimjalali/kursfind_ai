@@ -48,7 +48,7 @@ export default async function EditCoursePage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="-mt-3 sm:-mt-4 -mx-4 sm:-mx-6 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link

@@ -26,7 +26,7 @@ export default async function AnalyticsPage() {
   const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(2) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 -mt-3 sm:-mt-4">
       <div>
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Analytics</h1>
         <p className="text-base lg:text-lg text-gray-600">Übersicht über Ihre Kurs-Performance</p>

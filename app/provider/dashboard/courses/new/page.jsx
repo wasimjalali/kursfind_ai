@@ -13,7 +13,7 @@ export default async function NewCoursePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 -mt-3 sm:-mt-4">
       <div className="mb-8">
         <Link
           href="/provider/dashboard/courses"

@@ -32,8 +32,7 @@ export default async function ProviderDashboard() {
   const recentCourses = courses?.slice(0, 5) || [];
 
   return (
-    <div className="space-y-4 sm:space-y-6 -mt-2 sm:-mt-3">
-      
+    <div className="space-y-4 sm:space-y-6 -mt-3 sm:-mt-4">
       {/* Welcome Message - Mobile Optimized */}
       <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-lg">
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">
