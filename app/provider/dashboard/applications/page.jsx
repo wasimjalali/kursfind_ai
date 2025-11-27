@@ -177,7 +177,7 @@ export default function ApplicationsPage() {
   const stats = calculateStats(applications)
 
   return (
-    <div className="space-y-6 -mt-3 sm:-mt-4">
+    <div className="space-y-6">
       {/* Page Header */}
       <div>
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">

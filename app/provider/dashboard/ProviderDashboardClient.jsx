@@ -15,8 +15,8 @@ export default function ProviderDashboardClient({ provider, children }) {
       {/* Sidebar - Overlay, no dark background */}
       <ProviderSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      {/* Main Content - NO top padding, let pages handle their own spacing */}
-      <main className="w-full pt-[60px] sm:pt-[73px]">
+      {/* Main Content - Fixed header offset + minimal top padding */}
+      <main className="w-full pt-[62px] sm:pt-[76px]">
         <div className="px-4 sm:px-6 pb-4 sm:pb-6">
           {children}
         </div>
