@@ -621,6 +621,7 @@ function ChatContent() {
                               }
                               
                               // ENHANCED: Check if this is a follow-up with no courses but mentions existing ones
+                              // CRITICAL: Only do this if message has NO courses from API
                               if (!hasCourses && message.role === 'assistant' && message.content) {
                                 const allPreviousCourses = messages
                                   .slice(0, idx)
@@ -637,6 +638,21 @@ function ChatContent() {
                                   console.log('🔄 Follow-up detected, re-showing courses:', followUpCourses.length);
                                   coursesToDisplay = followUpCourses;
                                 }
+                              }
+                              
+                              // FINAL DEDUPLICATION: Just to be absolutely sure
+                              if (coursesToDisplay.length > 0) {
+                                const finalSeenIds = new Set<string>();
+                                const finalSeenTitles = new Set<string>();
+                                coursesToDisplay = coursesToDisplay.filter((course: any) => {
+                                  const id = course.id?.toString();
+                                  const title = course.title?.toLowerCase().trim();
+                                  if (id && finalSeenIds.has(id)) return false;
+                                  if (title && finalSeenTitles.has(title)) return false;
+                                  if (id) finalSeenIds.add(id);
+                                  if (title) finalSeenTitles.add(title);
+                                  return true;
+                                });
                               }
                               
                               const shouldRenderCards = coursesToDisplay && coursesToDisplay.length > 0;

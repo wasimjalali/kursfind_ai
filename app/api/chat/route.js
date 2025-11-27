@@ -887,6 +887,11 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
     if (effectiveToolCalls && effectiveToolCalls.length > 0) {
       console.log('🔧 Processing', effectiveToolCalls.length, 'function calls');
       
+      // CRITICAL: Log all function calls to detect duplicates
+      effectiveToolCalls.forEach((tc, idx) => {
+        console.log(`  ${idx + 1}. ${tc.function.name} - Args:`, tc.function.arguments);
+      });
+      
       // Clean content for adding to conversation
       let cleanedContent = fallbackUsed 
         ? cleanDeepSeekTokens(assistantMessage.content || '')
