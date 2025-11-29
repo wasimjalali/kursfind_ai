@@ -50,6 +50,47 @@ interface SearchState {
   totalCount: number;
 }
 
+// Typing animation component for loading text
+function TypingText({ text, className = '' }: { text: string; className?: string }) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    
+    if (!isDeleting && displayedText.length < text.length) {
+      // Typing forward
+      timeout = setTimeout(() => {
+        setDisplayedText(text.slice(0, displayedText.length + 1));
+      }, 50); // Speed of typing
+    } else if (!isDeleting && displayedText.length === text.length) {
+      // Pause at end before deleting
+      timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 1500); // Wait 1.5s before deleting
+    } else if (isDeleting && displayedText.length > 0) {
+      // Deleting
+      timeout = setTimeout(() => {
+        setDisplayedText(text.slice(0, displayedText.length - 1));
+      }, 30); // Speed of deleting (faster)
+    } else if (isDeleting && displayedText.length === 0) {
+      // Start typing again
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+      }, 300); // Short pause before retyping
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [displayedText, isDeleting, text]);
+  
+  return (
+    <span className={className}>
+      {displayedText}
+      <span className="animate-pulse">|</span>
+    </span>
+  );
+}
+
 function ChatContent() {
   const searchParams = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,6 +98,7 @@ function ChatContent() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingQuery, setLoadingQuery] = useState(''); // Track the current search query for loading animation
+  const [isCourseSearch, setIsCourseSearch] = useState(true); // Track if it's a course search or follow-up
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
@@ -220,6 +262,12 @@ function ChatContent() {
     
     setLoading(true);
     setLoadingQuery(userMessage); // Store the query for the loading animation
+    
+    // Detect if this is a course search or follow-up question
+    const courseSearchPatterns = /kurs|course|bootcamp|weiterbildung|suche|finde|zeige|looking for|show me|recommend|empfehl/i;
+    const isFirstMessage = messages.length === 0;
+    const looksLikeCourseSearch = courseSearchPatterns.test(userMessage);
+    setIsCourseSearch(isFirstMessage || looksLikeCourseSearch);
 
     try {
       // ✅ CORRECT: Send ENTIRE conversation history
@@ -817,26 +865,39 @@ function ChatContent() {
                   </div>
                 ))}
 
-                {/* Loading indicator - Website-style search animation */}
+                {/* Loading indicator - Left-aligned with typing animation */}
                 {loading && (
-                  <div className="flex justify-center w-full">
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-6 sm:px-8 py-5 sm:py-6 max-w-md w-full mx-4">
-                      {/* Sparkle icon + Progress bar */}
-                      <div className="flex items-center gap-3 mb-4">
-                        <svg className="w-6 h-6 text-cyan-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="flex justify-start">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center mr-3 animate-pulse">
+                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      </svg>
+                    </div>
+                    <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-5 py-4 max-w-sm">
+                      {/* Progress bar */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                           <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full animate-progress-bar"></div>
                         </div>
                       </div>
-                      {/* Search query text - shows just the topic, not full query */}
-                      <p className="text-gray-700 text-base">
-                        Suche nach{' '}
-                        <span className="text-cyan-600 font-medium">
-                          {extractSearchTopic(loadingQuery)}
-                        </span>
-                        {' ...'}
+                      {/* Typing animation text */}
+                      <p className="text-gray-700 text-sm">
+                        {isCourseSearch ? (
+                          <>
+                            Suche nach{' '}
+                            <TypingText 
+                              text={extractSearchTopic(loadingQuery)} 
+                              className="text-cyan-600 font-medium"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <TypingText 
+                              text="KI denkt nach" 
+                              className="text-gray-600 font-medium"
+                            />
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>
