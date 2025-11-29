@@ -274,9 +274,21 @@ function ChatContent() {
     setLoadingQuery(userMessage); // Store the query for the loading animation
     
     // Detect if this is a course search or follow-up question
-    const courseSearchPatterns = /kurs|course|bootcamp|weiterbildung|suche|finde|zeige|looking for|show me|recommend|empfehl/i;
+    // First message is ALWAYS a course search
+    // Follow-up messages are course searches ONLY if they explicitly ask for courses/bootcamps
     const isFirstMessage = messages.length === 0;
-    const looksLikeCourseSearch = courseSearchPatterns.test(userMessage);
+    
+    // Strict patterns that indicate a NEW course search (not follow-up)
+    const newCourseSearchPatterns = /\b(kurs|course|bootcamp|weiterbildung|programm|training)\b/i;
+    // Patterns that indicate the user is asking for course recommendations
+    const courseRequestPatterns = /\b(suche|finde|zeige|such|find|show|recommend|empfehl|gibt es|looking for|interested in)\b.*\b(kurs|course|bootcamp|programm|training|weiterbildung)\b/i;
+    
+    // It's a course search if:
+    // 1. It's the first message, OR
+    // 2. The message explicitly mentions course/bootcamp/etc AND has a request verb
+    const looksLikeCourseSearch = newCourseSearchPatterns.test(userMessage) && 
+      (isFirstMessage || courseRequestPatterns.test(userMessage));
+    
     setIsCourseSearch(isFirstMessage || looksLikeCourseSearch);
 
     try {
