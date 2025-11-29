@@ -54,16 +54,26 @@ interface SearchState {
 function TypingText({ text, className = '' }: { text: string; className?: string }) {
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentText, setCurrentText] = useState(text);
+  
+  // Reset animation when text prop changes
+  useEffect(() => {
+    if (text !== currentText) {
+      setDisplayedText('');
+      setIsDeleting(false);
+      setCurrentText(text);
+    }
+  }, [text, currentText]);
   
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     
-    if (!isDeleting && displayedText.length < text.length) {
+    if (!isDeleting && displayedText.length < currentText.length) {
       // Typing forward
       timeout = setTimeout(() => {
-        setDisplayedText(text.slice(0, displayedText.length + 1));
+        setDisplayedText(currentText.slice(0, displayedText.length + 1));
       }, 50); // Speed of typing
-    } else if (!isDeleting && displayedText.length === text.length) {
+    } else if (!isDeleting && displayedText.length === currentText.length) {
       // Pause at end before deleting
       timeout = setTimeout(() => {
         setIsDeleting(true);
@@ -71,7 +81,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
     } else if (isDeleting && displayedText.length > 0) {
       // Deleting
       timeout = setTimeout(() => {
-        setDisplayedText(text.slice(0, displayedText.length - 1));
+        setDisplayedText(currentText.slice(0, displayedText.length - 1));
       }, 30); // Speed of deleting (faster)
     } else if (isDeleting && displayedText.length === 0) {
       // Start typing again
@@ -81,7 +91,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
     }
     
     return () => clearTimeout(timeout);
-  }, [displayedText, isDeleting, text]);
+  }, [displayedText, isDeleting, currentText]);
   
   return (
     <span className={className}>
