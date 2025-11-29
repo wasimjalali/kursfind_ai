@@ -983,8 +983,8 @@ function ChatContent() {
         </div>
       </div>
       
-      </div> {/* Close Main Content Wrapper */}
-    </div> {/* Close flex container */}
+      </div>
+    </div>
   );
 }
 

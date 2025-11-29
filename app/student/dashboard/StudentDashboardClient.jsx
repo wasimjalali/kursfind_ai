@@ -97,8 +97,8 @@ export default function StudentDashboardClient({ student, children }) {
           {children}
         </main>
       
-      </div> {/* Close Main Content Wrapper */}
-    </div> {/* Close flex container */}
+      </div>
+    </div>
   );
 }
 
