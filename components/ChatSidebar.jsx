@@ -139,12 +139,14 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     );
   }
 
-  // Tooltip component for consistency
+  // Tooltip component - using fixed positioning to escape overflow containers
   const Tooltip = ({ text }) => (
-    <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-[9999] shadow-lg">
+    <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap shadow-lg"
+      style={{ zIndex: 99999 }}
+    >
       {text}
       <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></span>
-    </span>
+    </div>
   );
 
   return (
@@ -164,13 +166,13 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           bg-white border-r border-gray-200
           flex flex-col
           transition-all duration-200 ease-in-out
-          shadow-lg
+          shadow-lg overflow-visible
           ${isOpen ? 'w-[260px]' : 'w-[60px]'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         {/* Header: Logo on LEFT, Toggle on RIGHT when open */}
-        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
+        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100 overflow-visible`}>
           {/* Logo + Text - LEFT side when open */}
           {isOpen && (
             <Link href="/suchen" className="flex items-center gap-2 cursor-pointer">
@@ -201,7 +203,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         </div>
 
         {/* New Search Button - Sparkle icon for AI */}
-        <div className="p-2">
+        <div className="p-2 overflow-visible">
           <button
             onClick={() => window.location.href = '/suchen'}
             className={`
@@ -222,17 +224,19 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
+        {/* Navigation Items - overflow-visible to show tooltips */}
+        <nav className="flex-1 px-2 py-2 space-y-1 overflow-visible">
           {menuItems.map((item, idx) => (
             <Link
               key={idx}
               href={item.href}
-              className={`
-                flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
-                text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-                transition-all cursor-pointer relative group
-              `}
+              className="flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all cursor-pointer relative group"
+              style={{ 
+                justifyContent: isOpen ? 'flex-start' : 'center',
+                gap: isOpen ? '12px' : '0',
+                paddingLeft: isOpen ? '16px' : '0',
+                paddingRight: isOpen ? '16px' : '0',
+              }}
             >
               <span className="flex-shrink-0">{item.icon}</span>
               {isOpen && <span className="font-medium text-[15px]">{item.label}</span>}
@@ -276,14 +280,17 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         )}
 
         {/* User Profile Section */}
-        <div className="border-t border-gray-200 p-2">
+        <div className="border-t border-gray-200 p-2 overflow-visible">
           {user && student ? (
             <Link
               href="/student/dashboard/profile"
-              className={`
-                flex items-center ${isOpen ? 'gap-3 px-2' : 'justify-center'} py-2 rounded-lg
-                hover:bg-gray-50 transition-all cursor-pointer relative group
-              `}
+              className="flex items-center py-2 rounded-lg hover:bg-gray-50 transition-all cursor-pointer relative group"
+              style={{ 
+                justifyContent: isOpen ? 'flex-start' : 'center',
+                gap: isOpen ? '12px' : '0',
+                paddingLeft: isOpen ? '8px' : '0',
+                paddingRight: isOpen ? '8px' : '0',
+              }}
             >
               <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                 {student.first_name?.[0]?.toUpperCase() || 'U'}
@@ -301,11 +308,13 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           ) : (
             <Link
               href="/student/login"
-              className={`
-                flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
-                text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-                transition-all cursor-pointer relative group
-              `}
+              className="flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all cursor-pointer relative group"
+              style={{ 
+                justifyContent: isOpen ? 'flex-start' : 'center',
+                gap: isOpen ? '12px' : '0',
+                paddingLeft: isOpen ? '16px' : '0',
+                paddingRight: isOpen ? '16px' : '0',
+              }}
             >
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />

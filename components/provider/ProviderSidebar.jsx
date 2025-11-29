@@ -92,12 +92,14 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
     },
   ];
 
-  // Tooltip component for consistency
+  // Tooltip component - using inline style for z-index to escape overflow containers
   const Tooltip = ({ text }) => (
-    <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-[9999] shadow-lg">
+    <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap shadow-lg"
+      style={{ zIndex: 99999 }}
+    >
       {text}
       <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></span>
-    </span>
+    </div>
   );
 
   return (
@@ -115,14 +117,14 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
         className={`
           fixed top-0 left-0 bottom-0 z-50
           bg-white border-r border-gray-200
-          flex flex-col shadow-lg
+          flex flex-col shadow-lg overflow-visible
           transition-all duration-200 ease-in-out
           ${isOpen ? 'w-[260px]' : 'w-[60px]'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         {/* Header: Logo on LEFT, Toggle on RIGHT when open */}
-        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
+        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100 overflow-visible`}>
           {/* Logo + Text - LEFT side when open */}
           {isOpen && (
             <Link href="/provider/dashboard" className="flex items-center gap-2 cursor-pointer">
@@ -153,7 +155,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
         </div>
 
         {/* Neuer Kurs Button - With + icon */}
-        <div className="p-2">
+        <div className="p-2 overflow-visible">
           <Link
             href="/provider/dashboard/courses/new"
             className={`
@@ -174,8 +176,8 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
           </Link>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
+        {/* Navigation Items - overflow-visible to show tooltips */}
+        <nav className="flex-1 px-2 py-2 space-y-1 overflow-visible">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -183,13 +185,18 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
-                  transition-all cursor-pointer relative group
+                  flex items-center py-2.5 rounded-lg transition-all cursor-pointer relative group
                   ${isActive 
                     ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
                     : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
                   }
                 `}
+                style={{ 
+                  justifyContent: isOpen ? 'flex-start' : 'center',
+                  gap: isOpen ? '12px' : '0',
+                  paddingLeft: isOpen ? '16px' : '0',
+                  paddingRight: isOpen ? '16px' : '0',
+                }}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 {isOpen && <span className="font-medium text-[15px]">{item.name}</span>}
@@ -212,14 +219,16 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
         </nav>
 
         {/* Footer - Back to Website */}
-        <div className="border-t border-gray-200 p-2">
+        <div className="border-t border-gray-200 p-2 overflow-visible">
           <Link 
             href="/"
-            className={`
-              flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
-              text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-              transition-all cursor-pointer relative group
-            `}
+            className="flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all cursor-pointer relative group"
+            style={{ 
+              justifyContent: isOpen ? 'flex-start' : 'center',
+              gap: isOpen ? '12px' : '0',
+              paddingLeft: isOpen ? '16px' : '0',
+              paddingRight: isOpen ? '16px' : '0',
+            }}
           >
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
