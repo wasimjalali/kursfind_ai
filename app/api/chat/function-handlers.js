@@ -580,7 +580,8 @@ async function searchCourses(args) {
   // Pagination
   queryBuilder = queryBuilder.range(offset, offset + max_results - 1);
 
-  const { data: courses, error, count } = await queryBuilder;
+  // Use let instead of const so we can reassign in fallback logic
+  let { data: courses, error, count } = await queryBuilder;
 
   if (error) {
     console.error('❌ Search courses error:', error);

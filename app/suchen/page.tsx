@@ -122,6 +122,56 @@ function ChatContent() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Extract the main course/topic from user query for loading animation
+  const extractSearchTopic = (query: string): string => {
+    // Remove common filler words to get just the topic
+    const fillerPatterns = [
+      /^ich suche\s*(ein|einen|eine|nach)?\s*/i,
+      /^zeige mir\s*/i,
+      /^finde\s*(mir)?\s*/i,
+      /^suche\s*(nach)?\s*/i,
+      /^ich möchte\s*/i,
+      /^welche\s*/i,
+      /^gibt es\s*/i,
+      /^looking for\s*/i,
+      /^show me\s*/i,
+      /^find\s*/i,
+      /\s*mit bildungsgutschein\s*/gi,
+      /\s*in berlin\s*/gi,
+      /\s*in münchen\s*/gi,
+      /\s*in hamburg\s*/gi,
+      /\s*in köln\s*/gi,
+      /\s*oder remote\s*/gi,
+      /\s*online\s*/gi,
+      /\s*bootcamp(s)?\s*/gi,
+      /\s*kurs(e)?\s*/gi,
+      /\s*course(s)?\s*/gi,
+    ];
+    
+    let topic = query.trim();
+    
+    // Apply each pattern
+    for (const pattern of fillerPatterns) {
+      topic = topic.replace(pattern, ' ');
+    }
+    
+    // Clean up extra spaces and trim
+    topic = topic.replace(/\s+/g, ' ').trim();
+    
+    // If we stripped too much, use first few words of original
+    if (topic.length < 3) {
+      const words = query.split(/\s+/).slice(0, 4);
+      topic = words.join(' ');
+    }
+    
+    // Capitalize first letter
+    if (topic.length > 0) {
+      topic = topic.charAt(0).toUpperCase() + topic.slice(1);
+    }
+    
+    return topic;
+  };
+
   const handleExampleClick = (query: string) => {
     setInput(query);
     handleSubmit(null, query);
@@ -780,15 +830,13 @@ function ChatContent() {
                           <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full animate-progress-bar"></div>
                         </div>
                       </div>
-                      {/* Search query text */}
+                      {/* Search query text - shows just the topic, not full query */}
                       <p className="text-gray-700 text-base">
                         Suche nach{' '}
                         <span className="text-cyan-600 font-medium">
-                          {loadingQuery.length > 40 
-                            ? loadingQuery.substring(0, 40) + '...' 
-                            : loadingQuery}
+                          {extractSearchTopic(loadingQuery)}
                         </span>
-                        {loadingQuery.length <= 40 && ' ...'}
+                        {' ...'}
                       </p>
                     </div>
                   </div>
