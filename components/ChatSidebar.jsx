@@ -161,27 +161,9 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* Header: Toggle button (always visible) + Logo (when open) */}
-        <div className={`flex items-center ${isOpen ? 'justify-between px-3' : 'justify-center'} py-3 border-b border-gray-100`}>
-          {/* Toggle Button - Window icon, always inside sidebar */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
-            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="7" height="18" rx="1"/>
-              <rect x="14" y="3" width="7" height="18" rx="1"/>
-            </svg>
-            {/* Tooltip */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                Sidebar öffnen
-              </span>
-            )}
-          </button>
-          
-          {/* Logo - visible when open */}
+        {/* Header: Logo on LEFT, Toggle on RIGHT when open */}
+        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
+          {/* Logo + Text - LEFT side when open */}
           {isOpen && (
             <Link href="/suchen" className="flex items-center gap-2">
               <Image 
@@ -191,9 +173,27 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 height={40}
                 className="rounded-lg"
               />
-              <span className="font-bold text-gray-900">Kursfind AI</span>
+              <span className="font-bold text-gray-900 text-base">Kursfind AI</span>
             </Link>
           )}
+          
+          {/* Toggle Button - RIGHT side when open, centered when collapsed */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
+            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
+            </svg>
+            {/* Tooltip - only when collapsed */}
+            {!isOpen && (
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
+                Sidebar öffnen
+              </span>
+            )}
+          </button>
         </div>
 
         {/* New Search Button - Sparkle icon for AI */}
@@ -215,7 +215,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             {isOpen && <span>Neue Suche</span>}
             {/* Tooltip when collapsed */}
             {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                 Neue Suche
               </span>
             )}
@@ -235,11 +235,11 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               `}
             >
               <span className="flex-shrink-0">{item.icon}</span>
-              {isOpen && <span className="font-medium text-sm">{item.label}</span>}
+              {isOpen && <span className="font-medium text-[15px]">{item.label}</span>}
               
               {/* Tooltip for collapsed state */}
               {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                   {item.label}
                 </span>
               )}
@@ -264,7 +264,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                     <Link
                       key={conv.id || idx}
                       href={`/suchen?chat=${conv.id}`}
-                      className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg truncate"
+                      className="block px-3 py-2 text-[15px] text-gray-600 hover:bg-gray-50 rounded-lg truncate"
                     >
                       {title}...
                     </Link>
@@ -294,14 +294,14 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               </div>
               {isOpen && (
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 truncate">
+                  <div className="text-[15px] font-medium text-gray-900 truncate">
                     {student.first_name}
                   </div>
                 </div>
               )}
               {/* Tooltip when collapsed */}
               {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                   Profil
                 </span>
               )}
@@ -318,10 +318,10 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-              {isOpen && <span className="font-medium text-sm">Anmelden</span>}
+              {isOpen && <span className="font-medium text-[15px]">Anmelden</span>}
               {/* Tooltip when collapsed */}
               {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                   Anmelden
                 </span>
               )}

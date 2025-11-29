@@ -85,27 +85,9 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* Header: Toggle button + Logo */}
-        <div className={`flex items-center ${isOpen ? 'justify-between px-3' : 'justify-center'} py-3 border-b border-gray-100`}>
-          {/* Toggle Button - Window icon */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
-            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="7" height="18" rx="1"/>
-              <rect x="14" y="3" width="7" height="18" rx="1"/>
-            </svg>
-            {/* Tooltip */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                Sidebar öffnen
-              </span>
-            )}
-          </button>
-          
-          {/* Logo - visible when open */}
+        {/* Header: Logo on LEFT, Toggle on RIGHT when open */}
+        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
+          {/* Logo + Text - LEFT side when open */}
           {isOpen && (
             <Link href="/suchen" className="flex items-center gap-2">
               <Image 
@@ -115,9 +97,27 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                 height={40}
                 className="rounded-lg"
               />
-              <span className="font-bold text-gray-900">Kursfind AI</span>
+              <span className="font-bold text-gray-900 text-base">Kursfind AI</span>
             </Link>
           )}
+          
+          {/* Toggle Button - RIGHT side when open, centered when collapsed */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
+            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
+            </svg>
+            {/* Tooltip - only when collapsed */}
+            {!isOpen && (
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
+                Sidebar öffnen
+              </span>
+            )}
+          </button>
         </div>
 
         {/* KI-Kurssuche Button - Sparkle icon for AI */}
@@ -139,7 +139,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             {isOpen && <span>KI-Kurssuche</span>}
             {/* Tooltip when collapsed */}
             {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                 KI-Kurssuche
               </span>
             )}
@@ -164,11 +164,11 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                 `}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
-                {isOpen && <span className="font-medium text-sm">{item.name}</span>}
+                {isOpen && <span className="font-medium text-[15px]">{item.name}</span>}
                 
                 {/* Tooltip for collapsed state */}
                 {!isOpen && (
-                  <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                  <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
                     {item.name}
                   </span>
                 )}
