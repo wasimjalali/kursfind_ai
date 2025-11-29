@@ -784,11 +784,11 @@ function ChatContent() {
                       <p className="text-gray-700 text-base">
                         Suche nach{' '}
                         <span className="text-cyan-600 font-medium">
-                          {loadingQuery.length > 35 
-                            ? loadingQuery.substring(0, 35) + '...' 
+                          {loadingQuery.length > 40 
+                            ? loadingQuery.substring(0, 40) + '...' 
                             : loadingQuery}
                         </span>
-                        {' '}...
+                        {loadingQuery.length <= 40 && ' ...'}
                       </p>
                     </div>
                   </div>
