@@ -16,6 +16,47 @@ import {
 // Using GPT-4o-mini (Primary) with DeepSeek (Fallback)
 // ═══════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════
+// SANITIZE DATA - Remove URLs and images from AI context only
+// This prevents the AI from mentioning URLs/images in text responses
+// BUT keeps them in the courses array for frontend card rendering
+// ═══════════════════════════════════════════════════════════════
+function sanitizeForAI(data) {
+  if (!data) return data;
+  
+  // Fields to remove from AI context (contain URLs or images)
+  const fieldsToRemove = [
+    'website', 'website_url', 'provider_url', 'external_url',
+    'application_url', 'registration_url', 'signup_url',
+    'facebook', 'instagram', 'linkedin', 'twitter', 'social_media',
+    'api_key', 'secret', 'password', 'token',
+    'image_url', 'cover_image', 'thumbnail', 'photo', 'picture', 'logo_url'
+  ];
+  
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeForAI(item));
+  }
+  
+  if (typeof data === 'object') {
+    const sanitized = {};
+    for (const [key, value] of Object.entries(data)) {
+      // Skip fields that should be removed
+      if (fieldsToRemove.includes(key.toLowerCase())) {
+        continue;
+      }
+      // Recursively sanitize nested objects (like providers)
+      if (typeof value === 'object' && value !== null) {
+        sanitized[key] = sanitizeForAI(value);
+      } else {
+        sanitized[key] = value;
+      }
+    }
+    return sanitized;
+  }
+  
+  return data;
+}
+
 // Detect the language of the user's message
 function detectLanguage(text) {
   // Common German words and patterns
@@ -937,7 +978,9 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
             result: functionResult
           });
           
-          // Extract courses for frontend from various function types
+          // ═══════════════════════════════════════════════════════════════
+          // EXTRACT COURSES FOR FRONTEND (with full data including images)
+          // ═══════════════════════════════════════════════════════════════
           // NOTE: If multiple function calls return courses, we REPLACE (not merge)
           // to avoid showing courses from different searches mixed together
           if (functionResult.success) {
@@ -945,17 +988,17 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
             
             if (functionName === 'search_courses') {
               if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
-                newCourses = functionResult.data.courses;
+                newCourses = functionResult.data.courses; // ✅ FULL data with image_url
                 console.log('📚 Courses from search_courses:', newCourses.length);
               }
             } else if (functionName === 'get_course_details') {
               if (functionResult.data?.course) {
-                newCourses = [functionResult.data.course];
+                newCourses = [functionResult.data.course]; // ✅ FULL data with image_url
                 console.log('📚 Single course from get_course_details');
               }
             } else if (functionName === 'recommend_courses') {
               if (functionResult.data?.courses && Array.isArray(functionResult.data.courses)) {
-                newCourses = functionResult.data.courses;
+                newCourses = functionResult.data.courses; // ✅ FULL data with image_url
                 console.log('📚 Courses from recommend_courses:', newCourses.length);
               }
             }
@@ -963,17 +1006,26 @@ Keep it simple. Keep it helpful. Keep it accurate. USE FUNCTIONS ACTIVELY.
             // IMPORTANT: Replace coursesToReturn with new courses (don't accumulate)
             // This ensures we only show courses from the LAST relevant function call
             if (newCourses.length > 0) {
-              coursesToReturn = newCourses;
+              coursesToReturn = newCourses; // ✅ Stored with FULL data for frontend
               console.log('📋 Courses set to:', coursesToReturn.length, 'courses');
             }
           }
           
-          // Add function result to conversation as structured JSON
+          // ═══════════════════════════════════════════════════════════════
+          // SANITIZE FOR AI CONTEXT ONLY (remove URLs and images)
+          // ═══════════════════════════════════════════════════════════════
+          // This prevents AI from mentioning URLs/images in text responses
+          // BUT coursesToReturn above still has FULL data for frontend cards
+          const sanitizedResult = {
+            ...functionResult,
+            data: sanitizeForAI(functionResult.data) // Remove image_url, website, etc.
+          };
+          
           conversationMessages.push({
             role: 'tool',
             tool_call_id: toolCall.id,
             name: functionName,
-            content: JSON.stringify(functionResult) // ✅ Return as JSON, not free text
+            content: JSON.stringify(sanitizedResult) // ✅ Sanitized for AI context
           });
           
         } catch (functionError) {

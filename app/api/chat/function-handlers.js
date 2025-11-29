@@ -6,45 +6,6 @@
 import { supabase } from '@/lib/supabase'
 import { createClient } from '@/lib/supabase-server'
 
-// ═══════════════════════════════════════════════════════════════
-// SANITIZE DATA - Remove URLs and sensitive fields before sending to AI
-// This prevents the AI from showing provider website URLs to users
-// ═══════════════════════════════════════════════════════════════
-function sanitizeForAI(data) {
-  if (!data) return data;
-  
-  // Fields to remove (contain URLs or sensitive info)
-  const fieldsToRemove = [
-    'website', 'website_url', 'provider_url', 'external_url',
-    'application_url', 'registration_url', 'signup_url',
-    'facebook', 'instagram', 'linkedin', 'twitter', 'social_media',
-    'api_key', 'secret', 'password', 'token'
-  ];
-  
-  if (Array.isArray(data)) {
-    return data.map(item => sanitizeForAI(item));
-  }
-  
-  if (typeof data === 'object') {
-    const sanitized = {};
-    for (const [key, value] of Object.entries(data)) {
-      // Skip fields that should be removed
-      if (fieldsToRemove.includes(key.toLowerCase())) {
-        continue;
-      }
-      // Recursively sanitize nested objects (like providers)
-      if (typeof value === 'object' && value !== null) {
-        sanitized[key] = sanitizeForAI(value);
-      } else {
-        sanitized[key] = value;
-      }
-    }
-    return sanitized;
-  }
-  
-  return data;
-}
-
 /**
  * Keyword expansion for better search recall
  * Expands search terms with synonyms and related concepts
@@ -791,15 +752,13 @@ async function searchCourses(args) {
 
     console.log('✅ Found courses:', coursesWithReasons.length, '(after dedup)');
     
-    // SANITIZE: Remove website URLs and sensitive data before sending to AI
-    const sanitizedCourses = sanitizeForAI(coursesWithReasons);
-    
+    // Return FULL courses (with images) - sanitization will happen in route.js for AI context only
     return {
       success: true,
       data: {
-        courses: sanitizedCourses,
+        courses: coursesWithReasons, // ✅ Keep full data with image_url for frontend
         total: count || 0,
-        showing: sanitizedCourses.length,
+        showing: coursesWithReasons.length,
         offset,
         hasMore: count > offset + max_results,
         fallbackContext: fallbackContext || null // Include fallback info for AI to explain
@@ -852,12 +811,10 @@ async function getCourseDetails(args) {
     };
   }
 
-  // SANITIZE: Remove website URLs and sensitive data before sending to AI
-  const sanitizedCourse = sanitizeForAI(course);
-
+  // Return FULL course (with images) - sanitization will happen in route.js for AI context only
   const result = {
     success: true,
-    data: { course: sanitizedCourse }
+    data: { course: course } // ✅ Keep full data with image_url for frontend
   };
 
   // Get similar courses if requested
@@ -932,13 +889,11 @@ async function searchProviders(args) {
     filteredProviders = filteredProviders.filter(p => p.courses?.[0]?.count > 0);
   }
 
-  // SANITIZE: Remove website URLs and sensitive data before sending to AI
-  const sanitizedProviders = sanitizeForAI(filteredProviders);
-
+  // Return FULL providers (with URLs) - sanitization will happen in route.js for AI context only
   return {
     success: true,
     data: {
-      providers: sanitizedProviders,
+      providers: filteredProviders, // ✅ Keep full data for frontend
       total: sanitizedProviders.length
     }
   };
@@ -973,12 +928,10 @@ async function getProviderDetails(args) {
     };
   }
 
-  // SANITIZE: Remove website URLs and sensitive data before sending to AI
-  const sanitizedProvider = sanitizeForAI(provider);
-
+  // Return FULL provider (with URLs) - sanitization will happen in route.js for AI context only
   const result = {
     success: true,
-    data: { provider: sanitizedProvider }
+    data: { provider: provider } // ✅ Keep full data for frontend
   };
 
   // Get courses
@@ -1617,13 +1570,11 @@ async function recommendCourses(args, context) {
     };
   }
 
-  // SANITIZE: Remove website URLs and sensitive data before sending to AI
-  const sanitizedCourses = sanitizeForAI(courses || []);
-
+  // Return FULL courses (with images) - sanitization will happen in route.js for AI context only
   return {
     success: true,
     data: {
-      recommendations: sanitizedCourses,
+      recommendations: courses || [], // ✅ Keep full data with image_url for frontend
       total: sanitizedCourses.length,
       reasoning: career_goal 
         ? `Courses matched to career goal: ${career_goal}`

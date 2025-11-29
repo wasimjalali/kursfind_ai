@@ -275,22 +275,24 @@ function ChatContent() {
     
     // Detect if this is a course search or follow-up question
     // First message is ALWAYS a course search
-    // Follow-up messages are course searches ONLY if they explicitly ask for courses/bootcamps
+    // Follow-up messages are course searches ONLY if they are INITIAL requests (not clarifications)
     const isFirstMessage = messages.length === 0;
     
-    // Course-related keywords
-    const courseKeywords = /\b(kurs|course|bootcamp|weiterbildung|programm|training)\b/i;
-    // Request verbs that indicate searching/wanting
-    const requestVerbs = /\b(suche|finde|zeige|such|find|show|recommend|empfehl|gibt es|looking for|interested in|want|möchte|brauche|need)\b/i;
+    // Patterns that indicate a NEW course search request (not a follow-up clarification)
+    // These are phrases that typically START a search, not continue one
+    const initialSearchPatterns = /\b(ich suche|ich möchte|ich brauche|zeig mir|finde|gib mir|gibt es|i'm looking for|i want|i need|show me|find me|give me|are there)\b.*\b(kurs|course|bootcamp|weiterbildung|programm|training)\b/i;
+    
+    // Also match standalone course type requests (e.g., "Python Bootcamp", "E-Commerce Kurs")
+    const standaloneSearchPatterns = /^\s*\b(python|javascript|java|data|marketing|design|e-commerce|seo|digital|web|mobile|app|software|coding|programming)\b.*\b(kurs|course|bootcamp|weiterbildung|programm|training)\b\s*$/i;
     
     // It's a course search if:
     // 1. It's the first message, OR
-    // 2. The message contains BOTH course keywords AND request verbs (in any order)
-    const hasCourseKeyword = courseKeywords.test(userMessage);
-    const hasRequestVerb = requestVerbs.test(userMessage);
-    const looksLikeCourseSearch = hasCourseKeyword && (isFirstMessage || hasRequestVerb);
+    // 2. The message matches an INITIAL search pattern (not just contains "course")
+    const looksLikeCourseSearch = isFirstMessage || 
+      initialSearchPatterns.test(userMessage) || 
+      standaloneSearchPatterns.test(userMessage);
     
-    setIsCourseSearch(isFirstMessage || looksLikeCourseSearch);
+    setIsCourseSearch(looksLikeCourseSearch);
 
     try {
       // ✅ CORRECT: Send ENTIRE conversation history
