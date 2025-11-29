@@ -69,15 +69,15 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       {/* Backdrop overlay - mobile only */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Sidebar - Push behavior on desktop */}
+      {/* Sidebar - Always visible on desktop */}
       <aside
         className={`
-          fixed top-0 left-0 bottom-0 z-40
+          fixed top-0 left-0 bottom-0 z-50
           bg-white border-r border-gray-200
           flex flex-col shadow-lg
           transition-all duration-200 ease-in-out
@@ -85,47 +85,64 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* Toggle Button - First item, aligned with other icons */}
-        <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} p-3 border-b border-gray-100`}>
+        {/* Header: Toggle button + Logo */}
+        <div className={`flex items-center ${isOpen ? 'justify-between px-3' : 'justify-center'} py-3 border-b border-gray-100`}>
+          {/* Toggle Button - Window icon */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
+            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
+            </svg>
+            {/* Tooltip */}
+            {!isOpen && (
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                Sidebar öffnen
+              </span>
+            )}
+          </button>
+          
+          {/* Logo - visible when open */}
           {isOpen && (
             <Link href="/suchen" className="flex items-center gap-2">
               <Image 
                 src="/Assets/kursfind-ai-logo.jpg" 
                 alt="Kursfind AI" 
-                width={32} 
-                height={32}
+                width={40} 
+                height={40}
                 className="rounded-lg"
               />
-              <span className="font-bold text-gray-900 text-sm">Kursfind AI</span>
+              <span className="font-bold text-gray-900">Kursfind AI</span>
             </Link>
           )}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-2 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600"
-            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="7" height="18" rx="1"/>
-              <rect x="14" y="3" width="7" height="18" rx="1"/>
-            </svg>
-          </button>
         </div>
 
-        {/* KI-Kurssuche Button - With visible + icon */}
+        {/* KI-Kurssuche Button - Sparkle icon for AI */}
         <div className="p-2">
           <Link
             href="/suchen"
             className={`
-              w-full flex items-center justify-center gap-2 py-2.5
+              w-full flex items-center ${isOpen ? 'justify-start gap-3 px-4' : 'justify-center'} py-3
               bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
               rounded-lg font-medium shadow-md
               hover:shadow-lg hover:scale-[1.02] transition-all
+              relative group
             `}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            {/* Sparkle/AI icon */}
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
             {isOpen && <span>KI-Kurssuche</span>}
+            {/* Tooltip when collapsed */}
+            {!isOpen && (
+              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                KI-Kurssuche
+              </span>
+            )}
           </Link>
         </div>
 
@@ -138,9 +155,8 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg
+                  flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
                   transition-all relative group
-                  ${!isOpen ? 'justify-center px-2' : ''}
                   ${isActive 
                     ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
                     : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
@@ -152,14 +168,9 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                 
                 {/* Tooltip for collapsed state */}
                 {!isOpen && (
-                  <div className="
-                    absolute left-full ml-2 px-3 py-1.5
-                    bg-gray-800 text-white text-xs rounded-md
-                    opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                    transition-all whitespace-nowrap z-50 shadow-lg
-                  ">
+                  <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
                     {item.name}
-                  </div>
+                  </span>
                 )}
               </Link>
             );
