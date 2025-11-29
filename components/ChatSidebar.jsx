@@ -139,6 +139,14 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     );
   }
 
+  // Tooltip component for consistency
+  const Tooltip = ({ text }) => (
+    <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-[9999] shadow-lg">
+      {text}
+      <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></span>
+    </span>
+  );
+
   return (
     <>
       {/* Backdrop overlay - mobile only */}
@@ -165,12 +173,12 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
           {/* Logo + Text - LEFT side when open */}
           {isOpen && (
-            <Link href="/suchen" className="flex items-center gap-2">
+            <Link href="/suchen" className="flex items-center gap-2 cursor-pointer">
               <Image 
                 src="/Assets/kursfind-ai-logo.jpg" 
                 alt="Kursfind AI" 
-                width={40} 
-                height={40}
+                width={44} 
+                height={44}
                 className="rounded-lg"
               />
               <span className="font-bold text-gray-900 text-base">Kursfind AI</span>
@@ -180,7 +188,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           {/* Toggle Button - RIGHT side when open, centered when collapsed */}
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
+            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 cursor-pointer relative group"
             aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -188,11 +196,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
             {/* Tooltip - only when collapsed */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                Sidebar öffnen
-              </span>
-            )}
+            {!isOpen && <Tooltip text="Sidebar öffnen" />}
           </button>
         </div>
 
@@ -203,7 +207,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             className={`
               w-full flex items-center ${isOpen ? 'justify-start gap-3 px-4' : 'justify-center'} py-3
               bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
-              rounded-lg font-medium shadow-md
+              rounded-lg font-medium shadow-md cursor-pointer
               hover:shadow-lg hover:scale-[1.02] transition-all
               relative group
             `}
@@ -214,11 +218,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             </svg>
             {isOpen && <span>Neue Suche</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                Neue Suche
-              </span>
-            )}
+            {!isOpen && <Tooltip text="Neue Suche" />}
           </button>
         </div>
 
@@ -231,18 +231,14 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               className={`
                 flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
                 text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-                transition-all relative group
+                transition-all cursor-pointer relative group
               `}
             >
               <span className="flex-shrink-0">{item.icon}</span>
               {isOpen && <span className="font-medium text-[15px]">{item.label}</span>}
               
               {/* Tooltip for collapsed state */}
-              {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                  {item.label}
-                </span>
-              )}
+              {!isOpen && <Tooltip text={item.label} />}
             </Link>
           ))}
         </nav>
@@ -264,7 +260,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                     <Link
                       key={conv.id || idx}
                       href={`/suchen?chat=${conv.id}`}
-                      className="block px-3 py-2 text-[15px] text-gray-600 hover:bg-gray-50 rounded-lg truncate"
+                      className="block px-3 py-2 text-[15px] text-gray-600 hover:bg-gray-50 rounded-lg truncate cursor-pointer"
                     >
                       {title}...
                     </Link>
@@ -286,7 +282,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               href="/student/dashboard/profile"
               className={`
                 flex items-center ${isOpen ? 'gap-3 px-2' : 'justify-center'} py-2 rounded-lg
-                hover:bg-gray-50 transition-all relative group
+                hover:bg-gray-50 transition-all cursor-pointer relative group
               `}
             >
               <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
@@ -300,11 +296,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 </div>
               )}
               {/* Tooltip when collapsed */}
-              {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                  Profil
-                </span>
-              )}
+              {!isOpen && <Tooltip text="Profil" />}
             </Link>
           ) : (
             <Link
@@ -312,7 +304,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               className={`
                 flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
                 text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-                transition-all relative group
+                transition-all cursor-pointer relative group
               `}
             >
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,11 +312,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               </svg>
               {isOpen && <span className="font-medium text-[15px]">Anmelden</span>}
               {/* Tooltip when collapsed */}
-              {!isOpen && (
-                <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                  Anmelden
-                </span>
-              )}
+              {!isOpen && <Tooltip text="Anmelden" />}
             </Link>
           )}
         </div>

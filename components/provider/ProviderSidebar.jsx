@@ -92,6 +92,14 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
     },
   ];
 
+  // Tooltip component for consistency
+  const Tooltip = ({ text }) => (
+    <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-[9999] shadow-lg">
+      {text}
+      <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></span>
+    </span>
+  );
+
   return (
     <>
       {/* Backdrop overlay - mobile only (NO dark overlay on desktop) */}
@@ -117,12 +125,12 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
         <div className={`flex items-center ${isOpen ? 'justify-between' : 'justify-center'} px-3 py-3 border-b border-gray-100`}>
           {/* Logo + Text - LEFT side when open */}
           {isOpen && (
-            <Link href="/provider/dashboard" className="flex items-center gap-2">
+            <Link href="/provider/dashboard" className="flex items-center gap-2 cursor-pointer">
               <Image 
                 src="/Assets/kursfind-ai-logo.jpg" 
                 alt="Kursfind AI" 
-                width={40} 
-                height={40}
+                width={44} 
+                height={44}
                 className="rounded-lg"
               />
               <span className="font-bold text-gray-900 text-base">Kursfind AI</span>
@@ -132,7 +140,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
           {/* Toggle Button - RIGHT side when open, centered when collapsed */}
           <button 
             onClick={handleToggle}
-            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 relative group"
+            className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 cursor-pointer relative group"
             aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -140,11 +148,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
               <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
             {/* Tooltip - only when collapsed */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                Sidebar öffnen
-              </span>
-            )}
+            {!isOpen && <Tooltip text="Sidebar öffnen" />}
           </button>
         </div>
 
@@ -155,7 +159,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             className={`
               w-full flex items-center ${isOpen ? 'justify-start gap-3 px-4' : 'justify-center'} py-3
               bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
-              rounded-lg font-medium shadow-md
+              rounded-lg font-medium shadow-md cursor-pointer
               hover:shadow-lg hover:scale-[1.02] transition-all
               relative group
             `}
@@ -166,11 +170,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             </svg>
             {isOpen && <span>Neuer Kurs</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                Neuer Kurs
-              </span>
-            )}
+            {!isOpen && <Tooltip text="Neuer Kurs" />}
           </Link>
         </div>
 
@@ -184,7 +184,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
                 href={item.href}
                 className={`
                   flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
-                  transition-all relative group
+                  transition-all cursor-pointer relative group
                   ${isActive 
                     ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
                     : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
@@ -205,11 +205,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
                 )}
                 
                 {/* Tooltip for collapsed state */}
-                {!isOpen && (
-                  <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                    {item.name}
-                  </span>
-                )}
+                {!isOpen && <Tooltip text={item.name} />}
               </Link>
             );
           })}
@@ -222,7 +218,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             className={`
               flex items-center ${isOpen ? 'gap-3 px-4' : 'justify-center'} py-2.5 rounded-lg
               text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
-              transition-all relative group
+              transition-all cursor-pointer relative group
             `}
           >
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,11 +226,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             </svg>
             {isOpen && <span className="font-medium text-[15px]">Zurück zur Website</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && (
-              <span className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-[100]">
-                Zurück zur Website
-              </span>
-            )}
+            {!isOpen && <Tooltip text="Zurück zur Website" />}
           </Link>
         </div>
       </aside>
