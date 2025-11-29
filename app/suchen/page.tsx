@@ -278,16 +278,17 @@ function ChatContent() {
     // Follow-up messages are course searches ONLY if they explicitly ask for courses/bootcamps
     const isFirstMessage = messages.length === 0;
     
-    // Strict patterns that indicate a NEW course search (not follow-up)
-    const newCourseSearchPatterns = /\b(kurs|course|bootcamp|weiterbildung|programm|training)\b/i;
-    // Patterns that indicate the user is asking for course recommendations
-    const courseRequestPatterns = /\b(suche|finde|zeige|such|find|show|recommend|empfehl|gibt es|looking for|interested in)\b.*\b(kurs|course|bootcamp|programm|training|weiterbildung)\b/i;
+    // Course-related keywords
+    const courseKeywords = /\b(kurs|course|bootcamp|weiterbildung|programm|training)\b/i;
+    // Request verbs that indicate searching/wanting
+    const requestVerbs = /\b(suche|finde|zeige|such|find|show|recommend|empfehl|gibt es|looking for|interested in|want|möchte|brauche|need)\b/i;
     
     // It's a course search if:
     // 1. It's the first message, OR
-    // 2. The message explicitly mentions course/bootcamp/etc AND has a request verb
-    const looksLikeCourseSearch = newCourseSearchPatterns.test(userMessage) && 
-      (isFirstMessage || courseRequestPatterns.test(userMessage));
+    // 2. The message contains BOTH course keywords AND request verbs (in any order)
+    const hasCourseKeyword = courseKeywords.test(userMessage);
+    const hasRequestVerb = requestVerbs.test(userMessage);
+    const looksLikeCourseSearch = hasCourseKeyword && (isFirstMessage || hasRequestVerb);
     
     setIsCourseSearch(isFirstMessage || looksLikeCourseSearch);
 
