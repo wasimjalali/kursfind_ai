@@ -20,7 +20,6 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
     }
   }, [student?.id]);
 
-  // Listen for chat history updates
   useEffect(() => {
     const handleChatHistoryUpdate = () => {
       console.log('🔄 Chat history updated - reloading conversations');
@@ -37,7 +36,6 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
   }, [student?.id]);
 
   const checkUser = async () => {
-    console.log('🔐 Checking user authentication...');
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError) {
@@ -47,46 +45,25 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
       return;
     }
     
-    if (!user) {
-      console.log('👤 User: Not logged in (guest mode)');
-      return;
-    }
+    if (!user) return;
     
-    console.log('👤 User: Logged in', user.id);
     setUser(user);
 
-    console.log('📋 Fetching student data for auth_user_id:', user.id);
     const { data: studentData, error: studentError } = await supabase
       .from('students')
       .select('*')
       .eq('auth_user_id', user.id)
       .single();
     
-    if (studentError) {
-      if (studentError.code === 'PGRST116') {
-        console.warn('⚠️ No student record found for user:', user.id);
-      } else {
-        console.error('❌ Error fetching student data:', studentError);
-      }
-    } else if (studentData) {
-      console.log('✅ Student data loaded:', {
-        id: studentData.id,
-        email: studentData.email,
-        name: `${studentData.first_name} ${studentData.last_name}`
-      });
+    if (!studentError && studentData) {
       setStudent(studentData);
     }
   };
 
   const loadConversations = async () => {
-    if (!student?.id || typeof student.id !== 'number') {
-      console.log('⚠️ No valid student ID available for loading conversations');
-      return;
-    }
+    if (!student?.id || typeof student.id !== 'number') return;
     
     try {
-      console.log('📥 Loading chat history for student ID:', student.id);
-      
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
@@ -97,12 +74,8 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         .gte('created_at', thirtyDaysAgo.toISOString())
         .order('created_at', { ascending: false })
       
-      if (error) {
-        console.error('❌ Error loading conversations:', error);
-        return;
-      }
+      if (error) return;
       
-      // Group messages by conversation_id
       const conversationsMap = new Map();
       
       if (chatMessages && chatMessages.length > 0) {
@@ -164,93 +137,119 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         />
       )}
 
-      {/* Claude-Style Sidebar */}
+      {/* Brand Sidebar - Light theme with Cyan/Emerald */}
       <aside 
         className={`
-          claude-sidebar
-          ${isOpen ? '' : 'collapsed'}
-          fixed top-0 left-0 bottom-0
-          lg:translate-x-0
+          fixed top-0 left-0 bottom-0 z-50
+          bg-white border-r border-gray-200
+          flex flex-col
+          transition-all duration-200 ease-in-out
+          shadow-lg
+          ${isOpen ? 'w-[260px]' : 'w-[60px]'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform duration-300 lg:transition-none
         `}
       >
-        {/* Header with Toggle */}
-        <div className="claude-sidebar-header">
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="claude-toggle-btn"
-            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
-          >
-            {/* Two rectangles icon like Claude */}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
-              <rect x="14" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
-            </svg>
-          </button>
-          
+        {/* Header with Logo and Toggle */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 min-h-[64px]">
+          {/* Logo - visible when open */}
           {isOpen && (
-            <Link href="/suchen" className="claude-brand-text">
-              Kursfind AI
+            <Link href="/suchen" className="flex items-center gap-2">
+              <Image 
+                src="/Assets/kursfind-ai-logo.jpg" 
+                alt="Kursfind AI" 
+                width={36} 
+                height={36}
+                className="rounded-lg"
+              />
+              <span className="font-bold text-gray-900">Kursfind AI</span>
             </Link>
           )}
+          
+          {/* Toggle Button - Right side when open, centered when collapsed */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className={`p-2 hover:bg-cyan-50 rounded-lg transition-colors text-gray-600 hover:text-cyan-600 ${!isOpen ? 'mx-auto' : ''}`}
+            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
+            </svg>
+          </button>
         </div>
 
         {/* Primary Action Button - New Chat */}
-        <button
-          onClick={() => {
-            window.location.href = '/suchen';
-          }}
-          className="claude-primary-action"
+        <Link
+          href="/suchen"
+          onClick={() => window.location.href = '/suchen'}
+          className={`
+            flex items-center justify-center gap-2 mx-3 my-4 py-2.5 px-4
+            bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
+            rounded-lg font-medium shadow-md
+            hover:shadow-lg hover:scale-[1.02] transition-all
+            ${!isOpen ? 'px-2' : ''}
+          `}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
-          <span>Neue Suche</span>
-        </button>
+          {isOpen && <span>Neue Suche</span>}
+        </Link>
 
         {/* Navigation Items */}
-        <nav className="px-2">
+        <nav className="px-2 space-y-1">
           {getMenuItems().map((item, idx) => (
             <Link
               key={idx}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className={`claude-nav-item ${!isOpen ? 'collapsed' : ''}`}
+              className={`
+                flex items-center gap-3 px-3 py-2.5 rounded-lg
+                text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
+                transition-all relative group
+                ${!isOpen ? 'justify-center' : ''}
+              `}
             >
-              <span className="claude-nav-icon text-lg">{item.icon}</span>
-              <span className="claude-nav-label">{item.label}</span>
+              <span className="text-lg flex-shrink-0">{item.icon}</span>
+              {isOpen && <span className="font-medium">{item.label}</span>}
               
               {/* Tooltip for collapsed state */}
               {!isOpen && (
-                <div className="claude-tooltip">{item.label}</div>
+                <div className="
+                  absolute left-full ml-2 px-3 py-1.5
+                  bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm rounded-md
+                  opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                  transition-all whitespace-nowrap z-50 shadow-lg
+                ">
+                  {item.label}
+                </div>
               )}
             </Link>
           ))}
         </nav>
 
         {/* Chat History Section */}
-        {user && student && (
-          <div className="claude-recents-section">
-            <div className="claude-recents-header">
+        {user && student && isOpen && (
+          <div className="flex-1 overflow-y-auto mt-4 border-t border-gray-100">
+            <div className="px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Recents {conversations.length > 0 && `(${conversations.length})`}
             </div>
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 px-2">
               {conversations.length > 0 ? (
                 conversations.map((conv, idx) => {
                   const messages = conv.messages || [];
                   const firstUserMessage = messages.find(m => m.role === 'user');
-                  const title = firstUserMessage?.content?.substring(0, 50) || `Chat vom ${new Date(conv.created_at).toLocaleDateString('de-DE')}`;
+                  const title = firstUserMessage?.content?.substring(0, 40) || `Chat vom ${new Date(conv.created_at).toLocaleDateString('de-DE')}`;
                   
                   return (
                     <div
                       key={conv.id || idx}
-                      className="claude-recent-item group"
+                      className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 group"
                     >
                       <Link
                         href={`/suchen?chat=${conv.id}`}
                         onClick={() => setIsOpen(false)}
-                        className="claude-recent-item-text"
+                        className="flex-1 text-sm text-gray-600 truncate hover:text-cyan-600"
                       >
                         {title}
                       </Link>
@@ -258,9 +257,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                         onClick={async (e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          
                           const conversationIdToDelete = conv.conversation_id || conv.id;
-                          
                           if (confirm('Möchten Sie diesen Chat wirklich löschen?')) {
                             try {
                               const response = await fetch('/api/student/delete-chat', {
@@ -268,22 +265,18 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ conversation_id: conversationIdToDelete })
                               });
-                              
                               if (response.ok) {
                                 setConversations(prev => prev.filter(c => 
                                   (c.conversation_id || c.id) !== conversationIdToDelete
                                 ));
                                 window.dispatchEvent(new CustomEvent('chatHistoryUpdated'));
-                              } else {
-                                alert('Fehler beim Löschen des Chats');
                               }
                             } catch (error) {
                               console.error('❌ Error deleting chat:', error);
-                              alert('Fehler beim Löschen des Chats');
                             }
                           }
                         }}
-                        className="claude-recent-item-menu p-1.5 hover:bg-red-900/30 rounded text-red-400"
+                        className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 rounded text-red-400 hover:text-red-500 transition-all"
                         title="Chat löschen"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,8 +288,8 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 })
               ) : (
                 <div className="px-4 py-6 text-center">
-                  <div className="text-gray-500 text-2xl mb-2">💬</div>
-                  <div className="text-xs text-gray-500">Noch keine Chats</div>
+                  <div className="text-gray-400 text-2xl mb-2">💬</div>
+                  <div className="text-xs text-gray-400">Noch keine Chats</div>
                 </div>
               )}
             </div>
@@ -304,41 +297,46 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         )}
 
         {/* User Profile Section */}
-        <div className="claude-user-section mt-auto">
+        <div className="mt-auto border-t border-gray-200 p-3">
           {user && student ? (
             <Link
               href="/student/dashboard/profile"
               onClick={() => setIsOpen(false)}
-              className="claude-user-profile"
+              className={`
+                flex items-center gap-3 p-2 rounded-lg
+                hover:bg-gray-50 transition-all
+                ${!isOpen ? 'justify-center' : ''}
+              `}
             >
-              <div className="claude-user-avatar">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                 {student.first_name?.[0]?.toUpperCase() || 'U'}
               </div>
-              <div className="claude-user-info">
-                <div className="claude-user-name">
-                  {student.first_name} {student.last_name}
-                </div>
-                <div className="claude-user-plan">
-                  {student.email}
-                </div>
-              </div>
-              {/* Chevron icon */}
               {isOpen && (
-                <svg className="w-4 h-4 text-gray-500 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-900 truncate">
+                    {student.first_name} {student.last_name}
+                  </div>
+                  <div className="text-xs text-gray-500 truncate">
+                    {student.email}
+                  </div>
+                </div>
               )}
             </Link>
           ) : (
             <Link
               href="/student/login"
               onClick={() => setIsOpen(false)}
-              className="claude-nav-item"
+              className={`
+                flex items-center gap-3 px-3 py-2.5 rounded-lg
+                text-gray-600 hover:bg-cyan-50 hover:text-cyan-600
+                transition-all
+                ${!isOpen ? 'justify-center' : ''}
+              `}
             >
-              <svg className="claude-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-              <span className="claude-nav-label">Anmelden</span>
+              {isOpen && <span className="font-medium">Anmelden</span>}
             </Link>
           )}
         </div>

@@ -93,8 +93,10 @@ export default function StudentDashboardClient({ student, children }) {
       </div>
 
         {/* Page Content - Add padding-top for headers */}
-        <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
-          {children}
+        <main className="flex-1 overflow-y-auto pt-16 lg:pt-20">
+          <div className="p-4 sm:p-6">
+            {children}
+          </div>
         </main>
       
       </div>

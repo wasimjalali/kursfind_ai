@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
@@ -16,7 +17,6 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       );
       
-      // TODO: Replace with actual provider ID from auth
       const PROVIDER_ID = 1;
       
       const { count, error } = await supabase
@@ -31,8 +31,6 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
     }
     
     fetchUnreadCount();
-    
-    // Optional: Refresh every 30 seconds
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -96,39 +94,53 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
         />
       )}
 
-      {/* Claude-Style Sidebar */}
+      {/* Brand Sidebar - Light theme with Cyan/Emerald */}
       <aside
         className={`
-          claude-sidebar
-          fixed top-[60px] sm:top-[73px] lg:top-0 left-0 bottom-0
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          fixed top-0 left-0 bottom-0 z-40
+          w-64 bg-white border-r border-gray-200
+          flex flex-col shadow-lg
           transition-transform duration-300
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Header with Toggle */}
-        <div className="claude-sidebar-header">
+        {/* Header with Logo and Toggle */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 min-h-[64px]">
+          {/* Logo */}
+          <Link href="/provider/dashboard" className="flex items-center gap-2">
+            <Image 
+              src="/Assets/kursfind-ai-logo.jpg" 
+              alt="Kursfind AI" 
+              width={36} 
+              height={36}
+              className="rounded-lg"
+            />
+            <span className="font-bold text-gray-900">Kursfind AI</span>
+          </Link>
+          
+          {/* Toggle Button - Right side */}
           <button 
             onClick={onClose}
-            className="claude-toggle-btn"
+            className="p-2 hover:bg-cyan-50 rounded-lg transition-colors text-gray-600 hover:text-cyan-600"
             aria-label="Close sidebar"
           >
-            {/* Two rectangles icon like Claude */}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
-              <rect x="14" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
           </button>
-          
-          <Link href="/provider/dashboard" className="claude-brand-text">
-            Kursfind AI
-          </Link>
         </div>
 
         {/* Primary Action Button - Neuer Kurs */}
         <Link
           href="/provider/dashboard/courses/new"
           onClick={onClose}
-          className="claude-primary-action"
+          className="
+            flex items-center justify-center gap-2 mx-3 my-4 py-2.5 px-4
+            bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
+            rounded-lg font-medium shadow-md
+            hover:shadow-lg hover:scale-[1.02] transition-all
+          "
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -137,7 +149,7 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
         </Link>
 
         {/* Navigation Items */}
-        <nav className="px-2 flex-1">
+        <nav className="px-2 flex-1 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -145,12 +157,17 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`claude-nav-item ${isActive ? 'active' : ''}`}
+                className={`
+                  flex items-center gap-3 px-3 py-2.5 rounded-lg
+                  transition-all
+                  ${isActive 
+                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
+                    : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
+                  }
+                `}
               >
-                <span className="claude-nav-icon">{item.icon}</span>
-                <span className="claude-nav-label">{item.name}</span>
-                
-                {/* Badge for unread applications */}
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span className="font-medium">{item.name}</span>
                 {item.badge > 0 && (
                   <span className="ml-auto inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
                     {item.badge}
@@ -162,16 +179,16 @@ export default function ProviderSidebar({ isOpen = false, onClose }) {
         </nav>
 
         {/* Footer - Back to Website */}
-        <div className="claude-user-section">
+        <div className="border-t border-gray-200 p-3">
           <Link 
             href="/"
             onClick={onClose}
-            className="claude-nav-item"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all"
           >
-            <svg className="claude-nav-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span className="claude-nav-label">Zurück zur Website</span>
+            <span className="font-medium">Zurück zur Website</span>
           </Link>
         </div>
       </aside>

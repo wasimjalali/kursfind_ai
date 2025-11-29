@@ -64,44 +64,59 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
         />
       )}
 
-      {/* Claude-Style Sidebar */}
+      {/* Brand Sidebar - Light theme with Cyan/Emerald */}
       <aside
         className={`
-          claude-sidebar
-          ${isOpen ? '' : 'collapsed'}
-          fixed top-14 lg:top-0 left-0 bottom-0
-          lg:translate-x-0
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          transition-transform duration-300 lg:transition-none
+          fixed top-14 lg:top-0 left-0 bottom-0 z-40
+          w-64 bg-white border-r border-gray-200
+          flex flex-col shadow-lg
+          transition-transform duration-300
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           h-[calc(100vh-3.5rem)] lg:h-screen
         `}
       >
-        {/* Header with Toggle */}
-        <div className="claude-sidebar-header">
+        {/* Header with Toggle - Desktop only */}
+        <div className="hidden lg:flex items-center justify-between p-4 border-b border-gray-200 min-h-[64px]">
+          <Link href="/suchen" className="flex items-center gap-2">
+            <span className="font-bold text-gray-900">Student Portal</span>
+          </Link>
+          
+          {/* Toggle Button */}
           <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="claude-toggle-btn"
-            aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
+            onClick={() => setIsOpen(false)}
+            className="p-2 hover:bg-cyan-50 rounded-lg transition-colors text-gray-600 hover:text-cyan-600"
+            aria-label="Close sidebar"
           >
-            {/* Two rectangles icon like Claude */}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
-              <rect x="14" y="3" width="7" height="18" rx="1" strokeWidth="2"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="18" rx="1"/>
+              <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
           </button>
-          
-          {isOpen && (
-            <Link href="/suchen" className="claude-brand-text">
-              Kursfind AI
-            </Link>
-          )}
+        </div>
+
+        {/* Mobile Close Button */}
+        <div className="lg:hidden flex items-center justify-end p-3 border-b border-gray-200">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Close sidebar"
+          >
+            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Primary Action Button - KI-Kurssuche */}
         <Link
           href="/suchen"
           onClick={() => setIsOpen(false)}
-          className="claude-primary-action"
+          className="
+            flex items-center justify-center gap-2 mx-3 my-4 py-2.5 px-4
+            bg-gradient-to-r from-cyan-500 to-emerald-500 text-white
+            rounded-lg font-medium shadow-md
+            hover:shadow-lg hover:scale-[1.02] transition-all
+          "
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -110,7 +125,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
         </Link>
 
         {/* Navigation Items */}
-        <nav className="px-2">
+        <nav className="px-2 flex-1 space-y-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -118,48 +133,47 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`claude-nav-item ${isActive ? 'active' : ''} ${!isOpen ? 'collapsed' : ''}`}
+                className={`
+                  flex items-center gap-3 px-3 py-2.5 rounded-lg
+                  transition-all
+                  ${isActive 
+                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
+                    : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
+                  }
+                `}
               >
-                <span className="claude-nav-icon">{item.icon}</span>
-                <span className="claude-nav-label">{item.name}</span>
-                
-                {/* Tooltip for collapsed state */}
-                {!isOpen && (
-                  <div className="claude-tooltip">{item.name}</div>
-                )}
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span className="font-medium">{item.name}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Spacer */}
-        <div className="flex-1"></div>
-
         {/* Additional Link - Kurse suchen */}
-        <div className="px-2 pb-4">
+        <div className="px-2 pb-2">
           <Link
             href="/courses"
             onClick={() => setIsOpen(false)}
-            className={`claude-nav-item ${pathname === '/courses' ? 'active' : ''} ${!isOpen ? 'collapsed' : ''}`}
+            className={`
+              flex items-center gap-3 px-3 py-2.5 rounded-lg
+              transition-all
+              ${pathname === '/courses' 
+                ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white shadow-md' 
+                : 'text-gray-600 hover:bg-cyan-50 hover:text-cyan-600'
+              }
+            `}
           >
-            <svg className="claude-nav-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="claude-nav-label">Kurse suchen</span>
-            
-            {/* Tooltip for collapsed state */}
-            {!isOpen && (
-              <div className="claude-tooltip">Kurse suchen</div>
-            )}
+            <span className="font-medium">Kurse suchen</span>
           </Link>
         </div>
 
-        {/* User Section / Footer */}
-        <div className="claude-user-section">
-          <div className="text-center">
-            <div className="text-xs text-gray-500">
-              © 2025 Kursfind AI
-            </div>
+        {/* Footer */}
+        <div className="border-t border-gray-200 p-3">
+          <div className="text-center text-xs text-gray-400">
+            © 2025 Kursfind AI
           </div>
         </div>
       </aside>
