@@ -56,6 +56,7 @@ function ChatContent() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingQuery, setLoadingQuery] = useState(''); // Track the current search query for loading animation
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
@@ -112,6 +113,7 @@ function ChatContent() {
       console.error('❌ Exception loading conversation:', error);
     } finally {
       setLoading(false);
+      setLoadingQuery('');
     }
   };
 
@@ -167,6 +169,7 @@ function ChatContent() {
     }
     
     setLoading(true);
+    setLoadingQuery(userMessage); // Store the query for the loading animation
 
     try {
       // ✅ CORRECT: Send ENTIRE conversation history
@@ -268,6 +271,7 @@ function ChatContent() {
       }]);
     } finally {
       setLoading(false);
+      setLoadingQuery('');
     }
   };
 
@@ -763,23 +767,29 @@ function ChatContent() {
                   </div>
                 ))}
 
-                {/* Loading indicator */}
+                {/* Loading indicator - Website-style search animation */}
                 {loading && (
-                  <div className="flex justify-start">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center mr-3 animate-pulse">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                      </svg>
-                    </div>
-                    <div className="bg-white text-gray-800 border border-gray-200 px-6 py-4 rounded-2xl shadow-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex space-x-2">
-                          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  <div className="flex justify-center w-full">
+                    <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-6 sm:px-8 py-5 sm:py-6 max-w-md w-full mx-4">
+                      {/* Sparkle icon + Progress bar */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <svg className="w-6 h-6 text-cyan-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full animate-progress-bar"></div>
                         </div>
-                        <span className="text-sm text-gray-600 font-medium">KI denkt...</span>
                       </div>
+                      {/* Search query text */}
+                      <p className="text-gray-700 text-base">
+                        Suche nach{' '}
+                        <span className="text-cyan-600 font-medium">
+                          {loadingQuery.length > 35 
+                            ? loadingQuery.substring(0, 35) + '...' 
+                            : loadingQuery}
+                        </span>
+                        {' '}...
+                      </p>
                     </div>
                   </div>
                 )}
