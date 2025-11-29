@@ -478,10 +478,20 @@ function ChatContent() {
   };
 
   return (
-    <div className="flex h-screen bg-[#FFFBF5]">
+    <div className="flex h-screen bg-[#FFFBF5] overflow-hidden">
       
-      {/* MOBILE STICKY HEADER - Only visible on mobile */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 lg:hidden">
+      {/* Sidebar */}
+      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      
+      {/* Main Content Wrapper with Push Behavior */}
+      <div className={`
+        flex-1 flex flex-col h-screen
+        transition-all duration-200 ease-in-out
+        ${sidebarOpen ? 'lg:ml-[260px]' : 'lg:ml-[60px]'}
+      `}>
+        
+        {/* MOBILE STICKY HEADER - Only visible on mobile */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 lg:hidden">
         <div className="flex items-center justify-between h-14 px-4">
           {/* Hamburger button - left */}
           <button 
@@ -542,12 +552,6 @@ function ChatContent() {
         </svg>
         <span>Neuer Chat</span>
       </button>
-      
-      {/* Sidebar */}
-      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
 
         {/* Chat Area - Add padding-top for mobile header only */}
         <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
@@ -978,7 +982,9 @@ function ChatContent() {
           </div>
         </div>
       </div>
-    </div>
+      
+      </div> {/* Close Main Content Wrapper */}
+    </div> {/* Close flex container */}
   );
 }
 
