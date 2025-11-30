@@ -1031,8 +1031,8 @@ async function searchStudentApplications(args, context) {
   }
 
   if (funding_type) {
-    // Note: applications table uses funding_type (singular), not funding_types
-    queryBuilder = queryBuilder.eq('funding_type', funding_type);
+    // Note: Database column is funding_types (array), use contains for filtering
+    queryBuilder = queryBuilder.contains('funding_types', [funding_type]);
   }
 
   if (has_funding_approved !== undefined) {
