@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { notifyApplicationStatusChanged } from '@/lib/notifications'
 
 /**
  * PUT /api/applications/[id]
@@ -51,16 +52,24 @@ export async function PUT(request, { params }) {
       return Response.json({ error: 'Provider not found' }, { status: 404 })
     }
     
-    // Verify application belongs to this provider
+    // Verify application belongs to this provider and get student_id + course info
     const { data: application } = await supabase
       .from('applications')
-      .select('provider_id')
+      .select(`
+        provider_id,
+        student_id,
+        status,
+        course_id,
+        courses:course_id (title)
+      `)
       .eq('id', id)
       .single()
     
     if (!application || application.provider_id !== provider.id) {
       return Response.json({ error: 'Application not found or unauthorized' }, { status: 404 })
     }
+    
+    const previousStatus = application.status
     
     // Update application
     const updateData = {
@@ -92,6 +101,23 @@ export async function PUT(request, { params }) {
     if (error) {
       console.error('Update error:', error)
       return Response.json({ error: 'Failed to update application' }, { status: 500 })
+    }
+    
+    // Send notification to student if status changed
+    if (body.status && body.status !== previousStatus && application.student_id) {
+      try {
+        const courseName = application.courses?.title || 'Kurs'
+        await notifyApplicationStatusChanged({
+          studentId: application.student_id,
+          courseName,
+          newStatus: body.status,
+          applicationId: id
+        })
+        console.log('Status change notification sent for application:', id)
+      } catch (notifyError) {
+        // Don't fail the update if notification fails
+        console.error('Error sending status notification:', notifyError)
+      }
     }
     
     return Response.json({ success: true, data: updatedApplication })

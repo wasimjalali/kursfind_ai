@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { notifyApplicationSubmitted } from '@/lib/notifications'
 
 /**
  * POST /api/applications
@@ -145,6 +146,48 @@ export async function POST(request) {
         },
         { status: 500 }
       )
+    }
+
+    // Create notifications for student and provider
+    if (data[0]) {
+      try {
+        // Get course name for notification
+        const { data: courseData } = await supabase
+          .from('courses')
+          .select('title')
+          .eq('id', body.courseId)
+          .single()
+        
+        const courseName = courseData?.title || 'Kurs'
+        const studentName = `${body.firstName} ${body.lastName}`
+        
+        // Only create notifications if we have valid IDs
+        if (studentId && body.providerId) {
+          await notifyApplicationSubmitted({
+            studentId,
+            providerId: body.providerId,
+            courseName,
+            applicationId: data[0].id,
+            studentName
+          })
+          console.log('Notifications created for application:', data[0].id)
+        } else if (body.providerId) {
+          // At minimum, notify the provider even if student is not logged in
+          const { createProviderNotification, PROVIDER_NOTIFICATION_TYPES, NOTIFICATION_CATEGORIES } = await import('@/lib/notifications')
+          await createProviderNotification({
+            providerId: body.providerId,
+            type: PROVIDER_NOTIFICATION_TYPES.NEW_APPLICATION,
+            category: NOTIFICATION_CATEGORIES.APPLICATIONS,
+            title: 'Neue Bewerbung',
+            message: `${studentName} hat sich für "${courseName}" beworben.`,
+            link: `/provider/dashboard/applications`
+          })
+          console.log('Provider notification created for application:', data[0].id)
+        }
+      } catch (notifyError) {
+        // Don't fail the application if notification fails
+        console.error('Error creating notifications:', notifyError)
+      }
     }
 
     // Success response

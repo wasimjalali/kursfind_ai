@@ -1,11 +1,52 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function StudentSidebar({ isOpen, setIsOpen }) {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread notification count
+  useEffect(() => {
+    async function fetchUnreadCount() {
+      try {
+        const res = await fetch('/api/notifications/unread-count?role=student');
+        const data = await res.json();
+        if (data.success) {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch (error) {
+        console.error('Error fetching unread count:', error);
+      }
+    }
+    
+    fetchUnreadCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Refetch when navigating to notifications page
+  useEffect(() => {
+    if (pathname === '/student/dashboard/notifications') {
+      // Small delay to allow marking as read
+      const timeout = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/notifications/unread-count?role=student');
+          const data = await res.json();
+          if (data.success) {
+            setUnreadCount(data.unreadCount);
+          }
+        } catch (error) {
+          console.error('Error fetching unread count:', error);
+        }
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [pathname]);
 
   const menuItems = [
     {
@@ -52,6 +93,16 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       ),
+    },
+    {
+      name: 'Benachrichtigungen',
+      href: '/student/dashboard/notifications',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      ),
+      badge: unreadCount,
     },
     {
       name: 'Profil',
@@ -170,8 +221,23 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
                   paddingRight: isOpen ? '16px' : '0',
                 }}
               >
-                <span className="flex-shrink-0">{item.icon}</span>
+                <span className="flex-shrink-0 relative">
+                  {item.icon}
+                  {/* Badge for collapsed state - positioned on icon */}
+                  {!isOpen && item.badge > 0 && (
+                    <span className="absolute -top-2 -right-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+                      {item.badge > 9 ? '9+' : item.badge}
+                    </span>
+                  )}
+                </span>
                 {isOpen && <span className="font-medium text-[15px]">{item.name}</span>}
+                
+                {/* Badge for expanded state - positioned on right */}
+                {isOpen && item.badge > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 text-xs font-bold text-white bg-red-500 rounded-full">
+                    {item.badge > 9 ? '9+' : item.badge}
+                  </span>
+                )}
                 
                 {/* Tooltip for collapsed state */}
                 {!isOpen && <Tooltip text={item.name} />}
