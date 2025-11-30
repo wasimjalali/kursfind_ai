@@ -143,7 +143,7 @@ export default async function StudentDashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Saved Courses */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200">
+        <Link href="/student/dashboard/saved" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Gespeicherte Kurse</p>
@@ -153,16 +153,13 @@ export default async function StudentDashboardPage() {
               <span className="text-2xl">❤️</span>
             </div>
           </div>
-          <Link
-            href="/student/dashboard/saved"
-            className="text-sm text-cyan-600 hover:text-cyan-700 mt-4 inline-block hover:translate-x-1 transition-transform duration-200"
-          >
+          <span className="text-sm text-cyan-600 mt-4 inline-block">
             Alle anzeigen →
-          </Link>
-        </div>
+          </span>
+        </Link>
 
         {/* Applications */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200">
+        <Link href="/student/dashboard/applications" className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Bewerbungen</p>
@@ -172,16 +169,13 @@ export default async function StudentDashboardPage() {
               <span className="text-2xl">📝</span>
             </div>
           </div>
-          <Link
-            href="/student/dashboard/applications"
-            className="text-sm text-emerald-600 hover:text-emerald-700 mt-4 inline-block hover:translate-x-1 transition-transform duration-200"
-          >
+          <span className="text-sm text-emerald-600 mt-4 inline-block">
             Alle anzeigen →
-          </Link>
-        </div>
+          </span>
+        </Link>
 
         {/* Latest Status */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 mb-1">Letzter Status</p>

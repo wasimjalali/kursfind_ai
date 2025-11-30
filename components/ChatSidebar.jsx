@@ -292,9 +292,19 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 paddingRight: isOpen ? '8px' : '0',
               }}
             >
-              <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                {student.first_name?.[0]?.toUpperCase() || 'U'}
-              </div>
+              {student.avatar_url ? (
+                <Image
+                  src={student.avatar_url}
+                  alt="Profilbild"
+                  width={36}
+                  height={36}
+                  className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                  {student.first_name?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
               {isOpen && (
                 <div className="flex-1 min-w-0">
                   <div className="text-[15px] font-medium text-gray-900 truncate">

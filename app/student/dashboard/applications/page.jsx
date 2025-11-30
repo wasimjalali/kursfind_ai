@@ -319,7 +319,7 @@ const { data: applicationsData, error: appError } = await supabase
 
       {/* Stats Cards - Mobile Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <p className="text-xs sm:text-sm text-gray-600 mb-1">Gesamt</p>
@@ -331,7 +331,7 @@ const { data: applicationsData, error: appError } = await supabase
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <p className="text-xs sm:text-sm text-gray-600 mb-1">Ausstehend</p>
@@ -343,7 +343,7 @@ const { data: applicationsData, error: appError } = await supabase
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <p className="text-xs sm:text-sm text-gray-600 mb-1">Angenommen</p>
@@ -355,7 +355,7 @@ const { data: applicationsData, error: appError } = await supabase
           </div>
         </div>
 
-        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
+        <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <p className="text-xs sm:text-sm text-gray-600 mb-1">Abgelehnt</p>
