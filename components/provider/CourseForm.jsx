@@ -74,6 +74,8 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(course?.image_url || '');
+  const [imageUrlInput, setImageUrlInput] = useState(course?.image_url || '');
+  const [useImageUrl, setUseImageUrl] = useState(!!course?.image_url && !course?.image_url.includes('supabase'));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -138,6 +140,7 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
+      setUseImageUrl(false);
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -147,7 +150,23 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
     }
   };
 
+  const handleImageUrlChange = (e) => {
+    const url = e.target.value;
+    setImageUrlInput(url);
+    setUseImageUrl(true);
+    setImageFile(null);
+    if (url) {
+      setImagePreview(url);
+    }
+  };
+
   const uploadImage = async () => {
+    // If using URL input, return that URL
+    if (useImageUrl && imageUrlInput) {
+      return imageUrlInput.trim();
+    }
+    
+    // If no file selected, return existing URL
     if (!imageFile) return formData.image_url;
 
     try {
@@ -155,20 +174,35 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
       const filePath = `course-images/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('courses')
-        .upload(filePath, imageFile);
+      console.log('Uploading image to:', filePath);
 
-      if (uploadError) throw uploadError;
+      const { error: uploadError, data: uploadData } = await supabase.storage
+        .from('courses')
+        .upload(filePath, imageFile, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error details:', uploadError);
+        // Check if it's a bucket not found error
+        if (uploadError.message?.includes('bucket') || uploadError.message?.includes('not found')) {
+          throw new Error('Speicher-Bucket nicht gefunden. Bitte kontaktieren Sie den Administrator.');
+        }
+        throw uploadError;
+      }
+
+      console.log('Upload successful:', uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('courses')
         .getPublicUrl(filePath);
 
+      console.log('Public URL:', publicUrl);
       return publicUrl;
     } catch (err) {
       console.error('Error uploading image:', err);
-      throw new Error('Fehler beim Hochladen des Bildes');
+      throw new Error('Fehler beim Hochladen des Bildes: ' + (err.message || 'Unbekannter Fehler'));
     }
   };
 
@@ -567,7 +601,7 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
 
       {/* Image Upload */}
       <div>
-        <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Kursbild
         </label>
         
@@ -577,17 +611,67 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
               src={imagePreview}
               alt="Vorschau"
               className="w-full h-48 object-cover rounded-lg border border-gray-200"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
             />
           </div>
         )}
 
-        <input
-          type="file"
-          id="image"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100"
-        />
+        <div className="space-y-3">
+          {/* Option 1: File Upload */}
+          <div>
+            <label className="flex items-center gap-2 mb-2">
+              <input
+                type="radio"
+                checked={!useImageUrl}
+                onChange={() => setUseImageUrl(false)}
+                className="text-cyan-600"
+              />
+              <span className="text-sm text-gray-700">Bild hochladen</span>
+            </label>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              disabled={useImageUrl}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">oder</span>
+            </div>
+          </div>
+
+          {/* Option 2: URL Input */}
+          <div>
+            <label className="flex items-center gap-2 mb-2">
+              <input
+                type="radio"
+                checked={useImageUrl}
+                onChange={() => setUseImageUrl(true)}
+                className="text-cyan-600"
+              />
+              <span className="text-sm text-gray-700">Bild-URL eingeben</span>
+            </label>
+            <input
+              type="url"
+              value={imageUrlInput}
+              onChange={handleImageUrlChange}
+              disabled={!useImageUrl}
+              placeholder="https://example.com/kursbild.jpg"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900 placeholder:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+          </div>
+        </div>
+
         <p className="text-sm text-gray-500 mt-2">
           Empfohlene Größe: 1200x600px (JPG, PNG)
         </p>
