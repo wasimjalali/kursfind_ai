@@ -536,10 +536,6 @@ export default function HomePage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full font-medium mb-6">
-              <Icons.Mail className="w-4 h-4" />
-              <span>Kontakt aufnehmen • Wir sind für dich da</span>
-            </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Starte jetzt deine Kurssuche</h2>
             <p className="text-xl mb-8 opacity-90">
               Finde in Minuten den perfekten AZAV-zertifizierten Kurs. KI-gestützt, staatlich gefördert, 100% kostenlos.

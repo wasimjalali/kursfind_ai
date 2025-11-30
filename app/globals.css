@@ -91,6 +91,28 @@ body {
   color: #4b5563 !important;
 }
 
+/* Override for gradient/colored background sections - white text */
+.marketing-page .text-white h1,
+.marketing-page .text-white h2,
+.marketing-page .text-white h3,
+.marketing-page .text-white h4,
+.marketing-page .text-white p,
+.marketing-layout .text-white h1,
+.marketing-layout .text-white h2,
+.marketing-layout .text-white h3,
+.marketing-layout .text-white h4,
+.marketing-layout .text-white p,
+.marketing-page section.text-white h1,
+.marketing-page section.text-white h2,
+.marketing-page section.text-white h3,
+.marketing-page section.text-white p,
+.marketing-layout section.text-white h1,
+.marketing-layout section.text-white h2,
+.marketing-layout section.text-white h3,
+.marketing-layout section.text-white p {
+  color: #ffffff !important;
+}
+
 /* Marketing page headings sizes */
 .marketing-page h1,
 .marketing-layout h1 {
