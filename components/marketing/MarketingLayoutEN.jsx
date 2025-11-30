@@ -148,7 +148,7 @@ export default function MarketingLayoutEN({ children }) {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm opacity-80">Find your Weiterbildung in minutes — powered by AI.</p>
+              <p className="text-sm text-gray-300">Find your Weiterbildung in minutes — powered by AI.</p>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Platform</h4>

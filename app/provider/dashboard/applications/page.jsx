@@ -47,6 +47,65 @@ function formatDate(dateString) {
   })
 }
 
+function exportToCSV(applications) {
+  if (!applications || applications.length === 0) {
+    alert('Keine Bewerbungen zum Exportieren vorhanden.')
+    return
+  }
+
+  // Define CSV headers
+  const headers = [
+    'Status',
+    'Vorname',
+    'Nachname',
+    'Email',
+    'Telefon',
+    'Kurs',
+    'Förderungsart',
+    'Bewerbungsdatum',
+    'Nachricht',
+    'Bevorzugtes Startdatum',
+    'Förderung genehmigt',
+    'Anbieter-Notizen'
+  ]
+
+  // Map applications to CSV rows
+  const rows = applications.map(app => [
+    getStatusLabel(app.status),
+    app.first_name || '',
+    app.last_name || '',
+    app.email || '',
+    app.phone || '',
+    app.course_title || '',
+    app.funding_type || '',
+    formatDate(app.applied_at),
+    (app.message || '').replace(/"/g, '""').replace(/\n/g, ' '), // Escape quotes and newlines
+    app.preferred_start_date || '',
+    app.has_funding_approved ? 'Ja' : 'Nein',
+    (app.provider_notes || '').replace(/"/g, '""').replace(/\n/g, ' ')
+  ])
+
+  // Build CSV content
+  const csvContent = [
+    headers.join(';'),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(';'))
+  ].join('\n')
+
+  // Add BOM for Excel UTF-8 compatibility
+  const BOM = '\uFEFF'
+  const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
+  
+  // Create download link
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  link.setAttribute('href', url)
+  link.setAttribute('download', `bewerbungen_${new Date().toISOString().split('T')[0]}.csv`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 function calculateStats(applications) {
   const total = applications.length
   const newApps = applications.filter(app => !app.provider_viewed).length
@@ -179,13 +238,26 @@ export default function ApplicationsPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          Bewerbungen
-        </h1>
-        <p className="text-base lg:text-lg text-gray-600">
-          Verwalten Sie Ihre Kursbewerbungen
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+            Bewerbungen
+          </h1>
+          <p className="text-base lg:text-lg text-gray-600">
+            Verwalten Sie Ihre Kursbewerbungen
+          </p>
+        </div>
+        {applications.length > 0 && (
+          <button
+            onClick={() => exportToCSV(applications)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Als CSV exportieren</span>
+          </button>
+        )}
       </div>
 
       {/* Stats Grid */}
