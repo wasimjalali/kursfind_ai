@@ -113,6 +113,16 @@ body {
   color: #ffffff !important;
 }
 
+/* Footer text should be white */
+.marketing-page footer p,
+.marketing-layout footer p,
+.marketing-page footer p.text-white,
+.marketing-layout footer p.text-white,
+.marketing-page p.text-white,
+.marketing-layout p.text-white {
+  color: #ffffff !important;
+}
+
 /* Marketing page headings sizes */
 .marketing-page h1,
 .marketing-layout h1 {
