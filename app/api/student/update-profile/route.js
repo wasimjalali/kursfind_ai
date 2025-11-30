@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase-server';
 import { NextResponse } from 'next/server';
 
 /**
@@ -9,17 +9,8 @@ import { NextResponse } from 'next/server';
  */
 export async function PUT(request) {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // Use server client that properly handles auth from cookies/headers
+    const supabase = await createClient();
     
     // CRITICAL: Get and verify authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();

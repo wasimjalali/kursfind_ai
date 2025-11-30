@@ -1,4 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase-server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 /**
@@ -10,19 +11,18 @@ import { NextResponse } from 'next/server';
 export async function DELETE(request) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-    if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
+    if (!supabaseUrl || !supabaseServiceKey) {
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
       );
     }
 
-    // First, verify authentication with anon key
-    const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
-    const { data: { user }, error: authError } = await supabaseAnon.auth.getUser();
+    // First, verify authentication with server client (reads from cookies)
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     
     if (authError || !user) {
       return NextResponse.json(
@@ -46,7 +46,7 @@ export async function DELETE(request) {
     }
 
     // Use service role key for admin operations (deleting user)
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createServiceClient(supabaseUrl, supabaseServiceKey);
 
     // Get student ID first
     const { data: student, error: studentError } = await supabase
