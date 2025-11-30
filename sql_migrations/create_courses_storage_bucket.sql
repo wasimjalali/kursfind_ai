@@ -10,6 +10,12 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('courses', 'courses', true)
 ON CONFLICT (id) DO NOTHING;
 
+-- Drop existing policies first (if they exist)
+DROP POLICY IF EXISTS "Providers can upload course images" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access to course images" ON storage.objects;
+DROP POLICY IF EXISTS "Providers can update course images" ON storage.objects;
+DROP POLICY IF EXISTS "Providers can delete course images" ON storage.objects;
+
 -- Set up RLS policies for the courses bucket
 -- Allow authenticated users (providers) to upload course images
 CREATE POLICY "Providers can upload course images"
@@ -52,4 +58,3 @@ USING (bucket_id = 'courses');
 -- 4. Add UPDATE policy for authenticated users
 -- 5. Add DELETE policy for authenticated users
 -- ============================================
-

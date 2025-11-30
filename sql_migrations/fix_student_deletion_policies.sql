@@ -5,14 +5,20 @@
 -- students to delete their own accounts
 -- ============================================
 
+-- Drop existing policies first (if they exist)
+DROP POLICY IF EXISTS "Students can delete own profile" ON students;
+DROP POLICY IF EXISTS "Students can delete own saved courses" ON saved_courses;
+DROP POLICY IF EXISTS "Students can delete own applications" ON applications;
+DROP POLICY IF EXISTS "Students can delete own chat history" ON chat_history;
+
 -- Allow students to delete their own profile
-CREATE POLICY IF NOT EXISTS "Students can delete own profile"
+CREATE POLICY "Students can delete own profile"
 ON students FOR DELETE
 TO authenticated
 USING (auth_user_id = auth.uid());
 
 -- Allow students to delete their own saved courses
-CREATE POLICY IF NOT EXISTS "Students can delete own saved courses"
+CREATE POLICY "Students can delete own saved courses"
 ON saved_courses FOR DELETE
 TO authenticated
 USING (student_id IN (
@@ -20,7 +26,7 @@ USING (student_id IN (
 ));
 
 -- Allow students to delete their own applications
-CREATE POLICY IF NOT EXISTS "Students can delete own applications"
+CREATE POLICY "Students can delete own applications"
 ON applications FOR DELETE
 TO authenticated
 USING (student_id IN (
@@ -28,7 +34,7 @@ USING (student_id IN (
 ));
 
 -- Allow students to delete their own chat history
-CREATE POLICY IF NOT EXISTS "Students can delete own chat history"
+CREATE POLICY "Students can delete own chat history"
 ON chat_history FOR DELETE
 TO authenticated
 USING (student_id IN (
@@ -39,8 +45,13 @@ USING (student_id IN (
 -- Storage: Allow students to manage avatars
 -- ============================================
 
+-- Drop existing storage policies first (if they exist)
+DROP POLICY IF EXISTS "Students can upload own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Students can update own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Students can delete own avatar" ON storage.objects;
+
 -- Allow students to upload their own avatar
-CREATE POLICY IF NOT EXISTS "Students can upload own avatar"
+CREATE POLICY "Students can upload own avatar"
 ON storage.objects FOR INSERT
 TO authenticated
 WITH CHECK (
@@ -49,7 +60,7 @@ WITH CHECK (
 );
 
 -- Allow students to update their own avatar
-CREATE POLICY IF NOT EXISTS "Students can update own avatar"
+CREATE POLICY "Students can update own avatar"
 ON storage.objects FOR UPDATE
 TO authenticated
 USING (
@@ -58,7 +69,7 @@ USING (
 );
 
 -- Allow students to delete their own avatar
-CREATE POLICY IF NOT EXISTS "Students can delete own avatar"
+CREATE POLICY "Students can delete own avatar"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (
@@ -76,4 +87,3 @@ USING (
 -- 3. The avatars bucket must exist (created by
 --    create_avatars_storage_bucket.sql)
 -- ============================================
-

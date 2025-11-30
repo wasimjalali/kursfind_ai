@@ -10,6 +10,12 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('avatars', 'avatars', true)
 ON CONFLICT (id) DO NOTHING;
 
+-- Drop existing policies first (if they exist)
+DROP POLICY IF EXISTS "Users can upload their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access to avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects;
+
 -- Set up RLS policies for the avatars bucket
 -- Allow authenticated users to upload their own avatars
 CREATE POLICY "Users can upload their own avatar"
@@ -47,4 +53,3 @@ USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1
 -- 
 -- Then add policies manually in the UI
 -- ============================================
-

@@ -10,6 +10,12 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('logos', 'logos', true)
 ON CONFLICT (id) DO NOTHING;
 
+-- Drop existing policies first (if they exist)
+DROP POLICY IF EXISTS "Providers can upload logos" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access to logos" ON storage.objects;
+DROP POLICY IF EXISTS "Providers can update logos" ON storage.objects;
+DROP POLICY IF EXISTS "Providers can delete logos" ON storage.objects;
+
 -- Set up RLS policies for the logos bucket
 -- Allow authenticated users (providers) to upload logos
 CREATE POLICY "Providers can upload logos"
@@ -52,4 +58,3 @@ USING (bucket_id = 'logos');
 -- 4. Add UPDATE policy for authenticated users
 -- 5. Add DELETE policy for authenticated users
 -- ============================================
-
