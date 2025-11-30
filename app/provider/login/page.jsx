@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { createClient } from '@/lib/supabase-browser';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -16,11 +16,8 @@ export default function ProviderLogin() {
     password: '',
   });
 
-  // Create Supabase client with proper cookie handling
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  // Use shared Supabase browser client for consistent cookie handling
+  const supabase = createClient();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

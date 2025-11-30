@@ -11,6 +11,7 @@ export default function StudentLogin() {
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
+  const [showNoProfileError, setShowNoProfileError] = useState(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -20,6 +21,7 @@ export default function StudentLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setShowNoProfileError(false);
     setLoading(true);
 
     try {
@@ -65,31 +67,12 @@ export default function StudentLogin() {
         console.error('Student profile error:', studentError);
         console.error('Error code:', studentError.code);
         console.error('Error message:', studentError.message);
-        console.error('Error details:', studentError.details);
         
-        // If profile doesn't exist, create it
+        // If profile doesn't exist, show error - do NOT auto-create
         if (studentError.code === 'PGRST116') {
-          console.log('Creating new student profile...');
-          // Try to create the profile
-          const { data: newStudent, error: createError } = await supabase
-            .from('students')
-            .insert([{
-              auth_user_id: data.user.id,
-              email: data.user.email,
-              first_name: data.user.user_metadata?.first_name || '',
-              last_name: data.user.user_metadata?.last_name || '',
-              phone: data.user.user_metadata?.phone || '',
-            }])
-            .select()
-            .single();
-
-          if (createError) {
-            console.error('Error creating profile:', createError);
-            console.error('Create error details:', createError.message, createError.details);
-            throw new Error('Kein Studentenprofil gefunden. Bitte kontaktieren Sie den Support.');
-          }
-          
-          console.log('New student profile created:', newStudent);
+          // Sign out the user since they don't have a student profile
+          await supabase.auth.signOut();
+          throw new Error('NO_STUDENT_PROFILE');
         } else {
           throw new Error(`Fehler beim Abrufen des Profils: ${studentError.message || 'Unbekannter Fehler'}`);
         }
@@ -101,7 +84,12 @@ export default function StudentLogin() {
 
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message || 'Login fehlgeschlagen');
+      if (error.message === 'NO_STUDENT_PROFILE') {
+        setShowNoProfileError(true);
+        setError('');
+      } else {
+        setError(error.message || 'Login fehlgeschlagen');
+      }
     } finally {
       setLoading(false);
     }
@@ -161,6 +149,30 @@ export default function StudentLogin() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
             ❌ {error}
+          </div>
+        )}
+
+        {/* No Student Profile Error - Special handling */}
+        {showNoProfileError && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-4 rounded-lg mb-6">
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p className="font-semibold mb-2">Kein Studentenprofil gefunden</p>
+                <p className="text-sm mb-3">
+                  Für diese E-Mail-Adresse existiert kein Studentenkonto. 
+                  Bitte registrieren Sie sich zuerst als Student.
+                </p>
+                <Link 
+                  href="/student/signup" 
+                  className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                >
+                  Jetzt registrieren →
+                </Link>
+              </div>
+            </div>
           </div>
         )}
 

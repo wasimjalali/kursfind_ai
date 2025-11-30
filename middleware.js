@@ -25,6 +25,17 @@ export async function middleware(request) {
           return request.cookies.get(name)?.value;
         },
         set(name, value, options) {
+          // Ensure cookies are set with proper options for persistence
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
           response.cookies.set({
             name,
             value,
@@ -32,6 +43,16 @@ export async function middleware(request) {
           });
         },
         remove(name, options) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
           response.cookies.set({
             name,
             value: '',
@@ -42,7 +63,8 @@ export async function middleware(request) {
     }
   );
 
-  // Refresh session if expired
+  // Refresh session if expired - this keeps users logged in
+  // by automatically refreshing the JWT token when needed
   await supabase.auth.getUser();
 
   return response;
@@ -50,6 +72,10 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
+    // Match all routes that need auth session handling
     '/provider/:path*',
+    '/student/:path*',
+    '/suchen/:path*',
+    '/api/:path*',
   ],
 };
