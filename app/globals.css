@@ -59,16 +59,39 @@ body {
 
 /* ═══════════════════════════════════════════════════════════════
    MARKETING PAGES TYPOGRAPHY - Consistent with Website
+   Force light mode for marketing pages
    ═══════════════════════════════════════════════════════════════ */
+
+/* Force light mode colors on marketing pages */
+.marketing-page,
+.marketing-layout {
+  --background: #ffffff !important;
+  --foreground: #171717 !important;
+  background-color: #ffffff !important;
+  color: #171717 !important;
+}
+
+/* Marketing page headings - explicit dark colors */
+.marketing-page h1,
+.marketing-layout h1,
+.marketing-page h2,
+.marketing-layout h2,
+.marketing-page h3,
+.marketing-layout h3,
+.marketing-page h4,
+.marketing-layout h4 {
+  color: #111827 !important;
+}
 
 /* Marketing page paragraphs - 17px with 1.6 line height */
 .marketing-page p,
 .marketing-layout p {
   font-size: 17px !important;
   line-height: 1.6 !important;
+  color: #4b5563 !important;
 }
 
-/* Marketing page headings */
+/* Marketing page headings sizes */
 .marketing-page h1,
 .marketing-layout h1 {
   font-size: 3rem;
