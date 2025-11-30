@@ -135,7 +135,7 @@ export async function POST(request) {
       price: body.price || null,
       price_type: body.price_type || 'Einmalzahlung',
       funding_eligible: body.funding_eligible !== undefined ? body.funding_eligible : true,
-      funding_type: body.funding_type || null,
+      // Note: Database column is funding_types (plural), not funding_type
       funding_types: body.funding_types || null,
       benefits: body.benefits || null,
       start_date: body.start_date || null,
@@ -284,7 +284,7 @@ export async function PUT(request) {
       price: body.price || null,
       price_type: body.price_type || existingCourse.price_type || 'Einmalzahlung',
       funding_eligible: body.funding_eligible !== undefined ? body.funding_eligible : existingCourse.funding_eligible,
-      funding_type: body.funding_type || null,
+      // Note: Database column is funding_types (plural), not funding_type
       funding_types: body.funding_types || null,
       benefits: body.benefits || null,
       start_date: body.start_date || null,
