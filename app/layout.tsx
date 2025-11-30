@@ -13,8 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kursfind AI - Intelligente Kurssuche mit Bildungsgutschein",
-  description: "Finden Sie den perfekten Kurs mit KI-Unterstützung. 100% Förderung durch Bildungsgutschein oder AVGS. Karriere-Boost in Digital Marketing, Webentwicklung, Data Science und mehr.",
+  title: "Kursfind AI – Finde deinen perfekten AZAV-Kurs mit KI",
+  description: "KI-gestützte Kurssuche für geförderte Weiterbildung in Deutschland. Finde AZAV-zertifizierte Kurse mit Bildungsgutschein oder AVGS. 100% kostenlos für Lernende.",
+  openGraph: {
+    title: "Kursfind AI – Finde deinen perfekten AZAV-Kurs",
+    description: "Intelligente KI findet den perfekten AZAV-zertifizierten Kurs mit Bildungsgutschein oder AVGS.",
+    type: "website",
+    images: ["/landing/kursfind-ai-logo.jpg"],
+  },
+  icons: {
+    icon: "/landing/kursfind-ai-logo.jpg",
+    shortcut: "/landing/kursfind-ai-logo.jpg",
+    apple: "/landing/kursfind-ai-logo.jpg",
+  },
 };
 
 export default function RootLayout({
