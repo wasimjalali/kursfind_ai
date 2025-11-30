@@ -1,9 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
+
+// Demo texts for AI animation (German)
+const demoTextsDE = [
+  'Digital Marketing Kursen in Berlin',
+  'Web Development Bootcamps in München',
+  'Data Science Weiterbildung in Hamburg',
+  'UX Design Kursen in Köln',
+];
 
 // Lucide-style SVG Icons as components
 const Icons = {
@@ -163,6 +171,11 @@ function FAQItem({ question, answer }) {
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
+  
+  // AI Demo Animation State
+  const [typedText, setTypedText] = useState('');
+  const [aiStep, setAiStep] = useState(0);
+  const [progressWidth, setProgressWidth] = useState(25);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -171,6 +184,39 @@ export default function HomePage() {
     }
     setMobileMenuOpen(false);
   };
+
+  // AI Demo Typewriter Animation
+  useEffect(() => {
+    let typingTimeout;
+    let charIndex = 0;
+    const currentText = demoTextsDE[aiStep];
+    
+    const typeNextChar = () => {
+      if (charIndex <= currentText.length) {
+        setTypedText(currentText.slice(0, charIndex));
+        charIndex++;
+        typingTimeout = setTimeout(typeNextChar, 80);
+      }
+    };
+    
+    // Start typing
+    setTypedText('');
+    charIndex = 0;
+    typeNextChar();
+    
+    // Update progress bar
+    setProgressWidth(((aiStep + 1) / demoTextsDE.length) * 100);
+    
+    // Move to next step after 4 seconds
+    const stepInterval = setTimeout(() => {
+      setAiStep((prev) => (prev + 1) % demoTextsDE.length);
+    }, 4000);
+    
+    return () => {
+      clearTimeout(typingTimeout);
+      clearTimeout(stepInterval);
+    };
+  }, [aiStep]);
 
   return (
     <div className="min-h-screen bg-white marketing-page">
@@ -386,24 +432,28 @@ export default function HomePage() {
               <div className="relative">
                 <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
                   <div className="flex items-center space-x-3 mb-6">
-                    <Icons.Sparkles className="w-6 h-6 text-cyan-500" />
-                    <div className="flex-1">
-                      <div className="h-2 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full w-1/4"></div>
+                    <Icons.Sparkles className="w-6 h-6 text-cyan-500 animate-pulse" />
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div 
+                        className="h-2 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${progressWidth}%` }}
+                      ></div>
                     </div>
                   </div>
                   <div className="text-gray-700 mb-6 min-h-[60px]">
-                    Suche nach <span className="font-semibold text-cyan-600">Digital Marketing Kursen in Berlin</span>...
+                    Suche nach <span className="font-semibold text-cyan-600">{typedText}</span>
+                    <span className="animate-pulse">|</span>
                   </div>
                   <div className="space-y-3">
-                    {[1, 2, 3].map((i) => (
+                    {[0, 1, 2].map((i) => (
                       <div
                         key={i}
-                        className={`bg-gray-50 rounded-lg p-4 border border-gray-100 transition-colors cursor-pointer ${
-                          i === 1 ? 'opacity-100' : 'opacity-40'
+                        className={`bg-gray-50 rounded-lg p-4 border border-gray-100 transition-all duration-300 cursor-pointer hover:border-cyan-200 ${
+                          aiStep >= i ? 'opacity-100' : 'opacity-40'
                         }`}
                       >
                         <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                          <div className={`w-2 h-2 rounded-full transition-colors ${aiStep >= i ? 'bg-emerald-500' : 'bg-gray-300'}`}></div>
                           <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-100 rounded w-3/4"></div>
                         </div>
                         <div className="h-3 bg-gray-100 rounded w-1/2 ml-4"></div>
