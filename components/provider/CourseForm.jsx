@@ -235,9 +235,9 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
         throw new Error('Bitte wählen Sie mindestens eine Förderungsart aus, wenn der Kurs förderungsfähig ist');
       }
 
-      // Upload image if new one selected
+      // Upload image if new one selected OR using URL input
       let imageUrl = formData.image_url;
-      if (imageFile) {
+      if (imageFile || (useImageUrl && imageUrlInput)) {
         imageUrl = await uploadImage();
       }
 
@@ -656,7 +656,10 @@ export default function CourseForm({ course = null, onSuccess, provider = null }
               <input
                 type="radio"
                 checked={useImageUrl}
-                onChange={() => setUseImageUrl(true)}
+                onChange={() => {
+                  setUseImageUrl(true);
+                  setImageFile(null); // Clear any previously selected file
+                }}
                 className="text-cyan-600"
               />
               <span className="text-sm text-gray-700">Bild-URL eingeben</span>
