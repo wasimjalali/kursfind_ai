@@ -17,6 +17,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success' | 'error' | null
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -48,11 +49,28 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
 
     setIsSubmitting(true)
     setSubmitStatus(null)
+    setErrorMessage('')
 
     try {
+      // Validate providerId
+      if (!providerId) {
+        throw new Error('Provider ID fehlt. Bitte laden Sie die Seite neu.')
+      }
+
       // Get auth token from client
       const supabase = (await import('@/lib/supabase-browser')).createClient()
       const { data: { session } } = await supabase.auth.getSession()
+      
+      const requestBody = {
+        ...formData,
+        courseId,
+        courseName,
+        providerId,
+        providerName,
+        submittedAt: new Date().toISOString()
+      }
+      
+      console.log('Submitting application:', requestBody)
       
       const response = await fetch('/api/applications', {
         method: 'POST',
@@ -60,14 +78,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
           'Content-Type': 'application/json',
           'Authorization': session?.access_token ? `Bearer ${session.access_token}` : ''
         },
-        body: JSON.stringify({
-          ...formData,
-          courseId,
-          courseName,
-          providerId,
-          providerName,
-          submittedAt: new Date().toISOString()
-        })
+        body: JSON.stringify(requestBody)
       })
 
       const result = await response.json()
@@ -75,7 +86,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
 
       if (!response.ok) {
         console.error('Application error:', result)
-        throw new Error(result.error || 'Submission failed')
+        throw new Error(result.error || result.details || 'Submission failed')
       }
 
       setSubmitStatus('success')
@@ -101,6 +112,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
     } catch (error) {
       console.error('Application submission error:', error)
       setSubmitStatus('error')
+      setErrorMessage(error.message || 'Ein unbekannter Fehler ist aufgetreten.')
     } finally {
       setIsSubmitting(false)
     }
@@ -303,10 +315,10 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {submitStatus === 'error' && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
-              <span className="font-medium">Fehler beim Absenden. Bitte versuchen Sie es erneut.</span>
+              <span className="font-medium">{errorMessage || 'Fehler beim Absenden. Bitte versuchen Sie es erneut.'}</span>
             </div>
           </div>
         )}

@@ -118,6 +118,8 @@ export async function POST(request) {
       course_id: body.courseId,
       provider_id: body.providerId,
       funding_type: body.fundingType,
+      registration_status: body.registrationStatus || null,
+      preferred_start_date: body.preferredStartDate || null,
       message: body.message || null,
       gdpr_consent: body.gdprConsent,
       marketing_consent: body.marketingConsent || false,
