@@ -144,10 +144,10 @@ function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-cyan-200 hover:shadow-md transition-all bg-white">
+    <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-cyan-200 hover:shadow-md transition-all bg-white cursor-pointer">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left p-6 font-semibold flex justify-between items-center hover:bg-gray-50 transition-colors"
+        className="w-full text-left p-6 font-semibold flex justify-between items-center hover:bg-gray-50 transition-colors cursor-pointer"
         aria-expanded={isOpen}
       >
         <span className="font-semibold text-lg">{question}</span>
