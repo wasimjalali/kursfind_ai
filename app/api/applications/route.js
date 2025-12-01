@@ -148,6 +148,31 @@ export async function POST(request) {
       applicationData.student_id = studentId
     }
 
+    // For guests (no studentId): Check if they already applied with same email + course
+    // Logged-in users are handled by DB constraint (student_id + course_id)
+    if (!studentId) {
+      const { data: existingApplication } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('email', body.email.toLowerCase())
+        .eq('course_id', parseInt(body.courseId))
+        .is('student_id', null)  // Only check guest applications
+        .limit(1)
+        .single()
+      
+      if (existingApplication) {
+        console.log('Guest already applied:', body.email, 'for course:', body.courseId)
+        return Response.json(
+          { 
+            success: false, 
+            error: 'Sie haben sich bereits für diesen Kurs beworben. Bitte warten Sie, bis der Anbieter sich bei Ihnen meldet. Falls Sie innerhalb von 48 Stunden keine Antwort erhalten, finden Sie die Kontaktdaten des Anbieters auf der Kursseite.',
+            code: 'DUPLICATE_GUEST'
+          },
+          { status: 400 }
+        )
+      }
+    }
+
     // Insert into Supabase
     console.log('Attempting to insert:', applicationData)
     const { data, error } = await supabase
@@ -165,7 +190,7 @@ export async function POST(request) {
       if (error.code === '23503') {
         errorMessage = 'Ungültige Kurs- oder Anbieter-ID. Bitte laden Sie die Seite neu.'
       } else if (error.code === '23505') {
-        errorMessage = 'Sie haben sich bereits für diesen Kurs beworben.'
+        errorMessage = 'Sie haben sich bereits für diesen Kurs beworben. Bitte warten Sie, bis der Anbieter sich bei Ihnen meldet. Falls Sie innerhalb von 48 Stunden keine Antwort erhalten, finden Sie die Kontaktdaten des Anbieters auf der Kursseite.'
       }
       
       return Response.json(
