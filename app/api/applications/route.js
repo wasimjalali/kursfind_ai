@@ -116,6 +116,13 @@ export async function POST(request) {
     })
 
     // Prepare data for database insert (camelCase to snake_case)
+    // Note: preferred_start_date column doesn't exist in applications table
+    // Store it in the message field if provided
+    let messageWithStartDate = body.message || ''
+    if (body.preferredStartDate) {
+      messageWithStartDate = `Gewünschter Starttermin: ${body.preferredStartDate}\n\n${messageWithStartDate}`.trim()
+    }
+    
     const applicationData = {
       student_id: studentId,
       first_name: body.firstName,
@@ -126,8 +133,7 @@ export async function POST(request) {
       provider_id: parseInt(body.providerId), // Ensure it's an integer
       funding_type: body.fundingType,
       registration_status: body.registrationStatus || null,
-      preferred_start_date: body.preferredStartDate ? body.preferredStartDate : null,
-      message: body.message || null,
+      message: messageWithStartDate || null,
       gdpr_consent: body.gdprConsent,
       marketing_consent: body.marketingConsent || false,
       // Auto-populated fields
