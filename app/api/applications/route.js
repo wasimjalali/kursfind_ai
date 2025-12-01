@@ -115,32 +115,37 @@ export async function POST(request) {
       preferredStartDate: body.preferredStartDate
     })
 
-    // Prepare data for database insert (camelCase to snake_case)
-    // Note: preferred_start_date column doesn't exist in applications table
-    // Store it in the message field if provided
-    let messageWithStartDate = body.message || ''
+    // Prepare data for database insert
+    // Build message with all extra info (registration status, start date, etc.)
+    let fullMessage = ''
+    if (body.registrationStatus) {
+      fullMessage += `Registriert bei: ${body.registrationStatus}\n`
+    }
     if (body.preferredStartDate) {
-      messageWithStartDate = `Gewünschter Starttermin: ${body.preferredStartDate}\n\n${messageWithStartDate}`.trim()
+      fullMessage += `Gewünschter Starttermin: ${body.preferredStartDate}\n`
+    }
+    if (body.message) {
+      fullMessage += `\n${body.message}`
     }
     
+    // Only include fields that definitely exist in the applications table
     const applicationData = {
-      student_id: studentId,
       first_name: body.firstName,
       last_name: body.lastName,
       email: body.email,
       phone: body.phone,
-      course_id: parseInt(body.courseId), // Ensure it's an integer
-      provider_id: parseInt(body.providerId), // Ensure it's an integer
+      course_id: parseInt(body.courseId),
+      provider_id: parseInt(body.providerId),
       funding_type: body.fundingType,
-      registration_status: body.registrationStatus || null,
-      message: messageWithStartDate || null,
-      gdpr_consent: body.gdprConsent,
-      marketing_consent: body.marketingConsent || false,
-      // Auto-populated fields
+      message: fullMessage.trim() || null,
       status: 'new',
       provider_viewed: false,
-      source: 'course_page',
       applied_at: new Date().toISOString()
+    }
+    
+    // Only add student_id if we have one
+    if (studentId) {
+      applicationData.student_id = studentId
     }
 
     // Insert into Supabase
