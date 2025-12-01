@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
 
@@ -143,50 +143,7 @@ function FAQItem({ question, answer }) {
 export default function AnbieterPage() {
   const [pricingModel, setPricingModel] = useState('cpl');
 
-  // Initialize Cal.com calendar on component mount
-  useEffect(() => {
-    // Load Cal.com script dynamically
-    const initCal = () => {
-      if (typeof window !== 'undefined') {
-        // Check if Cal is already loaded
-        if (window.Cal) {
-          window.Cal("inline", {
-            elementOrSelector: "#cal-booking-container",
-            calLink: "wasim.jalali/30min",
-            layout: "month_view",
-            config: {
-              theme: "light"
-            }
-          });
-          return;
-        }
-
-        // Load the script
-        const script = document.createElement('script');
-        script.src = 'https://app.cal.com/embed/embed.js';
-        script.async = true;
-        script.onload = () => {
-          if (window.Cal) {
-            window.Cal("init", { origin: "https://cal.com" });
-            window.Cal("inline", {
-              elementOrSelector: "#cal-booking-container",
-              calLink: "wasim.jalali/30min",
-              layout: "month_view",
-              config: {
-                theme: "light"
-              }
-            });
-          }
-        };
-        document.head.appendChild(script);
-      }
-    };
-
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(initCal, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
+  
   return (
     <MarketingLayout>
       {/* Hero Section */}
@@ -259,20 +216,19 @@ export default function AnbieterPage() {
           </div>
           
           {/* Video Embed */}
-          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
+          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/nblywT1nm10?autoplay=1&mute=1&loop=1&playlist=nblywT1nm10&controls=1&rel=0&modestbranding=1"
-              title="Kursfind Demo für Anbieter"
+              width="853"
+              height="480"
+              src="https://www.youtube.com/embed/nblywT1nm10"
+              title="Kursfind AI Demo Video"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
-              loading="lazy"
             />
           </div>
-          <p className="text-center text-sm text-gray-500 mt-3">
-            🔇 Video startet stumm – klicken Sie auf das Video für Ton
-          </p>
           
           <div className="mt-8 text-center">
             <Link
@@ -538,7 +494,14 @@ export default function AnbieterPage() {
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Termin vereinbaren</h3>
               <p className="text-sm text-gray-700 text-center mb-4">Buchen Sie ein 30-minütiges Beratungsgespräch</p>
-              <div id="cal-booking-container" className="w-full overflow-y-auto max-h-[600px] min-h-[400px]"></div>
+              <div className="w-full min-h-[600px]">
+                <iframe
+                  src="https://cal.com/wasim.jalali/30min?embed=true&theme=light"
+                  className="w-full h-[600px] border-0 rounded-xl"
+                  title="Termin buchen"
+                  loading="lazy"
+                />
+              </div>
             </div>
 
             {/* Contact Information Grid */}
