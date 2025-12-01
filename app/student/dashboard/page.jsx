@@ -104,8 +104,12 @@ export default async function StudentDashboardPage() {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case 'new':
       case 'pending':
+        return 'bg-blue-100 text-blue-800';
+      case 'contacted':
         return 'bg-yellow-100 text-yellow-800';
+      case 'converted':
       case 'accepted':
         return 'bg-green-100 text-green-800';
       case 'rejected':
@@ -117,14 +121,19 @@ export default async function StudentDashboardPage() {
 
   const getStatusText = (status) => {
     switch (status) {
+      case 'new':
+        return 'Neu';
       case 'pending':
         return 'Ausstehend';
+      case 'contacted':
+        return 'Kontaktiert';
+      case 'converted':
       case 'accepted':
         return 'Angenommen';
       case 'rejected':
         return 'Abgelehnt';
       default:
-        return status;
+        return status || 'Neu';
     }
   };
 

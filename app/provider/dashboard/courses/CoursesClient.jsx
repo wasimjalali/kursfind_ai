@@ -110,25 +110,25 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                 {courses.map((course) => (
                   <tr key={course.id} className="hover:bg-gray-50">
                     <td className="px-4 sm:px-6 py-4">
-                      <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="flex items-start gap-3 sm:gap-4">
                         {course.image_url ? (
                           <img
                             src={course.image_url}
                             alt={course.title}
-                            className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg border flex-shrink-0"
+                            className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg border flex items-center justify-center flex-shrink-0">
-                            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-lg border flex items-center justify-center flex-shrink-0">
+                            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                           </div>
                         )}
-                        <div className="min-w-0">
-                          <p className="font-medium text-sm sm:text-base text-gray-900 line-clamp-2">{course.title}</p>
-                          <p className="text-xs sm:text-sm text-gray-500 line-clamp-1 hidden sm:block">{course.description}</p>
+                        <div className="min-w-0 max-w-xs">
+                          <p className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 mb-1">{course.title}</p>
+                          <p className="text-xs text-gray-500 line-clamp-2 hidden sm:block">{course.description?.substring(0, 100)}{course.description?.length > 100 ? '...' : ''}</p>
                           {/* Show status on mobile inline */}
-                          <span className={`inline-block mt-1 md:hidden px-2 py-0.5 rounded-full text-xs font-medium ${
+                          <span className={`inline-block mt-2 md:hidden px-2 py-0.5 rounded-full text-xs font-medium ${
                             (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                           }`}>
                             {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}

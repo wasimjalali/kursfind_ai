@@ -186,33 +186,43 @@ export default function ProfileForm({ initialData }) {
         .eq('auth_user_id', user.id);
       
       // Handle FAQs separately in provider_faqs table
-      if (validFaq.length > 0) {
-        // Get provider ID
-        const { data: providerData } = await supabase
-          .from('providers')
-          .select('provider_id')
-          .eq('auth_user_id', user.id)
-          .single();
+      // Get provider data (both id and provider_id)
+      const { data: providerData } = await supabase
+        .from('providers')
+        .select('id, provider_id')
+        .eq('auth_user_id', user.id)
+        .single();
+      
+      if (providerData) {
+        // Delete existing FAQs (try both provider_id formats)
+        await supabase
+          .from('provider_faqs')
+          .delete()
+          .eq('provider_id', providerData.provider_id);
         
-        if (providerData) {
-          // Delete existing FAQs
-          await supabase
-            .from('provider_faqs')
-            .delete()
-            .eq('provider_id', providerData.provider_id);
-          
-          // Insert new FAQs
+        // Also try deleting by numeric id in case that's what's stored
+        await supabase
+          .from('provider_faqs')
+          .delete()
+          .eq('provider_id', providerData.id);
+        
+        // Insert new FAQs if any
+        if (validFaq.length > 0) {
           const faqsToInsert = validFaq.map((faq, index) => ({
-            provider_id: providerData.provider_id,
+            provider_id: providerData.provider_id, // Use text slug
             question: faq.question,
             answer: faq.answer,
             is_active: true,
             display_order: index + 1
           }));
           
-          await supabase
+          const { error: faqError } = await supabase
             .from('provider_faqs')
             .insert(faqsToInsert);
+          
+          if (faqError) {
+            console.error('FAQ insert error:', faqError);
+          }
         }
       }
 
