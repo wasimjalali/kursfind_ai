@@ -62,7 +62,8 @@ async function getCourseData(identifier) {
   console.log('Provider data:', { 
     found: !!provider, 
     name: provider?.name,
-    provider_id: provider?.provider_id 
+    id: provider?.id,  // Numeric ID for applications table
+    provider_id: provider?.provider_id  // Text slug
   })
 
   // Fetch provider FAQs

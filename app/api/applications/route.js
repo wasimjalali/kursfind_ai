@@ -108,6 +108,13 @@ export async function POST(request) {
     
     console.log('Final student_id:', studentId)
 
+    // Log incoming data for debugging
+    console.log('Received application data:', {
+      courseId: body.courseId,
+      providerId: body.providerId,
+      preferredStartDate: body.preferredStartDate
+    })
+
     // Prepare data for database insert (camelCase to snake_case)
     const applicationData = {
       student_id: studentId,
@@ -115,11 +122,11 @@ export async function POST(request) {
       last_name: body.lastName,
       email: body.email,
       phone: body.phone,
-      course_id: body.courseId,
-      provider_id: body.providerId,
+      course_id: parseInt(body.courseId), // Ensure it's an integer
+      provider_id: parseInt(body.providerId), // Ensure it's an integer
       funding_type: body.fundingType,
       registration_status: body.registrationStatus || null,
-      preferred_start_date: body.preferredStartDate || null,
+      preferred_start_date: body.preferredStartDate ? body.preferredStartDate : null,
       message: body.message || null,
       gdpr_consent: body.gdprConsent,
       marketing_consent: body.marketingConsent || false,
@@ -140,11 +147,22 @@ export async function POST(request) {
     if (error) {
       console.error('Supabase insert error:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
+      console.error('Application data that failed:', JSON.stringify(applicationData, null, 2))
+      
+      // Provide more specific error message
+      let errorMessage = 'Fehler beim Speichern der Bewerbung. Bitte versuchen Sie es später erneut.'
+      if (error.code === '23503') {
+        errorMessage = 'Ungültige Kurs- oder Anbieter-ID. Bitte laden Sie die Seite neu.'
+      } else if (error.code === '23505') {
+        errorMessage = 'Sie haben sich bereits für diesen Kurs beworben.'
+      }
+      
       return Response.json(
         { 
           success: false, 
-          error: 'Fehler beim Speichern der Bewerbung. Bitte versuchen Sie es später erneut.',
-          details: error.message
+          error: errorMessage,
+          details: error.message,
+          code: error.code
         },
         { status: 500 }
       )
