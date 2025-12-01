@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { notifyApplicationStatusChanged } from '@/lib/notifications'
+import { sendStudentApplicationAccepted, sendStudentApplicationRejected } from '@/lib/email'
 
 /**
  * PUT /api/applications/[id]
@@ -60,6 +61,9 @@ export async function PUT(request, { params }) {
         student_id,
         status,
         course_id,
+        first_name,
+        last_name,
+        email,
         courses:course_id (title)
       `)
       .eq('id', id)
@@ -103,20 +107,63 @@ export async function PUT(request, { params }) {
       return Response.json({ error: 'Failed to update application' }, { status: 500 })
     }
     
-    // Send notification to student if status changed
-    if (body.status && body.status !== previousStatus && application.student_id) {
-      try {
-        const courseName = application.courses?.title || 'Kurs'
-        await notifyApplicationStatusChanged({
-          studentId: application.student_id,
-          courseName,
-          newStatus: body.status,
-          applicationId: id
-        })
-        console.log('Status change notification sent for application:', id)
-      } catch (notifyError) {
-        // Don't fail the update if notification fails
-        console.error('Error sending status notification:', notifyError)
+    // Send notification and email to student if status changed
+    if (body.status && body.status !== previousStatus) {
+      const courseName = application.courses?.title || 'Kurs'
+      const studentEmail = application.email
+      const studentName = `${application.first_name} ${application.last_name}`
+      
+      // Get provider details for the email
+      const { data: providerData } = await supabase
+        .from('providers')
+        .select('company_name, email, phone')
+        .eq('id', provider.id)
+        .single()
+      
+      const providerName = providerData?.company_name || 'Anbieter'
+      
+      // Send in-app notification if student is logged in
+      if (application.student_id) {
+        try {
+          await notifyApplicationStatusChanged({
+            studentId: application.student_id,
+            courseName,
+            newStatus: body.status,
+            applicationId: id
+          })
+          console.log('In-app notification sent for application:', id)
+        } catch (notifyError) {
+          console.error('Error sending in-app notification:', notifyError)
+        }
+      }
+      
+      // Send email to student based on new status
+      if (studentEmail) {
+        try {
+          if (body.status === 'converted' || body.status === 'accepted') {
+            // Status: Accepted/Converted
+            await sendStudentApplicationAccepted({
+              studentEmail,
+              studentName,
+              courseName,
+              providerName,
+              providerEmail: providerData?.email,
+              providerPhone: providerData?.phone
+            })
+            console.log('[Email] Acceptance email sent to:', studentEmail)
+          } else if (body.status === 'rejected') {
+            // Status: Rejected
+            await sendStudentApplicationRejected({
+              studentEmail,
+              studentName,
+              courseName,
+              providerName
+            })
+            console.log('[Email] Rejection email sent to:', studentEmail)
+          }
+        } catch (emailError) {
+          console.error('[Email] Failed to send status email:', emailError)
+        }
       }
     }
     

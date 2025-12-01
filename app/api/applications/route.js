@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { notifyApplicationSubmitted } from '@/lib/notifications'
+import { sendStudentApplicationSubmitted, sendProviderNewApplication } from '@/lib/email'
 
 /**
  * POST /api/applications
@@ -204,10 +205,10 @@ export async function POST(request) {
       )
     }
 
-    // Create notifications for student and provider
+    // Create notifications and send emails for student and provider
     if (data[0]) {
       try {
-        // Get course name for notification
+        // Get course details for notification
         const { data: courseData } = await supabase
           .from('courses')
           .select('title')
@@ -217,7 +218,50 @@ export async function POST(request) {
         const courseName = courseData?.title || 'Kurs'
         const studentName = `${body.firstName} ${body.lastName}`
         
-        // Only create notifications if we have valid IDs
+        // Get provider details for email
+        const { data: providerData } = await supabase
+          .from('providers')
+          .select('company_name, email, phone')
+          .eq('id', parseInt(body.providerId))
+          .single()
+        
+        const providerName = providerData?.company_name || body.providerName || 'Anbieter'
+        const providerEmail = providerData?.email
+        
+        // Send email to STUDENT (confirmation)
+        try {
+          await sendStudentApplicationSubmitted({
+            studentEmail: body.email,
+            studentName,
+            courseName,
+            providerName
+          })
+          console.log('[Email] Student confirmation sent to:', body.email)
+        } catch (emailError) {
+          console.error('[Email] Failed to send student email:', emailError)
+        }
+        
+        // Send email to PROVIDER (new application notification)
+        if (providerEmail) {
+          try {
+            await sendProviderNewApplication({
+              providerEmail,
+              providerName,
+              studentName,
+              studentEmail: body.email,
+              studentPhone: body.phone,
+              courseName,
+              fundingType: body.fundingType,
+              message: applicationData.message,
+              applicationId: data[0].id
+            })
+            console.log('[Email] Provider notification sent to:', providerEmail)
+          } catch (emailError) {
+            console.error('[Email] Failed to send provider email:', emailError)
+          }
+        }
+        
+        // Create in-app notifications
         if (studentId && body.providerId) {
           await notifyApplicationSubmitted({
             studentId,
@@ -226,7 +270,7 @@ export async function POST(request) {
             applicationId: data[0].id,
             studentName
           })
-          console.log('Notifications created for application:', data[0].id)
+          console.log('In-app notifications created for application:', data[0].id)
         } else if (body.providerId) {
           // At minimum, notify the provider even if student is not logged in
           const { createProviderNotification, PROVIDER_NOTIFICATION_TYPES, NOTIFICATION_CATEGORIES } = await import('@/lib/notifications')
@@ -238,11 +282,11 @@ export async function POST(request) {
             message: `${studentName} hat sich für "${courseName}" beworben.`,
             link: `/provider/dashboard/applications`
           })
-          console.log('Provider notification created for application:', data[0].id)
+          console.log('Provider in-app notification created for application:', data[0].id)
         }
       } catch (notifyError) {
-        // Don't fail the application if notification fails
-        console.error('Error creating notifications:', notifyError)
+        // Don't fail the application if notification/email fails
+        console.error('Error creating notifications/emails:', notifyError)
       }
     }
 
