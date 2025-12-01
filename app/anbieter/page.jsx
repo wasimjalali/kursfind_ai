@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 import MarketingLayout from '@/components/marketing/MarketingLayout';
 
 // Icons
@@ -144,6 +143,50 @@ function FAQItem({ question, answer }) {
 export default function AnbieterPage() {
   const [pricingModel, setPricingModel] = useState('cpl');
 
+  // Initialize Cal.com calendar on component mount
+  useEffect(() => {
+    // Load Cal.com script dynamically
+    const initCal = () => {
+      if (typeof window !== 'undefined') {
+        // Check if Cal is already loaded
+        if (window.Cal) {
+          window.Cal("inline", {
+            elementOrSelector: "#cal-booking-container",
+            calLink: "wasim.jalali/30min",
+            layout: "month_view",
+            config: {
+              theme: "light"
+            }
+          });
+          return;
+        }
+
+        // Load the script
+        const script = document.createElement('script');
+        script.src = 'https://app.cal.com/embed/embed.js';
+        script.async = true;
+        script.onload = () => {
+          if (window.Cal) {
+            window.Cal("init", { origin: "https://cal.com" });
+            window.Cal("inline", {
+              elementOrSelector: "#cal-booking-container",
+              calLink: "wasim.jalali/30min",
+              layout: "month_view",
+              config: {
+                theme: "light"
+              }
+            });
+          }
+        };
+        document.head.appendChild(script);
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(initCal, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <MarketingLayout>
       {/* Hero Section */}
@@ -216,16 +259,20 @@ export default function AnbieterPage() {
           </div>
           
           {/* Video Embed */}
-          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-black">
+          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-gray-900">
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/nblywT1nm10"
+              src="https://www.youtube.com/embed/nblywT1nm10?autoplay=1&mute=1&loop=1&playlist=nblywT1nm10&controls=1&rel=0&modestbranding=1"
               title="Kursfind Demo für Anbieter"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
+              loading="lazy"
             />
           </div>
+          <p className="text-center text-sm text-gray-500 mt-3">
+            🔇 Video startet stumm – klicken Sie auf das Video für Ton
+          </p>
           
           <div className="mt-8 text-center">
             <Link
@@ -566,46 +613,7 @@ export default function AnbieterPage() {
           </div>
         </div>
 
-        {/* Cal.com Script */}
-        <Script
-          id="cal-embed"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function (C, A, L) {
-                let p = function (a, ar) { a.q.push(ar); };
-                let d = C.document;
-                C.Cal = C.Cal || function () {
-                  let cal = C.Cal;
-                  let ar = arguments;
-                  if (!cal.loaded) {
-                    cal.ns = {};
-                    cal.q = cal.q || [];
-                    d.head.appendChild(d.createElement("script")).src = A;
-                    cal.loaded = true;
-                  }
-                  if (ar[0] === L) {
-                    const api = function () { p(api, arguments); };
-                    const namespace = ar[1];
-                    api.q = api.q || [];
-                    typeof namespace === "string" ? (cal.ns[namespace] = api) && p(api, ar) : p(cal, ar);
-                    return;
-                  }
-                  p(cal, ar);
-                };
-              })(window, "https://app.cal.com/embed/embed.js", "init");
-              Cal("init", {origin:"https://cal.com"});
-              Cal("inline", {
-                elementOrSelector: "#cal-booking-container",
-                calLink: "wasim.jalali/30min",
-                layout: "month_view",
-                config: {
-                  theme: "light"
-                }
-              });
-            `,
-          }}
-        />
+        {/* Cal.com is initialized via useEffect */}
       </section>
 
       {/* FAQ Section */}
