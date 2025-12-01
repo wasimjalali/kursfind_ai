@@ -628,3 +628,69 @@ a, button {
 .claude-recents-section::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PWA ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Slide up animation for install banner */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide down animation for update banner */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* PWA standalone mode adjustments */
+@media all and (display-mode: standalone) {
+  /* Add safe area insets for notched devices */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* Hide install banner when in standalone mode */
+  .pwa-install-banner {
+    display: none !important;
+  }
+}
