@@ -199,8 +199,48 @@ export default function AnbieterPage() {
         </div>
       </section>
 
+      {/* Demo Video Section */}
+      <section className="py-16 md:py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
+              <Icons.Zap className="w-4 h-4" />
+              <span>Demo-Video</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              So funktioniert Kursfind für Anbieter
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              In diesem kurzen Video zeigen wir Ihnen, wie Sie Kurse einstellen, Bewerbungen erhalten und Interessenten verwalten.
+            </p>
+          </div>
+          
+          {/* Video Embed */}
+          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-black">
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/nblywT1nm10"
+              title="Kursfind Demo für Anbieter"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+          
+          <div className="mt-8 text-center">
+            <Link
+              href="/provider/signup"
+              className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:shadow-xl transition-all group"
+            >
+              <span>Jetzt kostenlos starten</span>
+              <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Why Providers Choose Section */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Warum Anbieter Kursfind AI wählen</h2>
