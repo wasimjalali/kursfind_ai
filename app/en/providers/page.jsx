@@ -122,19 +122,19 @@ function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all">
+    <div className="border border-gray-200 rounded-lg overflow-hidden hover:border-cyan-200 hover:shadow-md transition-all bg-white cursor-pointer">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center p-6 text-left"
+        className="w-full text-left p-6 font-semibold flex justify-between items-center hover:bg-gray-50 transition-colors cursor-pointer"
         aria-expanded={isOpen}
       >
-        <span className="font-semibold text-gray-900 pr-4">{question}</span>
-        <span className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold transition-transform">
+        <span className="font-semibold text-lg text-gray-900">{question}</span>
+        <span className="text-cyan-500 text-2xl transition-transform duration-300">
           {isOpen ? '−' : '+'}
         </span>
       </button>
       <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-        <div className="px-6 pb-6 text-gray-600">{answer}</div>
+        <div className="px-6 pb-6 text-gray-600 leading-relaxed bg-gray-50">{answer}</div>
       </div>
     </div>
   );
@@ -216,18 +216,17 @@ export default function ProvidersPageEN() {
           </div>
           
           {/* Video Embed */}
-          <div className="relative w-full pt-[56.25%] rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              width="853"
-              height="480"
-              src="https://www.youtube.com/embed/nblywT1nm10"
-              title="Kursfind AI Demo Video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+          <div className="w-full rounded-2xl overflow-hidden shadow-2xl">
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+              <iframe
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                src="https://www.youtube.com/embed/nblywT1nm10"
+                title="Kursfind AI Demo Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
           </div>
           
           <div className="mt-8 text-center">
