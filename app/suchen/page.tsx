@@ -531,7 +531,7 @@ function ChatContent() {
                     
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
-                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-white/90 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-md">
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-cyan-50 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-md">
                         <p className="text-sm sm:text-base leading-relaxed">{message.content}</p>
                       </div>
                     )}
