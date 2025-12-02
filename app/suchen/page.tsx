@@ -532,7 +532,7 @@ function ChatContent() {
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
                       <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-cyan-50 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-md">
-                        <p className="text-sm sm:text-base leading-relaxed">{message.content}</p>
+                        <p className="text-base sm:text-lg leading-relaxed">{message.content}</p>
                       </div>
                     )}
                     
@@ -559,7 +559,7 @@ function ChatContent() {
                                   // Bold text - Consistent size with paragraph
                                   strong: ({node, ...props}) => (
                                     <strong 
-                                      className="font-bold text-[15px] sm:text-base" 
+                                      className="font-bold text-base sm:text-lg" 
                                       style={{ color: '#1f2937', fontWeight: 700 }} 
                                       {...props} 
                                     />
@@ -567,15 +567,15 @@ function ChatContent() {
                                   // Italic text
                                   em: ({node, ...props}) => (
                                     <em 
-                                      className="italic text-[15px] sm:text-base" 
+                                      className="italic text-base sm:text-lg" 
                                       style={{ color: '#374151' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Paragraphs - Consistent 15px on mobile, 16px on desktop
+                                  // Paragraphs - Consistent 16px on mobile, 18px on desktop
                                   p: ({node, ...props}) => (
                                     <p 
-                                      className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed text-[15px] sm:text-base" 
+                                      className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed text-base sm:text-lg" 
                                       style={{ color: '#374151' }} 
                                       {...props} 
                                     />
@@ -628,7 +628,7 @@ function ChatContent() {
                                   // List items - FIXED: Explicit marker color and consistent text size
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-relaxed text-[15px] sm:text-base marker:text-gray-600 marker:font-normal"
+                                      className="leading-relaxed text-base sm:text-lg marker:text-gray-600 marker:font-normal"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',
@@ -641,7 +641,7 @@ function ChatContent() {
                                   // Links - Visible cyan color
                                   a: ({node, ...props}) => (
                                     <a 
-                                      className="underline font-medium text-[15px] sm:text-base" 
+                                      className="underline font-medium text-base sm:text-lg" 
                                       style={{ color: '#0891b2' }} 
                                       {...props} 
                                     />

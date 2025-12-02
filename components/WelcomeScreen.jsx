@@ -90,10 +90,10 @@ export default function WelcomeScreen({ onExampleClick }) {
                   {example.icon}
                 </span>
                 <div>
-                  <div className="font-semibold text-gray-900 mb-1.5 group-hover:text-cyan-600 transition-colors text-sm sm:text-base">
+                  <div className="font-semibold text-gray-900 mb-1.5 group-hover:text-cyan-600 transition-colors text-base sm:text-lg">
                     {example.title}
                   </div>
-                  <div className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  <div className="text-sm sm:text-base text-gray-600 leading-relaxed">
                     {example.query}
                   </div>
                 </div>
