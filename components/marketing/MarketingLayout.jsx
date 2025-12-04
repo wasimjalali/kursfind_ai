@@ -40,7 +40,7 @@ export default function MarketingLayout({ children }) {
                 height={48}
                 className="h-10 md:h-12 w-auto rounded-xl"
               />
-              <span className="ml-3 text-xl md:text-2xl font-bold text-gray-900">KursFind AI</span>
+              <span className="ml-3 text-xl md:text-2xl font-bold text-gray-900">Kursfind AI</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -96,7 +96,7 @@ export default function MarketingLayout({ children }) {
                 height={40}
                 className="h-10 w-auto rounded-xl"
               />
-              <span className="ml-3 text-xl font-bold text-gray-900">KursFind AI</span>
+              <span className="ml-3 text-xl font-bold text-gray-900">Kursfind AI</span>
               <button onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen">
                 <Icons.X className="w-6 h-6" />
               </button>
