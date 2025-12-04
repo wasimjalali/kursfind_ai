@@ -238,7 +238,7 @@ export default function HomePage() {
 
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20 py-2 md:py-3">
             <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
               <Image
@@ -375,7 +375,7 @@ export default function HomePage() {
               <div>
                 <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
                   <Icons.Sparkles className="w-4 h-4" />
-                  <span>KI-gestützte Kurssuche • 100% kostenlos für Lernende</span>
+                  <span>Kostenlos • Keine Anmeldung nötig</span>
                 </div>
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
                   Finde deine Weiterbildung
