@@ -110,22 +110,17 @@ body {
 .marketing-layout section.text-white h2,
 .marketing-layout section.text-white h3,
 .marketing-layout section.text-white p,
-/* Gradient background sections - force white text */
-.marketing-page .bg-gradient-to-r h1,
-.marketing-page .bg-gradient-to-r h2,
-.marketing-page .bg-gradient-to-r h3,
-.marketing-page .bg-gradient-to-r h4,
-.marketing-page .bg-gradient-to-r p,
-.marketing-layout .bg-gradient-to-r h1,
-.marketing-layout .bg-gradient-to-r h2,
-.marketing-layout .bg-gradient-to-r h3,
-.marketing-layout .bg-gradient-to-r h4,
-.marketing-layout .bg-gradient-to-r p,
-section.bg-gradient-to-r h1,
-section.bg-gradient-to-r h2,
-section.bg-gradient-to-r h3,
-section.bg-gradient-to-r h4,
-section.bg-gradient-to-r p {
+/* Gradient background sections - force white text (only for section-level gradients, not card elements) */
+.marketing-page section.bg-gradient-to-r h1,
+.marketing-page section.bg-gradient-to-r h2,
+.marketing-page section.bg-gradient-to-r h3,
+.marketing-page section.bg-gradient-to-r h4,
+.marketing-page section.bg-gradient-to-r > div p,
+.marketing-layout section.bg-gradient-to-r h1,
+.marketing-layout section.bg-gradient-to-r h2,
+.marketing-layout section.bg-gradient-to-r h3,
+.marketing-layout section.bg-gradient-to-r h4,
+.marketing-layout section.bg-gradient-to-r > div p {
   color: #ffffff !important;
 }
 
@@ -137,6 +132,13 @@ section.bg-gradient-to-r p {
 .marketing-page p.text-white,
 .marketing-layout p.text-white {
   color: #ffffff !important;
+}
+
+/* Footer headings should be white/off-white */
+.marketing-page footer h4,
+.marketing-layout footer h4,
+footer h4.text-white {
+  color: #f9fafb !important;
 }
 
 /* Marketing page headings sizes */
