@@ -614,13 +614,27 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section id="faq" className="py-20 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold">Häufig gestellte Fragen</h2>
+            </div>
+            <div className="space-y-4">
+              {faqData.map((faq, i) => (
+                <FAQItem key={i} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section id="student-waitlist-section" className="py-20 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Starte jetzt deine Kurssuche</h2>
-            <p className="text-xl mb-8 opacity-90">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>Starte jetzt deine Kurssuche</h2>
+            <p className="text-xl mb-8" style={{ color: 'white', opacity: 0.9 }}>
               Finde in Minuten den perfekten AZAV-zertifizierten Kurs. KI-gestützt, staatlich gefördert, 100% kostenlos.
             </p>
             <Link
@@ -630,7 +644,7 @@ export default function HomePage() {
               <span>Jetzt KI-Suche starten</span>
               <Icons.ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="mt-4 text-sm opacity-80">✨ Wir helfen dir, den perfekten Kurs zu finden</p>
+            <p className="mt-4 text-sm" style={{ color: 'white', opacity: 0.8 }}>✨ Wir helfen dir, den perfekten Kurs zu finden</p>
           </div>
         </section>
 
@@ -653,25 +667,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section id="faq" className="py-20 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold">Häufig gestellte Fragen</h2>
-            </div>
-            <div className="space-y-4">
-              {faqData.map((faq, i) => (
-                <FAQItem key={i} question={faq.question} answer={faq.answer} />
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 mb-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Logo & Description */}
             <div>
               <Link href="/" className="flex items-center mb-4 hover:opacity-80 transition-all">
                 <Image
@@ -684,27 +686,24 @@ export default function HomePage() {
               </Link>
               <p className="text-sm text-white">Finde deine Weiterbildung in Minuten — mit KI-Power.</p>
             </div>
+            
+            {/* Für Lernende */}
             <div>
-              <h4 className="text-white font-semibold mb-4">Plattform</h4>
+              <h4 className="text-white font-semibold mb-4">Für Lernende</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <button onClick={() => scrollToSection('for-students')} className="hover:text-cyan-400 transition-all">
-                    Für Lernende
-                  </button>
-                </li>
-                <li>
-                  <Link href="/anbieter" className="hover:text-cyan-400 transition-all">
-                    Für Anbieter
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/courses" className="hover:text-cyan-400 transition-all">
-                    Kurse durchsuchen
+                  <Link href="/suchen" className="hover:text-cyan-400 transition-all">
+                    KI-Suche starten
                   </Link>
                 </li>
                 <li>
                   <button onClick={() => scrollToSection('how-it-works')} className="hover:text-cyan-400 transition-all">
                     So funktioniert&apos;s
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => scrollToSection('demo')} className="hover:text-cyan-400 transition-all">
+                    Demo
                   </button>
                 </li>
                 <li>
@@ -714,6 +713,40 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
+            
+            {/* Für Anbieter */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Für Anbieter</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/anbieter" className="hover:text-cyan-400 transition-all">
+                    Übersicht
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all">
+                    Demo
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all">
+                    Preise
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">
+                    Termin buchen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all">
+                    FAQ
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            
+            {/* Rechtliches & Kontakt */}
             <div>
               <h4 className="text-white font-semibold mb-4">Rechtliches</h4>
               <ul className="space-y-2 text-sm">
@@ -725,6 +758,11 @@ export default function HomePage() {
                 <li>
                   <Link href="/impressum" className="hover:text-cyan-400 transition-all">
                     Impressum
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ueber-uns" className="hover:text-cyan-400 transition-all">
+                    Über uns
                   </Link>
                 </li>
               </ul>

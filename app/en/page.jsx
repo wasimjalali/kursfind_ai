@@ -589,13 +589,27 @@ export default function HomePageEN() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section id="faq" className="py-20 px-4 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold">Frequently Asked Questions</h2>
+            </div>
+            <div className="space-y-4">
+              {faqData.map((faq, i) => (
+                <FAQItem key={i} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-20 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Start your course search now</h2>
-            <p className="text-xl mb-8 opacity-90">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>Start your course search now</h2>
+            <p className="text-xl mb-8" style={{ color: 'white', opacity: 0.9 }}>
               Find the perfect AZAV-certified course in minutes. AI-powered, government-funded, 100% free.
             </p>
             <Link
@@ -605,7 +619,7 @@ export default function HomePageEN() {
               <span>Try AI Search Now</span>
               <Icons.ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="mt-4 text-sm opacity-80">✨ We&apos;ll help you find the perfect course</p>
+            <p className="mt-4 text-sm" style={{ color: 'white', opacity: 0.8 }}>✨ We&apos;ll help you find the perfect course</p>
           </div>
         </section>
 
@@ -627,26 +641,13 @@ export default function HomePageEN() {
             </Link>
           </div>
         </section>
-
-        {/* FAQ Section */}
-        <section id="faq" className="py-20 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold">Frequently Asked Questions</h2>
-            </div>
-            <div className="space-y-4">
-              {faqData.map((faq, i) => (
-                <FAQItem key={i} question={faq.question} answer={faq.answer} />
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 mb-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Logo & Description */}
             <div>
               <Link href="/en" className="flex items-center mb-4 hover:opacity-80 transition-all">
                 <Image
@@ -657,22 +658,39 @@ export default function HomePageEN() {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm text-white">Find your Weiterbildung in minutes — powered by AI.</p>
+              <p className="text-sm text-white">Find your training in minutes — powered by AI.</p>
             </div>
+            
+            {/* For Learners */}
             <div>
-              <h4 className="text-white font-semibold mb-4">Platform</h4>
+              <h4 className="text-white font-semibold mb-4">For Learners</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/en" className="hover:text-cyan-400 transition-all">Home</Link></li>
-                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">AI Search</Link></li>
-                <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">For Providers</Link></li>
-                <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
+                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">Start AI Search</Link></li>
+                <li><Link href="/en#how-it-works" className="hover:text-cyan-400 transition-all">How It Works</Link></li>
+                <li><Link href="/en#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
+                <li><Link href="/en#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
               </ul>
             </div>
+            
+            {/* For Providers */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">For Providers</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">Overview</Link></li>
+                <li><Link href="/en/providers#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
+                <li><Link href="/en/providers#pricing" className="hover:text-cyan-400 transition-all">Pricing</Link></li>
+                <li><Link href="/en/providers#booking" className="hover:text-cyan-400 transition-all">Book Appointment</Link></li>
+                <li><Link href="/en/providers#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+              </ul>
+            </div>
+            
+            {/* Legal & Contact */}
             <div>
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/en/privacy" className="hover:text-cyan-400 transition-all">Privacy Policy</Link></li>
                 <li><Link href="/en/imprint" className="hover:text-cyan-400 transition-all">Imprint</Link></li>
+                <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-4 mt-8">Contact</h4>
               <div className="flex items-center space-x-2 mb-2">
