@@ -438,6 +438,44 @@ export default function HomePageEN() {
           </div>
         </section>
 
+        {/* Student Demo Video Section */}
+        <section className="py-20 px-4 bg-gradient-to-br from-cyan-50 to-emerald-50">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                How Kursfind AI Finds Your Perfect Bootcamp in Minutes
+              </h2>
+              <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
+                In this short video, we'll show you how Kursfind AI helps you find the ideal course for your goals in just a few simple steps.
+              </p>
+            </div>
+            
+            {/* Video Embed */}
+            <div className="w-full rounded-2xl overflow-hidden shadow-2xl">
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+                <iframe
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                  src="https://www.youtube.com/embed/FmxlY9IjF9s?autoplay=1&mute=1"
+                  title="KursFind AI Demo Student"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+            
+            <div className="mt-8 text-center">
+              <Link
+                href="/en/suchen"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all"
+              >
+                <span>Try AI Search Now</span>
+                <Icons.ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works Section */}
         <section id="how-it-works" className="py-20 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
