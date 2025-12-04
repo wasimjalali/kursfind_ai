@@ -493,7 +493,7 @@ export default function AnbieterPage() {
               </ul>
               <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
                 <p className="font-semibold text-gray-900 mb-1">🎁 Launch-Bonus</p>
-                <p className="text-sm text-gray-700">5 kostenlose Leads</p>
+                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 kostenlose Leads' : '1 kostenlose Anmeldung'}</p>
               </div>
               <Link
                 href="/provider/signup"
@@ -536,7 +536,7 @@ export default function AnbieterPage() {
               </ul>
               <div className="bg-white rounded-xl p-4 mb-6 border border-cyan-200">
                 <p className="font-semibold text-gray-900 mb-1">🎁 Launch-Bonus</p>
-                <p className="text-sm text-gray-700">5 kostenlose Leads</p>
+                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 kostenlose Leads' : '1 kostenlose Anmeldung'}</p>
               </div>
               <Link
                 href="/provider/signup"
@@ -574,7 +574,7 @@ export default function AnbieterPage() {
               </ul>
               <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
                 <p className="font-semibold text-gray-900 mb-1">🎁 Launch-Bonus</p>
-                <p className="text-sm text-gray-700">5 kostenlose Leads</p>
+                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 kostenlose Leads' : '1 kostenlose Anmeldung'}</p>
               </div>
               <Link
                 href="/provider/signup"
@@ -701,10 +701,10 @@ export default function AnbieterPage() {
       {/* Section 10: Final CTA */}
       <section className="py-24 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'white' }}>
             Bereit, Ihre Kurse zu füllen?
           </h2>
-          <p className="text-xl text-white mb-10 max-w-2xl mx-auto">
+          <p className="text-xl mb-10 max-w-2xl mx-auto" style={{ color: 'white' }}>
             Starten Sie kostenlos und erhalten Sie qualifizierte Leads mit Bildungsgutschein. Keine Vorabkosten, kein Risiko.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
@@ -837,81 +837,6 @@ export default function AnbieterPage() {
           </div>
         </div>
       </section>
-
-      {/* Provider Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            {/* Logo & Description */}
-            <div className="md:col-span-1">
-              <Link href="/" className="flex items-center mb-4">
-                <Image
-                  src="/landing/kursfind-ai-logo.jpg"
-                  alt="Kursfind AI Logo"
-                  width={48}
-                  height={48}
-                  className="h-12 w-auto rounded-xl"
-                />
-                <span className="ml-3 text-xl font-bold text-white">KursFind AI</span>
-              </Link>
-              <p className="text-sm text-gray-400">
-                KI-gestützte Vermittlung von qualifizierten Kursteilnehmern für AZAV-zertifizierte Bildungsanbieter.
-              </p>
-            </div>
-
-            {/* Für Anbieter */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">Für Anbieter</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="#pricing" className="hover:text-cyan-400 transition-all">Preise</Link></li>
-                <li><Link href="#demo" className="hover:text-cyan-400 transition-all">Demo anfragen</Link></li>
-                <li><Link href="/provider/login" className="hover:text-cyan-400 transition-all">Provider-Dashboard</Link></li>
-                <li><Link href="/provider/signup" className="hover:text-cyan-400 transition-all">Partner werden</Link></li>
-              </ul>
-            </div>
-
-            {/* Rechtliches */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">Rechtliches</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/datenschutz" className="hover:text-cyan-400 transition-all">Datenschutz</Link></li>
-                <li><Link href="/impressum" className="hover:text-cyan-400 transition-all">Impressum</Link></li>
-                <li><Link href="/agb" className="hover:text-cyan-400 transition-all">AGB</Link></li>
-              </ul>
-            </div>
-
-            {/* Kontakt */}
-            <div>
-              <h4 className="text-white font-semibold mb-4">Kontakt</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="mailto:partner@kursfind.de" className="hover:text-cyan-400 transition-all flex items-center gap-2">
-                    <Icons.Mail className="w-4 h-4" />
-                    partner@kursfind.de
-                  </a>
-                </li>
-                <li>
-                  <a href="tel:+491630446980" className="hover:text-cyan-400 transition-all flex items-center gap-2">
-                    <Icons.Phone className="w-4 h-4" />
-                    +49 163 044 6980
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} Kursfind AI. Alle Rechte vorbehalten.
-            </p>
-            <div className="flex items-center space-x-4 mt-4 md:mt-0">
-              <Link href="/en/providers" className="text-sm text-gray-400 hover:text-cyan-400 transition-all">
-                English
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </MarketingLayout>
   );
 }

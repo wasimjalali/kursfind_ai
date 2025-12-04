@@ -51,6 +51,9 @@ export default function MarketingLayoutEN({ children }) {
               <Link href="/en/providers" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 For Providers
               </Link>
+              <Link href="/en/providers#pricing" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                Pricing
+              </Link>
               <Link href="/en/about" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 About Us
               </Link>
@@ -105,6 +108,9 @@ export default function MarketingLayoutEN({ children }) {
               <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 For Providers
               </Link>
+              <Link href="/en/providers#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+                Pricing
+              </Link>
               <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 About Us
               </Link>
@@ -133,7 +139,8 @@ export default function MarketingLayoutEN({ children }) {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 mb-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Logo & Description */}
             <div>
               <Link href="/en" className="flex items-center mb-4 hover:opacity-80 transition-all">
                 <Image
@@ -144,22 +151,37 @@ export default function MarketingLayoutEN({ children }) {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm text-white">Find your Weiterbildung in minutes — powered by AI.</p>
+              <p className="text-sm text-white">Find your training in minutes — powered by AI.</p>
             </div>
+            
+            {/* For Learners */}
             <div>
-              <h4 className="text-white font-semibold mb-4">Platform</h4>
+              <h4 className="text-white font-semibold mb-4">For Learners</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/en" className="hover:text-cyan-400 transition-all">Home</Link></li>
-                <li><Link href="/courses" className="hover:text-cyan-400 transition-all">Browse Courses</Link></li>
-                <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">For Providers</Link></li>
-                <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
+                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">AI Search</Link></li>
+                <li><Link href="/en#demo" className="hover:text-cyan-400 transition-all">How It Works</Link></li>
+                <li><Link href="/en#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
               </ul>
             </div>
+            
+            {/* For Providers */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">For Providers</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/en/providers#pricing" className="hover:text-cyan-400 transition-all">Pricing</Link></li>
+                <li><Link href="/en/providers#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
+                <li><Link href="/en/providers#booking" className="hover:text-cyan-400 transition-all">Become a Partner</Link></li>
+                <li><Link href="/en/providers#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+              </ul>
+            </div>
+            
+            {/* Legal & Contact */}
             <div>
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/en/privacy" className="hover:text-cyan-400 transition-all">Privacy Policy</Link></li>
                 <li><Link href="/en/imprint" className="hover:text-cyan-400 transition-all">Imprint</Link></li>
+                <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-4 mt-8">Contact</h4>
               <div className="flex items-center space-x-2 mb-2">

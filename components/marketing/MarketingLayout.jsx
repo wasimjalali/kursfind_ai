@@ -51,6 +51,9 @@ export default function MarketingLayout({ children }) {
               <Link href="/anbieter" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Für Anbieter
               </Link>
+              <Link href="/anbieter#pricing" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                Preise
+              </Link>
               <Link href="/ueber-uns" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Über uns
               </Link>
@@ -105,6 +108,9 @@ export default function MarketingLayout({ children }) {
               <Link href="/anbieter" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 Für Anbieter
               </Link>
+              <Link href="/anbieter#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+                Preise
+              </Link>
               <Link href="/ueber-uns" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 Über uns
               </Link>
@@ -133,7 +139,8 @@ export default function MarketingLayout({ children }) {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-12 mb-12">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            {/* Logo & Description */}
             <div>
               <Link href="/" className="flex items-center mb-4 hover:opacity-80 transition-all">
                 <Image
@@ -146,20 +153,35 @@ export default function MarketingLayout({ children }) {
               </Link>
               <p className="text-sm text-white">Finde deine Weiterbildung in Minuten — mit KI-Power.</p>
             </div>
+            
+            {/* Für Lernende */}
             <div>
-              <h4 className="text-white font-semibold mb-4">Plattform</h4>
+              <h4 className="text-white font-semibold mb-4">Für Lernende</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/" className="hover:text-cyan-400 transition-all">Startseite</Link></li>
-                <li><Link href="/courses" className="hover:text-cyan-400 transition-all">Kurse durchsuchen</Link></li>
-                <li><Link href="/anbieter" className="hover:text-cyan-400 transition-all">Für Anbieter</Link></li>
-                <li><Link href="/ueber-uns" className="hover:text-cyan-400 transition-all">Über uns</Link></li>
+                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">KI-Suche</Link></li>
+                <li><Link href="/#demo" className="hover:text-cyan-400 transition-all">So funktioniert&apos;s</Link></li>
+                <li><Link href="/#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
               </ul>
             </div>
+            
+            {/* Für Anbieter */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Für Anbieter</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all">Preise</Link></li>
+                <li><Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
+                <li><Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">Partner werden</Link></li>
+                <li><Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+              </ul>
+            </div>
+            
+            {/* Rechtliches & Kontakt */}
             <div>
               <h4 className="text-white font-semibold mb-4">Rechtliches</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/datenschutz" className="hover:text-cyan-400 transition-all">Datenschutzerklärung</Link></li>
                 <li><Link href="/impressum" className="hover:text-cyan-400 transition-all">Impressum</Link></li>
+                <li><Link href="/ueber-uns" className="hover:text-cyan-400 transition-all">Über uns</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-4 mt-8">Kontakt</h4>
               <div className="flex items-center space-x-2 mb-2">
