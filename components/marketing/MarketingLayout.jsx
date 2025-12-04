@@ -45,11 +45,8 @@ export default function MarketingLayout({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Startseite
-              </Link>
-              <Link href="/courses" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Kurse
+              <Link href="/suchen" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                KI-Suche
               </Link>
               <Link href="/anbieter" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 Für Anbieter
@@ -102,11 +99,8 @@ export default function MarketingLayout({ children }) {
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
-                Startseite
-              </Link>
-              <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
-                Kurse
+              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+                KI-Suche
               </Link>
               <Link href="/anbieter" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 Für Anbieter

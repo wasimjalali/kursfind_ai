@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import MarketingLayoutEN from '@/components/marketing/MarketingLayoutEN';
 
 // Icons
@@ -87,6 +88,12 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
     </svg>
   ),
+  Play: ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
 };
 
 // FAQ Data for Providers
@@ -149,37 +156,33 @@ export default function ProvidersPageEN() {
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white via-cyan-50/30 to-gray-50 pt-16 pb-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
-            <Icons.Clock className="w-4 h-4" />
-            <span>Limited Beta • Extended Free Period for Early Adopters</span>
-          </div>
-          <div className="text-cyan-600 font-medium mb-4">For AZAV-Certified Providers</div>
+          <div className="text-cyan-600 font-medium mb-4">For AZAV-Certified Education Providers</div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            Connect with{' '}
+            Qualified{' '}
             <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-              motivated learners
+              Course Participants
             </span>
             <br />
-            with government funding
+            — No Upfront Advertising Costs
           </h1>
           <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-            Reach highly motivated learners with Bildungsgutschein or AVGS funding. List unlimited courses completely free. Flexible pricing models: from €25 per lead (CPL) or from €300 per successful enrollment (CPA) – you decide!
+            AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/provider/signup"
               className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
             >
-              <span className="relative z-10">List Your Courses</span>
+              <span className="relative z-10">Get Started Free</span>
               <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </Link>
             <Link
-              href="/provider/login"
+              href="#demo"
               className="bg-white text-gray-800 px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-xl transition-all border-2 border-gray-200 hover:border-cyan-500"
             >
-              <span>Login</span>
-              <Icons.ArrowRight className="w-5 h-5" />
+              <span>View Demo</span>
+              <Icons.Play className="w-5 h-5" />
             </Link>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-6 mt-8 text-sm text-gray-600">
@@ -200,7 +203,7 @@ export default function ProvidersPageEN() {
       </section>
 
       {/* Demo Video Section */}
-      <section className="py-16 md:py-20 px-4 bg-white">
+      <section id="demo" className="py-16 md:py-20 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
@@ -211,7 +214,7 @@ export default function ProvidersPageEN() {
               See How Kursfind AI Works for Providers
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              In this short video, we show you how to list courses, receive applications, and manage interested students.
+              In 2 minutes, see how to list courses, receive applications, and manage interested students.
             </p>
           </div>
           
@@ -241,35 +244,187 @@ export default function ProvidersPageEN() {
         </div>
       </section>
 
-      {/* Why Providers Choose Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Why providers choose Kursfind AI</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              All the benefits your education business needs to acquire more qualified students
-            </p>
+      {/* Section 4: Problem → Transformation */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+              Stop Paying for Empty Course Seats
+            </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Left Column - The Old Model */}
+            <div className="bg-gray-100 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">The Old Model</h3>
+              <ul className="space-y-4">
+                {[
+                  '€300-800 per lead through Google Ads',
+                  'KURSNET listing brings few inquiries',
+                  'Cold calling employment agencies',
+                  '30-40% of courses cancelled due to low enrollment',
+                  'Hours spent qualifying leads',
+                  'Unknown voucher status of prospects',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="text-red-500 font-bold text-lg">✗</span>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="font-semibold text-red-800 mb-1">Typical Costs:</p>
+                <p className="text-red-700">€8,000-12,000 marketing per course start</p>
+                <p className="text-red-700">4-6 weeks until enrollment</p>
+              </div>
+            </div>
+
+            {/* Right Column - With Kursfind AI */}
+            <div className="bg-emerald-50 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">With Kursfind AI</h3>
+              <ul className="space-y-4">
+                {[
+                  'From €25 per qualified lead (CPL)',
+                  'Or from €300 per successful enrollment (CPA)',
+                  'AI matching brings suitable learners to you',
+                  'All leads have voucher or are applying for one',
+                  'Direct contact via dashboard',
+                  'No upfront advertising budget needed',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="text-emerald-500 font-bold text-lg">✓</span>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 bg-emerald-100 border border-emerald-300 rounded-xl p-4">
+                <p className="font-semibold text-emerald-800 mb-1">Your Advantage:</p>
+                <p className="text-emerald-700">60-70% lower costs per participant</p>
+                <p className="text-emerald-700">2-3 days until enrollment</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: How It Works - 3 Steps */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+              3 Steps to More Course Participants
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Icons.Sparkles, title: 'AI-Verified Quality Leads', desc: 'Our smart AI engine evaluates and filters all applicants by suitability, motivation, and funding eligibility.' },
-              { icon: Icons.ShieldCheck, title: 'Pre-Qualified Students', desc: 'Only prospects with valid Bildungsgutschein, AVGS, or self-payers. No wasted time or resources.' },
-              { icon: Icons.BarChart, title: 'Comprehensive Analytics', desc: 'Real-time dashboard with conversion tracking, lead quality scores, and ROI calculations.' },
-              { icon: Icons.Clock, title: 'Time Savings Through Automation', desc: 'No more manual pre-sorting. Applications go directly to your dashboard with all relevant data.' },
-              { icon: Icons.Users, title: 'Direct Student Communication', desc: 'Contact applicants directly through the platform – phone, email, or chat.' },
-              { icon: Icons.Zap, title: 'Fast Onboarding', desc: 'Free setup, data migration, and personal training. Ready to go in 48 hours.' },
-              { icon: Icons.Gift, title: 'Free Listing', desc: 'All AZAV-certified providers can list their courses for free. No listing fees, no annual fees.' },
-              { icon: Icons.DollarSign, title: 'Pay Only for Results (CPL/CPA)', desc: 'Choose between Cost-per-Lead or Cost-per-Acquisition. Only pay when qualified leads or successful enrollments are generated.' },
-              { icon: Icons.FileCheck, title: 'Short Contract Terms – 3-6 Months', desc: 'Instead of 12+ months like other platforms. Flexibly test, adjust, and scale – without years of commitment.' },
-            ].map((item, i) => (
-              <div key={i} className="group bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 lg:p-8 border-2 border-gray-200 hover:border-cyan-400 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 p-3 shadow-lg group-hover:shadow-cyan-500/50 transition-shadow duration-300">
-                    <item.icon className="h-6 w-6 text-white" />
+              {
+                num: '1',
+                icon: '📝',
+                title: 'List Courses for Free',
+                desc: 'Create your profile and list unlimited AZAV courses. Free setup, no annual fees.',
+              },
+              {
+                num: '2',
+                icon: '🎯',
+                title: 'AI Brings Matching Learners',
+                desc: 'Our AI matches your courses with learners based on goals, location, and funding status.',
+              },
+              {
+                num: '3',
+                icon: '✅',
+                title: 'Accept & Contact',
+                desc: 'Review leads in your dashboard, accept suitable prospects, and contact them directly.',
+              },
+            ].map((step, i) => (
+              <div key={i} className="group bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-cyan-400 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    {step.num}
                   </div>
-                  <h3 className="font-bold text-lg text-gray-900 leading-tight">{item.title}</h3>
+                  <span className="text-3xl">{step.icon}</span>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link
+              href="/provider/signup"
+              className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:shadow-xl transition-all group"
+            >
+              <span>List Your Courses Now</span>
+              <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Benefits - 6 Cards with 3D/Cursor Style */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+              Why Providers Choose Kursfind AI
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Icons.Sparkles,
+                title: 'AI-Verified Quality Leads',
+                desc: 'Our AI evaluates all applicants by suitability, motivation, and funding eligibility.',
+              },
+              {
+                icon: Icons.ShieldCheck,
+                title: 'Pre-Qualified Prospects',
+                desc: 'Only learners with Bildungsgutschein, AVGS, or self-payers. No wasted time.',
+              },
+              {
+                icon: Icons.BarChart,
+                title: 'Comprehensive Analytics',
+                desc: 'Real-time dashboard with conversion tracking, lead scores, and ROI calculation.',
+              },
+              {
+                icon: Icons.Clock,
+                title: 'Time Savings Through Automation',
+                desc: 'No manual pre-sorting. Applications directly in your dashboard with all data.',
+              },
+              {
+                icon: Icons.Phone,
+                title: 'Direct Contact with Prospects',
+                desc: 'Phone, email, or chat — contact leads directly through the platform.',
+              },
+              {
+                icon: Icons.Zap,
+                title: 'Fast Onboarding',
+                desc: 'Free setup and training. Ready to go in 48 hours.',
+              },
+            ].map((item, i) => (
+              <div 
+                key={i} 
+                className="group relative bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1 cursor-pointer overflow-hidden"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  perspective: '1000px',
+                }}
+              >
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+                
+                {/* Glowing border effect */}
+                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-cyan-400/50 transition-all duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-cyan-500/30 transition-all duration-500 group-hover:scale-110">
+                    <item.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors duration-300">{item.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -280,9 +435,8 @@ export default function ProvidersPageEN() {
       <section className="py-12 md:py-16 bg-gray-50" id="pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <p className="text-cyan-600 font-semibold mb-2">Transparent Pricing</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Fair rates for every provider
+              Fair Pricing for Every Provider
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               Pay only for qualified leads or successful enrollments. No setup fees, no hidden costs.
@@ -320,7 +474,7 @@ export default function ProvidersPageEN() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
-                <p className="text-gray-600">Perfect for smaller education providers</p>
+                <p className="text-gray-600">For smaller education providers</p>
                 <p className="text-sm text-cyan-600 font-medium mt-2">Course value: €2,000 - €6,000</p>
               </div>
               <div className="mb-6">
@@ -328,23 +482,19 @@ export default function ProvidersPageEN() {
                   <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€25' : '€300'}</span>
                   <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
                 </div>
-                <p className="text-sm text-emerald-600 font-medium">Launch price (first 6 months)</p>
-                <div className="mt-2 text-sm text-gray-500">
-                  <span className="line-through">Standard: {pricingModel === 'cpl' ? '€30' : '€350'}</span>
-                </div>
               </div>
-              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
-                <p className="font-semibold text-gray-900 mb-2">🎁 Early Adopter Bonus</p>
-                <p className="text-sm text-gray-700">• {pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {['Unlimited course listings', 'Professional page for each course', 'Personal provider dashboard', 'Conversion tracking & analytics', 'Real-time applications', 'Direct student contact', 'Email notifications', 'Free platform setup', 'Free onboarding training'].map((feature, i) => (
+              <ul className="space-y-3 mb-6">
+                {['Unlimited course listings', 'Provider dashboard', 'Conversion tracking', 'Email notifications', 'Standard support'].map((feature, i) => (
                   <li key={i} className="flex items-start space-x-3">
                     <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
               </ul>
+              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
+                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
+                <p className="text-sm text-gray-700">5 free leads</p>
+              </div>
               <Link
                 href="/provider/signup"
                 className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
@@ -357,41 +507,37 @@ export default function ProvidersPageEN() {
             {/* Professional Tier (Highlighted) */}
             <div className="bg-gradient-to-b from-cyan-50 to-emerald-50 border-2 border-cyan-500 rounded-2xl p-6 lg:p-8 shadow-xl hover:shadow-2xl transition-all relative">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
-                  ⭐ Most Popular
+                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg whitespace-nowrap">
+                  ⭐ Popular with Providers
                 </span>
               </div>
               <div className="mb-6 pt-2">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
-                <p className="text-gray-600">Ideal for established providers</p>
+                <p className="text-gray-600">For established providers</p>
                 <p className="text-sm text-cyan-600 font-medium mt-2">Course value: €6,000 - €11,000</p>
               </div>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€40' : '€600'}</span>
+                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€40' : '€450'}</span>
                   <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
                 </div>
-                <p className="text-sm text-emerald-600 font-medium">Launch price (first 6 months)</p>
-                <div className="mt-2 text-sm text-gray-500">
-                  <span className="line-through">Standard: {pricingModel === 'cpl' ? '€48' : '€700'}</span>
-                </div>
               </div>
-              <div className="bg-white rounded-xl p-4 mb-6 border border-cyan-200">
-                <p className="font-semibold text-gray-900 mb-2">🎁 Early Adopter Bonus</p>
-                <p className="text-sm text-gray-700">• {pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {['Unlimited course listings', 'Professional page for each course', 'Personal provider dashboard', 'Conversion tracking & analytics', 'Real-time applications', 'Direct student contact', 'Email notifications', 'Free platform setup', 'Free onboarding training'].map((feature, i) => (
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start space-x-3">
+                  <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Everything in Basic, plus:</span>
+                </li>
+                {['Priority support', 'Advanced analytics', 'Dedicated contact person'].map((feature, i) => (
                   <li key={i} className="flex items-start space-x-3">
                     <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
-                <li className="flex items-start space-x-3">
-                  <Icons.Sparkles className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-900 font-medium">Priority support</span>
-                </li>
               </ul>
+              <div className="bg-white rounded-xl p-4 mb-6 border border-cyan-200">
+                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
+                <p className="text-sm text-gray-700">5 free leads</p>
+              </div>
               <Link
                 href="/provider/signup"
                 className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
@@ -410,34 +556,26 @@ export default function ProvidersPageEN() {
               </div>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€60' : '€850'}</span>
+                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€60' : '€600'}</span>
                   <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
                 </div>
-                <p className="text-sm text-emerald-600 font-medium">Launch price (first 6 months)</p>
-                <div className="mt-2 text-sm text-gray-500">
-                  <span className="line-through">Standard: {pricingModel === 'cpl' ? '€70' : '€1,000'}</span>
-                </div>
               </div>
-              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
-                <p className="font-semibold text-gray-900 mb-2">🎁 Early Adopter Bonus</p>
-                <p className="text-sm text-gray-700">• {pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {['Unlimited course listings', 'Professional page for each course', 'Personal provider dashboard', 'Conversion tracking & analytics', 'Real-time applications', 'Direct student contact', 'Email notifications', 'Free platform setup', 'Free onboarding training'].map((feature, i) => (
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start space-x-3">
+                  <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">Everything in Professional, plus:</span>
+                </li>
+                {['Early access to new features', 'Custom integrations', 'Quarterly strategy calls'].map((feature, i) => (
                   <li key={i} className="flex items-start space-x-3">
                     <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
-                <li className="flex items-start space-x-3">
-                  <Icons.Sparkles className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-900 font-medium">Priority support</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <Icons.Zap className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-900 font-medium">Early access to new features</span>
-                </li>
               </ul>
+              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
+                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
+                <p className="text-sm text-gray-700">5 free leads</p>
+              </div>
               <Link
                 href="/provider/signup"
                 className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
@@ -453,8 +591,158 @@ export default function ProvidersPageEN() {
         </div>
       </section>
 
+      {/* Section 8: Mini-FAQ */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Frequently Asked Questions from Providers
+            </h2>
+          </div>
+          
+          <div className="space-y-4">
+            {[
+              {
+                q: 'What is a "qualified lead"?',
+                a: 'A lead with genuine interest in your course, correct contact details, and confirmed Bildungsgutschein or AVGS status (or self-payer). Unqualified inquiries are not charged.',
+              },
+              {
+                q: 'When do I have to pay?',
+                a: 'With CPL: After receiving the lead. With CPA: Only after successful course enrollment. No advance payments.',
+              },
+              {
+                q: 'What if a lead doesn\'t fit me?',
+                a: 'You can reject leads. Rejected leads are not charged as long as the rejection is justified (e.g., wrong location, wrong course topic).',
+              },
+              {
+                q: 'How quickly will I see results?',
+                a: 'First leads typically within 1-2 weeks after activation, depending on course offering and demand in your region.',
+              },
+              {
+                q: 'Is there a minimum purchase?',
+                a: 'No. You only pay for leads you actually receive. No minimum purchase, no monthly fixed costs.',
+              },
+              {
+                q: 'What makes Kursfind AI different from KURSNET?',
+                a: 'KURSNET is a directory — learners have to search themselves. Kursfind AI is an active matching system: Our AI brings matching learners directly to your courses.',
+              },
+            ].map((item, i) => (
+              <FAQItem key={i} question={item.q} answer={item.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 9: Competitive Comparison */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Kursfind AI vs. Your Alternatives
+            </h2>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left p-4 font-semibold text-gray-900">Criteria</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Google Ads</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">KURSNET</th>
+                  <th className="text-center p-4 font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500">Kursfind AI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 font-medium text-gray-700">Cost per Lead</td>
+                  <td className="p-4 text-center text-gray-600">€300-800</td>
+                  <td className="p-4 text-center text-gray-600">Free*</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">From €25</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 font-medium text-gray-700">Lead Quality</td>
+                  <td className="p-4 text-center text-gray-600">Mixed</td>
+                  <td className="p-4 text-center text-gray-600">Low</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Pre-qualified</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 font-medium text-gray-700">Voucher Status</td>
+                  <td className="p-4 text-center text-gray-600">Unknown</td>
+                  <td className="p-4 text-center text-gray-600">Unknown</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Verified</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 font-medium text-gray-700">Time Investment</td>
+                  <td className="p-4 text-center text-gray-600">High (campaigns)</td>
+                  <td className="p-4 text-center text-gray-600">Low</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Minimal</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="p-4 font-medium text-gray-700">Upfront Investment</td>
+                  <td className="p-4 text-center text-gray-600">€5,000+</td>
+                  <td className="p-4 text-center text-gray-600">None</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">None</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-medium text-gray-700">Results Guarantee</td>
+                  <td className="p-4 text-center text-gray-600">No</td>
+                  <td className="p-4 text-center text-gray-600">No</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Lead Guarantee</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-center text-gray-500 text-sm mt-4">
+            *KURSNET is free but brings few qualified inquiries
+          </p>
+        </div>
+      </section>
+
+      {/* Section 10: Final CTA */}
+      <section className="py-24 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+            Ready to Fill Your Courses?
+          </h2>
+          <p className="text-xl text-white mb-10 max-w-2xl mx-auto">
+            Start for free and receive qualified leads with education vouchers. No upfront costs, no risk.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <Link
+              href="/provider/signup"
+              className="bg-white text-emerald-600 px-10 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:shadow-2xl transition-all group"
+              style={{ height: '56px' }}
+            >
+              <span>Get Started Free</span>
+              <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="#booking"
+              className="border-2 border-white text-white px-10 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:bg-white/10 transition-all"
+              style={{ height: '56px' }}
+            >
+              <span>Consultation Call</span>
+            </Link>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-6 text-white">
+            <span className="flex items-center gap-2">
+              <Icons.Check className="w-5 h-5" />
+              Free course listing
+            </span>
+            <span className="flex items-center gap-2">
+              <Icons.Check className="w-5 h-5" />
+              5 free leads
+            </span>
+            <span className="flex items-center gap-2">
+              <Icons.Check className="w-5 h-5" />
+              Cancel anytime
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section with Cal.com Booking */}
-      <section className="py-20 px-4 bg-gradient-to-br from-cyan-50 to-emerald-50 relative overflow-hidden">
+      <section id="booking" className="py-20 px-4 bg-white relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Become a Kursfind AI Partner</h2>
           <p className="text-xl mb-12 text-gray-700">
@@ -463,7 +751,7 @@ export default function ProvidersPageEN() {
 
           {/* Cal.com Booking Section */}
           <div className="max-w-7xl mx-auto px-4">
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Schedule a Meeting</h3>
               <p className="text-sm text-gray-700 text-center mb-4">Book a 30-minute consultation call</p>
               <div className="w-full min-h-[600px]">
@@ -478,7 +766,7 @@ export default function ProvidersPageEN() {
 
             {/* Contact Information Grid */}
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                   <Icons.Phone className="w-6 h-6 text-cyan-600" />
                   Contact Information
@@ -508,7 +796,7 @@ export default function ProvidersPageEN() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                   <Icons.Sparkles className="w-6 h-6 text-cyan-600" />
                   What to Expect
@@ -545,25 +833,82 @@ export default function ProvidersPageEN() {
             </Link>
           </div>
         </div>
-
-        {/* Cal.com is initialized via useEffect */}
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
+      {/* Provider Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
+            {/* Logo & Description */}
+            <div className="md:col-span-1">
+              <Link href="/en" className="flex items-center mb-4">
+                <Image
+                  src="/landing/kursfind-ai-logo.jpg"
+                  alt="Kursfind AI Logo"
+                  width={48}
+                  height={48}
+                  className="h-12 w-auto rounded-xl"
+                />
+                <span className="ml-3 text-xl font-bold text-white">KursFind AI</span>
+              </Link>
+              <p className="text-sm text-gray-400">
+                AI-powered matching of qualified course participants for AZAV-certified education providers.
+              </p>
+            </div>
+
+            {/* For Providers */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">For Providers</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="#pricing" className="hover:text-cyan-400 transition-all">Pricing</Link></li>
+                <li><Link href="#demo" className="hover:text-cyan-400 transition-all">Request Demo</Link></li>
+                <li><Link href="/provider/login" className="hover:text-cyan-400 transition-all">Provider Dashboard</Link></li>
+                <li><Link href="/provider/signup" className="hover:text-cyan-400 transition-all">Become a Partner</Link></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/en/privacy" className="hover:text-cyan-400 transition-all">Privacy Policy</Link></li>
+                <li><Link href="/en/imprint" className="hover:text-cyan-400 transition-all">Imprint</Link></li>
+                <li><Link href="/en/terms" className="hover:text-cyan-400 transition-all">Terms of Service</Link></li>
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="mailto:partner@kursfind.de" className="hover:text-cyan-400 transition-all flex items-center gap-2">
+                    <Icons.Mail className="w-4 h-4" />
+                    partner@kursfind.de
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+491630446980" className="hover:text-cyan-400 transition-all flex items-center gap-2">
+                    <Icons.Phone className="w-4 h-4" />
+                    +49 163 044 6980
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className="space-y-4">
-            {providerFaqData.map((faq, i) => (
-              <FAQItem key={i} question={faq.question} answer={faq.answer} />
-            ))}
+
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-gray-500">
+              © {new Date().getFullYear()} Kursfind AI. All rights reserved.
+            </p>
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+              <Link href="/anbieter" className="text-sm text-gray-400 hover:text-cyan-400 transition-all">
+                Deutsch
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
+      </footer>
     </MarketingLayoutEN>
   );
 }

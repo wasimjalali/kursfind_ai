@@ -30,7 +30,7 @@ export default function MarketingLayoutEN({ children }) {
     <div className="min-h-screen bg-white flex flex-col marketing-layout">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20 py-2 md:py-3">
             <Link href="/en" className="flex items-center hover:opacity-90 transition-opacity">
               <Image
@@ -45,11 +45,8 @@ export default function MarketingLayoutEN({ children }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/en" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Home
-              </Link>
-              <Link href="/courses" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
-                Courses
+              <Link href="/suchen" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+                AI Search
               </Link>
               <Link href="/en/providers" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
                 For Providers
@@ -102,11 +99,8 @@ export default function MarketingLayoutEN({ children }) {
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
-              <Link href="/en" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
-                Home
-              </Link>
-              <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
-                Courses
+              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+                AI Search
               </Link>
               <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
                 For Providers

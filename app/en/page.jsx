@@ -236,12 +236,11 @@ export default function HomePageEN() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/en" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
-                Home
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-              <Link href="/courses" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
-                Courses
+              <Link
+                href="/suchen"
+                className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group"
+              >
+                AI Search
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
               <button
@@ -310,11 +309,8 @@ export default function HomePageEN() {
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
-              <Link href="/en" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
-                Home
-              </Link>
-              <Link href="/courses" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
-                Courses
+              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+                AI Search
               </Link>
               <button onClick={() => scrollToSection('for-students')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
                 For Students
@@ -378,11 +374,11 @@ export default function HomePageEN() {
                   </Link>
 
                   <Link
-                    href="/courses"
+                    href="/en/providers"
                     className="w-full md:w-auto bg-white text-gray-800 px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all flex items-center justify-center space-x-2 border-2 border-gray-200 hover:border-cyan-500"
                   >
-                    <span>Browse All Courses</span>
-                    <Icons.Search className="w-5 h-5" />
+                    <span>For Providers</span>
+                    <Icons.Building className="w-5 h-5" />
                   </Link>
                 </div>
 
@@ -667,7 +663,7 @@ export default function HomePageEN() {
               <h4 className="text-white font-semibold mb-4">Platform</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/en" className="hover:text-cyan-400 transition-all">Home</Link></li>
-                <li><Link href="/courses" className="hover:text-cyan-400 transition-all">Browse Courses</Link></li>
+                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">AI Search</Link></li>
                 <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">For Providers</Link></li>
                 <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
               </ul>
