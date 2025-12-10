@@ -537,13 +537,13 @@ export default function AnbieterPage() {
                   onClick={() => setPricingModel('cpl')}
                   className={`px-6 py-3 rounded-full font-semibold transition-all ${pricingModel === 'cpl' ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
-                  Cost Per Lead (CPL)
+                  Kosten pro Lead (CPL)
                 </button>
                 <button
                   onClick={() => setPricingModel('cpa')}
                   className={`px-6 py-3 rounded-full font-semibold transition-all ${pricingModel === 'cpa' ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' : 'text-gray-600 hover:text-gray-900'}`}
                 >
-                  Cost Per Acquisition (CPA)
+                  Kosten pro Anmeldung (CPA)
                 </button>
               </div>
               <p className="mt-4 text-sm md:text-base text-gray-600">
