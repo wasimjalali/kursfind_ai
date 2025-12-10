@@ -484,7 +484,7 @@ export default function ProvidersPageEN() {
               {
                 icon: Icons.Phone,
                 title: 'Direct Contact with Prospects',
-                desc: 'Phone, email, or chat — contact leads directly through the platform.',
+                desc: 'Contact leads directly through the platform via phone, email, or chat.',
               },
               {
                 icon: Icons.Zap,
@@ -712,7 +712,7 @@ export default function ProvidersPageEN() {
               },
               {
                 q: 'What makes Kursfind AI different from KURSNET?',
-                a: 'KURSNET is a directory — learners have to search themselves. Kursfind AI is an active matching system: Our AI brings matching learners directly to your courses.',
+                a: 'KURSNET is a directory where learners have to search themselves. Kursfind AI is an active matching system: Our AI brings matching learners directly to your courses.',
               },
             ].map((item, i) => (
               <FAQItem key={i} question={item.q} answer={item.a} />

@@ -360,13 +360,13 @@ export default function HomePageEN() {
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
                   Find your Weiterbildung
                   <br />
-                  in minutes —
+                  in minutes,{' '}
                   <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-                    {' '}powered by AI
+                    powered by AI
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-                  Smart AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect Weiterbildung for your career goals, location, and funding status—completely free.
+                  Smart AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect Weiterbildung for your career goals, location, and funding status, completely free.
                 </p>
                 <div className="space-y-4">
                   <Link
@@ -604,38 +604,38 @@ export default function HomePageEN() {
                 },
                 {
                   icon: Icons.Gift,
-                  title: 'Zero Cost to You — Providers pay us, you search and apply completely free',
-                  desc: 'Search, match, and apply without paying a cent. No hidden fees, ever.',
+                  title: 'Completely Free for You',
+                  desc: 'Providers pay us so you can search and apply at no cost. No hidden fees, no subscriptions, no surprises.',
                 },
                 {
                   icon: Icons.Award,
-                  title: 'Study with Confidence — Every provider is AZAV-certified and government-approved',
-                  desc: 'Find verified bootcamps eligible for Bildungsgutschein or AVGS funding. Only trusted, quality providers.',
+                  title: 'Only Verified Quality Providers',
+                  desc: 'Every provider is AZAV-certified and government-approved. You\'ll only find trusted education providers eligible for Bildungsgutschein or AVGS funding.',
                 },
                 {
                   icon: Icons.Sparkles,
-                  title: 'Save Hours of Research — AI finds your perfect course in seconds',
-                  desc: 'Get matched to courses that actually fit your career goals, location, and schedule. AI does the hard work for you.',
+                  title: 'Save Hours of Research',
+                  desc: 'Our AI finds courses that actually fit your career goals, location, and schedule in seconds. No more endless Googling.',
                 },
                 {
                   icon: Icons.FileCheck,
-                  title: 'Maximize Your Funding — Match with courses that accept your Bildungsgutschein or AVGS',
-                  desc: 'Check your eligibility easily. We guide you through the funding process step-by-step.',
+                  title: 'Maximize Your Funding',
+                  desc: 'Find courses that accept your Bildungsgutschein or AVGS. We guide you through the funding process step-by-step.',
                 },
                 {
                   icon: Icons.Zap,
-                  title: 'Expert Guidance — Get answers about courses, funding, and career paths',
-                  desc: 'AI automation means faster replies and smoother document handling. Start your course sooner.',
+                  title: 'Quick Answers to Your Questions',
+                  desc: 'Get instant answers about courses, funding, and career paths. AI support means faster responses so you can start sooner.',
                 },
                 {
                   icon: Icons.Globe,
-                  title: 'Multilingual Support — Platform available in German, English, and more languages',
-                  desc: 'Search in German, English, or Dari. Language should not be a barrier to your education.',
+                  title: 'Multilingual Support',
+                  desc: 'Use the platform in German, English, or Dari. Language should not be a barrier to your education.',
                 },
                 {
                   icon: Icons.Lock,
                   title: 'GDPR Compliant & Safe',
-                  desc: 'Your data is protected. We only share your information with providers you explicitly choose — no selling, no spam.',
+                  desc: 'Your data is protected. We only share your information with providers you explicitly choose. No selling, no spam.',
                 },
               ].map((benefit, i) => (
                 <div
@@ -699,7 +699,7 @@ export default function HomePageEN() {
             <div className="text-cyan-600 font-medium mb-2">For Education Providers</div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Get verified, high-quality leads for your courses</h2>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              If you&apos;re an AZAV-certified provider in Germany, Kursfind AI helps you reach serious learners—with full consent and GDPR compliance. List unlimited courses completely free.
+              If you&apos;re an AZAV-certified provider in Germany, Kursfind AI helps you reach serious learners with full consent and GDPR compliance. List unlimited courses completely free.
             </p>
             <Link
               href="/en/providers"
@@ -728,7 +728,7 @@ export default function HomePageEN() {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm text-white">Find your training in minutes — powered by AI.</p>
+              <p className="text-sm text-white">Find your training in minutes, powered by AI.</p>
             </div>
             
             {/* For Learners */}

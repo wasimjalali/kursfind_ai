@@ -385,9 +385,9 @@ export default function HomePage() {
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
                   Finde deine Weiterbildung
                   <br />
-                  in Minuten —
+                  in Minuten mit{' '}
                   <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-                    {' '}mit KI-Power
+                    KI-Power
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
@@ -629,38 +629,38 @@ export default function HomePage() {
                 },
                 {
                   icon: Icons.Gift,
-                  title: 'Null Kosten für dich — Anbieter zahlen uns, du suchst und bewirbst dich komplett kostenlos',
-                  desc: 'Suchen, matchen und bewerben ohne einen Cent zu zahlen. Keine versteckten Kosten. Nie.',
+                  title: 'Komplett kostenlos für dich',
+                  desc: 'Anbieter zahlen uns, damit du kostenlos suchst und dich bewirbst. Keine versteckten Gebühren, keine Abos, keine Überraschungen.',
                 },
                 {
                   icon: Icons.Award,
-                  title: 'Lerne mit Sicherheit — Jeder Anbieter ist AZAV-zertifiziert und staatlich geprüft',
-                  desc: 'Finde geprüfte Bootcamps mit Bildungsgutschein oder AVGS-Förderung. Nur vertrauenswürdige Qualitätsanbieter.',
+                  title: 'Nur geprüfte Qualitätsanbieter',
+                  desc: 'Jeder Anbieter ist AZAV-zertifiziert und staatlich geprüft. Du findest hier ausschließlich vertrauenswürdige Bildungsträger mit Bildungsgutschein oder AVGS-Förderung.',
                 },
                 {
                   icon: Icons.Sparkles,
-                  title: 'Spare Stunden an Recherche — KI findet deinen perfekten Kurs in Sekunden',
-                  desc: 'Finde Kurse, die wirklich zu deinen Karrierezielen, deinem Standort und deinem Zeitplan passen. Die KI macht die harte Arbeit für dich.',
+                  title: 'Spare Stunden an Recherche',
+                  desc: 'Unsere KI findet in Sekunden Kurse, die wirklich zu deinen Karrierezielen, deinem Standort und deinem Zeitplan passen. Schluss mit endlosem Googeln.',
                 },
                 {
                   icon: Icons.FileCheck,
-                  title: 'Nutze deine Förderung optimal — Finde Kurse, die deinen Bildungsgutschein oder AVGS akzeptieren',
-                  desc: 'Prüfe deine Berechtigung ganz einfach. Wir begleiten dich Schritt für Schritt durch den Förderprozess.',
+                  title: 'Nutze deine Förderung optimal',
+                  desc: 'Finde Kurse, die deinen Bildungsgutschein oder AVGS akzeptieren. Wir begleiten dich Schritt für Schritt durch den Förderprozess.',
                 },
                 {
                   icon: Icons.Zap,
-                  title: 'Expertenberatung — Erhalte Antworten zu Kursen, Förderung und Karrierewegen',
-                  desc: 'KI-Automatisierung bedeutet schnellere Antworten und reibungslosere Dokumentenabwicklung. Starte deinen Kurs früher.',
+                  title: 'Schnelle Antworten auf deine Fragen',
+                  desc: 'Erhalte sofort Antworten zu Kursen, Förderung und Karrierewegen. Dank KI-Unterstützung geht alles schneller und du kannst früher starten.',
                 },
                 {
                   icon: Icons.Globe,
-                  title: 'Mehrsprachiger Support — Plattform verfügbar auf Deutsch, Englisch und weiteren Sprachen',
-                  desc: 'Suche auf Deutsch, Englisch oder Dari. Sprache sollte keine Barriere für deine Bildung sein.',
+                  title: 'Mehrsprachiger Support',
+                  desc: 'Nutze die Plattform auf Deutsch, Englisch oder Dari. Sprache sollte keine Barriere für deine Bildung sein.',
                 },
                 {
                   icon: Icons.Lock,
                   title: 'DSGVO-konform & sicher',
-                  desc: 'Deine Daten sind geschützt. Wir teilen deine Informationen nur mit Anbietern, die du ausdrücklich wählst — kein Verkauf, kein Spam.',
+                  desc: 'Deine Daten sind geschützt. Wir teilen deine Informationen nur mit Anbietern, die du ausdrücklich wählst. Kein Weiterverkauf, kein Spam.',
                 },
               ].map((benefit, i) => (
                 <div
@@ -754,7 +754,7 @@ export default function HomePage() {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm text-white">Finde deine Weiterbildung in Minuten — mit KI-Power.</p>
+              <p className="text-sm text-white">Finde deine Weiterbildung in Minuten mit KI-Power.</p>
             </div>
             
             {/* Für Lernende */}

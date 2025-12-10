@@ -484,7 +484,7 @@ export default function AnbieterPage() {
               {
                 icon: Icons.Phone,
                 title: 'Direkter Kontakt zu Interessenten',
-                desc: 'Telefon, E-Mail oder Chat — kontaktieren Sie Leads direkt über die Plattform.',
+                desc: 'Kontaktieren Sie Leads direkt über die Plattform per Telefon, E-Mail oder Chat.',
               },
               {
                 icon: Icons.Zap,
@@ -712,7 +712,7 @@ export default function AnbieterPage() {
               },
               {
                 q: 'Was unterscheidet Kursfind AI von KURSNET?',
-                a: 'KURSNET ist ein Verzeichnis — Lernende müssen selbst suchen. Kursfind AI ist ein aktives Matching-System: Unsere KI bringt passende Lernende direkt zu Ihren Kursen.',
+                a: 'KURSNET ist ein Verzeichnis, in dem Lernende selbst suchen müssen. Kursfind AI ist ein aktives Matching-System: Unsere KI bringt passende Lernende direkt zu Ihren Kursen.',
               },
             ].map((item, i) => (
               <FAQItem key={i} question={item.q} answer={item.a} />
