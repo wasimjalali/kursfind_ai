@@ -253,7 +253,7 @@ export default function HomePage() {
                 height={48}
                 className="h-10 md:h-12 w-auto rounded-xl"
               />
-              <span className="ml-3 text-xl md:text-2xl font-bold text-gray-900">Kursfind AI</span>
+              <span className="ml-3 text-xl md:text-2xl font-bold text-gray-900">Kursfind <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">AI</span></span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -327,7 +327,7 @@ export default function HomePage() {
                 height={40}
                 className="h-10 w-auto rounded-xl"
               />
-              <span className="ml-3 text-xl font-bold text-gray-900">Kursfind AI</span>
+              <span className="ml-3 text-xl font-bold text-gray-900">Kursfind <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">AI</span></span>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="transition-transform"
