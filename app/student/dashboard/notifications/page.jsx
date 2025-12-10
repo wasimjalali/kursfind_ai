@@ -126,11 +126,11 @@ export default function StudentNotificationsPage() {
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Benachrichtigungen</h1>
-        <p className="text-gray-500 mt-1">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Benachrichtigungen</h1>
+        <p className="text-base md:text-lg text-gray-600 mt-2">
           Bleiben Sie über Ihre Bewerbungen und wichtige Updates informiert.
         </p>
       </div>

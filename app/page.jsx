@@ -98,6 +98,11 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
     </svg>
   ),
+  Check: ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    </svg>
+  ),
   X: ({ className }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -425,6 +430,11 @@ export default function HomePage() {
 
               {/* Right: AI Demo Card */}
               <div className="relative">
+                <div className="text-center mb-4">
+                  <span className="inline-block bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
+                    Live-Vorschau der KI-Suche
+                  </span>
+                </div>
                 <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
                   <div className="flex items-center space-x-3 mb-6">
                     <Icons.Sparkles className="w-6 h-6 text-cyan-500 animate-pulse" />
@@ -465,11 +475,15 @@ export default function HomePage() {
         <section className="py-20 px-4 bg-gradient-to-br from-cyan-50 to-emerald-50">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-12">
+              <div className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
+                <Icons.Target className="w-4 h-4" />
+                <span>Demo-Video • 2 Minuten</span>
+              </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                So findet Kursfind AI deine perfekte Weiterbildung in Minuten
+                So findet Kursfind AI deine perfekte Weiterbildung
               </h2>
               <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
-                In diesem kurzen Video zeigen wir dir, wie du mit Kursfind AI in wenigen Schritten den idealen Kurs für deine Ziele findest.
+                Sieh dir in 2 Minuten an, wie unsere KI dir hilft, den idealen AZAV-zertifizierten Kurs mit Bildungsgutschein zu finden – Schritt für Schritt erklärt.
               </p>
             </div>
             
@@ -543,8 +557,64 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Your Dashboard Preview Section */}
+        <section className="py-20 px-4 bg-gray-50">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
+                <Icons.Target className="w-4 h-4" />
+                <span>Dein persönliches Dashboard</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                Alles an einem Ort verwalten
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Verfolge deine Bewerbungen, speichere Kurse für später und erhalte personalisierte Empfehlungen. Dein Dashboard zeigt dir immer den aktuellen Stand.
+              </p>
+            </div>
+            
+            {/* Large Screenshot */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 mb-10">
+              <Image
+                src="/screenshots/Student-dashboard-main-page.png"
+                alt="Dein Lernenden-Dashboard"
+                width={1200}
+                height={700}
+                className="w-full h-auto"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
+            </div>
+            
+            {/* Features List + CTA */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <ul className="flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-3">
+                {[
+                  'Gespeicherte Kurse',
+                  'Bewerbungsstatus',
+                  'KI-Empfehlungen',
+                  'Chat-Verlauf',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <div className="w-5 h-5 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Icons.Check className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/suchen"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all group"
+              >
+                <span>Jetzt KI-Suche starten</span>
+                <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Learner Benefits Section */}
-        <section id="for-students" className="py-20 px-4 bg-gray-50">
+        <section id="for-students" className="py-20 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold">Warum Lernende Kursfind AI vertrauen</h2>

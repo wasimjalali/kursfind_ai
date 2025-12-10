@@ -155,48 +155,76 @@ export default function ProvidersPageEN() {
     <MarketingLayoutEN>
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white via-cyan-50/30 to-gray-50 pt-16 pb-20 px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="text-cyan-600 font-medium mb-4">For AZAV-Certified Education Providers</div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-            Qualified{' '}
-            <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-              Course Participants
-            </span>
-            <br />
-            — No Upfront Advertising Costs
-          </h1>
-          <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-            AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/provider/signup"
-              className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
-            >
-              <span className="relative z-10">Get Started Free</span>
-              <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </Link>
-            <Link
-              href="#demo"
-              className="bg-white text-gray-800 px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-xl transition-all border-2 border-gray-200 hover:border-cyan-500"
-            >
-              <span>View Demo</span>
-              <Icons.Play className="w-5 h-5" />
-            </Link>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-6 mt-8 text-sm text-gray-600">
-            <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
-              <Icons.Gift className="w-4 h-4" />
-              <span>Free listing</span>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Copy */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
+                <Icons.Sparkles className="w-4 h-4" />
+                <span>For AZAV-Certified Education Providers</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Qualified{' '}
+                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+                  Course Participants
+                </span>
+                <br />
+                No Upfront Advertising Costs
+              </h1>
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <Link
+                  href="/provider/signup"
+                  className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
+                >
+                  <span className="relative z-10">Get Started Free</span>
+                  <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </Link>
+                <Link
+                  href="#demo"
+                  className="bg-white text-gray-800 px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-xl transition-all border-2 border-gray-200 hover:border-cyan-500"
+                >
+                  <span>View Demo</span>
+                  <Icons.Play className="w-5 h-5" />
+                </Link>
+              </div>
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6 mt-8 text-sm text-gray-600">
+                <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
+                  <Icons.Gift className="w-4 h-4" />
+                  <span>Free listing</span>
+                </div>
+                <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
+                  <Icons.CheckCircle className="w-4 h-4" />
+                  <span>GDPR compliant</span>
+                </div>
+                <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
+                  <Icons.DollarSign className="w-4 h-4" />
+                  <span>From €25 per lead (CPL)</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
-              <Icons.CheckCircle className="w-4 h-4" />
-              <span>GDPR compliant</span>
-            </div>
-            <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
-              <Icons.DollarSign className="w-4 h-4" />
-              <span>From €25 per lead (CPL)</span>
+
+            {/* Right: Dashboard Screenshot */}
+            <div className="relative">
+              <div className="text-center mb-4">
+                <span className="inline-block bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
+                  Your Provider Dashboard
+                </span>
+              </div>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                <Image
+                  src="/screenshots/Provider-dashboard-main-page.png"
+                  alt="Kursfind AI Provider Dashboard"
+                  width={800}
+                  height={500}
+                  className="w-full h-auto"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -358,6 +386,66 @@ export default function ProvidersPageEN() {
               <span>List Your Courses Now</span>
               <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform Preview Section - Applications */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
+              <Icons.Users className="w-4 h-4" />
+              <span>Lead Management</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              All Applications at a Glance
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              See incoming applications in real-time, review applicant profiles, and contact prospects directly through the platform.
+            </p>
+          </div>
+          
+          {/* Large Screenshot */}
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+            <Image
+              src="/screenshots/Provider-student-application-received-page.png"
+              alt="Applications Dashboard"
+              width={1200}
+              height={700}
+              className="w-full h-auto"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform Preview Section - Analytics */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center space-x-2 bg-purple-50 text-purple-600 px-4 py-2 rounded-full font-medium mb-4 border border-purple-200">
+              <Icons.BarChart className="w-4 h-4" />
+              <span>Analytics & Insights</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Track Performance in Real-Time
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Conversion rates, clicks, and ROI at a glance. Optimize your courses based on real data.
+            </p>
+          </div>
+          
+          {/* Large Screenshot */}
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+            <Image
+              src="/screenshots/Provider-dashboard-analytics-page.png"
+              alt="Analytics Dashboard"
+              width={1200}
+              height={700}
+              className="w-full h-auto"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
           </div>
         </div>
       </section>
