@@ -121,7 +121,7 @@ const faqData = [
   },
   {
     question: 'How does the AI matching work?',
-    answer: 'Our AI analyzes your career goals, location, time preferences, and funding status, then finds the most relevant courses from our database of 100+ AZAV-certified programs. It\'s like having a personal education advisor, available 24/7.',
+    answer: 'Our AI analyzes your career goals, location, time preferences, and funding status, then finds the most relevant courses from our database of verified AZAV-certified programs. It\'s like having a personal education advisor, available 24/7.',
   },
   {
     question: 'Can I apply to multiple courses?',
@@ -390,7 +390,7 @@ export default function HomePageEN() {
                 <div className="flex flex-wrap items-center gap-8 mt-8">
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.GraduationCap className="w-5 h-5 text-cyan-500" />
-                    <span className="font-medium">100+ Courses</span>
+                    <span className="font-medium">Verified Courses</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.Building className="w-5 h-5 text-cyan-500" />
@@ -507,7 +507,7 @@ export default function HomePageEN() {
                   num: '2',
                   icon: Icons.Sparkles,
                   title: '2. Get Instant Matches',
-                  desc: 'Our AI analyzes 100+ AZAV-certified courses and instantly recommends the best matches for your situation, goals, and funding eligibility.',
+                  desc: 'Our AI analyzes verified AZAV-certified courses and instantly recommends the best matches for your situation, goals, and funding eligibility.',
                 },
                 {
                   num: '3',

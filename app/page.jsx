@@ -132,7 +132,7 @@ const faqData = [
   },
   {
     question: 'Wie funktioniert das KI-Matching?',
-    answer: 'Unsere KI analysiert deine Karriereziele, deinen Standort, deine Zeitpräferenzen und deinen Förderstatus und findet dann die relevantesten Kurse aus unserer Datenbank mit über 100+ AZAV-zertifizierten Programmen. Es ist wie ein persönlicher Bildungsberater, 24/7 verfügbar.',
+    answer: 'Unsere KI analysiert deine Karriereziele, deinen Standort, deine Zeitpräferenzen und deinen Förderstatus und findet dann die relevantesten Kurse aus unserer Datenbank mit geprüften AZAV-zertifizierten Programmen. Es ist wie ein persönlicher Bildungsberater, 24/7 verfügbar.',
   },
   {
     question: 'Kann ich mich bei mehreren Kursen bewerben?',
@@ -415,7 +415,7 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center gap-8 mt-8">
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.GraduationCap className="w-5 h-5 text-cyan-500" />
-                    <span className="font-medium">100+ Kurse</span>
+                    <span className="font-medium">Geprüfte Kurse</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.Building className="w-5 h-5 text-cyan-500" />
@@ -532,7 +532,7 @@ export default function HomePage() {
                   num: '2',
                   icon: Icons.Sparkles,
                   title: '2. Erhalte sofortige Empfehlungen',
-                  desc: 'Unsere KI analysiert über 100+ AZAV-zertifizierte Kurse und empfiehlt dir sofort die besten Matches für deine Situation, Ziele und Förderberechtigung.',
+                  desc: 'Unsere KI analysiert geprüfte AZAV-zertifizierte Kurse und empfiehlt dir sofort die besten Matches für deine Situation, Ziele und Förderberechtigung.',
                 },
                 {
                   num: '3',
