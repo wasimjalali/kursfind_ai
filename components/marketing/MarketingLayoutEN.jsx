@@ -48,28 +48,28 @@ export default function MarketingLayoutEN({ children, ctaHref, ctaLabel }) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/suchen" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+              <Link href="/suchen" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 AI Search
               </Link>
-              <Link href="/en/providers" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+              <Link href="/en/providers" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 For Providers
               </Link>
-              <Link href="/en/providers#pricing" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+              <Link href="/en/providers#pricing" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 Pricing
               </Link>
-              <Link href="/en/about" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium">
+              <Link href="/en/about" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 About Us
               </Link>
               <div className="flex items-center space-x-2 text-sm">
                 <span className="font-bold text-cyan-600">EN</span>
                 <span className="text-gray-400">|</span>
-                <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors">
+                <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors cursor-pointer">
                   DE
                 </Link>
               </div>
               <Link
                 href={resolvedCtaHref}
-                className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-xl transition-all"
+                className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-xl transition-all cursor-pointer"
               >
                 {resolvedCtaLabel}
               </Link>
@@ -105,27 +105,27 @@ export default function MarketingLayoutEN({ children, ctaHref, ctaLabel }) {
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
-              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 AI Search
               </Link>
-              <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+              <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 For Providers
               </Link>
-              <Link href="/en/providers#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+              <Link href="/en/providers#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 Pricing
               </Link>
-              <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600">
+              <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 About Us
               </Link>
               <div className="flex items-center space-x-2 text-sm py-2">
                 <span className="font-bold text-cyan-600">EN</span>
                 <span className="text-gray-400">|</span>
-                <Link href="/" className="text-gray-600 hover:text-cyan-600">DE</Link>
+                <Link href="/" className="text-gray-600 hover:text-cyan-600 cursor-pointer">DE</Link>
               </div>
               <Link
                 href={resolvedCtaHref}
                 onClick={() => setMobileMenuOpen(false)}
-                className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium text-center"
+                className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium text-center cursor-pointer"
               >
                 {resolvedCtaLabel}
               </Link>

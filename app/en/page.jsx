@@ -250,7 +250,7 @@ export default function HomePageEN() {
               </Link>
               <button
                 onClick={() => scrollToSection('for-students')}
-                className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group"
+                className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group cursor-pointer"
               >
                 For Students
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
@@ -265,7 +265,7 @@ export default function HomePageEN() {
               </Link>
               <button
                 onClick={() => scrollToSection('faq')}
-                className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group"
+                className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group cursor-pointer"
               >
                 FAQ
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
@@ -314,19 +314,19 @@ export default function HomePageEN() {
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
-              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+              <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 AI Search
               </Link>
-              <button onClick={() => scrollToSection('for-students')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+              <button onClick={() => scrollToSection('for-students')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 For Students
               </button>
-              <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+              <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 For Providers
               </Link>
-              <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+              <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 About Us
               </Link>
-              <button onClick={() => scrollToSection('faq')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all">
+              <button onClick={() => scrollToSection('faq')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 FAQ
               </button>
               <div className="flex items-center justify-center space-x-2 text-sm mb-4">
