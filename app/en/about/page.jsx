@@ -33,7 +33,7 @@ const Icons = {
 
 export const metadata = {
   title: 'About Us – Kursfind AI',
-  description: 'Learn more about Kursfind AI and our team. We are revolutionizing how people find their professional development courses.',
+  description: 'Learn more about Kursfind AI and our team. We help job seekers find government-funded training courses in Germany.',
 };
 
 export default function AboutPageEN() {
@@ -78,7 +78,7 @@ export default function AboutPageEN() {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
-              We are revolutionizing how people find their professional development courses
+              We help job seekers find government-funded training courses in Germany
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function AboutPageEN() {
               {teamMembers.map((member, i) => (
                 <div
                   key={i}
-                  className={`group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-${member.color}-300`}
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-cyan-400"
                 >
                   <div className={`aspect-[3/4] bg-gradient-to-br from-${member.color}-100 to-${member.color === 'cyan' ? 'emerald' : 'cyan'}-100 relative overflow-hidden`}>
                     <Image
@@ -182,7 +182,7 @@ export default function AboutPageEN() {
                   </div>
                   <div className="p-6">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                    <p className={`text-${member.color}-600 font-semibold mb-3`}>{member.role}</p>
+                    <p className="bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent font-semibold mb-3">{member.role}</p>
                     <p className="text-gray-600 leading-relaxed">{member.description}</p>
                   </div>
                 </div>
