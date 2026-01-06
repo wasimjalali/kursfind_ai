@@ -176,10 +176,10 @@ export default function ProvidersPageEN() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
-                  href="/provider/signup"
+                  href="#booking"
                   className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
                 >
-                  <span className="relative z-10">Get Started Free</span>
+                  <span className="relative z-10">Free Consultation Call</span>
                   <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </Link>
@@ -242,10 +242,10 @@ export default function ProvidersPageEN() {
           
           <div className="mt-8 text-center">
             <Link
-              href="/provider/signup"
+              href="#booking"
               className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:shadow-xl transition-all group"
             >
-              <span>Get Started for Free</span>
+              <span>Free Consultation Call</span>
               <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -801,7 +801,7 @@ export default function ProvidersPageEN() {
               className="border-2 border-white text-white px-10 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:bg-white/10 transition-all"
               style={{ height: '56px' }}
             >
-              <span>Consultation Call</span>
+              <span>Free Consultation Call</span>
             </Link>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-6 text-white">
