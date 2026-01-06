@@ -152,29 +152,29 @@ export default function ProvidersPageEN() {
 
   
   return (
-    <MarketingLayoutEN>
+    <MarketingLayoutEN ctaHref="/provider/login" ctaLabel="Provider Login">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white via-cyan-50/30 to-gray-50 pt-16 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Copy */}
-            <div className="text-center lg:text-left">
+          <div className="flex justify-center items-center">
+            {/* Centered Copy */}
+            <div className="text-center max-w-4xl">
               <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
                 <Icons.Sparkles className="w-4 h-4" />
                 <span>For AZAV-Certified Education Providers</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                Qualified{' '}
+                Get Qualified{' '}
                 <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
                   Course Participants
                 </span>
                 <br />
                 No Upfront Advertising Costs
               </h1>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed mx-auto">
+                Kursfind AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="/provider/signup"
                   className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-10 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
@@ -191,7 +191,7 @@ export default function ProvidersPageEN() {
                   <Icons.Play className="w-5 h-5" />
                 </Link>
               </div>
-              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-6 mt-8 text-sm text-gray-600">
+              <div className="flex flex-wrap justify-center items-center gap-6 mt-8 text-sm text-gray-600">
                 <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
                   <Icons.Gift className="w-4 h-4" />
                   <span>Free listing</span>
@@ -204,26 +204,6 @@ export default function ProvidersPageEN() {
                   <Icons.DollarSign className="w-4 h-4" />
                   <span>From €25 per lead (CPL)</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Right: Dashboard Screenshot */}
-            <div className="relative">
-              <div className="text-center mb-4">
-                <span className="inline-block bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
-                  Your Provider Dashboard
-                </span>
-              </div>
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-                <Image
-                  src="/screenshots/Provider-dashboard-main-page.png"
-                  alt="Kursfind AI Provider Dashboard"
-                  width={800}
-                  height={500}
-                  className="w-full h-auto"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -287,7 +267,7 @@ export default function ProvidersPageEN() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">The Old Model</h3>
               <ul className="space-y-4">
                 {[
-                  '€300-800 per lead through Google Ads',
+                  '€65-95 per lead through Google Ads',
                   'KURSNET listing brings few inquiries',
                   'Cold calling employment agencies',
                   '30-40% of courses cancelled due to low enrollment',
@@ -563,7 +543,11 @@ export default function ProvidersPageEN() {
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
                 <p className="text-gray-600">For smaller education providers</p>
-                <p className="text-sm text-cyan-600 font-medium mt-2">Course value: €2,000 - €6,000</p>
+                <div className="mt-3">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
+                    Course value: €2,000 - €6,000
+                  </span>
+                </div>
               </div>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2 mb-2">
@@ -602,7 +586,11 @@ export default function ProvidersPageEN() {
               <div className="mb-6 pt-2">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
                 <p className="text-gray-600">For established providers</p>
-                <p className="text-sm text-cyan-600 font-medium mt-2">Course value: €6,000 - €11,000</p>
+                <div className="mt-3">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
+                    Course value: €6,000 - €11,000
+                  </span>
+                </div>
               </div>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2 mb-2">
@@ -640,7 +628,11 @@ export default function ProvidersPageEN() {
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium</h3>
                 <p className="text-gray-600">For high-value training programs</p>
-                <p className="text-sm text-cyan-600 font-medium mt-2">Course value: €11,000+</p>
+                <div className="mt-3">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
+                    Course value: €11,000+
+                  </span>
+                </div>
               </div>
               <div className="mb-6">
                 <div className="flex items-baseline space-x-2 mb-2">
@@ -743,7 +735,7 @@ export default function ProvidersPageEN() {
               <tbody>
                 <tr className="border-b border-gray-100">
                   <td className="p-4 font-medium text-gray-700">Cost per Lead</td>
-                  <td className="p-4 text-center text-gray-600">€300-800</td>
+                  <td className="p-4 text-center text-gray-600">€65-95</td>
                   <td className="p-4 text-center text-gray-600">Free*</td>
                   <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">From €25</td>
                 </tr>

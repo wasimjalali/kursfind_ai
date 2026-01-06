@@ -203,7 +203,7 @@ export default function UeberUnsPage() {
             href="/suchen"
             className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-8 py-4 rounded-lg font-semibold hover:shadow-2xl transition-all"
           >
-            <span>Jetzt KI-Suche starten</span>
+            <span>Kurse kostenlos finden</span>
             <Icons.ArrowRight className="w-5 h-5" />
           </Link>
         </div>

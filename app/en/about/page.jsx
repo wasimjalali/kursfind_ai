@@ -203,7 +203,7 @@ export default function AboutPageEN() {
             href="/suchen"
             className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-8 py-4 rounded-lg font-semibold hover:shadow-2xl transition-all"
           >
-            <span>Start AI Search Now</span>
+            <span>Start AI Search Free</span>
             <Icons.ArrowRight className="w-5 h-5" />
           </Link>
         </div>

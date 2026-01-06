@@ -23,8 +23,11 @@ const Icons = {
   ),
 };
 
-export default function MarketingLayout({ children }) {
+export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const resolvedCtaHref = ctaHref ?? '/suchen';
+  const resolvedCtaLabel = ctaLabel ?? 'Kurse kostenlos finden';
 
   return (
     <div className="min-h-screen bg-white flex flex-col marketing-layout">
@@ -65,10 +68,10 @@ export default function MarketingLayout({ children }) {
                 <span className="font-bold text-cyan-600">DE</span>
               </div>
               <Link
-                href="/suchen"
+                href={resolvedCtaHref}
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-xl transition-all"
               >
-                KI-Suche testen
+                {resolvedCtaLabel}
               </Link>
             </nav>
 
@@ -120,11 +123,11 @@ export default function MarketingLayout({ children }) {
                 <span className="font-bold text-cyan-600">DE</span>
               </div>
               <Link
-                href="/suchen"
+                href={resolvedCtaHref}
                 onClick={() => setMobileMenuOpen(false)}
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium text-center"
               >
-                KI-Suche testen
+                {resolvedCtaLabel}
               </Link>
             </nav>
           </div>

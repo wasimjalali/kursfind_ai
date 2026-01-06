@@ -279,7 +279,7 @@ export default function HomePageEN() {
                 href="/suchen"
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-xl transition-all relative overflow-hidden group"
               >
-                <span className="relative z-10">Try AI Search</span>
+                <span className="relative z-10">Find Courses Free</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
             </nav>
@@ -338,7 +338,7 @@ export default function HomePageEN() {
                 href="/suchen"
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium text-center hover:shadow-lg transition-all"
               >
-                Try AI Search
+                Find Courses Free
               </Link>
             </nav>
           </div>
@@ -358,7 +358,7 @@ export default function HomePageEN() {
                   <span>Free • No Sign-up Required</span>
                 </div>
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                  Find your Weiterbildung
+                  Find your government-funded training courses
                   <br />
                   in minutes,{' '}
                   <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
@@ -366,14 +366,14 @@ export default function HomePageEN() {
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-                  Smart AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect Weiterbildung for your career goals, location, and funding status, completely free.
+                  Smart AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect course for your career goals, location, and funding status, completely free.
                 </p>
                 <div className="space-y-4">
                   <Link
                     href="/suchen"
                     className="w-full md:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
                   >
-                    <span className="relative z-10">Try AI Search Now</span>
+                    <span className="relative z-10">Find Courses Free</span>
                     <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </Link>
@@ -481,7 +481,7 @@ export default function HomePageEN() {
                 href="/en/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all"
               >
-                <span>Try AI Search Now</span>
+                <span>Find Courses Free</span>
                 <Icons.ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -581,7 +581,7 @@ export default function HomePageEN() {
                 href="/en/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all group"
               >
-                <span>Start AI Search Now</span>
+                <span>Start AI Search Free</span>
                 <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -686,7 +686,7 @@ export default function HomePageEN() {
               href="/suchen"
               className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-8 py-4 rounded-lg font-semibold hover:shadow-2xl transition-all"
             >
-              <span>Try AI Search Now</span>
+              <span>Find Courses Free</span>
               <Icons.ArrowRight className="w-5 h-5" />
             </Link>
             <p className="mt-4 text-sm" style={{ color: 'white', opacity: 0.8 }}>✨ We&apos;ll help you find the perfect course</p>
