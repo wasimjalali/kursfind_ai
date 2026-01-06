@@ -173,7 +173,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
               <ul className="space-y-2 text-sm">
                 <li><Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all">Preise</Link></li>
                 <li><Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
-                <li><Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">Partner werden</Link></li>
+                <li><Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">Kostenloses Beratungsgespräch</Link></li>
                 <li><Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
               </ul>
             </div>

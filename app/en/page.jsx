@@ -749,7 +749,7 @@ export default function HomePageEN() {
                 <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">Overview</Link></li>
                 <li><Link href="/en/providers#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
                 <li><Link href="/en/providers#pricing" className="hover:text-cyan-400 transition-all">Pricing</Link></li>
-                <li><Link href="/en/providers#booking" className="hover:text-cyan-400 transition-all">Book Appointment</Link></li>
+                <li><Link href="/en/providers#booking" className="hover:text-cyan-400 transition-all">Free Consultation Call</Link></li>
                 <li><Link href="/en/providers#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
               </ul>
             </div>

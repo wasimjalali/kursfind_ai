@@ -805,7 +805,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">
-                    Termin buchen
+                    Kostenloses Beratungsgespräch
                   </Link>
                 </li>
                 <li>

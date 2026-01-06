@@ -832,13 +832,13 @@ export default function ProvidersPageEN() {
           {/* Cal.com Booking Section */}
           <div className="max-w-7xl mx-auto px-4">
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Schedule a Meeting</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Free Consultation Call</h3>
               <p className="text-sm text-gray-700 text-center mb-4">Book a 30-minute consultation call</p>
               <div className="w-full min-h-[600px]">
                 <iframe
                   src="https://cal.com/wasim.jalali/30min?embed=true&theme=light"
                   className="w-full h-[600px] border-0 rounded-xl"
-                  title="Book a meeting"
+                  title="Free Consultation Call"
                   loading="lazy"
                 />
               </div>
