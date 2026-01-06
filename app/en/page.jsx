@@ -478,7 +478,7 @@ export default function HomePageEN() {
             
             <div className="mt-8 text-center">
               <Link
-                href="/en/suchen"
+                href="/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all"
               >
                 <span>Find Courses Free</span>
@@ -578,7 +578,7 @@ export default function HomePageEN() {
                 ))}
               </ul>
               <Link
-                href="/en/suchen"
+                href="/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all group"
               >
                 <span>Start AI Search Free</span>
