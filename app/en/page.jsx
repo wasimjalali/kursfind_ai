@@ -366,7 +366,7 @@ export default function HomePageEN() {
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-                  Smart AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect course for your career goals, location, and funding status, completely free.
+                  Kursfind AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect course for your career goals, location, and funding status, completely free.
                 </p>
                 <div className="space-y-4">
                   <Link

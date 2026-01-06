@@ -391,7 +391,7 @@ export default function HomePage() {
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-                  Intelligente KI findet sofort den passenden AZAV-zertifizierten Kurs mit Bildungsgutschein oder AVGS-Förderung. Finde die perfekte Weiterbildung für deine Karriereziele, deinen Standort und deinen Förderstatus – komplett kostenlos.
+                  Kursfind AI findet sofort den passenden AZAV-zertifizierten Kurs mit Bildungsgutschein oder AVGS-Förderung. Finde die perfekte Weiterbildung für deine Karriereziele, deinen Standort und deinen Förderstatus – komplett kostenlos.
                 </p>
                 <div className="space-y-4">
                   <Link
