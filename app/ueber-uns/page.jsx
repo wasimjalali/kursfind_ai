@@ -43,21 +43,24 @@ export default function UeberUnsPage() {
       role: 'Co-Founder & CEO',
       image: '/landing/team/Wasim.png',
       description: 'Visionär mit Leidenschaft für Bildungstechnologie und KI-Innovation. Führt das Team mit klarer Strategie und Fokus auf Impact.',
-      color: 'cyan',
+      color: 'cyan-500',
+      borderColor: 'cyan-500',
     },
     {
       name: 'Ahmad Samim Sherzad',
-      role: 'Co-Founder & Finance Department',
+      role: 'Co-Founder & CFO',
       image: '/landing/team/Samim.JPG',
       description: 'Finanzexperte mit strategischem Weitblick. Sorgt für nachhaltige Geschäftsmodelle und solide Partnerschaften.',
-      color: 'emerald',
+      color: 'cyan-500',
+      borderColor: 'cyan-500',
     },
     {
       name: 'Zaiem Jalali',
-      role: 'Co-Founder & IT Department',
+      role: 'Co-Founder & CTO',
       image: '/landing/team/Zaiem.JPG',
       description: 'Tech-Architekt und Entwickler. Baut die technische Infrastruktur, die unsere KI-Plattform zum Leben erweckt.',
-      color: 'cyan',
+      color: 'cyan-500',
+      borderColor: 'cyan-500',
     },
   ];
 
@@ -170,9 +173,9 @@ export default function UeberUnsPage() {
               {teamMembers.map((member, i) => (
                 <div
                   key={i}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-cyan-400"
+                  className={`group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-${member.borderColor}`}
                 >
-                  <div className={`aspect-[3/4] bg-gradient-to-br from-${member.color}-100 to-${member.color === 'cyan' ? 'emerald' : 'cyan'}-100 relative overflow-hidden`}>
+                  <div className={`aspect-[3/4] bg-gradient-to-br from-cyan-100 to-emerald-100 relative overflow-hidden`}>
                     <Image
                       src={member.image}
                       alt={member.name}
@@ -182,7 +185,7 @@ export default function UeberUnsPage() {
                   </div>
                   <div className="p-6">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                    <p className="text-cyan-400 font-semibold mb-3">{member.role}</p>
+                    <p className={`text-${member.color} font-semibold mb-3`}>{member.role}</p>
                     <p className="text-gray-600 leading-relaxed">{member.description}</p>
                   </div>
                 </div>
