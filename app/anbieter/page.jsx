@@ -533,7 +533,7 @@ export default function AnbieterPage() {
                 'Kostenlose Kurs-Listings',
                 'Keine Erfolgsprovision',
                 'Keine monatlichen Gebühren',
-                'Keine Mindestlaufzeit – monatlich kündbar',
+                'Monatlich kündbar — keine langfristigen Verträge',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">

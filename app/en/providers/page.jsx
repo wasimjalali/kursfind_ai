@@ -533,7 +533,7 @@ export default function ProvidersPageEN() {
                 'Free course listings',
                 'No success fees',
                 'No monthly fees',
-                'No minimum term – monthly cancellable',
+                'Monthly cancellable — no long-term contracts',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
