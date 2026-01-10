@@ -525,15 +525,15 @@ export default function ProvidersPageEN() {
             {/* Benefits */}
             <ul className="space-y-4 mb-8">
               {[
-                'Priority support',
-                'Free onboarding',
-                'Dashboard & real-time analytics',
-                'All leads in one place',
-                'Notifications for new leads',
-                'Free course listings',
-                'No success fees',
-                'No monthly fees',
+                'No success fees — keep 100% of enrollment revenue',
+                'No monthly fees — pay only for results',
                 'Monthly cancellable — no long-term contracts',
+                'Free course listings',
+                'All leads in one place',
+                'Dashboard & real-time analytics',
+                'Notifications for new leads',
+                'Free onboarding',
+                'Priority support',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">

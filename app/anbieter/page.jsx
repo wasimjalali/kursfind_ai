@@ -525,15 +525,15 @@ export default function AnbieterPage() {
             {/* Benefits */}
             <ul className="space-y-4 mb-8">
               {[
-                'Prioritäts-Support',
-                'Kostenloses Onboarding',
-                'Dashboard & Echtzeit-Analytics',
-                'Alle Leads an einem Ort',
-                'Benachrichtigungen bei neuen Leads',
-                'Kostenlose Kurs-Listings',
-                'Keine Erfolgsprovision',
-                'Keine monatlichen Gebühren',
+                'Keine Erfolgsprovision — 100% der Einnahmen behalten',
+                'Keine monatlichen Gebühren — zahlen Sie nur für Ergebnisse',
                 'Monatlich kündbar — keine langfristigen Verträge',
+                'Kostenlose Kurs-Listings',
+                'Alle Leads an einem Ort',
+                'Dashboard & Echtzeit-Analytics',
+                'Benachrichtigungen bei neuen Leads',
+                'Kostenloses Onboarding',
+                'Prioritäts-Support',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
