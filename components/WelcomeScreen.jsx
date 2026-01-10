@@ -83,7 +83,7 @@ export default function WelcomeScreen({ onExampleClick }) {
             <button
               key={idx}
               onClick={() => onExampleClick(example.query)}
-              className="p-5 sm:p-6 bg-white/80 border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-cyan-400 transition-all text-left group hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-1"
+              className="p-5 sm:p-6 bg-white/80 border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-cyan-400 transition-all text-left group hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-1 cursor-pointer"
             >
               <div className="flex items-start gap-4">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-2xl shadow-sm">
@@ -107,7 +107,7 @@ export default function WelcomeScreen({ onExampleClick }) {
       <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-md justify-center items-stretch sm:items-center">
         <a
           href="/courses"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/90 border border-gray-300 text-gray-700 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:border-cyan-400 hover:bg-gray-50 hover:-translate-y-0.5 transition-all text-center text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-1"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/90 border border-gray-300 text-gray-700 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:border-cyan-400 hover:bg-gray-50 hover:-translate-y-0.5 transition-all text-center text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-1 cursor-pointer"
         >
           <span className="text-lg">📚</span>
           <span>Alle Kurse durchsuchen</span>
@@ -115,7 +115,7 @@ export default function WelcomeScreen({ onExampleClick }) {
         {!user && (
         <a
           href="/student/signup"
-            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center text-sm md:text-base"
+            className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-center text-sm md:text-base cursor-pointer"
         >
           Kostenloses Konto erstellen →
         </a>

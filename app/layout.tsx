@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { PWAProvider, InstallBanner, UpdateBanner, OfflineIndicator } from "@/components/pwa";
+import { OrganizationSchema, WebsiteSchema } from "@/components/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl = 'https://kursfind.de';
+
 export const viewport: Viewport = {
   themeColor: "#06b6d4",
   width: "device-width",
@@ -23,25 +26,97 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Kursfind AI – Finde deinen perfekten AZAV-Kurs mit KI",
-  description: "KI-gestützte Kurssuche für geförderte Weiterbildung in Deutschland. Finde AZAV-zertifizierte Kurse mit Bildungsgutschein oder AVGS. 100% kostenlos für Lernende.",
+  metadataBase: new URL(baseUrl),
+  
+  title: {
+    default: 'Kursfind AI - Finde deine Weiterbildung in Minuten',
+    template: '%s | Kursfind AI',
+  },
+  
+  description: 'KI-gestützte Suche für AZAV-zertifizierte Weiterbildungen in Deutschland. Finde Kurse mit Bildungsgutschein, AVGS oder Selbstzahlung. Kostenlos und in Minuten.',
+  
+  keywords: [
+    'Weiterbildung',
+    'Bildungsgutschein',
+    'AZAV',
+    'Umschulung',
+    'Fortbildung',
+    'Kurse',
+    'Bildungsanbieter',
+    'AVGS',
+    'Arbeitsamt',
+    'Jobcenter',
+    'Weiterbildung finden',
+    'IT Weiterbildung',
+    'Pflege Weiterbildung',
+    'Online Weiterbildung',
+  ],
+  
+  authors: [{ name: 'Kursfind AI', url: baseUrl }],
+  creator: 'Wasim Academy UG',
+  publisher: 'Wasim Academy UG',
+  
   manifest: "/manifest.json",
+  
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Kursfind AI",
   },
+  
   formatDetection: {
     telephone: true,
     email: true,
     address: false,
   },
+  
   openGraph: {
-    title: "Kursfind AI – Finde deinen perfekten AZAV-Kurs",
-    description: "Intelligente KI findet den perfekten AZAV-zertifizierten Kurs mit Bildungsgutschein oder AVGS.",
-    type: "website",
-    images: ["/landing/kursfind-ai-logo.jpg"],
+    type: 'website',
+    locale: 'de_DE',
+    alternateLocale: 'en_US',
+    url: baseUrl,
+    siteName: 'Kursfind AI',
+    title: 'Kursfind AI - Finde deine Weiterbildung in Minuten',
+    description: 'KI-gestützte Suche für AZAV-zertifizierte Weiterbildungen. Finde deinen perfekten Kurs mit Bildungsgutschein.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Kursfind AI - KI-gestützte Weiterbildungssuche',
+      },
+    ],
   },
+  
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kursfind AI - Finde deine Weiterbildung in Minuten',
+    description: 'KI-gestützte Suche für AZAV-zertifizierte Weiterbildungen in Deutschland.',
+    images: ['/og-image.png'],
+  },
+  
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  
+  alternates: {
+    canonical: baseUrl,
+    languages: {
+      'de-DE': baseUrl,
+      'en-US': `${baseUrl}/en`,
+    },
+  },
+  
+  category: 'education',
+  
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -66,6 +141,10 @@ export default function RootLayout({
   return (
     <html lang="de" suppressHydrationWarning>
       <head>
+        {/* Structured Data for SEO */}
+        <OrganizationSchema />
+        <WebsiteSchema />
+        
         {/* PWA meta tags */}
         <meta name="application-name" content="Kursfind AI" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

@@ -23,7 +23,7 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
         {/* Hamburger Menu Button */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0 cursor-pointer"
           aria-label="Toggle sidebar"
         >
           {sidebarOpen ? (
@@ -39,7 +39,7 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
 
         {/* Logo - Mobile Optimized */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 cursor-pointer">
             <Image 
               src="/Assets/kursfind-ai-logo.jpg" 
               alt="Kursfind AI" 
@@ -64,7 +64,7 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1 sm:py-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-1 sm:py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
           >
             {/* Hide text on mobile, show avatar only */}
             <div className="hidden sm:block text-right">
@@ -99,14 +99,14 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
                 </div>
                 <Link
                   href="/provider/dashboard/profile"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                   onClick={() => setMenuOpen(false)}
                 >
                   Profil bearbeiten
                 </Link>
                 <Link
                   href="/"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                   onClick={() => setMenuOpen(false)}
                 >
                   Zur Website
@@ -114,7 +114,7 @@ export default function ProviderHeader({ provider, sidebarOpen, setSidebarOpen }
                 <hr className="my-2" />
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:translate-x-1 transition-all duration-200"
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                 >
                   Abmelden
                 </button>

@@ -39,7 +39,7 @@ export default function StudentHeader({ student }) {
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             >
               {/* Avatar */}
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-semibold">
@@ -86,7 +86,7 @@ export default function StudentHeader({ student }) {
                   <Link
                     href="/student/dashboard/profile"
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                   >
                     <span className="mr-3">⚙️</span>
                     Profileinstellungen
@@ -95,7 +95,7 @@ export default function StudentHeader({ student }) {
                   <Link
                     href="/"
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                   >
                     <span className="mr-3">🏠</span>
                     Zur Webseite
@@ -105,7 +105,7 @@ export default function StudentHeader({ student }) {
                   
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:translate-x-1 transition-all duration-200"
+                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:translate-x-1 transition-all duration-200 cursor-pointer"
                   >
                     <span className="mr-3">🚪</span>
                     Abmelden

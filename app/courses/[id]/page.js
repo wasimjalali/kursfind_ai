@@ -2,6 +2,49 @@ import { notFound } from 'next/navigation'
 import CoursePageClient from './CoursePageClient'
 import { createClient } from '@supabase/supabase-js'
 
+export async function generateMetadata({ params }) {
+  const { id } = await params
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
+  
+  const isNumericId = /^\d+$/.test(id)
+  let query = supabase.from('courses').select('id, title, description, slug')
+  
+  if (isNumericId) {
+    query = query.eq('id', parseInt(id))
+  } else {
+    query = query.eq('slug', id)
+  }
+  
+  const { data: course } = await query.single()
+
+  if (!course) {
+    return {
+      title: 'Kurs nicht gefunden',
+    }
+  }
+
+  const courseUrl = course.slug 
+    ? `https://kursfind.de/kurse/${course.slug}`
+    : `https://kursfind.de/kurse/${course.id}`
+
+  return {
+    title: course.title,
+    description: course.description?.substring(0, 160) || `Weiterbildung: ${course.title}`,
+    alternates: {
+      canonical: courseUrl,
+    },
+    openGraph: {
+      title: course.title,
+      description: course.description?.substring(0, 160),
+      type: 'article',
+      url: courseUrl,
+    },
+  }
+}
+
 async function getCourseData(identifier) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,

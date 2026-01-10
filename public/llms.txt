@@ -1,0 +1,32 @@
+# Kursfind AI - AI Crawler Information
+# https://kursfind.de
+
+## About
+Kursfind AI is an AI-powered platform for finding AZAV-certified vocational training courses in Germany.
+We help job seekers find courses eligible for Bildungsgutschein (education voucher) from the Arbeitsagentur.
+
+## What We Offer
+- AI-powered course search and recommendations
+- AZAV-certified vocational training courses
+- Courses eligible for Bildungsgutschein and AVGS funding
+- Connection between learners and education providers
+
+## Target Audience
+- Job seekers in Germany looking for vocational training
+- People with Bildungsgutschein from Arbeitsagentur/Jobcenter
+- Career changers seeking Umschulung (retraining)
+- Education providers offering AZAV-certified courses
+
+## Key Pages
+- Homepage: https://kursfind.de
+- Course Search: https://kursfind.de/suchen
+- For Providers: https://kursfind.de/anbieter
+- About: https://kursfind.de/ueber-uns
+
+## Contact
+Email: kontakt@kursfind.de
+Partner inquiries: partner@kursfind.de
+
+## Crawling Policy
+AI crawlers are welcome to index our public content.
+Please respect robots.txt directives.

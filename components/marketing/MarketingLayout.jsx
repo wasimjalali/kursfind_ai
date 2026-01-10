@@ -35,7 +35,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20 py-2 md:py-3">
-            <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+            <Link href="/" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
               <Image
                 src="/landing/kursfind-ai-logo.jpg"
                 alt="Kursfind AI"
@@ -78,7 +78,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden hover:opacity-80 transition-all"
+              className="md:hidden hover:opacity-80 transition-all cursor-pointer"
               aria-label="Menü öffnen"
             >
               <Icons.Menu className="w-6 h-6" />
@@ -100,7 +100,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
                 className="h-10 w-auto rounded-xl"
               />
               <span className="ml-3 text-xl font-bold text-gray-900">Kursfind <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">AI</span></span>
-              <button onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen">
+              <button onClick={() => setMobileMenuOpen(false)} aria-label="Menü schließen" className="cursor-pointer">
                 <Icons.X className="w-6 h-6" />
               </button>
             </div>
@@ -145,7 +145,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Logo & Description */}
             <div>
-              <Link href="/" className="flex items-center mb-4 hover:opacity-80 transition-all">
+              <Link href="/" className="flex items-center mb-4 hover:opacity-80 transition-all cursor-pointer">
                 <Image
                   src="/landing/kursfind-ai-logo.jpg"
                   alt="Kursfind AI Logo"
@@ -161,9 +161,9 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
             <div>
               <h4 className="text-white font-semibold mb-4">Für Lernende</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">KI-Suche</Link></li>
-                <li><Link href="/#demo" className="hover:text-cyan-400 transition-all">So funktioniert&apos;s</Link></li>
-                <li><Link href="/#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all cursor-pointer">KI-Suche</Link></li>
+                <li><Link href="/#demo" className="hover:text-cyan-400 transition-all cursor-pointer">So funktioniert&apos;s</Link></li>
+                <li><Link href="/#faq" className="hover:text-cyan-400 transition-all cursor-pointer">FAQ</Link></li>
               </ul>
             </div>
             
@@ -171,10 +171,10 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
             <div>
               <h4 className="text-white font-semibold mb-4">Für Anbieter</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all">Preise</Link></li>
-                <li><Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
-                <li><Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">Kostenloses Beratungsgespräch</Link></li>
-                <li><Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+                <li><Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all cursor-pointer">Preise</Link></li>
+                <li><Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all cursor-pointer">Demo</Link></li>
+                <li><Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all cursor-pointer">Kostenloses Beratungsgespräch</Link></li>
+                <li><Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all cursor-pointer">FAQ</Link></li>
               </ul>
             </div>
             
@@ -182,18 +182,18 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
             <div>
               <h4 className="text-white font-semibold mb-4">Rechtliches</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/datenschutz" className="hover:text-cyan-400 transition-all">Datenschutzerklärung</Link></li>
-                <li><Link href="/impressum" className="hover:text-cyan-400 transition-all">Impressum</Link></li>
-                <li><Link href="/ueber-uns" className="hover:text-cyan-400 transition-all">Über uns</Link></li>
+                <li><Link href="/datenschutz" className="hover:text-cyan-400 transition-all cursor-pointer">Datenschutzerklärung</Link></li>
+                <li><Link href="/impressum" className="hover:text-cyan-400 transition-all cursor-pointer">Impressum</Link></li>
+                <li><Link href="/ueber-uns" className="hover:text-cyan-400 transition-all cursor-pointer">Über uns</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-4 mt-8">Kontakt</h4>
               <div className="flex items-center space-x-2 mb-2">
                 <Icons.Mail className="w-5 h-5 text-gray-400" />
-                <a href="mailto:kontakt@kursfind.de" className="text-sm hover:text-cyan-400">kontakt@kursfind.de</a>
+                <a href="mailto:kontakt@kursfind.de" className="text-sm hover:text-cyan-400 cursor-pointer">kontakt@kursfind.de</a>
               </div>
               <div className="flex items-center space-x-2">
                 <Icons.Mail className="w-5 h-5 text-gray-400" />
-                <a href="mailto:partner@kursfind.de" className="text-sm hover:text-cyan-400">partner@kursfind.de</a>
+                <a href="mailto:partner@kursfind.de" className="text-sm hover:text-cyan-400 cursor-pointer">partner@kursfind.de</a>
               </div>
             </div>
           </div>
