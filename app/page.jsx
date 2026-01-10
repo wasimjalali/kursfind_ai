@@ -492,11 +492,12 @@ export default function HomePage() {
               <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
                 <iframe
                   style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                  src="https://www.youtube.com/embed/FmxlY9IjF9s?autoplay=1&mute=1"
+                  src="https://www.youtube-nocookie.com/embed/FmxlY9IjF9s?rel=0"
                   title="KursFind AI Demo Student"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
+                  loading="lazy"
                 />
               </div>
             </div>
