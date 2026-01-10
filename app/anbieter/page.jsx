@@ -653,7 +653,7 @@ export default function AnbieterPage() {
                   <td className="p-4 font-medium text-gray-700">
                     <div className="flex items-center gap-2">
                       <span className="text-red-400">✗</span>
-                      Wettbewerber (Springest, etc.)
+                      Wettbewerber
                     </div>
                   </td>
                   <td className="p-4 text-center text-gray-600">€80 <span className="text-gray-400">(1%)</span></td>
