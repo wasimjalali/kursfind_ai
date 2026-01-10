@@ -261,12 +261,12 @@ export default function ProvidersPageEN() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">The Old Model</h3>
               <ul className="space-y-4">
                 {[
-                  '€65-95 per lead through Google Ads',
+                  '€120 per lead through Google Ads',
+                  'No high-intent leads',
                   'KURSNET listing brings few inquiries',
                   'Cold calling employment agencies',
                   '30-40% of courses cancelled due to low enrollment',
-                  'Hours spent qualifying leads',
-                  'Unknown voucher status of prospects',
+                  'Unknown funding status of prospects',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="text-red-500 font-bold text-lg">✗</span>
@@ -289,7 +289,7 @@ export default function ProvidersPageEN() {
                   'Only 1% of course value per lead',
                   'No success fees, no subscriptions',
                   'AI matching brings suitable learners to you',
-                  'All leads have voucher or are applying for one',
+                  'All leads are eligible for funding or self-pay',
                   'Direct contact via dashboard',
                   'No upfront advertising budget needed',
                 ].map((item, i) => (
@@ -301,7 +301,7 @@ export default function ProvidersPageEN() {
               </ul>
               <div className="mt-8 bg-emerald-100 border border-emerald-300 rounded-xl p-4">
                 <p className="font-semibold text-emerald-800 mb-1">Your Advantage:</p>
-                <p className="text-emerald-700">1% per lead – 43% cheaper than competitors</p>
+                <p className="text-emerald-700">43% cheaper than competitors</p>
                 <p className="text-emerald-700">2-3 days until enrollment</p>
               </div>
             </div>
@@ -525,11 +525,14 @@ export default function ProvidersPageEN() {
             {/* Benefits */}
             <ul className="space-y-4 mb-8">
               {[
+                'Priority support',
+                'Free onboarding',
+                'Dashboard & real-time analytics',
+                'All leads in one place',
+                'Notifications for new leads',
+                'Free course listings',
                 'No success fees',
                 'No monthly fees',
-                'No minimum contract term',
-                'Free course listings',
-                'Free dashboard & analytics',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -601,7 +604,7 @@ export default function ProvidersPageEN() {
             {[
               {
                 q: 'What is a "qualified lead"?',
-                a: 'A lead with genuine interest in your course, correct contact details, and confirmed Bildungsgutschein or AVGS status (or self-payer). Unqualified inquiries are not charged.',
+                a: 'A lead with genuine interest in your course, correct contact details, and eligible for Bildungsgutschein or AVGS (or self-payer). Unqualified inquiries are not charged.',
               },
               {
                 q: 'How does the 1% pricing work?',

@@ -261,12 +261,12 @@ export default function AnbieterPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Das alte Modell</h3>
               <ul className="space-y-4">
                 {[
-                  '€65-95 pro Lead durch Google Ads',
+                  '€120 pro Lead durch Google Ads',
+                  'Keine hoch-qualifizierten Leads',
                   'KURSNET-Listing bringt kaum Anfragen',
                   'Kaltakquise bei Arbeitsagenturen',
                   '30-40% der Kurse wegen Unterbelegung abgesagt',
-                  'Stundenlange Nachqualifizierung von Leads',
-                  'Unklarer Gutschein-Status der Interessenten',
+                  'Unklarer Förderstatus der Interessenten',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="text-red-500 font-bold text-lg">✗</span>
@@ -289,7 +289,7 @@ export default function AnbieterPage() {
                   'Nur 1% vom Kurswert pro qualifiziertem Lead',
                   'Keine Erfolgsprovision oder versteckte Kosten',
                   'KI-Matching bringt passende Lernende zu Ihnen',
-                  'Alle Leads haben Gutschein bereits oder beantragen ihn',
+                  'Alle Leads sind förderberechtigt oder Selbstzahler',
                   'Direkte Kontaktaufnahme über Dashboard',
                   'Kein Werbebudget vorab nötig',
                 ].map((item, i) => (
@@ -525,11 +525,14 @@ export default function AnbieterPage() {
             {/* Benefits */}
             <ul className="space-y-4 mb-8">
               {[
+                'Prioritäts-Support',
+                'Kostenloses Onboarding',
+                'Dashboard & Echtzeit-Analytics',
+                'Alle Leads an einem Ort',
+                'Benachrichtigungen bei neuen Leads',
+                'Kostenlose Kurs-Listings',
                 'Keine Erfolgsprovision',
                 'Keine monatlichen Gebühren',
-                'Keine Mindestvertragslaufzeit',
-                'Kostenlose Kurs-Listings',
-                'Kostenloses Dashboard & Analytics',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -601,7 +604,7 @@ export default function AnbieterPage() {
             {[
               {
                 q: 'Was ist ein "qualifizierter Lead"?',
-                a: 'Ein Lead mit echtem Interesse an Ihrem Kurs, korrekten Kontaktdaten und bestätigtem Bildungsgutschein- oder AVGS-Status (oder Selbstzahler). Unqualifizierte Anfragen werden nicht berechnet.',
+                a: 'Ein Lead mit echtem Interesse an Ihrem Kurs, korrekten Kontaktdaten und förderberechtigt für Bildungsgutschein oder AVGS (oder Selbstzahler). Unqualifizierte Anfragen werden nicht berechnet.',
               },
               {
                 q: 'Wie funktioniert das 1%-Preismodell?',
