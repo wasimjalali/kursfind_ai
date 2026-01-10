@@ -94,6 +94,11 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
+  TrendingDown: ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+    </svg>
+  ),
 };
 
 // FAQ Data for Providers
@@ -493,9 +498,9 @@ export default function AnbieterPage() {
         </div>
       </section>
 
-      {/* Pricing Section - NEW 1% MODEL */}
+      {/* Pricing Section - NEW 1% MODEL - Two Column Layout */}
       <section className="py-16 md:py-20 bg-gray-50" id="pricing">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
               Einfache, transparente Preisgestaltung
@@ -505,84 +510,95 @@ export default function AnbieterPage() {
             </p>
           </div>
 
-          {/* Single Pricing Card */}
-          <div className="bg-white border-2 border-cyan-500 rounded-3xl p-8 md:p-10 shadow-2xl max-w-2xl mx-auto relative overflow-hidden">
+          {/* Two Column Pricing Card */}
+          <div className="bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl relative overflow-hidden">
             {/* Gradient accent */}
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
             
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-6 border border-cyan-200">
-                <Icons.DollarSign className="w-4 h-4" />
-                <span>Pro Lead Preismodell</span>
-              </div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <span className="text-7xl md:text-8xl font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">1%</span>
-              </div>
-              <p className="text-xl text-gray-600">pro qualifiziertem Lead</p>
-              <p className="text-gray-500 mt-2">Zahlen Sie nur 1% des Kurswertes pro qualifizierter Bewerbung</p>
-            </div>
-
-            {/* Benefits */}
-            <ul className="space-y-4 mb-8">
-              {[
-                'Keine Erfolgsprovision — 100% der Einnahmen behalten',
-                'Keine monatlichen Gebühren — zahlen Sie nur für Ergebnisse',
-                'Monatlich kündbar — keine langfristigen Verträge',
-                'Kostenlose Kurs-Listings',
-                'Alle Leads an einem Ort',
-                'Dashboard & Echtzeit-Analytics',
-                'Benachrichtigungen bei neuen Leads',
-                'Kostenloses Onboarding',
-                'Prioritäts-Support',
-              ].map((benefit, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Icons.Check className="w-4 h-4 text-white" />
+            <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+              {/* Left Column - Pricing Info */}
+              <div className="p-8 md:p-10">
+                <div className="text-center md:text-left mb-8">
+                  <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-6 border border-cyan-200">
+                    <Icons.DollarSign className="w-4 h-4" />
+                    <span>Pro Lead Preismodell</span>
                   </div>
-                  <span className="text-gray-700 font-medium">{benefit}</span>
-                </li>
-              ))}
-            </ul>
-
-            {/* Examples Table */}
-            <div className="bg-gray-50 rounded-xl p-6 mb-8">
-              <p className="font-semibold text-gray-900 mb-4 text-center">Beispiele</p>
-              <div className="space-y-3">
-                {[
-                  { course: '€5.000 Kurs', fee: '€50 pro Lead' },
-                  { course: '€8.000 Kurs', fee: '€80 pro Lead' },
-                  { course: '€10.000 Kurs', fee: '€100 pro Lead' },
-                  { course: '€15.000 Kurs', fee: '€150 pro Lead' },
-                ].map((example, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
-                    <span className="text-gray-600">{example.course}</span>
-                    <span className="font-semibold text-gray-900">→ {example.fee}</span>
+                  <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                    <span className="text-7xl md:text-8xl font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">1%</span>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <p className="text-xl text-gray-600">pro qualifiziertem Lead</p>
+                  <p className="text-gray-500 mt-2">Zahlen Sie nur 1% des Kurswertes pro qualifizierter Bewerbung</p>
+                </div>
 
-            {/* CTA Button */}
-            <Link
-              href="#booking"
-              className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center text-lg"
-            >
-              <span className="relative z-10">Jetzt Partner werden</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </Link>
-          </div>
+                {/* Benefits - Reduced to 6 */}
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Keine Erfolgsprovision — 100% der Einnahmen behalten',
+                    'Keine monatlichen Gebühren — zahlen Sie nur für Ergebnisse',
+                    'Keine Mindestlaufzeit — monatlich kündbar',
+                    'Kostenlose Kurs-Listings',
+                    'Dashboard & Echtzeit-Analytics',
+                    'Kostenloses Onboarding & Support',
+                  ].map((benefit, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <div className="w-5 h-5 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icons.Check className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="text-gray-700 font-medium text-sm">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
 
-          {/* Launch Offer Banner */}
-          <div className="mt-8 max-w-2xl mx-auto">
-            <div className="bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border border-cyan-200 rounded-2xl p-6 text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Icons.Gift className="w-6 h-6 text-cyan-600" />
-                <span className="text-xl font-bold text-gray-900">LAUNCH ANGEBOT</span>
+                {/* CTA Button */}
+                <Link
+                  href="#booking"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center text-lg"
+                >
+                  <span className="relative z-10">Jetzt Partner werden</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </Link>
               </div>
-              <p className="text-lg text-gray-700">
-                <span className="font-semibold text-cyan-600">5 kostenlose Leads</span> für neue Partner
-              </p>
-              <p className="text-gray-600 text-sm mt-1">Testen Sie uns risikofrei – keine Verpflichtung</p>
+
+              {/* Right Column - Examples & Launch Offer */}
+              <div className="p-8 md:p-10 bg-gray-50/50">
+                {/* Cheaper Badge */}
+                <div className="flex justify-center md:justify-start mb-6">
+                  <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-semibold border border-emerald-200">
+                    <Icons.TrendingDown className="w-4 h-4" />
+                    43% günstiger als Wettbewerber
+                  </span>
+                </div>
+
+                {/* Examples Table */}
+                <div className="mb-8">
+                  <p className="font-semibold text-gray-900 mb-4 text-lg">Beispiele</p>
+                  <div className="space-y-3">
+                    {[
+                      { course: '€5.000 Kurs', fee: '€50 pro Lead' },
+                      { course: '€8.000 Kurs', fee: '€80 pro Lead' },
+                      { course: '€10.000 Kurs', fee: '€100 pro Lead' },
+                      { course: '€15.000 Kurs', fee: '€150 pro Lead' },
+                    ].map((example, i) => (
+                      <div key={i} className="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
+                        <span className="text-gray-600">{example.course}</span>
+                        <span className="font-semibold text-gray-900">→ {example.fee}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Launch Offer Box */}
+                <div className="bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border border-cyan-200 rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icons.Gift className="w-5 h-5 text-cyan-600" />
+                    <span className="text-lg font-bold text-gray-900">LAUNCH ANGEBOT</span>
+                  </div>
+                  <p className="text-gray-700">
+                    <span className="font-semibold text-cyan-600">5 kostenlose Leads</span> für neue Partner
+                  </p>
+                  <p className="text-gray-600 text-sm mt-1">Testen Sie uns risikofrei – keine Verpflichtung</p>
+                </div>
+              </div>
             </div>
           </div>
 
