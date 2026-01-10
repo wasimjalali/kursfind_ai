@@ -531,20 +531,20 @@ export default function ProvidersPageEN() {
                 </div>
 
                 {/* Benefits - Reduced to 6 */}
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-4 mb-8">
                   {[
-                    'No success fees — keep 100% of revenue',
-                    'No monthly fees — pay only for results',
-                    'No minimum term — monthly cancellable',
-                    'Free course listings',
-                    'Dashboard & real-time analytics',
-                    'Free onboarding & support',
+                    { text: 'No success fees — keep 100% of revenue', bold: true },
+                    { text: 'No monthly fees — pay only for results', bold: true },
+                    { text: 'No minimum term — monthly cancellable', bold: true },
+                    { text: 'Free course listings', bold: false },
+                    { text: 'Dashboard & real-time analytics', bold: false },
+                    { text: 'Free onboarding & support', bold: false },
                   ].map((benefit, i) => (
                     <li key={i} className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Icons.Check className="w-3 h-3 text-white" />
+                      <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icons.Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-gray-700 font-medium text-sm">{benefit}</span>
+                      <span className={`text-gray-700 ${benefit.bold ? 'font-semibold' : 'font-medium'}`}>{benefit.text}</span>
                     </li>
                   ))}
                 </ul>

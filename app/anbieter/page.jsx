@@ -531,20 +531,20 @@ export default function AnbieterPage() {
                 </div>
 
                 {/* Benefits - Reduced to 6 */}
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-4 mb-8">
                   {[
-                    'Keine Erfolgsprovision — 100% der Einnahmen behalten',
-                    'Keine monatlichen Gebühren — zahlen Sie nur für Ergebnisse',
-                    'Keine Mindestlaufzeit — monatlich kündbar',
-                    'Kostenlose Kurs-Listings',
-                    'Dashboard & Echtzeit-Analytics',
-                    'Kostenloses Onboarding & Support',
+                    { text: 'Keine Erfolgsprovision — 100% der Einnahmen behalten', bold: true },
+                    { text: 'Keine monatlichen Gebühren — zahlen Sie nur für Ergebnisse', bold: true },
+                    { text: 'Keine Mindestlaufzeit — monatlich kündbar', bold: true },
+                    { text: 'Kostenlose Kurs-Listings', bold: false },
+                    { text: 'Dashboard & Echtzeit-Analytics', bold: false },
+                    { text: 'Kostenloses Onboarding & Support', bold: false },
                   ].map((benefit, i) => (
                     <li key={i} className="flex items-center gap-3">
-                      <div className="w-5 h-5 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Icons.Check className="w-3 h-3 text-white" />
+                      <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icons.Check className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-gray-700 font-medium text-sm">{benefit}</span>
+                      <span className={`text-gray-700 ${benefit.bold ? 'font-semibold' : 'font-medium'}`}>{benefit.text}</span>
                     </li>
                   ))}
                 </ul>
