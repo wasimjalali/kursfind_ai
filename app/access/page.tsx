@@ -298,8 +298,8 @@ function AccessGateContent() {
         </div>
       </div>
 
-        {/* SendPulse Styles */}
-        <style jsx global>{`
+      {/* SendPulse Styles */}
+      <style jsx global>{`
         .sp-form[sp-id="250258"] { 
           display: block; 
           background: transparent !important; 
@@ -393,7 +393,6 @@ function AccessGateContent() {
           display: none !important;
         }
       `}</style>
-      </div>
     </div>
   )
 }
