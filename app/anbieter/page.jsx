@@ -166,7 +166,7 @@ export default function AnbieterPage() {
                 ohne Werbekosten vorab
               </h1>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed mx-auto">
-                Zahlen Sie nur 1% des Kurswertes pro qualifiziertem Lead. Keine Erfolgsprovision. Keine versteckten Kosten. Keine Abonnements.
+                Kursfind AI verbindet Lernende mit Förderung oder Selbstzahler direkt mit Ihren Kursen. Zahlen Sie nur 1% des Kurswertes pro qualifiziertem Lead. Keine Erfolgsprovision. Keine versteckten Kosten.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
