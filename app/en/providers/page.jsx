@@ -166,7 +166,7 @@ export default function ProvidersPageEN() {
                 No Upfront Advertising Costs
               </h1>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed mx-auto">
-                Kursfind AI connects learners with education vouchers directly to your courses. Pay only 1% per qualified lead. No success fees. No hidden costs.
+                Kursfind AI connects learners eligible for education vouchers directly to your courses. Pay only 1% per qualified lead. No success fees. No hidden costs.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
@@ -706,7 +706,7 @@ export default function ProvidersPageEN() {
             Ready to Fill Your Courses?
           </h2>
           <p className="text-xl mb-10 max-w-2xl mx-auto" style={{ color: 'white' }}>
-            Start for free and receive qualified leads with education vouchers. No upfront costs, no risk.
+            Start for free and receive qualified leads eligible for education vouchers. No upfront costs, no risk.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link
