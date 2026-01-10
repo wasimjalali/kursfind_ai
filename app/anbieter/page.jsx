@@ -262,7 +262,7 @@ export default function AnbieterPage() {
               <ul className="space-y-4">
                 {[
                   '€120 pro Lead durch Google Ads',
-                  'Keine hoch-qualifizierten Leads',
+                  'Niedrige Lead-Qualität',
                   'KURSNET-Listing bringt kaum Anfragen',
                   'Kaltakquise bei Arbeitsagenturen',
                   '30-40% der Kurse wegen Unterbelegung abgesagt',
@@ -443,7 +443,7 @@ export default function AnbieterPage() {
               {
                 icon: Icons.ShieldCheck,
                 title: 'Vorqualifizierte Interessenten',
-                desc: 'Nur Lernende mit Bildungsgutschein, AVGS oder als Selbstzahler. Kein Zeitverlust.',
+                desc: 'Nur Lernende, die förderberechtigt für Bildungsgutschein, AVGS sind oder Selbstzahler. Kein Zeitverlust.',
               },
               {
                 icon: Icons.BarChart,
@@ -533,6 +533,7 @@ export default function AnbieterPage() {
                 'Kostenlose Kurs-Listings',
                 'Keine Erfolgsprovision',
                 'Keine monatlichen Gebühren',
+                'Keine Mindestlaufzeit – monatlich kündbar',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -705,7 +706,7 @@ export default function AnbieterPage() {
             Bereit, Ihre Kurse zu füllen?
           </h2>
           <p className="text-xl mb-10 max-w-2xl mx-auto" style={{ color: 'white' }}>
-            Starten Sie kostenlos und erhalten Sie qualifizierte Leads mit Bildungsgutschein. Keine Vorabkosten, kein Risiko.
+            Starten Sie kostenlos und erhalten Sie qualifizierte Leads, die für Bildungsgutschein berechtigt sind. Keine Vorabkosten, kein Risiko.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link
@@ -746,7 +747,7 @@ export default function AnbieterPage() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Partner von Kursfind AI werden</h2>
           <p className="text-xl mb-12 text-gray-700">
-            Verbinde dich mit motivierten Lernenden mit Bildungsgutschein oder AVGS-Förderung. Tritt noch heute unserem Netzwerk geprüfter Bildungsanbieter bei.
+            Verbinde dich mit motivierten Lernenden, die für Bildungsgutschein oder AVGS-Förderung berechtigt sind. Tritt noch heute unserem Netzwerk geprüfter Bildungsanbieter bei.
           </p>
 
           {/* Cal.com Booking Section */}
@@ -815,7 +816,7 @@ export default function AnbieterPage() {
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">Ab €25/Lead oder €300/Anmeldung</span>
+                    <span className="text-sm">Nur 1% vom Kurswert pro Lead</span>
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />

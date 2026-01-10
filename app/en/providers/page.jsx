@@ -262,7 +262,7 @@ export default function ProvidersPageEN() {
               <ul className="space-y-4">
                 {[
                   '€120 per lead through Google Ads',
-                  'No high-intent leads',
+                  'Low-intent leads',
                   'KURSNET listing brings few inquiries',
                   'Cold calling employment agencies',
                   '30-40% of courses cancelled due to low enrollment',
@@ -443,7 +443,7 @@ export default function ProvidersPageEN() {
               {
                 icon: Icons.ShieldCheck,
                 title: 'Pre-Qualified Prospects',
-                desc: 'Only learners with Bildungsgutschein, AVGS, or self-payers. No wasted time.',
+                desc: 'Only learners eligible for Bildungsgutschein, AVGS, or self-payers. No wasted time.',
               },
               {
                 icon: Icons.BarChart,
@@ -533,6 +533,7 @@ export default function ProvidersPageEN() {
                 'Free course listings',
                 'No success fees',
                 'No monthly fees',
+                'No minimum term – monthly cancellable',
               ].map((benefit, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -746,7 +747,7 @@ export default function ProvidersPageEN() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Become a Kursfind AI Partner</h2>
           <p className="text-xl mb-12 text-gray-700">
-            Connect with motivated learners with Bildungsgutschein or AVGS funding. Join our network of verified education providers today.
+            Connect with motivated learners eligible for Bildungsgutschein or AVGS funding. Join our network of verified education providers today.
           </p>
 
           {/* Cal.com Booking Section */}
@@ -812,7 +813,7 @@ export default function ProvidersPageEN() {
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">From €25/lead or €300/enrollment</span>
+                    <span className="text-sm">Only 1% of course value per lead</span>
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />
