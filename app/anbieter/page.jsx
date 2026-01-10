@@ -266,12 +266,12 @@ export default function AnbieterPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Das alte Modell</h3>
               <ul className="space-y-4">
                 {[
-                  '€120 pro Lead durch Google Ads',
-                  'Niedrige Lead-Qualität',
-                  'KURSNET-Listing bringt kaum Anfragen',
-                  'Kaltakquise bei Arbeitsagenturen',
-                  '30-40% der Kurse wegen Unterbelegung abgesagt',
-                  'Unklarer Förderstatus der Interessenten',
+                  '€120+ pro Lead bei Google Ads',
+                  '15% Erfolgsprovision bei Wettbewerbern',
+                  '€2.000+ pro Einschreibung',
+                  'Hohe Vorabkosten ohne Garantie',
+                  'Zeitaufwändige Lead-Qualifizierung',
+                  'Komplizierte Verträge & Mindestlaufzeiten',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="text-red-500 font-bold text-lg">✗</span>
@@ -279,11 +279,6 @@ export default function AnbieterPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 bg-red-50 border border-red-200 rounded-xl p-4">
-                <p className="font-semibold text-red-800 mb-1">Typische Kosten:</p>
-                <p className="text-red-700">€8.000-12.000 Marketing pro Kursstart</p>
-                <p className="text-red-700">4-6 Wochen bis zur Anmeldung</p>
-              </div>
             </div>
 
             {/* Right Column - Mit Kursfind AI */}
@@ -291,12 +286,12 @@ export default function AnbieterPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Mit Kursfind AI</h3>
               <ul className="space-y-4">
                 {[
-                  'Nur 1% vom Kurswert pro qualifiziertem Lead',
-                  'Keine Erfolgsprovision oder versteckte Kosten',
-                  'KI-Matching bringt passende Lernende zu Ihnen',
-                  'Alle Leads sind förderberechtigt oder Selbstzahler',
-                  'Direkte Kontaktaufnahme über Dashboard',
-                  'Kein Werbebudget vorab nötig',
+                  'Nur 1% vom Kurswert pro Lead',
+                  'Keine Erfolgsprovision — 0%',
+                  '€800 pro Einschreibung (Durchschnitt)',
+                  'Keine Vorabkosten — zahlen nur für Ergebnisse',
+                  'KI-qualifizierte, einschreibungsbereite Leads',
+                  'Keine Mindestlaufzeit — monatlich kündbar',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <span className="text-emerald-500 font-bold text-lg">✓</span>
@@ -304,12 +299,16 @@ export default function AnbieterPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 bg-emerald-100 border border-emerald-300 rounded-xl p-4">
-                <p className="font-semibold text-emerald-800 mb-1">Ihr Vorteil:</p>
-                <p className="text-emerald-700">43% günstiger als Google Ads</p>
-                <p className="text-emerald-700">2-3 Tage bis zur Anmeldung</p>
-              </div>
             </div>
+          </div>
+
+          {/* Bottom Result Line */}
+          <div className="mt-8 text-center">
+            <p className="text-lg text-gray-700">
+              <span className="font-semibold">Das Ergebnis:</span>{' '}
+              <span className="font-bold text-emerald-600">43% günstiger als Wettbewerber</span>,{' '}
+              <span className="font-bold text-cyan-600">33% günstiger als Google Ads</span>.
+            </p>
           </div>
         </div>
       </section>
@@ -608,8 +607,94 @@ export default function AnbieterPage() {
         </div>
       </section>
 
+      {/* Section: Competitive Comparison - Right after Pricing */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              Kursfind AI vs. Ihre Alternativen
+            </h2>
+            <p className="text-lg text-gray-600">
+              Sehen Sie den Unterschied — transparent und ehrlich
+            </p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left p-4 font-semibold text-gray-900">Anbieter</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Kosten pro Lead</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Erfolgsprovision</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Kosten für 1 Einschreibung*</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-emerald-50">
+                  <td className="p-4 font-bold text-gray-900">
+                    <div className="flex items-center gap-2">
+                      <span className="text-emerald-500 text-lg">✓</span>
+                      Kursfind AI
+                    </div>
+                  </td>
+                  <td className="p-4 text-center font-bold text-emerald-600">€80 <span className="font-normal text-gray-500">(1% von €8.000)</span></td>
+                  <td className="p-4 text-center">
+                    <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
+                      <span className="text-emerald-500">✓</span> €0
+                    </span>
+                  </td>
+                  <td className="p-4 text-center">
+                    <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
+                      <span className="text-emerald-500">✓</span> €800
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-100 bg-red-50/30">
+                  <td className="p-4 font-medium text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-400">✗</span>
+                      Wettbewerber (Springest, etc.)
+                    </div>
+                  </td>
+                  <td className="p-4 text-center text-gray-600">€80 <span className="text-gray-400">(1%)</span></td>
+                  <td className="p-4 text-center text-red-600 font-medium">€1.200 <span className="text-red-400">(15%)</span></td>
+                  <td className="p-4 text-center text-red-600 font-semibold">€2.000</td>
+                </tr>
+                <tr className="bg-gray-50/50">
+                  <td className="p-4 font-medium text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">○</span>
+                      Google Ads (Karriere-Keywords)
+                    </div>
+                  </td>
+                  <td className="p-4 text-center text-gray-600">€120</td>
+                  <td className="p-4 text-center text-gray-600">€0</td>
+                  <td className="p-4 text-center text-gray-700 font-medium">€1.200</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-center text-gray-500 text-sm mt-4">
+            *Basierend auf durchschnittlichem Kurswert €8.000 und 10% Conversion-Rate (10 Leads = 1 Einschreibung)
+          </p>
+
+          {/* Comparison Badges */}
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <span className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-semibold border border-emerald-200">
+              <span className="text-emerald-500">✓</span> 43% günstiger als Wettbewerber
+            </span>
+            <span className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-4 py-2 rounded-full font-semibold border border-cyan-200">
+              <span className="text-cyan-500">✓</span> 33% günstiger als Google Ads
+            </span>
+            <span className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full font-semibold border border-gray-200">
+              <span className="text-gray-500">✓</span> Keine versteckten Kosten
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* Section 8: Mini-FAQ */}
-      <section id="faq" className="py-16 px-4 bg-white">
+      <section id="faq" className="py-16 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -647,71 +732,6 @@ export default function AnbieterPage() {
               <FAQItem key={i} question={item.q} answer={item.a} />
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Section 9: Competitive Comparison */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Kursfind AI vs. Ihre Alternativen
-            </h2>
-            <p className="text-lg text-gray-600">
-              <span className="font-semibold text-emerald-600">43% günstiger als Wettbewerber</span> • <span className="font-semibold text-cyan-600">33% günstiger als Google Ads</span>
-            </p>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left p-4 font-semibold text-gray-900">Kanal</th>
-                  <th className="text-center p-4 font-semibold text-gray-900">Kosten pro Lead</th>
-                  <th className="text-center p-4 font-semibold text-gray-900">Erfolgsprovision</th>
-                  <th className="text-center p-4 font-semibold text-gray-900">10 Leads (1 Einschreibung)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-emerald-50">
-                  <td className="p-4 font-bold text-gray-900">
-                    <div className="flex items-center gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      Kursfind AI
-                    </div>
-                  </td>
-                  <td className="p-4 text-center font-semibold text-emerald-600">€80 (1% von €8k)</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600">€0</td>
-                  <td className="p-4 text-center font-bold text-emerald-600">€800</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-400">○</span>
-                      Google Ads
-                    </div>
-                  </td>
-                  <td className="p-4 text-center text-gray-600">€120</td>
-                  <td className="p-4 text-center text-gray-600">€0</td>
-                  <td className="p-4 text-center text-gray-700 font-medium">€1.200</td>
-                </tr>
-                <tr>
-                  <td className="p-4 font-medium text-gray-700">
-                    <div className="flex items-center gap-2">
-                      <span className="text-red-400">✗</span>
-                      Wettbewerber
-                    </div>
-                  </td>
-                  <td className="p-4 text-center text-gray-600">€80 (1%)</td>
-                  <td className="p-4 text-center text-red-500 font-medium">€1.200 (15%)</td>
-                  <td className="p-4 text-center text-red-600 font-medium">€2.000</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="text-center text-gray-500 text-sm mt-4">
-            Basierend auf einem €8.000 Kurs mit 10% Conversion-Rate (1 Einschreibung pro 10 Leads)
-          </p>
         </div>
       </section>
 
