@@ -99,28 +99,24 @@ const Icons = {
 // FAQ Data for Providers
 const providerFaqData = [
   {
-    question: 'Wie funktioniert die 1% Preisgestaltung?',
-    answer: 'Sie zahlen einfach 1% des Kurswertes pro qualifiziertem Lead. Bei einem €8.000 Kurs sind das €80 pro Lead. Keine Erfolgsprovision, keine versteckten Kosten, keine monatlichen Gebühren.',
-  },
-  {
-    question: 'Wann erhalte ich meine 5 kostenlosen Leads?',
-    answer: 'Sofort nach Aktivierung Ihres Accounts! Ihre ersten 5 Leads sind komplett kostenlos – testen Sie uns risikofrei ohne jede Verpflichtung.',
-  },
-  {
-    question: 'Gibt es eine Vertragslaufzeit?',
-    answer: 'Nein! Keine Mindestvertragslaufzeit, keine Abonnements. Sie zahlen nur für die Leads, die Sie erhalten. Jederzeit pausieren oder beenden.',
-  },
-  {
-    question: 'Wie werden die Leads vorqualifiziert?',
-    answer: 'Unsere KI-Engine prüft automatisch: Förderberechtigung (Bildungsgutschein/AVGS), Registrierung beim Jobcenter/Arbeitsagentur, Motivation und Passung zum Kurs. Sie erhalten nur Leads mit hoher Conversion-Wahrscheinlichkeit.',
+    question: 'Wie funktioniert das 1%-Preismodell?',
+    answer: 'Sie zahlen 1% des Kurswertes für jeden qualifizierten Lead, der sich über Kursfind AI für Ihren Kurs bewirbt. Bei einem €8.000-Kurs sind das €80 pro Lead. Keine versteckten Kosten, keine Erfolgsprovision.',
   },
   {
     question: 'Was ist ein "qualifizierter Lead"?',
-    answer: 'Ein Lead mit echtem Interesse an Ihrem Kurs, korrekten Kontaktdaten und bestätigtem Bildungsgutschein- oder AVGS-Status. Unqualifizierte Anfragen werden nicht berechnet.',
+    answer: 'Ein qualifizierter Lead ist eine Person, die aktiv nach einer Weiterbildung sucht, Ihre Kursseite besucht hat, und eine vollständige Bewerbung mit Kontaktdaten eingereicht hat. Sie zahlen nur für echte Interessenten.',
   },
   {
-    question: 'Warum 1% statt Festpreise?',
-    answer: 'Faire Preise für jeden Kurs: Bei günstigen Kursen zahlen Sie weniger, bei hochwertigen Kursen mehr – aber immer proportional zum Wert. Das ist transparent und gerecht für alle Anbieter.',
+    question: 'Gibt es eine Erfolgsprovision (CPA)?',
+    answer: 'Nein. Anders als viele Wettbewerber berechnen wir KEINE zusätzliche Provision bei erfolgreicher Einschreibung. Sie zahlen nur die 1% Lead-Gebühr.',
+  },
+  {
+    question: 'Was ist das Launch-Angebot?',
+    answer: 'Neue Partner erhalten 5 kostenlose Leads zum Testen. Keine Kreditkarte erforderlich, keine Verpflichtung.',
+  },
+  {
+    question: 'Wie schneidet Kursfind AI preislich gegen Alternativen ab?',
+    answer: 'Wettbewerber verlangen oft 1% Lead-Gebühr PLUS 15% Erfolgsprovision. Das entspricht effektiv €140 pro Lead. Wir berechnen nur €80 (bei €8.000-Kursen) – 43% günstiger.',
   },
 ];
 
@@ -637,64 +633,64 @@ export default function AnbieterPage() {
       {/* Section 9: Competitive Comparison */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Kursfind AI vs. Ihre Alternativen
             </h2>
+            <p className="text-lg text-gray-600">
+              <span className="font-semibold text-emerald-600">43% günstiger als Wettbewerber</span> • <span className="font-semibold text-cyan-600">33% günstiger als Google Ads</span>
+            </p>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl shadow-lg overflow-hidden">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left p-4 font-semibold text-gray-900">Kriterium</th>
-                  <th className="text-center p-4 font-semibold text-gray-900">Google Ads</th>
-                  <th className="text-center p-4 font-semibold text-gray-900">KURSNET</th>
-                  <th className="text-center p-4 font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500">Kursfind AI</th>
+                  <th className="text-left p-4 font-semibold text-gray-900">Kanal</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Kosten pro Lead</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">Erfolgsprovision</th>
+                  <th className="text-center p-4 font-semibold text-gray-900">10 Leads (1 Einschreibung)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">Kosten pro Lead</td>
-                  <td className="p-4 text-center text-gray-600">€65-95</td>
-                  <td className="p-4 text-center text-gray-600">Kostenlos*</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">1% vom Kurswert</td>
+                <tr className="border-b border-gray-100 bg-gradient-to-r from-cyan-50 to-emerald-50">
+                  <td className="p-4 font-bold text-gray-900">
+                    <div className="flex items-center gap-2">
+                      <span className="text-emerald-500">✓</span>
+                      Kursfind AI
+                    </div>
+                  </td>
+                  <td className="p-4 text-center font-semibold text-emerald-600">€80 (1% von €8k)</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600">€0</td>
+                  <td className="p-4 text-center font-bold text-emerald-600">€800</td>
                 </tr>
                 <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">Lead-Qualität</td>
-                  <td className="p-4 text-center text-gray-600">Gemischt</td>
-                  <td className="p-4 text-center text-gray-600">Niedrig</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Vorqualifiziert</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">Gutschein-Status</td>
-                  <td className="p-4 text-center text-gray-600">Unbekannt</td>
-                  <td className="p-4 text-center text-gray-600">Unbekannt</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Verifiziert</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">Zeitaufwand</td>
-                  <td className="p-4 text-center text-gray-600">Hoch (Kampagnen)</td>
-                  <td className="p-4 text-center text-gray-600">Niedrig</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Minimal</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="p-4 font-medium text-gray-700">Vorabinvestition</td>
-                  <td className="p-4 text-center text-gray-600">€5.000+</td>
-                  <td className="p-4 text-center text-gray-600">Keine</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Keine</td>
+                  <td className="p-4 font-medium text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400">○</span>
+                      Google Ads
+                    </div>
+                  </td>
+                  <td className="p-4 text-center text-gray-600">€120</td>
+                  <td className="p-4 text-center text-gray-600">€0</td>
+                  <td className="p-4 text-center text-gray-700 font-medium">€1.200</td>
                 </tr>
                 <tr>
-                  <td className="p-4 font-medium text-gray-700">Ergebnis-Garantie</td>
-                  <td className="p-4 text-center text-gray-600">Nein</td>
-                  <td className="p-4 text-center text-gray-600">Nein</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">Lead-Garantie</td>
+                  <td className="p-4 font-medium text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-400">✗</span>
+                      Wettbewerber
+                    </div>
+                  </td>
+                  <td className="p-4 text-center text-gray-600">€80 (1%)</td>
+                  <td className="p-4 text-center text-red-500 font-medium">€1.200 (15%)</td>
+                  <td className="p-4 text-center text-red-600 font-medium">€2.000</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p className="text-center text-gray-500 text-sm mt-4">
-            *KURSNET ist kostenlos, bringt aber kaum qualifizierte Anfragen
+            Basierend auf einem €8.000 Kurs mit 10% Conversion-Rate (1 Einschreibung pro 10 Leads)
           </p>
         </div>
       </section>
@@ -714,7 +710,7 @@ export default function AnbieterPage() {
               className="bg-white text-emerald-600 px-10 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:shadow-2xl transition-all group"
               style={{ height: '56px' }}
             >
-              <span>Kostenlos starten</span>
+              <span>Jetzt Partner werden</span>
               <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
@@ -722,7 +718,7 @@ export default function AnbieterPage() {
               className="border-2 border-white text-white px-10 py-4 rounded-lg font-semibold inline-flex items-center space-x-2 hover:bg-white/10 transition-all"
               style={{ height: '56px' }}
             >
-              <span>Kostenloses Beratungsgespräch</span>
+              <span>Demo buchen</span>
             </Link>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-6 text-white">
