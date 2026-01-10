@@ -99,28 +99,20 @@ const Icons = {
 // FAQ Data for Providers
 const providerFaqData = [
   {
-    question: 'What is the difference between CPL and CPA?',
-    answer: 'CPL (Cost Per Lead) means you pay for each qualified lead, regardless of enrollment. CPA (Cost Per Acquisition) means you only pay when a student actually enrolls. CPA is ideal for providers with less budget or uncertain conversion rates.',
+    question: 'How does the 1% pricing model work?',
+    answer: 'You pay only 1% of your course value per qualified lead. For example: €5,000 course = €50 per lead, €10,000 course = €100 per lead. No success fees, no subscriptions, no hidden costs.',
   },
   {
-    question: 'When do I receive my free Early Adopter leads?',
-    answer: 'Immediately after activating your account! With CPL, you get your first 5 leads free. With CPA, your first successful enrollment is free. No catch, no hidden costs.',
+    question: 'When do I receive my free launch leads?',
+    answer: 'Immediately after activating your account! You get your first 5 leads completely free. No catch, no hidden costs – test us risk-free.',
   },
   {
     question: 'Is there a contract term?',
-    answer: 'Our standard term is 3 months. As an Early Adopter, however, you lock in your launch prices permanently – even after the contract ends, you can renew at these rates.',
+    answer: 'No! No minimum contract term, no setup fees. You can cancel anytime. We rely on performance instead of lock-in.',
   },
   {
     question: 'How are students pre-qualified?',
     answer: 'Our AI engine automatically checks: funding eligibility (Bildungsgutschein/AVGS), registration with Jobcenter/Arbeitsagentur, motivation and course fit. You only receive leads with high conversion probability.',
-  },
-  {
-    question: 'What happens after the 6-month launch price period?',
-    answer: 'You can either continue at standard prices (+15-20%) or cancel your contract. As an Early Adopter, however, you have the option to keep your launch prices if you provide us with a brief success story.',
-  },
-  {
-    question: 'Can I switch between CPL and CPA?',
-    answer: 'Yes, anytime! Many providers start with CPA (low risk) and switch to CPL after 3-6 months once they know their conversion rate. We\'re happy to advise you.',
   },
 ];
 
@@ -148,8 +140,6 @@ function FAQItem({ question, answer }) {
 }
 
 export default function ProvidersPageEN() {
-  const [pricingModel, setPricingModel] = useState('cpl');
-
   
   return (
     <MarketingLayoutEN ctaHref="/provider/login" ctaLabel="Provider Login">
@@ -172,7 +162,7 @@ export default function ProvidersPageEN() {
                 No Upfront Advertising Costs
               </h1>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed mx-auto">
-                Kursfind AI connects learners with education vouchers directly to your courses. You only pay for results: from €25 per lead or from €300 per enrollment.
+                Kursfind AI connects learners with education vouchers directly to your courses. Pay only 1% per qualified lead. No success fees. No hidden costs.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
@@ -202,7 +192,7 @@ export default function ProvidersPageEN() {
                 </div>
                 <div className="flex items-center space-x-2 hover:text-cyan-600 transition-colors">
                   <Icons.DollarSign className="w-4 h-4" />
-                  <span>From €25 per lead (CPL)</span>
+                  <span>Only 1% per lead</span>
                 </div>
               </div>
             </div>
@@ -292,8 +282,8 @@ export default function ProvidersPageEN() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">With Kursfind AI</h3>
               <ul className="space-y-4">
                 {[
-                  'From €25 per qualified lead (CPL)',
-                  'Or from €300 per successful enrollment (CPA)',
+                  'Only 1% of course value per lead',
+                  'No success fees, no subscriptions',
                   'AI matching brings suitable learners to you',
                   'All leads have voucher or are applying for one',
                   'Direct contact via dashboard',
@@ -307,7 +297,7 @@ export default function ProvidersPageEN() {
               </ul>
               <div className="mt-8 bg-emerald-100 border border-emerald-300 rounded-xl p-4">
                 <p className="font-semibold text-emerald-800 mb-1">Your Advantage:</p>
-                <p className="text-emerald-700">60-70% lower costs per participant</p>
+                <p className="text-emerald-700">1% per lead – 43% cheaper than competitors</p>
                 <p className="text-emerald-700">2-3 days until enrollment</p>
               </div>
             </div>
@@ -499,174 +489,97 @@ export default function ProvidersPageEN() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-12 md:py-16 bg-gray-50" id="pricing">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+      {/* Pricing Section - NEW 1% MODEL */}
+      <section className="py-16 md:py-20 bg-gray-50" id="pricing">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Fair Pricing for Every Provider
+              Simple, Transparent Pricing
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              Pay only for qualified leads or successful enrollments. No setup fees, no hidden costs.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              1% of course value per qualified lead. No hidden costs.
             </p>
+          </div>
 
-            {/* CPL/CPA Toggle */}
-            <div className="inline-flex flex-col items-center">
-              <div className="bg-gray-100 rounded-full p-1 flex flex-wrap justify-center">
-                <button
-                  onClick={() => setPricingModel('cpl')}
-                  className={`px-6 py-3 rounded-full font-semibold transition-all ${pricingModel === 'cpl' ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                >
-                  Cost Per Lead (CPL)
-                </button>
-                <button
-                  onClick={() => setPricingModel('cpa')}
-                  className={`px-6 py-3 rounded-full font-semibold transition-all ${pricingModel === 'cpa' ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                >
-                  Cost Per Acquisition (CPA)
-                </button>
+          {/* Single Pricing Card */}
+          <div className="bg-white border-2 border-cyan-500 rounded-3xl p-8 md:p-10 shadow-2xl max-w-2xl mx-auto relative overflow-hidden">
+            {/* Gradient accent */}
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
+            
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-6 border border-cyan-200">
+                <Icons.DollarSign className="w-4 h-4" />
+                <span>Per Lead Pricing Model</span>
               </div>
-              <p className="mt-4 text-sm md:text-base text-gray-600">
-                💡 {pricingModel === 'cpl' ? 'Ideal for established providers with stable conversion rates' : 'Ideal for providers who only want to pay for successful enrollments'}
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="text-7xl md:text-8xl font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">1%</span>
+              </div>
+              <p className="text-xl text-gray-600">per qualified lead</p>
+              <p className="text-gray-500 mt-2">Pay only 1% of course value per qualified application</p>
+            </div>
+
+            {/* Benefits */}
+            <ul className="space-y-4 mb-8">
+              {[
+                'No success fees',
+                'No monthly fees',
+                'No minimum contract term',
+                'Free course listings',
+                'Free dashboard & analytics',
+              ].map((benefit, i) => (
+                <li key={i} className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icons.Check className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Examples Table */}
+            <div className="bg-gray-50 rounded-xl p-6 mb-8">
+              <p className="font-semibold text-gray-900 mb-4 text-center">Examples</p>
+              <div className="space-y-3">
+                {[
+                  { course: '€5,000 course', fee: '€50 per lead' },
+                  { course: '€8,000 course', fee: '€80 per lead' },
+                  { course: '€10,000 course', fee: '€100 per lead' },
+                  { course: '€15,000 course', fee: '€150 per lead' },
+                ].map((example, i) => (
+                  <div key={i} className="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
+                    <span className="text-gray-600">{example.course}</span>
+                    <span className="font-semibold text-gray-900">→ {example.fee}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <Link
+              href="#booking"
+              className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center text-lg"
+            >
+              <span className="relative z-10">Become a Partner Now</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </Link>
+          </div>
+
+          {/* Launch Offer Banner */}
+          <div className="mt-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border border-cyan-200 rounded-2xl p-6 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Icons.Gift className="w-6 h-6 text-cyan-600" />
+                <span className="text-xl font-bold text-gray-900">LAUNCH OFFER</span>
+              </div>
+              <p className="text-lg text-gray-700">
+                <span className="font-semibold text-cyan-600">5 free leads</span> for new partners
               </p>
+              <p className="text-gray-600 text-sm mt-1">Test us risk-free – no obligation</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Pricing Tiers */}
-      <section className="pb-16 md:pb-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            {/* Basic Tier */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
-                <p className="text-gray-600">For smaller education providers</p>
-                <div className="mt-3">
-                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
-                    Course value: €2,000 - €6,000
-                  </span>
-                </div>
-              </div>
-              <div className="mb-6">
-                <div className="flex items-baseline space-x-2 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€25' : '€300'}</span>
-                  <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
-                </div>
-              </div>
-              <ul className="space-y-3 mb-6">
-                {['Unlimited course listings', 'Provider dashboard', 'Conversion tracking', 'Email notifications', 'Standard support'].map((feature, i) => (
-                  <li key={i} className="flex items-start space-x-3">
-                    <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
-                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
-                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <Link
-                href="/provider/signup"
-                className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
-              >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </Link>
-            </div>
-
-            {/* Professional Tier (Highlighted) */}
-            <div className="bg-gradient-to-b from-cyan-50 to-emerald-50 border-2 border-cyan-500 rounded-2xl p-6 lg:p-8 shadow-xl hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg whitespace-nowrap">
-                  ⭐ Popular with Providers
-                </span>
-              </div>
-              <div className="mb-6 pt-2">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
-                <p className="text-gray-600">For established providers</p>
-                <div className="mt-3">
-                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
-                    Course value: €6,000 - €11,000
-                  </span>
-                </div>
-              </div>
-              <div className="mb-6">
-                <div className="flex items-baseline space-x-2 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€40' : '€450'}</span>
-                  <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
-                </div>
-              </div>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start space-x-3">
-                  <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Everything in Basic, plus:</span>
-                </li>
-                {['Priority support', 'Advanced analytics', 'Dedicated contact person'].map((feature, i) => (
-                  <li key={i} className="flex items-start space-x-3">
-                    <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="bg-white rounded-xl p-4 mb-6 border border-cyan-200">
-                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
-                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <Link
-                href="/provider/signup"
-                className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
-              >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </Link>
-            </div>
-
-            {/* Premium Tier */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Premium</h3>
-                <p className="text-gray-600">For high-value training programs</p>
-                <div className="mt-3">
-                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-cyan-500 to-emerald-500 text-white">
-                    Course value: €11,000+
-                  </span>
-                </div>
-              </div>
-              <div className="mb-6">
-                <div className="flex items-baseline space-x-2 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">{pricingModel === 'cpl' ? '€60' : '€600'}</span>
-                  <span className="text-gray-600">/ {pricingModel === 'cpl' ? 'lead' : 'enrollment'}</span>
-                </div>
-              </div>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start space-x-3">
-                  <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">Everything in Professional, plus:</span>
-                </li>
-                {['Early access to new features', 'Custom integrations', 'Quarterly strategy calls'].map((feature, i) => (
-                  <li key={i} className="flex items-start space-x-3">
-                    <Icons.Check className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 mb-6 border border-cyan-100">
-                <p className="font-semibold text-gray-900 mb-1">🎁 Launch Bonus</p>
-                <p className="text-sm text-gray-700">{pricingModel === 'cpl' ? '5 free leads' : '1 free enrollment'}</p>
-              </div>
-              <Link
-                href="/provider/signup"
-                className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white py-4 rounded-xl font-semibold hover:shadow-xl transition-all relative overflow-hidden group block text-center"
-              >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </Link>
-            </div>
-          </div>
-          <p className="text-center text-gray-500 text-sm mt-10">
-            All prices excl. VAT • No setup fees • 3 months minimum term • Cancel anytime after expiry
+          <p className="text-center text-gray-500 text-sm mt-8">
+            All prices excl. VAT • No setup fees • No minimum term
           </p>
         </div>
       </section>
@@ -687,8 +600,8 @@ export default function ProvidersPageEN() {
                 a: 'A lead with genuine interest in your course, correct contact details, and confirmed Bildungsgutschein or AVGS status (or self-payer). Unqualified inquiries are not charged.',
               },
               {
-                q: 'When do I have to pay?',
-                a: 'With CPL: After receiving the lead. With CPA: Only after successful course enrollment. No advance payments.',
+                q: 'How does the 1% pricing work?',
+                a: 'You pay 1% of your course value per qualified lead. Example: €8,000 course = €80 per lead. No success fees, no subscriptions, no hidden costs.',
               },
               {
                 q: 'What if a lead doesn\'t fit me?',
@@ -700,7 +613,7 @@ export default function ProvidersPageEN() {
               },
               {
                 q: 'Is there a minimum purchase?',
-                a: 'No. You only pay for leads you actually receive. No minimum purchase, no monthly fixed costs.',
+                a: 'No. You only pay for leads you actually receive. No minimum purchase, no monthly fixed costs, no minimum contract term.',
               },
               {
                 q: 'What makes Kursfind AI different from KURSNET?',
@@ -737,7 +650,7 @@ export default function ProvidersPageEN() {
                   <td className="p-4 font-medium text-gray-700">Cost per Lead</td>
                   <td className="p-4 text-center text-gray-600">€65-95</td>
                   <td className="p-4 text-center text-gray-600">Free*</td>
-                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">From €25</td>
+                  <td className="p-4 text-center font-semibold text-emerald-600 bg-emerald-50">1% of course value</td>
                 </tr>
                 <tr className="border-b border-gray-100">
                   <td className="p-4 font-medium text-gray-700">Lead Quality</td>
