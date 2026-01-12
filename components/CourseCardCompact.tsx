@@ -109,7 +109,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
       href={`/courses/${course.id}`}
       className="group block"
     >
-      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 mb-2">
+      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px]">
         
         {/* 1. IMAGE THUMBNAIL */}
         {/* Desktop: Fixed width (w-40). Mobile: Full width, fixed height (h-32) */}
@@ -124,15 +124,6 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <MonitorIcon className="w-8 h-8 opacity-20" />
-            </div>
-          )}
-
-          {/* Only funding badge on image */}
-          {course.funding_type && (
-            <div className="absolute top-2 left-2 z-10">
-              <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
-                {course.funding_type}
-              </span>
             </div>
           )}
         </div>
@@ -151,39 +142,39 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             </h3>
 
             {/* Metadata Badges */}
-            <div className="flex flex-wrap items-center gap-2 mb-3">
+            <div className="flex flex-wrap items-center gap-1.5 mb-3">
               {/* Location */}
-              <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
-                <MapPinIcon className="w-3 h-3 text-cyan-500" />
-                {course.location}
+              <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                <MapPinIcon className="w-3 h-3 text-cyan-600" />
+                <span className="text-cyan-700 font-medium">{course.location}</span>
               </span>
               
               {/* Duration */}
               {course.duration && (
-                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
-                  <ClockIcon className="w-3 h-3 text-cyan-500" />
-                  {course.duration}
+                <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                  <ClockIcon className="w-3 h-3 text-cyan-600" />
+                  <span className="text-cyan-700 font-medium">{course.duration}</span>
                 </span>
               )}
               
               {/* Language */}
               {course.language && (
-                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
                   <span className="text-xs">{getLanguageIcon(course.language)}</span>
-                  {course.language}
+                  <span className="text-cyan-700 font-medium">{course.language}</span>
                 </span>
               )}
               
               {/* Format */}
               {course.format && (
-                <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
                   {course.format}
                 </span>
               )}
               
               {/* Laptop Included */}
               {hasLaptopIncluded && (
-                <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
                   💻 Laptop
                 </span>
               )}
@@ -191,15 +182,15 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
           </div>
 
           {/* CTA Button */}
-          <div className="w-full mt-auto flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="w-full mt-auto flex items-center justify-between pt-2 border-t border-cyan-100">
             <div className="flex items-center gap-2">
               <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
                 Details ansehen
               </span>
               {formatStartDate(course.start_date) && (
                 <>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-xs text-gray-600 font-medium">
+                  <span className="text-cyan-200">•</span>
+                  <span className="text-xs text-cyan-700 font-medium">
                     Start: {formatStartDate(course.start_date)}
                   </span>
                 </>
