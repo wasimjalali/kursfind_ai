@@ -101,7 +101,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
   );
 }
 
-// Option D: Marketing-Inspired Professional Loading Component
+// Option E: Dynamic Vertical Stepper (Gemini Expert Recommendation)
 function EnhancedLoadingIndicator({ 
   stage, 
   topic, 
@@ -113,126 +113,110 @@ function EnhancedLoadingIndicator({
   progress: number;
   isCourseSearch: boolean;
 }) {
-  // Stage configurations with marketing-inspired design
-  const stageConfig = {
-    understanding: {
-      icon: '🔍',
-      text: {
-        de: 'Analysiere Ihre Anfrage',
-        en: 'Understanding your request'
-      },
-      description: {
-        de: 'KI versteht Ihre Bedürfnisse',
-        en: 'AI understands your needs'
-      }
+  // Stage configurations - Gemini-optimized
+  const stages = [
+    {
+      id: 'understanding',
+      title: 'Anfrage analysieren',
+      subtitle: 'KI versteht Ihre Bedürfnisse',
+      icon: '🔍'
     },
-    searching: {
-      icon: '📊',
-      text: {
-        de: 'Durchsuche Kursdatenbank',
-        en: 'Searching course database'
-      },
-      description: {
-        de: 'Tausende Kurse werden geprüft',
-        en: 'Thousands of courses being checked'
-      }
+    {
+      id: 'searching',
+      title: 'Kursdatenbank durchsuchen',
+      subtitle: 'Prüfe AZAV-Zertifizierungen & Standorte',
+      icon: '📊'
     },
-    preparing: {
-      icon: '✨',
-      text: {
-        de: 'Bereite Empfehlungen vor',
-        en: 'Preparing recommendations'
-      },
-      description: {
-        de: 'Perfekte Matches für Sie',
-        en: 'Perfect matches for you'
-      }
+    {
+      id: 'preparing',
+      title: 'Empfehlungen vorbereiten',
+      subtitle: 'Erstelle persönliche Matches',
+      icon: '✨'
     }
-  };
+  ];
 
-  const currentStage = stageConfig[stage];
-  const language = 'de'; // Default to German, can be dynamic
+  const currentStageIndex = stages.findIndex(s => s.id === stage);
 
   return (
-    <div className="flex justify-start animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 max-w-md">
-        {/* Progress Bar - Matching Hero Section Style */}
-        <div className="flex items-center space-x-3 mb-5">
-          <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div 
-              className="h-2 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            >
-              {/* Shimmer effect from hero section */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
-            </div>
-          </div>
-          <span className="text-xs text-gray-500 font-medium">{Math.round(progress)}%</span>
+    <div className="flex justify-start animate-fadeIn" role="status" aria-live="polite">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-xl border border-cyan-100 overflow-hidden flex flex-col transition-all duration-300 ease-in-out">
+        
+        {/* 1. Progress Bar (Top) */}
+        <div className="h-1.5 w-full bg-gray-100">
+          <div 
+            className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all duration-300 ease-out"
+            style={{ width: `${progress}%` }}
+          />
         </div>
 
-        {/* Current Stage with Animated Icon */}
-        <div className="flex items-start gap-3 mb-4">
-          <div className={`
-            text-2xl flex-shrink-0 mt-1
-            ${stage === 'understanding' ? 'animate-pulse' : ''}
-            ${stage === 'searching' ? 'animate-spin-slow' : ''}
-            ${stage === 'preparing' ? 'animate-bounce' : ''}
-          `}>
-            {currentStage.icon}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-gray-900 font-semibold text-base mb-1">
-              {currentStage.text[language]}
-              <span className="animate-pulse">|</span>
-            </h3>
-            <p className="text-gray-600 text-sm">
-              {currentStage.description[language]}
-            </p>
-          </div>
-        </div>
+        {/* 2. Content Area - Stage List */}
+        <div className="p-5 flex flex-col gap-3">
+          {stages.map((stageItem, index) => {
+            const isActive = index === currentStageIndex;
+            const isCompleted = index < currentStageIndex;
+            const isPending = index > currentStageIndex;
 
-        {/* Stage Progress - Checkmarks like Hero Section */}
-        <div className="space-y-2">
-          {(['understanding', 'searching', 'preparing'] as const).map((s, idx) => (
-            <div
-              key={s}
-              className={`flex items-center space-x-3 transition-all duration-300 ${
-                s === stage ? 'opacity-100' : s === 'understanding' && stage === 'searching' || s === 'searching' && stage === 'preparing' || s === 'understanding' && stage === 'preparing' 
-                  ? 'opacity-100' 
-                  : 'opacity-40'
-              }`}
-            >
-              {/* Checkmark or Dot */}
-              <div className="flex-shrink-0">
-                {s === 'understanding' && (stage === 'searching' || stage === 'preparing') ? (
-                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            return (
+              <div 
+                key={stageItem.id}
+                className={`flex items-start gap-3 transition-all duration-500 ${
+                  isPending ? 'opacity-40 grayscale' : 'opacity-100'
+                }`}
+              >
+                {/* Icon Container */}
+                <div className={`
+                  relative flex items-center justify-center w-8 h-8 rounded-full shrink-0 border transition-all duration-300
+                  ${isCompleted ? 'bg-emerald-100 border-emerald-200 text-emerald-600' : ''}
+                  ${isActive ? 'bg-cyan-50 border-cyan-200 text-cyan-600 ring-2 ring-cyan-100 ring-offset-1' : ''}
+                  ${isPending ? 'bg-gray-50 border-gray-200 text-gray-400' : ''}
+                `}>
+                  {isCompleted ? (
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
+                  ) : (
+                    <span className={`text-base ${isActive ? 'animate-spin-slow' : ''}`}>
+                      {stageItem.icon}
+                    </span>
+                  )}
+                  
+                  {/* Pulsing Ring for Active State */}
+                  {isActive && (
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-20 animate-ping"></span>
+                  )}
+                </div>
+
+                {/* Text Content */}
+                <div className="flex flex-col pt-0.5">
+                  <span className={`text-sm font-semibold leading-none transition-colors duration-300 ${
+                    isActive ? 'text-gray-900' : 'text-gray-500'
+                  }`}>
+                    {stageItem.title}
+                  </span>
+                  
+                  {/* Subtitle - Expands only when active */}
+                  <div className={`grid transition-all duration-500 ease-in-out ${
+                    isActive ? 'grid-rows-[1fr] opacity-100 mt-1' : 'grid-rows-[0fr] opacity-0'
+                  }`}>
+                    <span className="text-xs text-cyan-600 font-medium overflow-hidden">
+                      {stageItem.subtitle}
+                    </span>
                   </div>
-                ) : s === 'searching' && stage === 'preparing' ? (
-                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                ) : s === stage ? (
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center animate-pulse">
-                    <span className="w-2 h-2 bg-white rounded-full"></span>
-                  </div>
-                ) : (
-                  <div className="w-5 h-5 rounded-full bg-gray-300"></div>
-                )}
+                </div>
               </div>
-              
-              {/* Stage Text */}
-              <span className={`text-sm ${
-                s === stage ? 'text-gray-900 font-medium' : 'text-gray-600'
-              }`}>
-                {stageConfig[s].text[language]}
-              </span>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* 3. Footer - Trust Indicator */}
+        <div className="bg-gray-50 px-5 py-2 border-t border-gray-100 flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+            Kursfind AI
+          </span>
+          <span className="text-[10px] text-gray-400 flex items-center gap-1">
+            AZAV Database
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>
+          </span>
         </div>
       </div>
     </div>
