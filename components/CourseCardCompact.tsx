@@ -132,7 +132,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
         <div className="flex flex-col p-3 sm:p-4 grow justify-between min-w-0">
           <div>
             {/* Provider */}
-            <div className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full mb-2">
+            <div className="inline-flex items-center px-2.5 sm:px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full mb-2">
               {providerName}
             </div>
 
@@ -142,24 +142,24 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             </h3>
 
             {/* Metadata Badges */}
-            <div className="flex flex-wrap items-center gap-2 mb-3">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3">
               {/* Location */}
-              <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-1.5">
-                <MapPinIcon className="w-3.5 h-3.5 text-gray-500" />
+              <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
+                <MapPinIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500" />
                 <span className="text-xs font-semibold text-gray-900">{course.location}</span>
               </span>
               
               {/* Duration */}
               {course.duration && (
-                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-1.5">
-                  <ClockIcon className="w-3.5 h-3.5 text-gray-500" />
+                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
+                  <ClockIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500" />
                   <span className="text-xs font-semibold text-gray-900">{course.duration}</span>
                 </span>
               )}
               
               {/* Language */}
               {course.language && (
-                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-1.5">
+                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
                   <span className="text-xs">{getLanguageIcon(course.language)}</span>
                   <span className="text-xs font-semibold text-gray-900">{course.language}</span>
                 </span>
@@ -167,15 +167,22 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
               
               {/* Format */}
               {course.format && (
-                <span className="bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200 text-cyan-700 rounded-lg px-3 py-1.5 text-xs font-semibold">
+                <span className="bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200 text-cyan-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
                   {course.format}
                 </span>
               )}
               
               {/* Laptop Included */}
               {hasLaptopIncluded && (
-                <span className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-700 rounded-lg px-3 py-1.5 text-xs font-semibold">
+                <span className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
                   💻 Laptop
+                </span>
+              )}
+              
+              {/* Start Date Badge */}
+              {formatStartDate(course.start_date) && (
+                <span className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
+                  📅 {formatStartDate(course.start_date)}
                 </span>
               )}
             </div>
@@ -183,19 +190,9 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
 
           {/* CTA Button */}
           <div className="w-full mt-auto flex items-center justify-between pt-2 border-t border-cyan-100">
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
-                Details ansehen
-              </span>
-              {formatStartDate(course.start_date) && (
-                <>
-                  <span className="text-cyan-200">•</span>
-                  <span className="text-xs text-cyan-700 font-medium">
-                    Start: {formatStartDate(course.start_date)}
-                  </span>
-                </>
-              )}
-            </div>
+            <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
+              Details ansehen
+            </span>
             <ArrowRightIcon className="w-4 h-4 text-cyan-600 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
           </div>
         </div>
