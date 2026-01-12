@@ -154,7 +154,7 @@ function EnhancedLoadingIndicator({
   const currentData = isSearchMode ? content.search[textIndex] : content.chat;
 
   return (
-    <div className="flex justify-center w-full py-4" role="status" aria-live="polite" aria-atomic="true">
+    <div className="flex justify-start w-full py-4" role="status" aria-live="polite" aria-atomic="true">
       <div className="relative group">
         
         {/* Glow Effect - Stronger for Search, Softer for Chat */}
