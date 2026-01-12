@@ -7,7 +7,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import ChatSidebar from '@/components/ChatSidebar';
 import WelcomeScreen from '@/components/WelcomeScreen';
-import ChatCourseCard from '@/components/ChatCourseCard';
+import { CourseCardCompact } from '@/components/CourseCardCompact';
 import { supabase } from '@/lib/supabase';
 import { 
   orderCoursesByRecommendation, 
@@ -931,13 +931,9 @@ function ChatContent() {
                                         : course;
                                       
                                       return (
-                                        <ChatCourseCard 
+                                        <CourseCardCompact 
                                           key={`${course.id}-${idx}-${courseIdx}`} 
                                           course={enhancedCourse}
-                                          showRecommendedBadge={enhancedCourse._isRecommended}
-                                          badgeType={enhancedCourse._badgeType}
-                                          ranking={enhancedCourse._ranking}
-                                          isDuplicate={enhancedCourse._isDuplicate}
                                         />
                                       );
                                     })}
