@@ -368,6 +368,17 @@ a, button {
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Respect reduced motion preferences for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-ping,
+  .motion-safe\:animate-spin-slow,
+  .motion-safe\:animate-ping,
+  .motion-safe\:animate-pulse {
+    animation: none !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    KURSFIND BRAND SIDEBAR STYLING
    Light theme with Cyan/Emerald accents
