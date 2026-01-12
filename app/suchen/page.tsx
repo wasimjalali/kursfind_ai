@@ -737,25 +737,25 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // Headings - Slightly larger than body text
+                                  // Headings - Consistent 17px for hierarchy
                                   h1: ({node, ...props}) => (
                                     <h1 
-                                      className="text-lg sm:text-xl font-bold mb-2 sm:mb-3" 
-                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      className="font-bold mb-2 sm:mb-3" 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
                                       {...props} 
                                     />
                                   ),
                                   h2: ({node, ...props}) => (
                                     <h2 
-                                      className="text-[17px] sm:text-lg font-bold mb-2 sm:mb-2.5" 
-                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      className="font-bold mb-2 sm:mb-2.5" 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
                                       {...props} 
                                     />
                                   ),
                                   h3: ({node, ...props}) => (
                                     <h3 
-                                      className="text-[16px] sm:text-base font-bold mb-1.5 sm:mb-2" 
-                                      style={{ color: '#111827', fontWeight: 700 }} 
+                                      className="font-bold mb-1.5 sm:mb-2" 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
                                       {...props} 
                                     />
                                   ),
@@ -782,24 +782,25 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // List items - FIXED: Explicit marker color and consistent text size
+                                  // List items - Consistent 15px text size
                                   li: ({node, children, ...props}) => (
                                     <li 
-                                      className="leading-relaxed text-base sm:text-lg marker:text-gray-600 marker:font-normal"
+                                      className="leading-relaxed marker:text-gray-600 marker:font-normal"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',
+                                        fontSize: '15px'
                                       }}
                                       {...props}
                                     >
                                       {children}
                                     </li>
                                   ),
-                                  // Links - Visible cyan color
+                                  // Links - Consistent 15px text size
                                   a: ({node, ...props}) => (
                                     <a 
-                                      className="underline font-medium text-base sm:text-lg" 
-                                      style={{ color: '#0891b2' }} 
+                                      className="underline font-medium" 
+                                      style={{ color: '#0891b2', fontSize: '15px' }} 
                                       {...props} 
                                     />
                                   ),
