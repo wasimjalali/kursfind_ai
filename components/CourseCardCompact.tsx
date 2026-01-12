@@ -46,17 +46,21 @@ interface CourseCardProps {
 }
 
 export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
+  // Validate image URL
+  const validImageUrl = course.imageUrl && course.imageUrl.trim() !== '' ? course.imageUrl : null;
+
   return (
-    <div className="group flex flex-col md:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+    <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 mb-2">
       
-      {/* 1. IMAGE SECTION (Left on Desktop, Top on Mobile) */}
-      <div className="relative h-32 md:h-auto md:w-48 shrink-0 bg-gray-100">
-        {course.imageUrl ? (
+      {/* 1. IMAGE THUMBNAIL */}
+      {/* Desktop: Fixed width (w-40). Mobile: Full width, fixed height (h-32) */}
+      <div className="relative h-32 w-full sm:h-auto sm:w-40 shrink-0 bg-gray-100">
+        {validImageUrl ? (
           <Image 
-            src={course.imageUrl} 
+            src={validImageUrl} 
             alt={course.title} 
             fill 
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -64,63 +68,50 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
           </div>
         )}
 
-        {/* Badges Overlay (Top Left) */}
+        {/* Badges (Overlaid to save space) */}
         {(course.tags && course.tags.length > 0) && (
           <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
             {course.isPromoted && (
-              <span className="bg-gradient-to-r from-amber-400 to-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
-                Top-Wahl
-              </span>
-            )}
-            {course.tags.includes('Bildungsgutschein') && (
-              <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
-                ✓ 100% Gefördert
+              <span className="bg-amber-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                Empfohlen
               </span>
             )}
           </div>
         )}
       </div>
 
-      {/* 2. CONTENT SECTION (Right on Desktop, Bottom on Mobile) */}
-      <div className="flex flex-col p-4 grow justify-between">
+      {/* 2. CONTENT AREA */}
+      <div className="flex flex-col p-3 sm:p-4 grow justify-between min-w-0">
         <div>
-          {/* Provider Name (Subtle Trust Signal) */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-              {course.provider}
-            </span>
+          {/* Provider */}
+          <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1 truncate">
+            {course.provider}
           </div>
 
           {/* Title */}
-          <h3 className="font-bold text-gray-900 leading-snug mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2">
+          <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-snug mb-2 group-hover:text-cyan-600 transition-colors line-clamp-2">
             {course.title}
           </h3>
 
-          {/* Compact Metadata Row */}
+          {/* Metadata (Single Row) */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mb-3">
-            <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
+            <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded whitespace-nowrap">
               <MapPinIcon className="w-3 h-3 text-cyan-500" />
               {course.location}
             </span>
-            <span className="text-gray-300">•</span>
-            <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
+            <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded whitespace-nowrap">
               <ClockIcon className="w-3 h-3 text-cyan-500" />
               {course.duration}
-            </span>
-            <span className="text-gray-300">•</span>
-            <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
-              <MonitorIcon className="w-3 h-3 text-cyan-500" />
-              {course.format}
             </span>
           </div>
         </div>
 
-        {/* 3. ACTION BUTTON (High CTR) */}
+        {/* CTA Button */}
         <a 
           href={course.link} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="w-full mt-auto flex items-center justify-center gap-2 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 active:bg-cyan-200 font-medium py-2 rounded-lg transition-colors text-sm"
+          className="w-full mt-auto flex items-center justify-center gap-2 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 font-medium py-1.5 rounded-lg transition-colors text-xs sm:text-sm"
         >
           Zum Kurs
           <ExternalLinkIcon className="w-3 h-3" />

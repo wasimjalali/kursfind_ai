@@ -918,8 +918,8 @@ function ChatContent() {
                                     </p>
                                   )}
                                   
-                                  {/* Course cards with full design and smart ordering - Grid layout: 2 cols on desktop, 1 on mobile */}
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {/* Course cards with full design and smart ordering - List View: One card per line */}
+                                  <div className="flex flex-col gap-4 w-full">
                                     {coursesToDisplay.map((course: any, courseIdx: number) => {
                                       // Enhance course with recommendation context
                                       const enhancedCourse = FEATURES.SMART_CARD_ORDERING 
