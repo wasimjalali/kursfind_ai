@@ -109,10 +109,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
       href={`/courses/${course.id}`}
       className="group block"
     >
-      <div className="group relative">
-        {/* Gradient Glow Effect */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 rounded-xl blur opacity-30 motion-safe:animate-gradient-xy"></div>
-        <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px] relative">
+      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl border border-gray-100 shadow-md shadow-gray-200/50 overflow-hidden hover:shadow-lg hover:shadow-cyan-100/50 hover:border-cyan-200 hover:-translate-y-0.5 transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px]">
         
         {/* 1. IMAGE THUMBNAIL */}
         {/* Desktop: Fixed width (w-40). Mobile: Full width, fixed height (h-32) */}
@@ -199,7 +196,6 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             <ArrowRightIcon className="w-4 h-4 text-cyan-600 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
           </div>
         </div>
-      </div>
       </div>
     </Link>
   );
