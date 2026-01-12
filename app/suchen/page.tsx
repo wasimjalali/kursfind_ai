@@ -689,7 +689,7 @@ function ChatContent() {
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
                       <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-md">
-                        <p className="text-sm leading-relaxed" style={{ fontSize: '15px' }}>{message.content}</p>
+                        <p className="text-sm leading-relaxed" style={{ fontSize: '16px' }}>{message.content}</p>
                       </div>
                     )}
                     
@@ -713,11 +713,11 @@ function ChatContent() {
                             <div className="prose prose-sm max-w-none mb-4">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text - Consistent 15px for accessibility
+                                  // Bold text - Consistent 16px for better readability
                                   strong: ({node, ...props}) => (
                                     <strong 
                                       className="font-bold" 
-                                      style={{ color: '#1f2937', fontWeight: 700, fontSize: '15px' }} 
+                                      style={{ color: '#1f2937', fontWeight: 700, fontSize: '16px' }} 
                                       {...props} 
                                     />
                                   ),
@@ -725,37 +725,37 @@ function ChatContent() {
                                   em: ({node, ...props}) => (
                                     <em 
                                       className="italic" 
-                                      style={{ color: '#374151', fontSize: '15px' }} 
+                                      style={{ color: '#374151', fontSize: '16px' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Paragraphs - Professional 15px for accessibility
+                                  // Paragraphs - Professional 16px for better readability
                                   p: ({node, ...props}) => (
                                     <p 
                                       className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed" 
-                                      style={{ color: '#374151', fontSize: '15px' }} 
+                                      style={{ color: '#374151', fontSize: '16px' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Headings - Consistent 17px for hierarchy
+                                  // Headings - Consistent 18px for proper hierarchy
                                   h1: ({node, ...props}) => (
                                     <h1 
                                       className="font-bold mb-2 sm:mb-3" 
-                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
                                       {...props} 
                                     />
                                   ),
                                   h2: ({node, ...props}) => (
                                     <h2 
                                       className="font-bold mb-2 sm:mb-2.5" 
-                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
                                       {...props} 
                                     />
                                   ),
                                   h3: ({node, ...props}) => (
                                     <h3 
                                       className="font-bold mb-1.5 sm:mb-2" 
-                                      style={{ color: '#111827', fontWeight: 700, fontSize: '17px' }} 
+                                      style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
                                       {...props} 
                                     />
                                   ),
@@ -782,25 +782,25 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  // List items - Consistent 15px text size
+                                  // List items - Consistent 16px text size
                                   li: ({node, children, ...props}) => (
                                     <li 
                                       className="leading-relaxed marker:text-gray-600 marker:font-normal"
                                       style={{
                                         display: 'list-item',
                                         color: '#374151',
-                                        fontSize: '15px'
+                                        fontSize: '16px'
                                       }}
                                       {...props}
                                     >
                                       {children}
                                     </li>
                                   ),
-                                  // Links - Consistent 15px text size
+                                  // Links - Consistent 16px text size
                                   a: ({node, ...props}) => (
                                     <a 
                                       className="underline font-medium" 
-                                      style={{ color: '#0891b2', fontSize: '15px' }} 
+                                      style={{ color: '#0891b2', fontSize: '16px' }} 
                                       {...props} 
                                     />
                                   ),
