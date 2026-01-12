@@ -127,24 +127,14 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             </div>
           )}
 
-          {/* Badges (Overlaid to save space) */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-            {course.is_featured && (
-              <span className="bg-amber-400 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
-                Top-Wahl
-              </span>
-            )}
-            {course.funding_type && (
+          {/* Only funding badge on image */}
+          {course.funding_type && (
+            <div className="absolute top-2 left-2 z-10">
               <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
                 {course.funding_type}
               </span>
-            )}
-            {hasLaptopIncluded && (
-              <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
-                💻 Laptop
-              </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* 2. CONTENT AREA */}
@@ -160,29 +150,43 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
               {course.title}
             </h3>
 
-            {/* Subtitle if available */}
-            {course.subtitle && (
-              <p className="text-xs text-gray-600 mb-2 line-clamp-2">
-                {course.subtitle}
-              </p>
-            )}
-
-            {/* Metadata (Single Row) */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mb-3">
-              <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded whitespace-nowrap">
+            {/* Metadata Badges */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              {/* Location */}
+              <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
                 <MapPinIcon className="w-3 h-3 text-cyan-500" />
                 {course.location}
               </span>
-              <span className="text-gray-300">•</span>
-              <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded whitespace-nowrap">
-                <ClockIcon className="w-3 h-3 text-cyan-500" />
-                {course.duration || course.duration_hours}
-              </span>
-              <span className="text-gray-300">•</span>
-              <span className="flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded whitespace-nowrap">
-                <span className="text-xs">{getLanguageIcon(course.language)}</span>
-                {course.language}
-              </span>
+              
+              {/* Duration */}
+              {course.duration && (
+                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                  <ClockIcon className="w-3 h-3 text-cyan-500" />
+                  {course.duration}
+                </span>
+              )}
+              
+              {/* Language */}
+              {course.language && (
+                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                  <span className="text-xs">{getLanguageIcon(course.language)}</span>
+                  {course.language}
+                </span>
+              )}
+              
+              {/* Format */}
+              {course.format && (
+                <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                  {course.format}
+                </span>
+              )}
+              
+              {/* Laptop Included */}
+              {hasLaptopIncluded && (
+                <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                  💻 Laptop
+                </span>
+              )}
             </div>
           </div>
 
