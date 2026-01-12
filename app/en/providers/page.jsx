@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import MarketingLayoutEN from '@/components/marketing/MarketingLayoutEN';
+import Cal, { getCalApi } from '@calcom/embed-react';
 
 // Icons
 const Icons = {
@@ -145,6 +146,25 @@ function FAQItem({ question, answer }) {
         <div className="px-6 pb-6 text-gray-600 leading-relaxed bg-gray-50">{answer}</div>
       </div>
     </div>
+  );
+}
+
+// Cal.com Calendar Embed Component
+function CalendarEmbed() {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({"namespace":"15min"});
+      cal("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
+    })();
+  }, [])
+  
+  return (
+    <Cal 
+      namespace="15min"
+      calLink="wasim.jalali/15min"
+      style={{width:"100%",height:"100%",overflow:"scroll"}}
+      config={{"layout":"month_view"}}
+    />
   );
 }
 
@@ -791,14 +811,9 @@ export default function ProvidersPageEN() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Free Consultation Call</h3>
-              <p className="text-sm text-gray-700 text-center mb-4">Book a 30-minute consultation call</p>
+              <p className="text-sm text-gray-700 text-center mb-4">Book a 15-minute consultation call</p>
               <div className="w-full min-h-[600px]">
-                <iframe
-                  src="https://cal.com/wasim.jalali/30min?embed=true&theme=light"
-                  className="w-full h-[600px] border-0 rounded-xl"
-                  title="Free Consultation Call"
-                  loading="lazy"
-                />
+                <CalendarEmbed />
               </div>
             </div>
 
