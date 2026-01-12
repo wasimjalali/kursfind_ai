@@ -101,7 +101,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
   );
 }
 
-// Option A: Full-Featured 3-Phase Loading Component (Original)
+// Option A: Compact Inline Timeline (Recommended)
 function EnhancedLoadingIndicator({ 
   stage, 
   topic, 
@@ -113,38 +113,27 @@ function EnhancedLoadingIndicator({
   progress: number;
   isCourseSearch: boolean;
 }) {
-  // Stage configurations with icons, text, and visual elements
+  // Stage configurations
   const stageConfig = {
     understanding: {
-      icon: '🔍',
-      iconBg: 'from-blue-500 to-cyan-500',
       text: {
         de: 'Analysiere Ihre Anfrage...',
         en: 'Understanding your request...'
       },
-      subtext: topic ? `"${topic.substring(0, 50)}${topic.length > 50 ? '...' : ''}"` : '',
       barColor: 'from-blue-500 to-cyan-500'
     },
     searching: {
-      icon: '📊',
-      iconBg: 'from-cyan-500 to-emerald-500',
       text: {
         de: 'Durchsuche Kursdatenbank...',
         en: 'Searching course database...'
       },
-      subtext: progress > 50 
-        ? (isCourseSearch ? 'Kurse gefunden...' : 'Analyzing data...') 
-        : 'Suche läuft...',
       barColor: 'from-cyan-500 to-emerald-500'
     },
     preparing: {
-      icon: '✨',
-      iconBg: 'from-emerald-500 to-green-500',
       text: {
         de: 'Bereite Empfehlungen vor...',
         en: 'Preparing recommendations...'
       },
-      subtext: 'Fast fertig...',
       barColor: 'from-emerald-500 to-green-500'
     }
   };
@@ -154,90 +143,55 @@ function EnhancedLoadingIndicator({
 
   return (
     <div className="flex justify-start animate-fadeIn">
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-6 py-5 max-w-md">
-        {/* Stage Timeline - Visual Progress Indicator */}
-        <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg shadow-sm px-3 py-2 max-w-md">
+        {/* Inline Compact Timeline */}
+        <div className="flex items-center gap-1">
           {(['understanding', 'searching', 'preparing'] as const).map((s, idx) => (
-            <div key={s} className="flex items-center flex-1">
+            <div key={s} className="flex items-center">
               <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500
+                w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300
                 ${stage === s 
-                  ? `bg-gradient-to-r ${stageConfig[s].iconBg} text-white scale-110 shadow-lg` 
+                  ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' 
                   : s === 'understanding' && (stage === 'searching' || stage === 'preparing')
                     ? 'bg-emerald-500 text-white'
                     : s === 'searching' && stage === 'preparing'
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      : 'bg-gray-300 text-gray-600'
                 }
               `}>
-                {stage === s ? (
-                  <span className="animate-pulse">{idx + 1}</span>
-                ) : s === 'understanding' && (stage === 'searching' || stage === 'preparing') ? (
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                {s === 'understanding' && (stage === 'searching' || stage === 'preparing') ? (
+                  '✓'
                 ) : s === 'searching' && stage === 'preparing' ? (
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  '✓'
+                ) : stage === s ? (
+                  '●'
                 ) : (
                   idx + 1
                 )}
               </div>
               {idx < 2 && (
                 <div className={`
-                  flex-1 h-1 mx-2 rounded-full transition-all duration-500
+                  w-3 h-0.5 transition-all duration-300
                   ${(s === 'understanding' && (stage === 'searching' || stage === 'preparing')) ||
                     (s === 'searching' && stage === 'preparing')
                     ? 'bg-emerald-500'
-                    : 'bg-gray-200'
+                    : 'bg-gray-300'
                   }
                 `} />
               )}
             </div>
           ))}
         </div>
-
-        {/* Current Stage Info */}
-        <div className="flex items-start gap-3 mb-4">
-          <div className={`
-            text-3xl animate-bounce
-            ${stage === 'understanding' ? 'animate-pulse' : ''}
-            ${stage === 'searching' ? 'animate-spin-slow' : ''}
-            ${stage === 'preparing' ? 'animate-bounce' : ''}
-          `}>
-            {currentStage.icon}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-gray-800 font-semibold text-base mb-1">
-              {currentStage.text[language]}
-            </p>
-            {currentStage.subtext && (
-              <p className="text-gray-500 text-sm truncate">
-                {currentStage.subtext}
-              </p>
-            )}
-          </div>
-        </div>
         
-        {/* Animated Progress Bar */}
-        <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div 
-            className={`
-              absolute top-0 left-0 h-full bg-gradient-to-r ${currentStage.barColor} 
-              transition-all duration-700 ease-out rounded-full
-            `}
-            style={{ width: `${progress}%` }}
-          >
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
-          </div>
-        </div>
-
+        {/* Stage Text */}
+        <p className="text-gray-700 text-sm font-medium flex-1 truncate">
+          {currentStage.text[language]}
+        </p>
+        
         {/* Progress Percentage */}
-        <div className="mt-2 text-right">
-          <span className="text-xs text-gray-500 font-medium">{Math.round(progress)}%</span>
-        </div>
+        <span className="text-xs text-gray-500 font-medium">
+          {Math.round(progress)}%
+        </span>
       </div>
     </div>
   );
