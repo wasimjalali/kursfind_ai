@@ -688,8 +688,8 @@ function ChatContent() {
                     
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
-                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-cyan-50 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-md">
-                        <p className="text-base sm:text-lg leading-relaxed">{message.content}</p>
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-md">
+                        <p className="text-sm leading-relaxed" style={{ fontSize: '15px' }}>{message.content}</p>
                       </div>
                     )}
                     
@@ -713,27 +713,27 @@ function ChatContent() {
                             <div className="prose prose-sm max-w-none mb-4">
                               <ReactMarkdown
                                 components={{
-                                  // Bold text - Consistent size with paragraph
+                                  // Bold text - Consistent 15px for accessibility
                                   strong: ({node, ...props}) => (
                                     <strong 
-                                      className="font-bold text-base sm:text-lg" 
-                                      style={{ color: '#1f2937', fontWeight: 700 }} 
+                                      className="font-bold" 
+                                      style={{ color: '#1f2937', fontWeight: 700, fontSize: '15px' }} 
                                       {...props} 
                                     />
                                   ),
                                   // Italic text
                                   em: ({node, ...props}) => (
                                     <em 
-                                      className="italic text-base sm:text-lg" 
-                                      style={{ color: '#374151' }} 
+                                      className="italic" 
+                                      style={{ color: '#374151', fontSize: '15px' }} 
                                       {...props} 
                                     />
                                   ),
-                                  // Paragraphs - Consistent 16px on mobile, 18px on desktop
+                                  // Paragraphs - Professional 15px for accessibility
                                   p: ({node, ...props}) => (
                                     <p 
-                                      className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed text-base sm:text-lg" 
-                                      style={{ color: '#374151' }} 
+                                      className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed" 
+                                      style={{ color: '#374151', fontSize: '15px' }} 
                                       {...props} 
                                     />
                                   ),
