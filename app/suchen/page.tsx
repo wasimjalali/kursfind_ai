@@ -101,7 +101,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
   );
 }
 
-// Option A: Compact Inline Timeline (Recommended)
+// Option D: Marketing-Inspired Professional Loading Component
 function EnhancedLoadingIndicator({ 
   stage, 
   topic, 
@@ -113,28 +113,40 @@ function EnhancedLoadingIndicator({
   progress: number;
   isCourseSearch: boolean;
 }) {
-  // Stage configurations
+  // Stage configurations with marketing-inspired design
   const stageConfig = {
     understanding: {
+      icon: '🔍',
       text: {
-        de: 'Analysiere Ihre Anfrage...',
-        en: 'Understanding your request...'
+        de: 'Analysiere Ihre Anfrage',
+        en: 'Understanding your request'
       },
-      barColor: 'from-blue-500 to-cyan-500'
+      description: {
+        de: 'KI versteht Ihre Bedürfnisse',
+        en: 'AI understands your needs'
+      }
     },
     searching: {
+      icon: '📊',
       text: {
-        de: 'Durchsuche Kursdatenbank...',
-        en: 'Searching course database...'
+        de: 'Durchsuche Kursdatenbank',
+        en: 'Searching course database'
       },
-      barColor: 'from-cyan-500 to-emerald-500'
+      description: {
+        de: 'Tausende Kurse werden geprüft',
+        en: 'Thousands of courses being checked'
+      }
     },
     preparing: {
+      icon: '✨',
       text: {
-        de: 'Bereite Empfehlungen vor...',
-        en: 'Preparing recommendations...'
+        de: 'Bereite Empfehlungen vor',
+        en: 'Preparing recommendations'
       },
-      barColor: 'from-emerald-500 to-green-500'
+      description: {
+        de: 'Perfekte Matches für Sie',
+        en: 'Perfect matches for you'
+      }
     }
   };
 
@@ -143,55 +155,85 @@ function EnhancedLoadingIndicator({
 
   return (
     <div className="flex justify-start animate-fadeIn">
-      <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg shadow-sm px-3 py-2 max-w-md">
-        {/* Inline Compact Timeline */}
-        <div className="flex items-center gap-1">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 max-w-md">
+        {/* Progress Bar - Matching Hero Section Style */}
+        <div className="flex items-center space-x-3 mb-5">
+          <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div 
+              className="h-2 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            >
+              {/* Shimmer effect from hero section */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
+            </div>
+          </div>
+          <span className="text-xs text-gray-500 font-medium">{Math.round(progress)}%</span>
+        </div>
+
+        {/* Current Stage with Animated Icon */}
+        <div className="flex items-start gap-3 mb-4">
+          <div className={`
+            text-2xl flex-shrink-0 mt-1
+            ${stage === 'understanding' ? 'animate-pulse' : ''}
+            ${stage === 'searching' ? 'animate-spin-slow' : ''}
+            ${stage === 'preparing' ? 'animate-bounce' : ''}
+          `}>
+            {currentStage.icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-gray-900 font-semibold text-base mb-1">
+              {currentStage.text[language]}
+              <span className="animate-pulse">|</span>
+            </h3>
+            <p className="text-gray-600 text-sm">
+              {currentStage.description[language]}
+            </p>
+          </div>
+        </div>
+
+        {/* Stage Progress - Checkmarks like Hero Section */}
+        <div className="space-y-2">
           {(['understanding', 'searching', 'preparing'] as const).map((s, idx) => (
-            <div key={s} className="flex items-center">
-              <div className={`
-                w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300
-                ${stage === s 
-                  ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-white' 
-                  : s === 'understanding' && (stage === 'searching' || stage === 'preparing')
-                    ? 'bg-emerald-500 text-white'
-                    : s === 'searching' && stage === 'preparing'
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-300 text-gray-600'
-                }
-              `}>
+            <div
+              key={s}
+              className={`flex items-center space-x-3 transition-all duration-300 ${
+                s === stage ? 'opacity-100' : s === 'understanding' && stage === 'searching' || s === 'searching' && stage === 'preparing' || s === 'understanding' && stage === 'preparing' 
+                  ? 'opacity-100' 
+                  : 'opacity-40'
+              }`}
+            >
+              {/* Checkmark or Dot */}
+              <div className="flex-shrink-0">
                 {s === 'understanding' && (stage === 'searching' || stage === 'preparing') ? (
-                  '✓'
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 ) : s === 'searching' && stage === 'preparing' ? (
-                  '✓'
-                ) : stage === s ? (
-                  '●'
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                ) : s === stage ? (
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center animate-pulse">
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                  </div>
                 ) : (
-                  idx + 1
+                  <div className="w-5 h-5 rounded-full bg-gray-300"></div>
                 )}
               </div>
-              {idx < 2 && (
-                <div className={`
-                  w-3 h-0.5 transition-all duration-300
-                  ${(s === 'understanding' && (stage === 'searching' || stage === 'preparing')) ||
-                    (s === 'searching' && stage === 'preparing')
-                    ? 'bg-emerald-500'
-                    : 'bg-gray-300'
-                  }
-                `} />
-              )}
+              
+              {/* Stage Text */}
+              <span className={`text-sm ${
+                s === stage ? 'text-gray-900 font-medium' : 'text-gray-600'
+              }`}>
+                {stageConfig[s].text[language]}
+              </span>
             </div>
           ))}
         </div>
-        
-        {/* Stage Text */}
-        <p className="text-gray-700 text-sm font-medium flex-1 truncate">
-          {currentStage.text[language]}
-        </p>
-        
-        {/* Progress Percentage */}
-        <span className="text-xs text-gray-500 font-medium">
-          {Math.round(progress)}%
-        </span>
       </div>
     </div>
   );
