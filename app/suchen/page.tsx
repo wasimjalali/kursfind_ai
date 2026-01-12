@@ -702,7 +702,7 @@ function ChatContent() {
                               src="/Assets/kursfind-ai-logo.jpg" 
                               width={32} 
                               height={32}
-                              className="rounded-lg animate-pulse"
+                              className="rounded-lg"
                               alt="Kursfind AI"
                             />
                           </div>
