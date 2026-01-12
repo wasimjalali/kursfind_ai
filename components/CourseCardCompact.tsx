@@ -170,22 +170,22 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
               
               {/* Format */}
               {course.format && (
-                <span className="bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200 text-cyan-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
-                  {course.format}
+                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
+                  <span className="text-xs font-semibold text-gray-900">{course.format}</span>
                 </span>
               )}
               
               {/* Laptop Included */}
               {hasLaptopIncluded && (
-                <span className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
-                  💻 Laptop
+                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
+                  <span className="text-xs font-semibold text-gray-900">💻 Laptop</span>
                 </span>
               )}
               
               {/* Start Date Badge */}
               {formatStartDate(course.start_date) && (
-                <span className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-semibold">
-                  📅 {formatStartDate(course.start_date)}
+                <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
+                  <span className="text-xs font-semibold text-gray-900">📅 {formatStartDate(course.start_date)}</span>
                 </span>
               )}
             </div>

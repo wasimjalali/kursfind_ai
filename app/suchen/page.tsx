@@ -1029,8 +1029,6 @@ function ChatContent() {
         <div className="sticky bottom-0 bg-gradient-to-t from-[#FFFBF5] via-[#FFFBF5] to-transparent p-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              {/* Gradient Glow Effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 rounded-3xl blur opacity-50 motion-safe:animate-gradient-xy"></div>
               <textarea
                 ref={textareaRef}
                 value={input}
