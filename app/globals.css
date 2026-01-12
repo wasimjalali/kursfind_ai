@@ -368,13 +368,30 @@ a, button {
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Gradient animation for adaptive loader glow effect */
+@keyframes gradient-xy {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-xy {
+  background-size: 200% 200%;
+  animation: gradient-xy 3s ease infinite;
+}
+
 /* Respect reduced motion preferences for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .animate-spin-slow,
   .animate-ping,
+  .animate-gradient-xy,
   .motion-safe\:animate-spin-slow,
   .motion-safe\:animate-ping,
-  .motion-safe\:animate-pulse {
+  .motion-safe\:animate-pulse,
+  .motion-safe\:animate-gradient-xy {
     animation: none !important;
   }
 }

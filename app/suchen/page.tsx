@@ -101,7 +101,7 @@ function TypingText({ text, className = '' }: { text: string; className?: string
   );
 }
 
-// Option E: Production-Ready Dynamic Vertical Stepper (Expert Refined)
+// Adaptive Loading System: Mode A (Deep Search) vs Mode B (Simple Chat)
 function EnhancedLoadingIndicator({ 
   stage, 
   topic, 
@@ -113,134 +113,91 @@ function EnhancedLoadingIndicator({
   progress: number;
   isCourseSearch: boolean;
 }) {
-  // Stage configurations with German microcopy for trust
-  const stages = [
-    {
-      id: 'understanding',
-      title: 'Anfrage analysieren',
-      subtitle: 'KI versteht Ihre Bedürfnisse',
-      icon: '🔍',
-      ariaLabel: 'Anfrage analysieren'
-    },
-    {
-      id: 'searching',
-      title: 'Kursdatenbank durchsuchen',
-      subtitle: 'Prüfe AZAV-Zertifikate & Standorte',
-      icon: '📊',
-      ariaLabel: 'Kursdatenbank durchsuchen'
-    },
-    {
-      id: 'preparing',
-      title: 'Empfehlungen vorbereiten',
-      subtitle: 'Erstelle persönliche Matches',
-      icon: '✨',
-      ariaLabel: 'Empfehlungen vorbereiten'
-    }
-  ];
+  const [textIndex, setTextIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const currentStageIndex = stages.findIndex(s => s.id === stage);
-  const currentStageLabel = stages[currentStageIndex]?.ariaLabel || 'Lädt';
+  // Detect mode: 'search' for course queries, 'chat' for general questions
+  const mode = isCourseSearch ? 'search' : 'chat';
+  const language = 'DE'; // Can be made dynamic later
+
+  // Text configurations for both modes
+  const TEXTS = {
+    DE: {
+      search: [
+        { text: 'Analysiere Ihre Anfrage...', icon: '🔍', color: 'text-cyan-600' },
+        { text: 'Durchsuche AZAV-Datenbank...', icon: '📊', color: 'text-emerald-600' },
+        { text: 'Personalisiere Ergebnisse...', icon: '✨', color: 'text-cyan-600' }
+      ],
+      chat: { text: 'Kursfind AI formuliert...', icon: '💭', color: 'text-emerald-600' }
+    }
+  };
+
+  const content = TEXTS[language];
+  const isSearchMode = mode === 'search';
+
+  // Cycle through search texts only in search mode
+  useEffect(() => {
+    if (!isSearchMode) return;
+
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setTextIndex((prev) => (prev + 1) % content.search.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isSearchMode, content.search.length]);
+
+  // Get current display data
+  const currentData = isSearchMode ? content.search[textIndex] : content.chat;
 
   return (
-    <div 
-      className="flex justify-start animate-fadeIn" 
-      role="status" 
-      aria-live="polite"
-      aria-atomic="true"
-      aria-label={`Aktueller Schritt: ${currentStageLabel}`}
-    >
-      <div className="w-full max-w-md bg-white rounded-xl shadow-xl border border-cyan-50 overflow-hidden">
+    <div className="flex justify-center w-full py-4" role="status" aria-live="polite" aria-atomic="true">
+      <div className="relative group">
         
-        {/* 1. Progress Bar (Top) - Smooth transition */}
-        <div className="h-1.5 w-full bg-gray-100">
-          <div 
-            className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all ease-out"
-            style={{ width: `${progress}%`, transitionDuration: '300ms' }}
-          />
-        </div>
+        {/* Glow Effect - Stronger for Search, Softer for Chat */}
+        <div className={`absolute -inset-0.5 bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 rounded-full blur transition duration-1000 motion-safe:animate-gradient-xy ${
+          isSearchMode ? 'opacity-75' : 'opacity-40'
+        }`}></div>
+        
+        {/* The Pill Container */}
+        <div className="relative flex items-center gap-3 px-6 py-3 bg-white rounded-full leading-none shadow-lg min-w-[280px]">
+          
+          {/* Icon Area */}
+          <div className="relative flex items-center justify-center">
+            <span 
+              className={`text-xl transition-all duration-500 ${currentData.color} ${
+                isTransitioning ? 'scale-75 opacity-0' : 'scale-100 opacity-100'
+              } ${!isSearchMode ? 'motion-safe:animate-pulse' : ''}`}
+              aria-hidden="true"
+            >
+              {currentData.icon}
+            </span>
+          </div>
 
-        {/* 2. Header - Trust signals */}
-        <div className="p-4 sm:p-5 flex flex-col gap-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <div className="text-xs uppercase tracking-wide text-gray-400 font-medium">
-                Kursfind AI
-              </div>
-              <div className="hidden sm:flex items-center gap-2 text-[11px] text-gray-400">
-                <span>AZAV-Datenbank</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 motion-safe:animate-pulse" aria-hidden="true" />
-              </div>
+          {/* Text Area */}
+          <div className="flex flex-col overflow-hidden h-5 justify-center flex-1">
+            <span 
+              className={`text-sm font-medium text-gray-700 transition-all duration-500 transform ${
+                isTransitioning 
+                  ? '-translate-y-full opacity-0' 
+                  : 'translate-y-0 opacity-100'
+              }`}
+            >
+              {currentData.text}
+            </span>
+          </div>
+
+          {/* Loading Dots - Only in Search Mode */}
+          {isSearchMode && (
+            <div className="ml-auto flex gap-1">
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full motion-safe:animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full motion-safe:animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full motion-safe:animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
-            <div className="text-xs text-gray-500 font-medium">{Math.round(progress)}%</div>
-          </div>
-
-          {/* 3. Stage List */}
-          <div className="flex flex-col gap-2">
-            {stages.map((stageItem, index) => {
-              const isActive = index === currentStageIndex;
-              const isCompleted = index < currentStageIndex;
-              const isPending = index > currentStageIndex;
-
-              return (
-                <div 
-                  key={stageItem.id}
-                  className={`flex items-start gap-3 transition-all duration-300 ${
-                    isActive ? 'opacity-100' : isCompleted ? 'opacity-80' : 'opacity-60'
-                  }`}
-                  aria-current={isActive ? 'step' : undefined}
-                  aria-label={`${stageItem.ariaLabel}${isActive ? ' — läuft' : isCompleted ? ' — abgeschlossen' : ''}`}
-                >
-                  {/* Icon Container */}
-                  <div className={`
-                    relative flex items-center justify-center w-8 h-8 rounded-full shrink-0 border transition-all duration-300
-                    ${isCompleted ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : ''}
-                    ${isActive ? 'bg-cyan-50 border-cyan-200 text-cyan-600 ring-1 ring-cyan-100' : ''}
-                    ${isPending ? 'bg-gray-50 border-gray-200 text-gray-400' : ''}
-                  `}>
-                    {isCompleted ? (
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    ) : (
-                      <span className={`text-base ${isActive ? 'motion-safe:animate-spin-slow' : ''}`} aria-hidden="true">
-                        {stageItem.icon}
-                      </span>
-                    )}
-                    
-                    {/* Pulsing Ring for Active State */}
-                    {isActive && (
-                      <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-10 motion-safe:animate-ping" aria-hidden="true"></span>
-                    )}
-                  </div>
-
-                  {/* Text Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-semibold ${isActive ? 'text-gray-900' : 'text-gray-600'}`}>
-                      {stageItem.title}
-                    </div>
-                    
-                    {/* Subtitle - Expands only when active */}
-                    <div className={`overflow-hidden transition-all duration-300 ${
-                      isActive ? 'max-h-12 opacity-100 mt-1' : 'max-h-0 opacity-0'
-                    }`}>
-                      <div className="text-xs text-cyan-600 font-medium">
-                        {stageItem.subtitle}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 4. Footer - Trust Indicator */}
-        <div className="bg-gray-50 px-4 py-2 border-t border-gray-100 text-[11px] text-gray-500 flex items-center justify-between">
-          <span className="font-medium">Kursfind AI</span>
-          <span className="flex items-center gap-2">
-            <span>AZAV-Quelle</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 motion-safe:animate-pulse" aria-hidden="true" />
-          </span>
+          )}
         </div>
       </div>
     </div>
