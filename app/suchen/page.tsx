@@ -101,6 +101,148 @@ function TypingText({ text, className = '' }: { text: string; className?: string
   );
 }
 
+// Enhanced 3-Phase Loading Component
+function EnhancedLoadingIndicator({ 
+  stage, 
+  topic, 
+  progress, 
+  isCourseSearch 
+}: { 
+  stage: 'understanding' | 'searching' | 'preparing'; 
+  topic: string; 
+  progress: number;
+  isCourseSearch: boolean;
+}) {
+  // Stage configurations with icons, text, and visual elements
+  const stageConfig = {
+    understanding: {
+      icon: '🔍',
+      iconBg: 'from-blue-500 to-cyan-500',
+      text: {
+        de: 'Analysiere Ihre Anfrage...',
+        en: 'Understanding your request...'
+      },
+      subtext: topic ? `"${topic.substring(0, 50)}${topic.length > 50 ? '...' : ''}"` : '',
+      barColor: 'from-blue-500 to-cyan-500'
+    },
+    searching: {
+      icon: '📊',
+      iconBg: 'from-cyan-500 to-emerald-500',
+      text: {
+        de: 'Durchsuche Kursdatenbank...',
+        en: 'Searching course database...'
+      },
+      subtext: progress > 50 
+        ? (isCourseSearch ? 'Kurse gefunden...' : 'Analyzing data...') 
+        : 'Suche läuft...',
+      barColor: 'from-cyan-500 to-emerald-500'
+    },
+    preparing: {
+      icon: '✨',
+      iconBg: 'from-emerald-500 to-green-500',
+      text: {
+        de: 'Bereite Empfehlungen vor...',
+        en: 'Preparing recommendations...'
+      },
+      subtext: 'Fast fertig...',
+      barColor: 'from-emerald-500 to-green-500'
+    }
+  };
+
+  const currentStage = stageConfig[stage];
+  const language = 'de'; // Default to German, can be dynamic
+
+  return (
+    <div className="flex justify-start animate-fadeIn">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-6 py-5 max-w-md">
+        {/* Stage Timeline - Visual Progress Indicator */}
+        <div className="flex items-center justify-between mb-4">
+          {(['understanding', 'searching', 'preparing'] as const).map((s, idx) => (
+            <div key={s} className="flex items-center flex-1">
+              <div className={`
+                w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500
+                ${stage === s 
+                  ? `bg-gradient-to-r ${stageConfig[s].iconBg} text-white scale-110 shadow-lg` 
+                  : s === 'understanding' && (stage === 'searching' || stage === 'preparing')
+                    ? 'bg-emerald-500 text-white'
+                    : s === 'searching' && stage === 'preparing'
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                }
+              `}>
+                {stage === s ? (
+                  <span className="animate-pulse">{idx + 1}</span>
+                ) : s === 'understanding' && (stage === 'searching' || stage === 'preparing') ? (
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : s === 'searching' && stage === 'preparing' ? (
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  idx + 1
+                )}
+              </div>
+              {idx < 2 && (
+                <div className={`
+                  flex-1 h-1 mx-2 rounded-full transition-all duration-500
+                  ${(s === 'understanding' && (stage === 'searching' || stage === 'preparing')) ||
+                    (s === 'searching' && stage === 'preparing')
+                    ? 'bg-emerald-500'
+                    : 'bg-gray-200'
+                  }
+                `} />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Current Stage Info */}
+        <div className="flex items-start gap-3 mb-4">
+          <div className={`
+            text-3xl animate-bounce
+            ${stage === 'understanding' ? 'animate-pulse' : ''}
+            ${stage === 'searching' ? 'animate-spin-slow' : ''}
+            ${stage === 'preparing' ? 'animate-bounce' : ''}
+          `}>
+            {currentStage.icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-gray-800 font-semibold text-base mb-1">
+              {currentStage.text[language]}
+            </p>
+            {currentStage.subtext && (
+              <p className="text-gray-500 text-sm truncate">
+                {currentStage.subtext}
+              </p>
+            )}
+          </div>
+        </div>
+        
+        {/* Animated Progress Bar */}
+        <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div 
+            className={`
+              absolute top-0 left-0 h-full bg-gradient-to-r ${currentStage.barColor} 
+              transition-all duration-700 ease-out rounded-full
+            `}
+            style={{ width: `${progress}%` }}
+          >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
+          </div>
+        </div>
+
+        {/* Progress Percentage */}
+        <div className="mt-2 text-right">
+          <span className="text-xs text-gray-500 font-medium">{Math.round(progress)}%</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ChatContent() {
   const searchParams = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -110,6 +252,8 @@ function ChatContent() {
   const [loadingQuery, setLoadingQuery] = useState(''); // Track the current search query for loading animation
   const [isCourseSearch, setIsCourseSearch] = useState(true); // Track if it's a course search or follow-up
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadingStage, setLoadingStage] = useState<'understanding' | 'searching' | 'preparing'>('understanding');
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
     filters: {},
@@ -273,6 +417,50 @@ function ChatContent() {
     setLoading(true);
     setLoadingQuery(userMessage); // Store the query for the loading animation
     
+    // ═══════════════════════════════════════════════════════════════
+    // PHASE 2: Intelligent Stage Progression System
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Reset to initial stage
+    setLoadingStage('understanding');
+    setLoadingProgress(0);
+    
+    // Stage 1: Understanding (0-2.5 seconds, 0-25% progress)
+    const stage1Timer = setTimeout(() => {
+      setLoadingProgress(25);
+    }, 500);
+    
+    const stage2Transition = setTimeout(() => {
+      setLoadingStage('searching');
+      setLoadingProgress(30);
+    }, 2500);
+    
+    // Stage 2: Searching (2.5-8 seconds, 25-75% progress)
+    const stage2Progress1 = setTimeout(() => setLoadingProgress(45), 4000);
+    const stage2Progress2 = setTimeout(() => setLoadingProgress(60), 5500);
+    const stage2Progress3 = setTimeout(() => setLoadingProgress(75), 7000);
+    
+    const stage3Transition = setTimeout(() => {
+      setLoadingStage('preparing');
+      setLoadingProgress(80);
+    }, 8000);
+    
+    // Stage 3: Preparing (8-12 seconds, 75-95% progress)
+    const stage3Progress1 = setTimeout(() => setLoadingProgress(90), 9000);
+    const stage3Progress2 = setTimeout(() => setLoadingProgress(95), 10000);
+    
+    // Cleanup function for timers
+    const cleanupTimers = () => {
+      clearTimeout(stage1Timer);
+      clearTimeout(stage2Transition);
+      clearTimeout(stage2Progress1);
+      clearTimeout(stage2Progress2);
+      clearTimeout(stage2Progress3);
+      clearTimeout(stage3Transition);
+      clearTimeout(stage3Progress1);
+      clearTimeout(stage3Progress2);
+    };
+    
     // Detect if this is a course search or follow-up question
     // First message is ALWAYS a course search
     // Follow-up messages are course searches ONLY if they are INITIAL requests (not clarifications)
@@ -393,8 +581,16 @@ function ChatContent() {
         content: 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.' 
       }]);
     } finally {
-      setLoading(false);
-      setLoadingQuery('');
+      // Cleanup all stage progression timers
+      cleanupTimers();
+      
+      // Complete progress and reset
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setLoading(false);
+        setLoadingQuery('');
+        setLoadingProgress(0);
+      }, 300);
     }
   };
 
@@ -855,42 +1051,14 @@ function ChatContent() {
                   </div>
                 ))}
 
-                {/* Loading indicator - Left-aligned with typing animation */}
+                {/* Enhanced 3-Phase Loading Indicator */}
                 {loading && (
-                  <div className="flex justify-start">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 flex items-center justify-center mr-3 animate-pulse">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                      </svg>
-                    </div>
-                    <div className="bg-white border border-gray-200 rounded-2xl shadow-lg px-5 py-4 max-w-sm">
-                      {/* Progress bar */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full animate-progress-bar"></div>
-                        </div>
-                      </div>
-                      {/* Typing animation text */}
-                      <p className="text-gray-700 text-sm">
-                        {isCourseSearch ? (
-                          <>
-                            Suche nach{' '}
-                            <TypingText 
-                              text={extractSearchTopic(loadingQuery)} 
-                              className="text-cyan-600 font-medium"
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <TypingText 
-                              text="KI denkt nach" 
-                              className="text-gray-600 font-medium"
-                            />
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  </div>
+                  <EnhancedLoadingIndicator 
+                    stage={loadingStage}
+                    topic={extractSearchTopic(loadingQuery)}
+                    progress={loadingProgress}
+                    isCourseSearch={isCourseSearch}
+                  />
                 )}
                 
                 <div ref={messagesEndRef} />

@@ -320,6 +320,55 @@ a, button {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   ENHANCED 3-PHASE LOADING ANIMATIONS
+   Professional loading experience with smooth transitions
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Shimmer effect for progress bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Slow spin animation for searching icon */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* Fade in animation for loading component */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    KURSFIND BRAND SIDEBAR STYLING
    Light theme with Cyan/Emerald accents
    ═══════════════════════════════════════════════════════════════ */
