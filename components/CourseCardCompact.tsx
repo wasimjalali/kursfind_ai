@@ -28,17 +28,6 @@ const ArrowRightIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const HeartIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
-  <svg 
-    className={className} 
-    fill={filled ? "currentColor" : "none"} 
-    stroke="currentColor" 
-    viewBox="0 0 24 24"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-  </svg>
-);
-
 // Course interface matching the database schema
 interface Course {
   id: string;
@@ -57,11 +46,6 @@ interface Course {
   is_featured?: boolean; // For "Top-Wahl" etc.
   benefits?: string; // Text field containing benefits like "Laptop included"
   start_date?: string; // Next available start date
-  // Enhanced fields for All Courses page
-  price?: string | number;      // e.g., "4.200 €"
-  providerLogoUrl?: string;     // URL for the circular logo
-  isFavorite?: boolean;         // For the heart icon
-  badges?: string[];            // Extra tags like "Laptop inclusive"
 }
 
 interface CourseCardProps {
@@ -146,32 +130,9 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
 
         {/* 2. CONTENT AREA */}
         <div className="flex flex-col p-3 sm:p-4 grow justify-between min-w-0">
-          <div className="relative">
-            {/* Heart Icon - Top Right */}
-            {course.isFavorite !== undefined && (
-              <button 
-                className="absolute top-0 right-0 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-                aria-label={course.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                aria-pressed={course.isFavorite ? "true" : "false"}
-              >
-                <HeartIcon 
-                  className="w-4 h-4 text-red-500 hover:scale-110 transition-transform" 
-                  filled={course.isFavorite} 
-                />
-              </button>
-            )}
-            
-            {/* Provider with Logo */}
-            <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full mb-2">
-              {course.providerLogoUrl && (
-                <Image 
-                  src={course.providerLogoUrl} 
-                  alt={providerName}
-                  width={16}
-                  height={16}
-                  className="w-4 h-4 rounded-full object-cover"
-                />
-              )}
+          <div>
+            {/* Provider */}
+            <div className="inline-flex items-center px-2.5 sm:px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full mb-2">
               {providerName}
             </div>
 
@@ -180,7 +141,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
               {course.title}
             </h3>
 
-            {/* Enhanced Metadata Badges */}
+            {/* Metadata Badges */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-3">
               {/* Location */}
               <span className="flex items-center gap-1 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5">
@@ -227,28 +188,11 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             </div>
           </div>
 
-          {/* Enhanced Metadata Row with Price */}
-          <div className="w-full mt-auto flex items-center justify-between pt-2 border-t border-cyan-100">
-            <div className="flex items-center gap-3 text-xs text-gray-600">
-              {/* Price */}
-              {course.price && (
-                <span className="font-semibold text-gray-900">💶 {course.price}</span>
-              )}
-              {/* Start Date */}
-              {formatStartDate(course.start_date) && (
-                <span>📅 {formatStartDate(course.start_date)}</span>
-              )}
-              {/* Duration */}
-              {course.duration && (
-                <span>⏱ {course.duration}</span>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
-                Details ansehen
-              </span>
-              <ArrowRightIcon className="w-4 h-4 text-cyan-600 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
-            </div>
+          {/* Clean CTA Button */}
+          <div className="flex justify-end mt-auto pt-3">
+            <button className="bg-cyan-50 text-cyan-700 hover:bg-cyan-100 active:bg-cyan-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap">
+              Details ansehen
+            </button>
           </div>
         </div>
       </div>
