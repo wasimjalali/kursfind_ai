@@ -109,17 +109,17 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
       href={`/courses/${course.id}`}
       className="group block"
     >
-      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl border border-gray-100 shadow-md shadow-gray-200/50 overflow-hidden hover:shadow-lg hover:shadow-cyan-100/50 hover:border-cyan-200 hover:-translate-y-0.5 transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px]">
+      <div className="group flex flex-col md:flex-row w-full bg-white rounded-xl border border-gray-100 shadow-md shadow-gray-200/50 overflow-hidden hover:shadow-lg hover:shadow-cyan-100/50 hover:border-cyan-200 hover:-translate-y-0.5 transition-all duration-300 mb-2">
         
-        {/* 1. IMAGE THUMBNAIL */}
-        {/* Desktop: Fixed width (w-40). Mobile: Full width, fixed height (h-32) */}
-        <div className="relative h-32 w-full sm:h-auto sm:w-40 shrink-0 bg-gray-100">
+        {/* RESPONSIVE IMAGE CONTAINER */}
+        {/* Mobile: w-full aspect-video (16:9). Desktop: fixed width md:w-48, aspect-[4/3] */}
+        <div className="relative shrink-0 w-full aspect-video md:w-48 md:aspect-[4/3] bg-gray-100">
           {imageUrl ? (
             <Image 
               src={imageUrl} 
               alt={course.title} 
               fill 
-              className="object-cover"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
