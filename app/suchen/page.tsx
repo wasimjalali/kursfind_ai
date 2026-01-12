@@ -1029,6 +1029,8 @@ function ChatContent() {
         <div className="sticky bottom-0 bg-gradient-to-t from-[#FFFBF5] via-[#FFFBF5] to-transparent p-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
+              {/* Gradient Glow Effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 rounded-3xl blur opacity-50 motion-safe:animate-gradient-xy"></div>
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -1048,7 +1050,7 @@ function ChatContent() {
                   // Shift+Enter allows new line (default behavior)
                 }}
                 placeholder="z.B. Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein..."
-                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 focus:outline-none shadow-lg text-gray-900 placeholder-gray-500 leading-relaxed bg-[#FFFBF5]"
+                className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:outline-none text-gray-900 placeholder-gray-500 leading-relaxed bg-white shadow-lg transition-all duration-300"
                 disabled={loading}
                 rows={1}
               />
