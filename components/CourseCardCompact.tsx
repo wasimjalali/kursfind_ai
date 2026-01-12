@@ -144,37 +144,37 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
             {/* Metadata Badges */}
             <div className="flex flex-wrap items-center gap-1.5 mb-3">
               {/* Location */}
-              <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+              <span className="flex items-center gap-1 bg-cyan-100 px-2 py-1 rounded text-xs whitespace-nowrap">
                 <MapPinIcon className="w-3 h-3 text-cyan-600" />
-                <span className="text-cyan-700 font-medium">{course.location}</span>
+                <span className="text-cyan-800 font-bold">{course.location}</span>
               </span>
               
               {/* Duration */}
               {course.duration && (
-                <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                <span className="flex items-center gap-1 bg-cyan-100 px-2 py-1 rounded text-xs whitespace-nowrap">
                   <ClockIcon className="w-3 h-3 text-cyan-600" />
-                  <span className="text-cyan-700 font-medium">{course.duration}</span>
+                  <span className="text-cyan-800 font-bold">{course.duration}</span>
                 </span>
               )}
               
               {/* Language */}
               {course.language && (
-                <span className="flex items-center gap-1 bg-cyan-50 px-2 py-1 rounded text-xs whitespace-nowrap">
+                <span className="flex items-center gap-1 bg-cyan-100 px-2 py-1 rounded text-xs whitespace-nowrap">
                   <span className="text-xs">{getLanguageIcon(course.language)}</span>
-                  <span className="text-cyan-700 font-medium">{course.language}</span>
+                  <span className="text-cyan-800 font-bold">{course.language}</span>
                 </span>
               )}
               
               {/* Format */}
               {course.format && (
-                <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded text-xs whitespace-nowrap font-bold">
                   {course.format}
                 </span>
               )}
               
               {/* Laptop Included */}
               {hasLaptopIncluded && (
-                <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-2 py-1 rounded text-xs whitespace-nowrap font-medium">
+                <span className="bg-gradient-to-r from-cyan-200 to-emerald-200 text-cyan-900 px-2 py-1 rounded text-xs whitespace-nowrap font-bold">
                   💻 Laptop
                 </span>
               )}
