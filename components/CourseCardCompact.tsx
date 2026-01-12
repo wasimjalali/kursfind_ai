@@ -44,7 +44,8 @@ interface Course {
   providers?: any; // Nested provider object from Supabase JOIN
   provider?: string; // Fallback provider name
   is_featured?: boolean; // For "Top-Wahl" etc.
-  laptop_included?: boolean;
+  benefits?: string; // Text field containing benefits like "Laptop included"
+  start_date?: string; // Next available start date
 }
 
 interface CourseCardProps {
@@ -71,6 +72,12 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
 
   const imageUrl = getCourseImage();
 
+  // Check if laptop is included in benefits
+  const hasLaptopIncluded = course.benefits && 
+    (course.benefits.toLowerCase().includes('laptop') || 
+     course.benefits.toLowerCase().includes('laptop included') ||
+     course.benefits.toLowerCase().includes('laptop inklusive'));
+
   // Get language icon
   const getLanguageIcon = (lang?: string) => {
     if (!lang) return '🌐';
@@ -80,6 +87,21 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
     if (langLower.includes('französisch') || langLower.includes('french')) return '🇫🇷';
     if (langLower.includes('spanisch') || langLower.includes('spanish')) return '🇪🇸';
     return '🌐';
+  };
+
+  // Format start date
+  const formatStartDate = (dateString?: string) => {
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('de-DE', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   return (
@@ -117,7 +139,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
                 {course.funding_type}
               </span>
             )}
-            {course.laptop_included && (
+            {hasLaptopIncluded && (
               <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
                 💻 Laptop
               </span>
@@ -166,9 +188,19 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
 
           {/* CTA Button */}
           <div className="w-full mt-auto flex items-center justify-between pt-2 border-t border-gray-100">
-            <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
-              Details ansehen
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-semibold text-cyan-600 group-hover:text-emerald-600 transition-colors">
+                Details ansehen
+              </span>
+              {formatStartDate(course.start_date) && (
+                <>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-xs text-gray-600 font-medium">
+                    Start: {formatStartDate(course.start_date)}
+                  </span>
+                </>
+              )}
+            </div>
             <ArrowRightIcon className="w-4 h-4 text-cyan-600 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
           </div>
         </div>
