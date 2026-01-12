@@ -109,7 +109,7 @@ export const CourseCardCompact: React.FC<CourseCardProps> = ({ course }) => {
       href={`/courses/${course.id}`}
       className="group block"
     >
-      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px]">
+      <div className="group flex flex-col sm:flex-row w-full bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 mb-2 min-h-[140px] sm:min-h-[160px]">
         
         {/* 1. IMAGE THUMBNAIL */}
         {/* Desktop: Fixed width (w-40). Mobile: Full width, fixed height (h-32) */}

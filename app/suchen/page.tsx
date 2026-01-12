@@ -688,14 +688,14 @@ function ChatContent() {
                     
                     {/* USER MESSAGE */}
                     {message.role === 'user' && (
-                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-cyan-50 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-4 sm:px-6 py-3 sm:py-4 shadow-md">
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] ml-auto bg-cyan-50 border border-cyan-100 text-gray-900 rounded-2xl rounded-tr-sm px-5 py-3.5 shadow-md">
                         <p className="text-base sm:text-lg leading-relaxed">{message.content}</p>
                       </div>
                     )}
                     
                     {/* AI MESSAGE - WITH MARKDOWN RENDERING */}
                     {message.role === 'assistant' && (
-                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] mr-auto bg-white rounded-2xl rounded-tl-sm px-4 sm:px-6 py-3 sm:py-4 shadow-lg border border-gray-200">
+                      <div className="max-w-full sm:max-w-[90%] lg:max-w-[80%] mr-auto bg-transparent border-none shadow-none p-0">
                         <div className="flex items-start gap-3">
                           <div className="relative flex-shrink-0">
                             <Image 
