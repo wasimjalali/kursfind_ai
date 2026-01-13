@@ -44,6 +44,33 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
       certificateDescription: isEnglish ? 'Upon successful completion, you will receive a recognized certificate that documents your acquired qualifications and is highly regarded by employers.' : 'Nach erfolgreichem Abschluss erhalten Sie ein anerkanntes Zertifikat, das Ihre erworbenen Qualifikationen dokumentiert und bei Arbeitgebern hohes Ansehen genießt.',
       placementRate: isEnglish ? 'Job placement rate after completion' : 'Vermittlungsquote nach Abschluss',
       funding: isEnglish ? 'Funding Options' : 'Finanzierungsmöglichkeiten',
+      // Funding descriptions
+      fundingDescriptions: {
+        Bildungsgutschein: isEnglish 
+          ? '100% funding through the Employment Agency or JobCenter. Completely free training including all materials.'
+          : '100% Förderung durch die Agentur für Arbeit oder Jobcenter. Komplett kostenlose Weiterbildung inklusive aller Materialien.',
+        AVGS: isEnglish
+          ? 'Activation and placement voucher for individual coaching and qualification measures for job integration.'
+          : 'Aktivierungs- und Vermittlungsgutschein für individuelle Coachings und Qualifizierungsmaßnahmen zur Eingliederung in Arbeit.',
+        WeGebAU: isEnglish
+          ? 'Further training for low-skilled and employed older workers in companies. Funding for employees.'
+          : 'Weiterbildung Geringqualifizierter und beschäftigter älterer Arbeitnehmer in Unternehmen. Förderung für Beschäftigte.',
+        BAföG: isEnglish
+          ? 'Federal Training Assistance Act - Financial support for school and vocational training.'
+          : 'Bundesausbildungsförderungsgesetz - Finanzielle Unterstützung für schulische und berufliche Ausbildung.',
+        'Aufstiegs-BAföG': isEnglish
+          ? 'Funding for professional advancement training. Up to 75% subsidy on course and examination fees.'
+          : 'Förderung für berufliche Aufstiegsfortbildungen. Bis zu 75% Zuschuss auf Lehrgangs- und Prüfungsgebühren.',
+        Bildungsprämie: isEnglish
+          ? 'Premium voucher for employed persons with lower income. Up to €500 subsidy for further training.'
+          : 'Prämiengutschein für Erwerbstätige mit geringerem Einkommen. Bis zu 500€ Zuschuss für Weiterbildungen.',
+        Selbstzahler: isEnglish
+          ? 'Flexible installment payment possible. Invest in your professional future with individual payment options.'
+          : 'Flexible Ratenzahlung möglich. Investieren Sie in Ihre berufliche Zukunft mit individuellen Zahlungsmöglichkeiten.',
+        default: isEnglish
+          ? 'Funding option available - contact us for details.'
+          : 'Fördermöglichkeit verfügbar - kontaktieren Sie uns für Details.'
+      },
       provider: isEnglish ? 'About the Provider' : 'Über den Anbieter',
       contact: isEnglish ? 'Contact the Provider' : 'Kontakt zum Anbieter',
       curriculum: isEnglish ? 'Course Curriculum' : 'Kursinhalte',
@@ -701,54 +728,31 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {course.funding_types.map((fundingType, index) => {
-                // Define descriptions for known funding types
-                const fundingInfo = {
-                  'Bildungsgutschein': {
-                    icon: '🎓',
-                    description: '100% Förderung durch die Agentur für Arbeit oder Jobcenter. Komplett kostenlose Weiterbildung inklusive aller Materialien.'
-                  },
-                  'AVGS': {
-                    icon: '💼',
-                    description: 'Aktivierungs- und Vermittlungsgutschein für individuelle Coachings und Qualifizierungsmaßnahmen zur Eingliederung in Arbeit.'
-                  },
-                  'WeGebAU': {
-                    icon: '📚',
-                    description: 'Weiterbildung Geringqualifizierter und beschäftigter älterer Arbeitnehmer in Unternehmen. Förderung für Beschäftigte.'
-                  },
-                  'BAföG': {
-                    icon: '🎯',
-                    description: 'Bundesausbildungsförderungsgesetz - Finanzielle Unterstützung für schulische und berufliche Ausbildung.'
-                  },
-                  'Aufstiegs-BAföG': {
-                    icon: '🚀',
-                    description: 'Förderung für berufliche Aufstiegsfortbildungen. Bis zu 75% Zuschuss auf Lehrgangs- und Prüfungsgebühren.'
-                  },
-                  'Bildungsprämie': {
-                    icon: '💰',
-                    description: 'Prämiengutschein für Erwerbstätige mit geringerem Einkommen. Bis zu 500€ Zuschuss für Weiterbildungen.'
-                  },
-                  'Selbstzahler': {
-                    icon: '💳',
-                    description: 'Flexible Ratenzahlung möglich. Investieren Sie in Ihre berufliche Zukunft mit individuellen Zahlungsmöglichkeiten.'
-                  }
+                // Define icons for known funding types
+                const fundingIcons = {
+                  'Bildungsgutschein': '🎓',
+                  'AVGS': '💼',
+                  'WeGebAU': '📚',
+                  'BAföG': '🎯',
+                  'Aufstiegs-BAföG': '🚀',
+                  'Bildungsprämie': '💰',
+                  'Selbstzahler': '💳'
                 }
 
-                const info = fundingInfo[fundingType] || { 
-                  icon: '✓', 
-                  description: 'Fördermöglichkeit verfügbar - kontaktieren Sie uns für Details.' 
-                }
+                const icon = fundingIcons[fundingType] || '✓'
+                const description = ui.sections.fundingDescriptions[fundingType] || ui.sections.fundingDescriptions.default
 
                 return (
                   <div 
                     key={index}
                     className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-lg p-6 border border-cyan-100 hover:shadow-md transition-shadow"
                   >
-                    <div className="text-4xl mb-3">{info.icon}</div>
+                    <div className="text-4xl mb-3">{icon}</div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">
                       {fundingType}
                     </h3>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      {info.description}
+                      {description}
                     </p>
                   </div>
                 )
