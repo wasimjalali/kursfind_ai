@@ -55,14 +55,38 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
     // Application form
     form: {
       title: isEnglish ? 'Apply Now' : 'Jetzt bewerben',
+      forCourse: isEnglish ? 'for' : 'für',
       firstName: isEnglish ? 'First Name' : 'Vorname',
       lastName: isEnglish ? 'Last Name' : 'Nachname',
       email: isEnglish ? 'Email' : 'E-Mail',
       phone: isEnglish ? 'Phone' : 'Telefon',
       fundingType: isEnglish ? 'Funding Type' : 'Förderungsart',
+      registrationStatus: isEnglish ? 'Are you currently registered with' : 'Sind Sie aktuell registriert bei',
+      preferredStartDate: isEnglish ? 'Preferred Start Date' : 'Gewünschter Starttermin',
+      message: isEnglish ? 'Message / Comments' : 'Nachricht / Anmerkungen',
+      messagePlaceholder: isEnglish ? 'Do you have any questions about the course?' : 'Haben Sie Fragen zum Kurs?',
+      gdprConsent: isEnglish ? 'I agree to the' : 'Ich stimme der',
+      privacyPolicy: isEnglish ? 'Privacy Policy' : 'Datenschutzerklärung',
+      gdprConsentEnd: isEnglish ? '' : 'zu',
+      marketingConsent: isEnglish ? 'I would like to receive email updates about new courses' : 'Ich möchte per E-Mail über neue Kurse informiert werden',
       placeholderSelect: isEnglish ? 'Please select' : 'Bitte wählen',
       submit: isEnglish ? 'Submit Application' : 'Bewerbung absenden',
       close: isEnglish ? 'Close' : 'Schließen',
+      requiredFields: isEnglish ? 'Required fields' : 'Pflichtfelder',
+      // Funding type options
+      fundingBildungsgutschein: isEnglish ? 'Education Voucher' : 'Bildungsgutschein',
+      fundingAVGS: 'AVGS',
+      fundingSelfPayer: isEnglish ? 'Self-Payer' : 'Selbstzahler',
+      fundingEmployer: isEnglish ? 'Employer' : 'Arbeitgeber',
+      fundingOther: isEnglish ? 'Other' : 'Sonstiges',
+      // Registration status options
+      regJobCenter: 'JobCenter',
+      regAgency: isEnglish ? 'Employment Agency' : 'Agentur für Arbeit',
+      regNotRegistered: isEnglish ? 'Not registered' : 'Nicht registriert',
+      // Loading and error messages
+      submitting: isEnglish ? 'Submitting...' : 'Wird gesendet...',
+      successMessage: isEnglish ? 'Thank you! We will contact you within 24 hours.' : 'Vielen Dank! Wir melden uns innerhalb von 24 Stunden bei Ihnen.',
+      errorMessage: isEnglish ? 'Error submitting. Please try again.' : 'Fehler beim Absenden. Bitte versuchen Sie es erneut.',
     },
   };
 

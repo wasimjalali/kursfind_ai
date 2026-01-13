@@ -4,13 +4,24 @@ import { useState } from 'react'
 export default function ApplicationForm({ courseId, courseName, providerId, providerName, labels }) {
   // Default labels for backward compatibility
   const defaultLabels = {
+    title: 'Jetzt bewerben',
+    forCourse: 'für',
     firstName: 'Vorname',
     lastName: 'Nachname',
     email: 'E-Mail',
     phone: 'Telefon',
     fundingType: 'Förderungsart',
+    registrationStatus: 'Sind Sie aktuell registriert bei',
+    preferredStartDate: 'Gewünschter Starttermin',
+    message: 'Nachricht / Anmerkungen',
+    messagePlaceholder: 'Haben Sie Fragen zum Kurs?',
+    gdprConsent: 'Ich stimme der',
+    privacyPolicy: 'Datenschutzerklärung',
+    gdprConsentEnd: 'zu',
+    marketingConsent: 'Ich möchte per E-Mail über neue Kurse informiert werden',
     placeholderSelect: 'Bitte wählen',
     submit: 'Bewerbung absenden',
+    requiredFields: 'Pflichtfelder',
   };
   const ui = labels || defaultLabels;
   const [formData, setFormData] = useState({
@@ -132,10 +143,10 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">
-        Jetzt bewerben
+        {ui.title}
       </h2>
       <p className="text-sm text-gray-600 mb-6">
-        für {courseName}
+        {ui.forCourse} {courseName}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -221,18 +232,18 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-colors text-gray-900"
           >
             <option value="">{ui.placeholderSelect}</option>
-            <option value="Bildungsgutschein">Bildungsgutschein</option>
-            <option value="AVGS">AVGS</option>
-            <option value="Selbstzahler">Selbstzahler</option>
-            <option value="Arbeitgeber">Arbeitgeber</option>
-            <option value="Sonstiges">Sonstiges</option>
+            <option value="Bildungsgutschein">{ui.fundingBildungsgutschein || 'Bildungsgutschein'}</option>
+            <option value="AVGS">{ui.fundingAVGS || 'AVGS'}</option>
+            <option value="Selbstzahler">{ui.fundingSelfPayer || 'Selbstzahler'}</option>
+            <option value="Arbeitgeber">{ui.fundingEmployer || 'Arbeitgeber'}</option>
+            <option value="Sonstiges">{ui.fundingOther || 'Sonstiges'}</option>
           </select>
         </div>
 
         {/* Registration Status */}
         <div>
           <label htmlFor="registrationStatus" className="block text-sm font-medium text-gray-700 mb-1">
-            Sind Sie aktuell registriert bei <span className="text-red-500">*</span>
+            {ui.registrationStatus} <span className="text-red-500">*</span>
           </label>
           <select
             id="registrationStatus"
@@ -243,16 +254,16 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-colors text-gray-900"
           >
             <option value="">{ui.placeholderSelect}</option>
-            <option value="JobCenter">JobCenter</option>
-            <option value="Agentur für Arbeit">Agentur für Arbeit</option>
-            <option value="Nicht registriert">Nicht registriert</option>
+            <option value="JobCenter">{ui.regJobCenter || 'JobCenter'}</option>
+            <option value="Agentur für Arbeit">{ui.regAgency || 'Agentur für Arbeit'}</option>
+            <option value="Nicht registriert">{ui.regNotRegistered || 'Nicht registriert'}</option>
           </select>
         </div>
 
         {/* Preferred Start Date */}
         <div>
           <label htmlFor="preferredStartDate" className="block text-sm font-medium text-gray-700 mb-1">
-            Gewünschter Starttermin
+            {ui.preferredStartDate}
           </label>
           <input
             type="date"
@@ -267,7 +278,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* Message */}
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-            Nachricht / Anmerkungen
+            {ui.message}
           </label>
           <textarea
             id="message"
@@ -276,7 +287,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             onChange={handleChange}
             rows="4"
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-colors resize-none text-gray-900 placeholder:text-gray-400"
-            placeholder="Haben Sie Fragen zum Kurs?"
+            placeholder={ui.messagePlaceholder}
           />
         </div>
 
@@ -292,7 +303,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             className="mt-1 w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2"
           />
           <label htmlFor="gdprConsent" className="text-sm text-gray-700">
-            Ich stimme der <a href="/privacy-policy" target="_blank" className="text-cyan-600 hover:underline">Datenschutzerklärung</a> zu <span className="text-red-500">*</span>
+            {ui.gdprConsent} <a href="/privacy-policy" target="_blank" className="text-cyan-600 hover:underline">{ui.privacyPolicy}</a> {ui.gdprConsentEnd} <span className="text-red-500">*</span>
           </label>
         </div>
 
@@ -307,7 +318,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             className="mt-1 w-4 h-4 text-cyan-600 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2"
           />
           <label htmlFor="marketingConsent" className="text-sm text-gray-700">
-            Ich möchte per E-Mail über neue Kurse informiert werden
+            {ui.marketingConsent}
           </label>
         </div>
 
@@ -318,7 +329,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="font-medium">Vielen Dank! Wir melden uns innerhalb von 24 Stunden bei Ihnen.</span>
+              <span className="font-medium">{ui.successMessage || 'Vielen Dank! Wir melden uns innerhalb von 24 Stunden bei Ihnen.'}</span>
             </div>
           </div>
         )}
@@ -333,7 +344,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 )}
               </svg>
-              <p className="text-sm leading-relaxed">{errorMessage || 'Fehler beim Absenden. Bitte versuchen Sie es erneut.'}</p>
+              <p className="text-sm leading-relaxed">{errorMessage || ui.errorMessage || 'Fehler beim Absenden. Bitte versuchen Sie es erneut.'}</p>
             </div>
           </div>
         )}
@@ -350,7 +361,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>Wird gesendet...</span>
+              <span>{ui.submitting || 'Wird gesendet...'}</span>
             </>
           ) : (
             <span>{ui.submit}</span>
@@ -358,7 +369,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         </button>
 
         <p className="text-xs text-gray-500 text-center mt-2">
-          <span className="text-red-500">*</span> Pflichtfelder
+          <span className="text-red-500">*</span> {ui.requiredFields}
         </p>
       </form>
     </div>
