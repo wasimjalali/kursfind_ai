@@ -6,6 +6,20 @@ import SaveButton from '@/components/student/SaveButton'
 import ApplicationForm from './ApplicationForm'
 
 export default function CoursePageClient({ course, provider, providerFaqs }) {
+  // Smart Component Localization - detect course language and set UI labels
+  const isEnglish = (course?.language || '').toLowerCase().includes('english') || 
+                    (course?.language || '').toLowerCase().includes('englisch');
+  
+  const ui = {
+    apply: isEnglish ? 'Apply Now' : 'Jetzt bewerben',
+    download: isEnglish ? 'Download brochure' : 'Infomaterial herunterladen',
+    startLabel: isEnglish ? 'Next Start' : 'Nächster Start',
+    durationLabel: isEnglish ? 'Full-time' : 'Vollzeit',
+    contactForInfo: isEnglish ? 'Please contact us for information materials' : 'Bitte kontaktieren Sie uns für Infomaterial',
+    home: isEnglish ? 'Home' : 'Home',
+    allCourses: isEnglish ? 'All Courses' : 'Alle Kurse',
+  };
+
   // Debug: Log the data received
   useEffect(() => {
     console.log('=== CoursePageClient Debug ===')
@@ -161,11 +175,11 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <nav className="flex items-center gap-2 text-sm text-gray-600 overflow-x-auto whitespace-nowrap">
             <Link href="/" className="hover:text-cyan-600 transition-colors flex-shrink-0">
-              Home
+              {ui.home}
             </Link>
             <span>›</span>
             <Link href="/courses" className="hover:text-cyan-600 transition-colors flex-shrink-0">
-              Alle Kurse
+              {ui.allCourses}
             </Link>
             <span>›</span>
             <span className="text-gray-900 font-medium truncate max-w-md">{course.title}</span>
@@ -177,17 +191,17 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
       <div className="bg-gradient-to-br from-cyan-500 via-cyan-600 to-emerald-500 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="max-w-7xl mx-auto px-6 py-16 relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold">
-              {provider?.company_name || provider?.name || course.provider}
-            </span>
-            <span className="bg-emerald-500 px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" />
-              </svg>
-              Nächster Start: {course.start_date || '02.12.2025'}
-            </span>
-          </div>
+          {/* Start Date - Subtle white outline pill */}
+          {course.start_date && (
+            <div className="flex items-center gap-2 mb-4">
+              <span className="border border-white/50 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {ui.startLabel}: {course.start_date}
+              </span>
+            </div>
+          )}
           
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight max-w-4xl">
             {course.title}
@@ -276,7 +290,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               onClick={handleApplicationClick}
               className="bg-white text-cyan-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all duration-200"
             >
-              Jetzt bewerben →
+              {ui.apply} →
             </button>
             
             {course.infomaterial_url ? (
@@ -287,17 +301,17 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-200"
               >
-                Infomaterial herunterladen
+                {ui.download}
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </a>
             ) : (
               <button
-                onClick={() => alert('Bitte kontaktieren Sie uns für Infomaterial')}
+                onClick={() => alert(ui.contactForInfo)}
                 className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all duration-200"
               >
-                Infomaterial anfordern
+                {ui.download}
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
