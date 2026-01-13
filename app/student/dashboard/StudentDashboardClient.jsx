@@ -3,7 +3,7 @@
 import { useState, createContext, useContext } from 'react';
 import Link from 'next/link';
 import StudentSidebar from '@/components/student/StudentSidebar';
-import { getStudentLabels } from '@/lib/student-labels';
+import { useStudentLang } from '@/lib/useStudentLang';
 
 // Create context for language
 export const StudentLanguageContext = createContext({ lang: 'de', setLang: () => {}, labels: {} });
@@ -14,8 +14,8 @@ export function useStudentLanguage() {
 
 export default function StudentDashboardClient({ student, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true); // Start open on desktop
-  const [lang, setLang] = useState('de'); // Default to German
-  const labels = getStudentLabels(lang);
+  // Use shared hook with localStorage persistence
+  const { lang, setLang, labels, isLoaded } = useStudentLang();
 
   return (
     <StudentLanguageContext.Provider value={{ lang, setLang, labels }}>

@@ -44,8 +44,8 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
     if (selectedChats.size === 0) return;
 
     const confirmMessage = selectedChats.size === 1
-      ? 'Möchten Sie diesen Chat wirklich löschen?'
-      : `Möchten Sie ${selectedChats.size} Chats wirklich löschen?`;
+      ? (lang === 'de' ? 'Möchten Sie diesen Chat wirklich löschen?' : 'Do you really want to delete this chat?')
+      : (lang === 'de' ? `Möchten Sie ${selectedChats.size} Chats wirklich löschen?` : `Do you really want to delete ${selectedChats.size} chats?`);
 
     if (!confirm(confirmMessage)) return;
 
@@ -64,7 +64,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
       const failedDeletes = results.filter(r => !r.ok);
 
       if (failedDeletes.length > 0) {
-        alert(`${failedDeletes.length} Chat(s) konnten nicht gelöscht werden`);
+        alert(lang === 'de' ? `${failedDeletes.length} Chat(s) konnten nicht gelöscht werden` : `${failedDeletes.length} chat(s) could not be deleted`);
       }
 
       // Remove deleted chats from state
@@ -79,7 +79,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
       router.refresh();
     } catch (error) {
       console.error('Error deleting chats:', error);
-      alert('Fehler beim Löschen der Chats');
+      alert(lang === 'de' ? 'Fehler beim Löschen der Chats' : 'Error deleting chats');
     } finally {
       setIsDeleting(false);
     }
@@ -87,7 +87,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
 
   // Delete single chat
   const deleteSingleChat = async (conversationId) => {
-    if (!confirm('Möchten Sie diesen Chat wirklich löschen?')) return;
+    if (!confirm(lang === 'de' ? 'Möchten Sie diesen Chat wirklich löschen?' : 'Do you really want to delete this chat?')) return;
 
     try {
       const response = await fetch('/api/student/delete-chat', {
@@ -104,11 +104,11 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
         
         router.refresh();
       } else {
-        alert('Fehler beim Löschen des Chats');
+        alert(lang === 'de' ? 'Fehler beim Löschen des Chats' : 'Error deleting chat');
       }
     } catch (error) {
       console.error('Error deleting chat:', error);
-      alert('Fehler beim Löschen des Chats');
+      alert(lang === 'de' ? 'Fehler beim Löschen des Chats' : 'Error deleting chat');
     }
   };
 
@@ -137,7 +137,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                     onClick={selectAll}
                     className="px-3 py-2 text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    {selectedChats.size === chatHistory.length ? 'Abwählen' : 'Alle'}
+                    {selectedChats.size === chatHistory.length ? (lang === 'de' ? 'Abwählen' : 'Deselect') : (lang === 'de' ? 'Alle' : 'All')}
                   </button>
                   {selectedChats.size > 0 && (
                     <button
@@ -145,7 +145,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                       disabled={isDeleting}
                       className="px-3 py-2 text-xs sm:text-sm font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
                     >
-                      {isDeleting ? '...' : `${selectedChats.size} löschen`}
+                      {isDeleting ? '...' : (lang === 'de' ? `${selectedChats.size} löschen` : `Delete ${selectedChats.size}`)}
                     </button>
                   )}
                 </>
@@ -198,16 +198,16 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 line-clamp-2">
-                        {chat.title || chat.conversation_title || 'Neue Konversation'}
+                        {chat.title || chat.conversation_title || (lang === 'de' ? 'Neue Konversation' : 'New Conversation')}
                       </h3>
                       <p className="text-xs sm:text-sm text-gray-600">
-                        {new Date(chat.created_at).toLocaleDateString('de-DE', {
+                        {new Date(chat.created_at).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
-                        })} • {messages.length} Nachrichten
+                        })} • {messages.length} {lang === 'de' ? 'Nachrichten' : 'messages'}
                       </p>
                     </div>
                   </div>
@@ -216,7 +216,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                   {lastMessage && (
                     <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-3">
                       <p className="text-xs font-semibold text-gray-500 mb-1">
-                        Letzte Nachricht:
+                        {lang === 'de' ? 'Letzte Nachricht:' : 'Last message:'}
                       </p>
                       <p className="text-xs sm:text-sm text-gray-700 line-clamp-2 sm:line-clamp-3">
                         {typeof lastMessage === 'string' ? lastMessage : lastMessage.content || lastMessage.text}
@@ -226,7 +226,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
 
                   {/* Metadata */}
                   <div className="text-xs text-gray-400 mb-3">
-                    Erstellt: {new Date(chat.created_at).toLocaleDateString('de-DE')}
+                    {lang === 'de' ? 'Erstellt:' : 'Created:'} {new Date(chat.created_at).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US')}
                   </div>
 
                   {/* Action Buttons - Mobile Optimized */}
@@ -236,12 +236,12 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                         href={`/suchen?chat=${chat.conversation_id}`}
                         className="flex-1 py-2.5 text-center text-sm font-semibold text-cyan-600 hover:text-cyan-700 border border-cyan-300 rounded-lg hover:bg-cyan-50 transition-colors"
                       >
-                        Fortsetzen →
+                        {lang === 'de' ? 'Fortsetzen →' : 'Continue →'}
                       </Link>
                       <button
                         onClick={() => deleteSingleChat(chat.conversation_id)}
                         className="px-4 py-2.5 text-sm font-semibold text-red-600 hover:text-red-700 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
-                        title="Chat löschen"
+                        title={lang === 'de' ? 'Chat löschen' : 'Delete chat'}
                       >
                         🗑️
                       </button>
@@ -274,20 +274,20 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
       {/* Info Box - Mobile Optimized */}
       <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 sm:p-6">
         <h3 className="text-base sm:text-lg font-bold text-purple-900 mb-3">
-          💡 Über den Chat-Verlauf
+          💡 {lang === 'de' ? 'Über den Chat-Verlauf' : 'About Chat History'}
         </h3>
         <ul className="space-y-2 text-xs sm:text-sm text-purple-800">
           <li className="flex items-start gap-2">
             <span className="text-purple-500 mt-0.5">✓</span>
-            <span>Ihre Konversationen mit dem KI-Berater werden gespeichert</span>
+            <span>{lang === 'de' ? 'Ihre Konversationen mit dem KI-Berater werden gespeichert' : 'Your conversations with the AI advisor are saved'}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-purple-500 mt-0.5">✓</span>
-            <span>Setzen Sie frühere Suchen fort und verfeinern Sie Ihre Anfragen</span>
+            <span>{lang === 'de' ? 'Setzen Sie frühere Suchen fort und verfeinern Sie Ihre Anfragen' : 'Continue previous searches and refine your queries'}</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-purple-500 mt-0.5">✓</span>
-            <span>Wählen Sie mehrere Chats aus, um sie auf einmal zu löschen</span>
+            <span>{lang === 'de' ? 'Wählen Sie mehrere Chats aus, um sie auf einmal zu löschen' : 'Select multiple chats to delete them at once'}</span>
           </li>
         </ul>
       </div>

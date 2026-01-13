@@ -15,6 +15,7 @@ import {
   extractCoursesFromFollowUp 
 } from '@/lib/course-recommendation-parser';
 import { FEATURES } from '@/config/features';
+import { useStudentLang } from '@/lib/useStudentLang';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -215,7 +216,8 @@ function ChatContent() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadingStage, setLoadingStage] = useState<'understanding' | 'searching' | 'preparing'>('understanding');
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [lang, setLang] = useState<'de' | 'en'>('de'); // Language state for localization
+  // Use shared language hook with localStorage persistence (synced with Student Dashboard)
+  const { lang, setLang, labels } = useStudentLang();
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
     filters: {},
