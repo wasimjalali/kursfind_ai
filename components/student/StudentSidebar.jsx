@@ -4,10 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { getStudentLabels } from '@/lib/student-labels';
 
-export default function StudentSidebar({ isOpen, setIsOpen }) {
+export default function StudentSidebar({ isOpen, setIsOpen, lang = 'de', setLang }) {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const labels = getStudentLabels(lang);
 
   // Fetch unread notification count
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
 
   const menuItems = [
     {
-      name: 'Dashboard',
+      name: labels.nav.dashboard,
       href: '/student/dashboard',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +62,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       ),
     },
     {
-      name: 'Gespeicherte Kurse',
+      name: labels.nav.savedCourses,
       href: '/student/dashboard/saved',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +71,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       ),
     },
     {
-      name: 'Bewerbungen',
+      name: labels.nav.applications,
       href: '/student/dashboard/applications',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,7 +80,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       ),
     },
     {
-      name: 'Chat-Verlauf',
+      name: labels.nav.chatHistory,
       href: '/student/dashboard/chat',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +89,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       ),
     },
     {
-      name: 'Kurse suchen',
+      name: labels.nav.searchCourses,
       href: '/courses',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +98,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       ),
     },
     {
-      name: 'Benachrichtigungen',
+      name: labels.nav.notifications,
       href: '/student/dashboard/notifications',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +108,7 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
       badge: unreadCount,
     },
     {
-      name: 'Profil',
+      name: labels.nav.profile,
       href: '/student/dashboard/profile',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,14 +169,14 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 cursor-pointer relative group"
-            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+            aria-label={isOpen ? labels.nav.closeSidebar : labels.nav.openSidebar}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="18" rx="1"/>
               <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
             {/* Tooltip - only when collapsed */}
-            {!isOpen && <Tooltip text="Sidebar öffnen" />}
+            {!isOpen && <Tooltip text={labels.nav.openSidebar} />}
           </button>
         </div>
 
@@ -193,9 +196,9 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
-            {isOpen && <span>KI-Kurssuche</span>}
+            {isOpen && <span>{labels.nav.aiSearch}</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && <Tooltip text="KI-Kurssuche" />}
+            {!isOpen && <Tooltip text={labels.nav.aiSearch} />}
           </Link>
         </div>
 
@@ -246,10 +249,70 @@ export default function StudentSidebar({ isOpen, setIsOpen }) {
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 p-3">
+        {/* Footer - Language Selector */}
+        <div className="border-t border-gray-200 p-2 overflow-visible space-y-1">
+          {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              className="w-full flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all cursor-pointer relative group"
+              style={{ 
+                justifyContent: isOpen ? 'flex-start' : 'center',
+                gap: isOpen ? '12px' : '0',
+                paddingLeft: isOpen ? '16px' : '0',
+                paddingRight: isOpen ? '16px' : '0',
+              }}
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              {isOpen && (
+                <>
+                  <span className="font-medium text-[15px]">{labels.nav.language}</span>
+                  <span className="ml-auto text-xs font-semibold bg-gray-100 px-2 py-0.5 rounded">
+                    {lang === 'de' ? 'DE' : 'EN'}
+                  </span>
+                </>
+              )}
+              {!isOpen && <Tooltip text={labels.nav.language} />}
+            </button>
+            
+            {/* Language Dropdown */}
+            {showLangDropdown && setLang && (
+              <div 
+                className={`absolute ${isOpen ? 'bottom-full left-0 right-0 mb-1' : 'left-full bottom-0 ml-2'} bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-[99999]`}
+              >
+                <button
+                  onClick={() => { setLang('de'); setShowLangDropdown(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-cyan-50 transition-colors ${lang === 'de' ? 'bg-cyan-50 text-cyan-600' : 'text-gray-700'}`}
+                >
+                  <span className="text-lg">🇩🇪</span>
+                  <span className="font-medium">Deutsch</span>
+                  {lang === 'de' && (
+                    <svg className="w-4 h-4 ml-auto text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+                <button
+                  onClick={() => { setLang('en'); setShowLangDropdown(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-cyan-50 transition-colors ${lang === 'en' ? 'bg-cyan-50 text-cyan-600' : 'text-gray-700'}`}
+                >
+                  <span className="text-lg">🇬🇧</span>
+                  <span className="font-medium">English</span>
+                  {lang === 'en' && (
+                    <svg className="w-4 h-4 ml-auto text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Copyright */}
           {isOpen && (
-            <div className="text-center text-xs text-gray-400">
+            <div className="text-center text-xs text-gray-400 pt-2">
               © 2025 Kursfind AI
             </div>
           )}

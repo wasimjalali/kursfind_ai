@@ -1,16 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, createContext, useContext } from 'react';
 import Link from 'next/link';
 import StudentSidebar from '@/components/student/StudentSidebar';
+import { getStudentLabels } from '@/lib/student-labels';
+
+// Create context for language
+export const StudentLanguageContext = createContext({ lang: 'de', setLang: () => {}, labels: {} });
+
+export function useStudentLanguage() {
+  return useContext(StudentLanguageContext);
+}
 
 export default function StudentDashboardClient({ student, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true); // Start open on desktop
+  const [lang, setLang] = useState('de'); // Default to German
+  const labels = getStudentLabels(lang);
 
   return (
+    <StudentLanguageContext.Provider value={{ lang, setLang, labels }}>
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar with push behavior */}
-      <StudentSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <StudentSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} lang={lang} setLang={setLang} />
       
       {/* Main Content Wrapper with Push Behavior */}
       <div className={`
@@ -62,5 +73,6 @@ export default function StudentDashboardClient({ student, children }) {
         </main>
       </div>
     </div>
+    </StudentLanguageContext.Provider>
   );
 }
