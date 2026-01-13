@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useStudentLanguage } from '@/lib/useStudentLanguage';
+import useStudentLang from '@/lib/useStudentLang';
 
 export default function ChatHistoryHeader() {
-  const { labels } = useStudentLanguage();
+  const { labels } = useStudentLang();
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
