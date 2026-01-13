@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase-browser'
 import { useRouter } from 'next/navigation'
 import ApplicationDetailModal from './ApplicationDetailModal'
+import { usePortalLanguage } from '../ProviderDashboardClient'
 
 function getStatusColor(status) {
   switch(status) {
@@ -27,12 +28,12 @@ function getStatusColor(status) {
   }
 }
 
-function getStatusLabel(status) {
+function getStatusLabel(status, labels) {
   switch(status) {
-    case 'new': return 'Neu'
-    case 'contacted': return 'Kontaktiert'
-    case 'converted': return 'Angenommen'
-    case 'rejected': return 'Abgelehnt'
+    case 'new': return labels.applications.status.new
+    case 'contacted': return labels.applications.status.contacted
+    case 'converted': return labels.applications.status.converted
+    case 'rejected': return labels.applications.status.rejected
     default: return status
   }
 }
@@ -47,31 +48,31 @@ function formatDate(dateString) {
   })
 }
 
-function exportToCSV(applications) {
+function exportToCSV(applications, labels) {
   if (!applications || applications.length === 0) {
-    alert('Keine Bewerbungen zum Exportieren vorhanden.')
+    alert(labels.applications.noExportData)
     return
   }
 
   // Define CSV headers
   const headers = [
-    'Status',
-    'Vorname',
-    'Nachname',
-    'Email',
-    'Telefon',
-    'Kurs',
-    'Förderungsart',
-    'Bewerbungsdatum',
-    'Nachricht',
-    'Bevorzugtes Startdatum',
-    'Förderung genehmigt',
-    'Anbieter-Notizen'
+    labels.applications.csv.status,
+    labels.applications.csv.firstName,
+    labels.applications.csv.lastName,
+    labels.applications.csv.email,
+    labels.applications.csv.phone,
+    labels.applications.csv.course,
+    labels.applications.csv.fundingType,
+    labels.applications.csv.applicationDate,
+    labels.applications.csv.message,
+    labels.applications.csv.preferredStartDate,
+    labels.applications.csv.fundingApproved,
+    labels.applications.csv.providerNotes
   ]
 
   // Map applications to CSV rows
   const rows = applications.map(app => [
-    getStatusLabel(app.status),
+    getStatusLabel(app.status, labels),
     app.first_name || '',
     app.last_name || '',
     app.email || '',
@@ -81,7 +82,7 @@ function exportToCSV(applications) {
     formatDate(app.applied_at),
     (app.message || '').replace(/"/g, '""').replace(/\n/g, ' '), // Escape quotes and newlines
     app.preferred_start_date || '',
-    app.has_funding_approved ? 'Ja' : 'Nein',
+    app.has_funding_approved ? labels.applications.csv.yes : labels.applications.csv.no,
     (app.provider_notes || '').replace(/"/g, '""').replace(/\n/g, ' ')
   ])
 
@@ -127,6 +128,7 @@ function calculateStats(applications) {
 
 export default function ApplicationsPage() {
   const router = useRouter()
+  const { labels } = usePortalLanguage()
   const [applications, setApplications] = useState([])
   const [selectedApplication, setSelectedApplication] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -227,7 +229,7 @@ export default function ApplicationsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mb-4"></div>
-          <p className="text-gray-600">Laden...</p>
+          <p className="text-gray-600">{labels.common.loading}</p>
         </div>
       </div>
     )
@@ -241,21 +243,21 @@ export default function ApplicationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-            Bewerbungen
+            {labels.applications.title}
           </h1>
           <p className="text-base lg:text-lg text-gray-600">
-            Verwalten Sie Ihre Kursbewerbungen
+            {labels.applications.subtitle}
           </p>
         </div>
         {applications.length > 0 && (
           <button
-            onClick={() => exportToCSV(applications)}
+            onClick={() => exportToCSV(applications, labels)}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span>Als CSV exportieren</span>
+            <span>{labels.applications.exportCSV}</span>
           </button>
         )}
       </div>
@@ -276,7 +278,7 @@ export default function ApplicationsPage() {
             {stats.total}
           </div>
           <div className="text-sm lg:text-base text-gray-600">
-            Gesamt Bewerbungen
+            {labels.applications.totalApplications}
           </div>
         </div>
 
@@ -293,7 +295,7 @@ export default function ApplicationsPage() {
             {stats.newApps}
           </div>
           <div className="text-sm lg:text-base text-gray-600">
-            Neue Bewerbungen
+            {labels.applications.newApplications}
           </div>
         </div>
 
@@ -310,7 +312,7 @@ export default function ApplicationsPage() {
             {stats.thisMonth}
           </div>
           <div className="text-sm lg:text-base text-gray-600">
-            Diesen Monat
+            {labels.applications.thisMonth}
           </div>
         </div>
 
@@ -327,7 +329,7 @@ export default function ApplicationsPage() {
             {stats.conversionRate}%
           </div>
           <div className="text-sm lg:text-base text-gray-600">
-            Conversion Rate
+            {labels.applications.conversionRate}
           </div>
         </div>
       </div>
@@ -343,10 +345,10 @@ export default function ApplicationsPage() {
               </svg>
             </div>
             <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-2">
-              Noch keine Bewerbungen
+              {labels.applications.noApplications}
             </h3>
             <p className="text-base lg:text-lg text-gray-600 max-w-md mx-auto">
-              Bewerbungen werden hier angezeigt, sobald Studenten sich bewerben.
+              {labels.applications.noApplicationsDesc}
             </p>
           </div>
         ) : (
@@ -356,28 +358,28 @@ export default function ApplicationsPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    {labels.applications.table.status}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Name
+                    {labels.applications.table.name}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Email
+                    {labels.applications.table.email}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Telefon
+                    {labels.applications.table.phone}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Kurs
+                    {labels.applications.table.course}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Förderung
+                    {labels.applications.table.funding}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Datum
+                    {labels.applications.table.date}
                   </th>
                   <th className="px-6 py-3 text-left text-xs lg:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                    Aktionen
+                    {labels.applications.table.actions}
                   </th>
                 </tr>
               </thead>
@@ -388,7 +390,7 @@ export default function ApplicationsPage() {
                       <div className="flex items-center gap-2">
                         <span className={`w-3 h-3 rounded-full ${getStatusColor(app.status)}`}></span>
                         <span className="text-sm lg:text-base font-medium text-gray-900">
-                          {getStatusLabel(app.status)}
+                          {getStatusLabel(app.status, labels)}
                         </span>
                       </div>
                     </td>
@@ -400,7 +402,7 @@ export default function ApplicationsPage() {
                           </div>
                           {!app.provider_viewed && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs lg:text-sm font-medium bg-blue-100 text-blue-800">
-                              Neu
+                              {labels.applications.status.new}
                             </span>
                           )}
                         </div>
@@ -435,7 +437,7 @@ export default function ApplicationsPage() {
                         }}
                         className="text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
                       >
-                        Details
+                        {labels.common.details}
                       </button>
                     </td>
                   </tr>

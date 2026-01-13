@@ -5,11 +5,13 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { getPortalLabels } from '@/lib/portal-labels';
 
-export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) {
+export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen, lang = 'de' }) {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const labels = getPortalLabels(lang);
 
   const handleToggle = () => {
     if (setIsOpen) {
@@ -83,7 +85,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
 
   const navItems = [
     {
-      name: 'Dashboard',
+      name: labels.nav.dashboard,
       href: '/provider/dashboard',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +94,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
       ),
     },
     {
-      name: 'Bewerbungen',
+      name: labels.nav.applications,
       href: '/provider/dashboard/applications',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +104,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
       badge: unreadCount,
     },
     {
-      name: 'Meine Kurse',
+      name: labels.nav.myCourses,
       href: '/provider/dashboard/courses',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +113,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
       ),
     },
     {
-      name: 'Analytics',
+      name: labels.nav.analytics,
       href: '/provider/dashboard/analytics',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +122,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
       ),
     },
     {
-      name: 'Benachrichtigungen',
+      name: labels.nav.notifications,
       href: '/provider/dashboard/notifications',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +132,7 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
       badge: unreadNotifications,
     },
     {
-      name: 'Profil',
+      name: labels.nav.profile,
       href: '/provider/dashboard/profile',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,14 +193,14 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
           <button 
             onClick={handleToggle}
             className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 cursor-pointer relative group"
-            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+            aria-label={isOpen ? labels.nav.closeSidebar : labels.nav.openSidebar}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="18" rx="1"/>
               <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
             {/* Tooltip - only when collapsed */}
-            {!isOpen && <Tooltip text="Sidebar öffnen" />}
+            {!isOpen && <Tooltip text={labels.nav.openSidebar} />}
           </button>
         </div>
 
@@ -218,9 +220,9 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-            {isOpen && <span>Neuer Kurs</span>}
+            {isOpen && <span>{labels.nav.newCourse}</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && <Tooltip text="Neuer Kurs" />}
+            {!isOpen && <Tooltip text={labels.nav.newCourse} />}
           </Link>
         </div>
 
@@ -281,9 +283,9 @@ export default function ProviderSidebar({ isOpen = false, onClose, setIsOpen }) 
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            {isOpen && <span className="font-medium text-[15px]">Zurück zur Website</span>}
+            {isOpen && <span className="font-medium text-[15px]">{labels.nav.backToWeb}</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && <Tooltip text="Zurück zur Website" />}
+            {!isOpen && <Tooltip text={labels.nav.backToWeb} />}
           </Link>
         </div>
       </aside>
