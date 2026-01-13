@@ -67,6 +67,9 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
         Selbstzahler: isEnglish
           ? 'Flexible installment payment possible. Invest in your professional future with individual payment options.'
           : 'Flexible Ratenzahlung möglich. Investieren Sie in Ihre berufliche Zukunft mit individuellen Zahlungsmöglichkeiten.',
+        'Flexible Installments': isEnglish
+          ? 'Payment can be made in flexible installments. Contact the provider for more information about payment plans.'
+          : 'Zahlung kann in flexiblen Raten erfolgen. Kontaktieren Sie den Anbieter für weitere Informationen zu Zahlungsplänen.',
         default: isEnglish
           ? 'Funding option available - contact us for details.'
           : 'Fördermöglichkeit verfügbar - kontaktieren Sie uns für Details.'
@@ -736,7 +739,8 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   'BAföG': '🎯',
                   'Aufstiegs-BAföG': '🚀',
                   'Bildungsprämie': '💰',
-                  'Selbstzahler': '💳'
+                  'Selbstzahler': '💳',
+                  'Flexible Installments': '💳'
                 }
 
                 const icon = fundingIcons[fundingType] || '✓'
