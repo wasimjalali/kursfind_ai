@@ -21,7 +21,7 @@ export default function ProviderDashboardClient({ provider, children }) {
     <PortalLanguageContext.Provider value={{ lang, setLang, labels }}>
       <div className="flex h-screen overflow-hidden bg-gray-50">
         {/* Sidebar with push behavior */}
-        <ProviderSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} lang={lang} />
+        <ProviderSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} lang={lang} setLang={setLang} />
         
         {/* Main Content Wrapper with Push Behavior */}
         <div className={`
@@ -53,29 +53,9 @@ export default function ProviderDashboardClient({ provider, children }) {
                 />
               </Link>
               
-              {/* Language Toggle - right */}
-              <button
-                onClick={() => setLang(lang === 'de' ? 'en' : 'de')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium text-gray-700"
-                title={lang === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln'}
-              >
-                {lang === 'de' ? 'EN' : 'DE'}
-              </button>
+              {/* Spacer for symmetry */}
+              <div className="w-10"></div>
             </div>
-          </div>
-
-          {/* Desktop Language Toggle - Fixed position */}
-          <div className="hidden lg:block fixed top-4 right-4 z-40">
-            <button
-              onClick={() => setLang(lang === 'de' ? 'en' : 'de')}
-              className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              title={lang === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln'}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-              </svg>
-              {lang === 'de' ? 'EN' : 'DE'}
-            </button>
           </div>
 
           {/* Page Content */}
