@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useStudentLanguage } from '../StudentDashboardClient';
 
 export default function ChatHistoryClient({ initialChatHistory, student }) {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
   const [selectedChats, setSelectedChats] = useState(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectMode, setSelectMode] = useState(false);
+  const { labels, lang } = useStudentLanguage();
 
   // Toggle select mode
   const toggleSelectMode = () => {
@@ -123,7 +125,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
               <p className="text-2xl font-bold text-gray-900">
                 {chatHistory?.length || 0}
               </p>
-              <p className="text-sm text-gray-600">Gespeicherte Unterhaltungen</p>
+              <p className="text-sm text-gray-600">{labels?.chatHistory?.savedConversations || 'Gespeicherte Unterhaltungen'}</p>
             </div>
           </div>
 
@@ -156,7 +158,7 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
                     : 'text-cyan-600 border border-cyan-300 hover:bg-cyan-50'
                 }`}
               >
-                {selectMode ? 'Abbrechen' : 'Auswählen'}
+                {selectMode ? (labels?.common?.cancel || 'Abbrechen') : (labels?.common?.select || 'Auswählen')}
               </button>
             </div>
           )}
@@ -255,16 +257,16 @@ export default function ChatHistoryClient({ initialChatHistory, student }) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12 text-center">
           <div className="text-5xl sm:text-6xl mb-4">💬</div>
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-            Noch keine Unterhaltungen
+            {labels?.chatHistory?.noChats || 'Noch keine Unterhaltungen'}
           </h3>
           <p className="text-sm sm:text-base text-gray-600 mb-6">
-            Starten Sie eine KI-gestützte Kurssuche, um passende Weiterbildungen zu finden
+            {labels?.chatHistory?.noChatsDesc || 'Starten Sie eine KI-gestützte Kurssuche, um passende Weiterbildungen zu finden'}
           </p>
           <Link
             href="/suchen"
             className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
           >
-            KI-Kurssuche starten
+            {labels?.nav?.aiSearch || 'KI-Kurssuche starten'}
           </Link>
         </div>
       )}

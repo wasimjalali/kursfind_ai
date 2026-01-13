@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useStudentLanguage } from '../StudentDashboardClient';
 
 export default function StudentNotificationsPage() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all' | 'unread'
+  const { labels, lang } = useStudentLanguage();
 
   useEffect(() => {
     fetchNotifications();
@@ -129,9 +131,9 @@ export default function StudentNotificationsPage() {
     <div className="p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Benachrichtigungen</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{labels?.notifications?.title || 'Benachrichtigungen'}</h1>
         <p className="text-base md:text-lg text-gray-600 mt-2">
-          Bleiben Sie über Ihre Bewerbungen und wichtige Updates informiert.
+          {labels?.notifications?.subtitle || 'Bleiben Sie über Ihre Bewerbungen und wichtige Updates informiert.'}
         </p>
       </div>
 
@@ -147,7 +149,7 @@ export default function StudentNotificationsPage() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Alle
+            {labels?.common?.all || 'Alle'}
           </button>
           <button
             onClick={() => setFilter('unread')}
@@ -157,7 +159,7 @@ export default function StudentNotificationsPage() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Ungelesen {unreadCount > 0 && `(${unreadCount})`}
+            {labels?.common?.unread || 'Ungelesen'} {unreadCount > 0 && `(${unreadCount})`}
           </button>
         </div>
 
@@ -167,7 +169,7 @@ export default function StudentNotificationsPage() {
             onClick={markAllAsRead}
             className="px-4 py-2 text-sm font-medium text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition-colors"
           >
-            Alle als gelesen markieren
+            {labels?.notifications?.markAllRead || 'Alle als gelesen markieren'}
           </button>
         )}
       </div>
@@ -177,7 +179,7 @@ export default function StudentNotificationsPage() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-gray-500 mt-3">Laden...</p>
+            <p className="text-gray-500 mt-3">{labels?.common?.loading || 'Laden...'}</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="p-8 text-center">
@@ -187,12 +189,12 @@ export default function StudentNotificationsPage() {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-1">
-              {filter === 'unread' ? 'Keine ungelesenen Benachrichtigungen' : 'Keine Benachrichtigungen'}
+              {filter === 'unread' ? (labels?.notifications?.noUnreadNotifications || 'Keine ungelesenen Benachrichtigungen') : (labels?.notifications?.noNotifications || 'Keine Benachrichtigungen')}
             </h3>
             <p className="text-gray-500">
               {filter === 'unread' 
-                ? 'Sie haben alle Benachrichtigungen gelesen.'
-                : 'Sie haben noch keine Benachrichtigungen erhalten.'}
+                ? (labels?.notifications?.allReadDesc || 'Sie haben alle Benachrichtigungen gelesen.')
+                : (labels?.notifications?.noNotificationsDesc || 'Sie haben noch keine Benachrichtigungen erhalten.')}
             </p>
           </div>
         ) : (

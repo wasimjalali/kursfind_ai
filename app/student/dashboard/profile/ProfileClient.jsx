@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import { useStudentLanguage } from '../StudentDashboardClient';
 
 export default function ProfileClient({ initialStudent, authUserId }) {
   const router = useRouter();
   const fileInputRef = useRef(null);
+  const { labels, lang } = useStudentLanguage();
   
   const [student, setStudent] = useState(initialStudent);
   const [formData, setFormData] = useState({
@@ -220,10 +222,10 @@ export default function ProfileClient({ initialStudent, authUserId }) {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
-          Profil Einstellungen ⚙️
+          {labels?.profile?.title || 'Profil Einstellungen'} ⚙️
         </h1>
         <p className="text-gray-600 mt-2">
-          Verwalten Sie Ihre persönlichen Informationen
+          {labels?.profile?.subtitle || 'Verwalten Sie Ihre persönlichen Informationen'}
         </p>
       </div>
 
