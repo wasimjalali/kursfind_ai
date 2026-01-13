@@ -3,7 +3,7 @@
 import { useState, createContext, useContext } from 'react';
 import Link from 'next/link';
 import ProviderSidebar from '@/components/provider/ProviderSidebar';
-import { getPortalLabels } from '@/lib/portal-labels';
+import useProviderLang from '@/lib/useProviderLang';
 
 // Create context for language
 export const PortalLanguageContext = createContext({ lang: 'de', setLang: () => {}, labels: {} });
@@ -14,8 +14,7 @@ export function usePortalLanguage() {
 
 export default function ProviderDashboardClient({ provider, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true); // Start open on desktop
-  const [lang, setLang] = useState('de'); // Default to German
-  const labels = getPortalLabels(lang);
+  const { lang, setLang, labels } = useProviderLang();
 
   return (
     <PortalLanguageContext.Provider value={{ lang, setLang, labels }}>
