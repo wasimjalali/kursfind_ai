@@ -293,7 +293,7 @@ export default function ProfileClient({ initialStudent, authUserId }) {
             {/* First Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Vorname <span className="text-red-500">*</span>
+                {labels?.profile?.firstName || 'Vorname'} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -302,14 +302,14 @@ export default function ProfileClient({ initialStudent, authUserId }) {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900"
-                placeholder="Ihr Vorname"
+                placeholder={lang === 'de' ? 'Ihr Vorname' : 'Your first name'}
               />
             </div>
 
             {/* Last Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Nachname <span className="text-red-500">*</span>
+                {labels?.profile?.lastName || 'Nachname'} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -318,7 +318,7 @@ export default function ProfileClient({ initialStudent, authUserId }) {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-gray-900"
-                placeholder="Ihr Nachname"
+                placeholder={lang === 'de' ? 'Ihr Nachname' : 'Your last name'}
               />
             </div>
           </div>
@@ -326,7 +326,7 @@ export default function ProfileClient({ initialStudent, authUserId }) {
           {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
-              E-Mail
+              {labels?.profile?.email || 'E-Mail'}
             </label>
             <input
               type="email"
@@ -335,14 +335,14 @@ export default function ProfileClient({ initialStudent, authUserId }) {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
             />
             <p className="text-xs text-gray-500 mt-1">
-              E-Mail kann nicht geändert werden
+              {labels?.profile?.emailNote || 'E-Mail kann nicht geändert werden'}
             </p>
           </div>
 
           {/* Phone */}
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
-              Telefonnummer
+              {labels?.profile?.phone || 'Telefonnummer'}
             </label>
             <input
               type="tel"
@@ -361,7 +361,7 @@ export default function ProfileClient({ initialStudent, authUserId }) {
               disabled={loading}
               className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '⏳ Speichern...' : '💾 Änderungen speichern'}
+              {loading ? (lang === 'de' ? '⏳ Speichern...' : '⏳ Saving...') : `💾 ${labels?.profile?.saveChanges || 'Änderungen speichern'}`}
             </button>
             <button
               type="button"
@@ -384,46 +384,46 @@ export default function ProfileClient({ initialStudent, authUserId }) {
       {/* Account Actions */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
         <h3 className="text-xl font-bold text-gray-900 mb-6">
-          Konto-Aktionen
+          {labels?.profile?.accountActions || 'Konto-Aktionen'}
         </h3>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-1">Abmelden</h4>
-              <p className="text-sm text-gray-600">Von Ihrem Konto abmelden</p>
+              <h4 className="font-semibold text-gray-900 mb-1">{labels?.profile?.logout || 'Abmelden'}</h4>
+              <p className="text-sm text-gray-600">{labels?.profile?.logoutDesc || 'Von Ihrem Konto abmelden'}</p>
             </div>
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
             >
-              Abmelden
+              {labels?.profile?.logout || 'Abmelden'}
             </button>
           </div>
 
           <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-1">Passwort ändern</h4>
-              <p className="text-sm text-gray-600">Aktualisieren Sie Ihr Passwort</p>
+              <h4 className="font-semibold text-gray-900 mb-1">{labels?.profile?.changePassword || 'Passwort ändern'}</h4>
+              <p className="text-sm text-gray-600">{labels?.profile?.changePasswordDesc || 'Aktualisieren Sie Ihr Passwort'}</p>
             </div>
             <Link
               href="/student/reset-password"
               className="px-4 py-2 bg-cyan-100 text-cyan-700 font-semibold rounded-lg hover:bg-cyan-200 transition-colors"
             >
-              Ändern
+              {labels?.profile?.change || 'Ändern'}
             </Link>
           </div>
 
           <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg">
             <div>
-              <h4 className="font-semibold text-red-900 mb-1">Konto löschen</h4>
-              <p className="text-sm text-red-600">Alle Ihre Daten werden dauerhaft gelöscht</p>
+              <h4 className="font-semibold text-red-900 mb-1">{labels?.profile?.deleteAccount || 'Konto löschen'}</h4>
+              <p className="text-sm text-red-600">{labels?.profile?.deleteAccountDesc || 'Alle Ihre Daten werden dauerhaft gelöscht'}</p>
             </div>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors"
             >
-              Löschen
+              {labels?.profile?.deleteButton || 'Löschen'}
             </button>
           </div>
         </div>
@@ -440,16 +440,16 @@ export default function ProfileClient({ initialStudent, authUserId }) {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Konto löschen?
+                {lang === 'de' ? 'Konto löschen?' : 'Delete Account?'}
               </h3>
               <p className="text-gray-600 mb-4">
-                Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten, gespeicherten Kurse und Bewerbungen werden dauerhaft gelöscht.
+                {lang === 'de' ? 'Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten, gespeicherten Kurse und Bewerbungen werden dauerhaft gelöscht.' : 'This action cannot be undone. All your data, saved courses, and applications will be permanently deleted.'}
               </p>
             </div>
 
             <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Geben Sie <span className="text-red-600 font-mono">DELETE</span> ein, um zu bestätigen:
+                {lang === 'de' ? 'Geben Sie ' : 'Type '}<span className="text-red-600 font-mono">DELETE</span>{lang === 'de' ? ' ein, um zu bestätigen:' : ' to confirm:'}
               </label>
               <input
                 type="text"

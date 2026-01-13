@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import ChatHistoryClient from './ChatHistoryClient';
+import ChatHistoryHeader from './ChatHistoryHeader';
 
 export default async function ChatHistoryPage() {
   const supabase = await createClient();
@@ -80,24 +80,7 @@ export default async function ChatHistoryPage() {
 
   return (
     <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-      {/* Header - Mobile Optimized */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Chat-Verlauf 💬
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-            Ihre Konversationen mit dem KI-Kursberater
-          </p>
-        </div>
-        <Link
-          href="/suchen"
-          className="w-full sm:w-auto text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
-        >
-          + Neue Suche
-        </Link>
-      </div>
-
+      <ChatHistoryHeader />
       <ChatHistoryClient initialChatHistory={chatHistory} student={student} />
     </div>
   );

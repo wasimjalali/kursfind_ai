@@ -511,7 +511,7 @@ function ChatContent() {
       // Add AI response WITH deduplicated courses
       const assistantMessage: Message = { 
         role: 'assistant' as const, 
-        content: data.response || data.message || 'Keine Antwort erhalten.',
+        content: data.response || data.message || (lang === 'de' ? 'Keine Antwort erhalten.' : 'No response received.'),
         courses: uniqueCoursesFromAPI,
         searchMeta: data.searchMeta
       };
@@ -542,7 +542,7 @@ function ChatContent() {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.' 
+        content: lang === 'de' ? 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.' : 'Sorry, an error occurred. Please try again.' 
       }]);
     } finally {
       // Cleanup all stage progression timers
@@ -630,7 +630,7 @@ function ChatContent() {
       // Add error message to chat
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Entschuldigung, es gab einen Fehler beim Laden weiterer Kurse. Bitte versuchen Sie es erneut.'
+        content: lang === 'de' ? 'Entschuldigung, es gab einen Fehler beim Laden weiterer Kurse. Bitte versuchen Sie es erneut.' : 'Sorry, there was an error loading more courses. Please try again.'
       }]);
     } finally {
       setIsLoadingMore(false);
@@ -1050,7 +1050,7 @@ function ChatContent() {
                   }
                   // Shift+Enter allows new line (default behavior)
                 }}
-                placeholder="z.B. Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein..."
+                placeholder={lang === 'de' ? 'z.B. Ich suche einen Webentwicklung Kurs in Berlin mit Bildungsgutschein...' : 'e.g. I am looking for a web development course in Berlin with voucher...'}
                 className="w-full min-h-[72px] max-h-[200px] resize-none overflow-auto pl-6 pr-32 py-4 border-2 border-gray-300 rounded-3xl focus:outline-none text-gray-900 placeholder-gray-500 leading-relaxed bg-white shadow-lg transition-all duration-300"
                 disabled={loading}
                 rows={1}
@@ -1059,7 +1059,7 @@ function ChatContent() {
                 type="submit"
                 disabled={loading || !input.trim()}
                 className="absolute right-3 bottom-4 p-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Nachricht senden"
+                aria-label={lang === 'de' ? 'Nachricht senden' : 'Send message'}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

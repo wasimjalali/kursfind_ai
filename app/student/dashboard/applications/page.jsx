@@ -337,7 +337,7 @@ const { data: applicationsData, error: appError } = await supabase
         <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Ausstehend</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">{labels?.common?.pending || 'Ausstehend'}</p>
               <p className="text-2xl sm:text-3xl font-bold text-yellow-600">{pendingCount}</p>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
@@ -349,7 +349,7 @@ const { data: applicationsData, error: appError } = await supabase
         <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Angenommen</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">{labels?.common?.accepted || 'Angenommen'}</p>
               <p className="text-2xl sm:text-3xl font-bold text-green-600">{acceptedCount}</p>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -361,7 +361,7 @@ const { data: applicationsData, error: appError } = await supabase
         <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Abgelehnt</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">{labels?.common?.rejected || 'Abgelehnt'}</p>
               <p className="text-2xl sm:text-3xl font-bold text-red-600">{rejectedCount}</p>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center">
@@ -450,16 +450,16 @@ const { data: applicationsData, error: appError } = await supabase
                   {/* Message Preview */}
                   {application.message && (
                     <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                      <p className="text-xs font-semibold text-gray-700 mb-1">💬 Ihre Nachricht:</p>
+                      <p className="text-xs font-semibold text-gray-700 mb-1">💬 {lang === 'de' ? 'Ihre Nachricht:' : 'Your Message:'}</p>
                       <p className="text-xs text-gray-600 line-clamp-2">{application.message}</p>
                     </div>
                   )}
 
                   {/* Dates */}
                   <p className="text-xs text-gray-500">
-                    Eingereicht: {application.created_at ? new Date(application.created_at).toLocaleDateString('de-DE') : 'Invalid Date'}
+                    {lang === 'de' ? 'Eingereicht: ' : 'Submitted: '}{application.created_at ? new Date(application.created_at).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US') : 'Invalid Date'}
                     {application.updated_at && application.updated_at !== application.created_at && (
-                      <span> • Aktualisiert: {new Date(application.updated_at).toLocaleDateString('de-DE')}</span>
+                      <span> • {lang === 'de' ? 'Aktualisiert: ' : 'Updated: '}{new Date(application.updated_at).toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US')}</span>
                     )}
                   </p>
                 </div>
@@ -471,13 +471,13 @@ const { data: applicationsData, error: appError } = await supabase
                       href={`/courses/${course?.id}`}
                       className="flex-1 py-2.5 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-center font-semibold rounded-lg hover:shadow-lg transition-shadow text-sm"
                     >
-                      Kurs ansehen
+                      {lang === 'de' ? 'Kurs ansehen' : 'View Course'}
                     </Link>
                     {provider?.email && (
                       <a
                         href={`mailto:${provider.email}`}
                         className="px-4 py-2.5 border-2 border-gray-300 text-gray-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
-                        title="Anbieter kontaktieren"
+                        title={lang === 'de' ? 'Anbieter kontaktieren' : 'Contact Provider'}
                       >
                         ✉️
                       </a>
@@ -493,16 +493,16 @@ const { data: applicationsData, error: appError } = await supabase
         <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-8 sm:p-12 text-center ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="text-5xl sm:text-6xl mb-4">📝</div>
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-            Noch keine Bewerbungen
+            {lang === 'de' ? 'Noch keine Bewerbungen' : 'No Applications Yet'}
           </h3>
           <p className="text-sm sm:text-base text-gray-600 mb-6">
-            Durchsuchen Sie Kurse und bewerben Sie sich für Weiterbildungen
+            {lang === 'de' ? 'Durchsuchen Sie Kurse und bewerben Sie sich für Weiterbildungen' : 'Browse courses and apply for training programs'}
           </p>
           <Link
             href="/courses"
             className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
           >
-            Kurse durchsuchen
+            {lang === 'de' ? 'Kurse durchsuchen' : 'Browse Courses'}
           </Link>
         </div>
       )}
