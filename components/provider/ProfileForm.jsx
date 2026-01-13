@@ -3,9 +3,12 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { getPortalLabels } from '@/lib/portal-labels';
 
-export default function ProfileForm({ initialData }) {
+export default function ProfileForm({ initialData, labels: propLabels }) {
   const router = useRouter();
+  // Use passed labels or fallback to German
+  const labels = propLabels || getPortalLabels('de');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [activeTab, setActiveTab] = useState('basic');
@@ -112,21 +115,21 @@ export default function ProfileForm({ initialData }) {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        throw new Error('Nicht angemeldet');
+        throw new Error(labels.profile.validation.notLoggedIn);
       }
 
       // Validation
       if (!formData.company_name?.trim()) {
-        throw new Error('Firmenname ist erforderlich');
+        throw new Error(labels.profile.validation.companyNameRequired);
       }
       if (!formData.description?.trim()) {
-        throw new Error('Beschreibung ist erforderlich');
+        throw new Error(labels.profile.validation.descriptionRequired);
       }
       if (!formData.phone?.trim()) {
-        throw new Error('Telefonnummer ist erforderlich');
+        throw new Error(labels.profile.validation.phoneRequired);
       }
       if (!formData.email?.trim()) {
-        throw new Error('E-Mail ist erforderlich');
+        throw new Error(labels.profile.validation.emailRequired);
       }
 
       let logoUrl = formData.logo_url;
@@ -146,7 +149,7 @@ export default function ProfileForm({ initialData }) {
 
         if (uploadError) {
           console.error('Upload error:', uploadError);
-          throw new Error('Fehler beim Hochladen des Logos: ' + uploadError.message);
+          throw new Error(labels.profile.validation.logoUploadError + ': ' + uploadError.message);
         }
 
         const { data: { publicUrl } } = supabase.storage
@@ -231,7 +234,7 @@ export default function ProfileForm({ initialData }) {
         throw new Error(updateError.message || 'Fehler beim Aktualisieren des Profils');
       }
 
-      setMessage({ type: 'success', text: 'Profil erfolgreich aktualisiert! Die Änderungen werden auf allen Ihren Kursen angezeigt.' });
+      setMessage({ type: 'success', text: labels.profile.successMessage });
       
       // Clear message after 5 seconds
       setTimeout(() => {
@@ -244,7 +247,7 @@ export default function ProfileForm({ initialData }) {
       console.error('Error:', error);
       setMessage({ 
         type: 'error', 
-        text: error.message || 'Fehler beim Speichern. Bitte versuchen Sie es erneut.' 
+        text: error.message || labels.profile.errorMessage 
       });
     } finally {
       setSaving(false);
@@ -252,12 +255,12 @@ export default function ProfileForm({ initialData }) {
   }
 
   const tabs = [
-    { id: 'basic', label: 'Grundinformationen' },
-    { id: 'contact', label: 'Kontaktdaten' },
-    { id: 'address', label: 'Adresse' },
-    { id: 'about', label: 'Über uns' },
-    { id: 'certifications', label: 'Zertifizierungen' },
-    { id: 'faq', label: 'FAQ' },
+    { id: 'basic', label: labels.profile.tabs.basic },
+    { id: 'contact', label: labels.profile.tabs.contact },
+    { id: 'address', label: labels.profile.tabs.address },
+    { id: 'about', label: labels.profile.tabs.about },
+    { id: 'certifications', label: labels.profile.tabs.certifications },
+    { id: 'faq', label: labels.profile.tabs.faq },
   ];
 
   return (
@@ -686,7 +689,7 @@ export default function ProfileForm({ initialData }) {
           disabled={saving}
           className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {saving ? 'Wird gespeichert...' : 'Profil aktualisieren'}
+          {saving ? labels.profile.saving : labels.profile.updateButton}
         </button>
       </div>
     </form>

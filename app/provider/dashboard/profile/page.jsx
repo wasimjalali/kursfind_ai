@@ -1,6 +1,6 @@
 import { getCurrentProvider, createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import ProfileForm from '@/components/provider/ProfileForm';
+import ProfileContent from './ProfileContent';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,16 +64,5 @@ export default async function ProfilePage() {
     faq: faqs || [],
   };
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Profil bearbeiten</h1>
-        <p className="text-base lg:text-lg text-gray-600">Verwalten Sie Ihre Unternehmensinformationen</p>
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
-        <ProfileForm initialData={initialData} />
-      </div>
-    </div>
-  );
+  return <ProfileContent initialData={initialData} />;
 }

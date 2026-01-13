@@ -1,7 +1,6 @@
 import { getCurrentProvider } from '@/lib/supabase-server';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import CoursesClient from './CoursesClient';
 
 export const dynamic = 'force-dynamic';
@@ -48,31 +47,11 @@ export default async function CoursesPage() {
   const totalViews = courses.reduce((sum, c) => sum + (c.view_count || 0), 0);
   
   return (
-    <div>
-      <div className="max-w-7xl mx-auto">
-        {/* Header - Mobile Optimized */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Meine Kurse</h1>
-            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1">Verwalten Sie Ihre Kursangebote</p>
-          </div>
-          <Link
-            href="/provider/dashboard/courses/new"
-            className="w-full sm:w-auto text-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow text-sm sm:text-base"
-          >
-            + Neuen Kurs
-          </Link>
-        </div>
-
-        {/* Client Component with interactive functionality */}
-        <CoursesClient 
-          courses={courses} 
-          totalCourses={totalCourses}
-          activeCourses={activeCourses}
-          totalViews={totalViews}
-        />
-        
-      </div>
-    </div>
+    <CoursesClient 
+      courses={courses} 
+      totalCourses={totalCourses}
+      activeCourses={activeCourses}
+      totalViews={totalViews}
+    />
   );
 }

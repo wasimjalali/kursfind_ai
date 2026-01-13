@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePortalLanguage } from '../ProviderDashboardClient';
 
 export default function ProviderNotificationsPage() {
+  const { labels, lang } = usePortalLanguage();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all' | 'unread'
@@ -71,11 +73,14 @@ export default function ProviderNotificationsPage() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Gerade eben';
-    if (diffMins < 60) return `vor ${diffMins} Minute${diffMins > 1 ? 'n' : ''}`;
-    if (diffHours < 24) return `vor ${diffHours} Stunde${diffHours > 1 ? 'n' : ''}`;
-    if (diffDays < 7) return `vor ${diffDays} Tag${diffDays > 1 ? 'en' : ''}`;
-    return date.toLocaleDateString('de-DE');
+    if (diffMins < 1) return labels.notifications.timeAgo.justNow;
+    if (diffMins === 1) return labels.notifications.timeAgo.minute;
+    if (diffMins < 60) return labels.notifications.timeAgo.minutes.replace('{n}', diffMins);
+    if (diffHours === 1) return labels.notifications.timeAgo.hour;
+    if (diffHours < 24) return labels.notifications.timeAgo.hours.replace('{n}', diffHours);
+    if (diffDays === 1) return labels.notifications.timeAgo.day;
+    if (diffDays < 7) return labels.notifications.timeAgo.days.replace('{n}', diffDays);
+    return date.toLocaleDateString(lang === 'en' ? 'en-US' : 'de-DE');
   };
 
   const getCategoryIcon = (category, type) => {
@@ -137,9 +142,9 @@ export default function ProviderNotificationsPage() {
     <div className="p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Benachrichtigungen</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900">{labels.notifications.title}</h1>
         <p className="text-base md:text-lg text-gray-600 mt-2">
-          Bleiben Sie über neue Bewerbungen und wichtige Updates informiert.
+          {labels.notifications.subtitle}
         </p>
       </div>
 
@@ -155,7 +160,7 @@ export default function ProviderNotificationsPage() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Alle
+            {labels.notifications.all}
           </button>
           <button
             onClick={() => setFilter('unread')}
@@ -165,7 +170,7 @@ export default function ProviderNotificationsPage() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            Ungelesen {unreadCount > 0 && `(${unreadCount})`}
+            {labels.notifications.unread} {unreadCount > 0 && `(${unreadCount})`}
           </button>
         </div>
 
@@ -175,7 +180,7 @@ export default function ProviderNotificationsPage() {
             onClick={markAllAsRead}
             className="px-4 py-2 text-sm font-medium text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition-colors"
           >
-            Alle als gelesen markieren
+            {labels.notifications.markAllRead}
           </button>
         )}
       </div>
@@ -185,7 +190,7 @@ export default function ProviderNotificationsPage() {
         {loading ? (
           <div className="p-8 text-center">
             <div className="animate-spin w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-gray-500 mt-3">Laden...</p>
+            <p className="text-gray-500 mt-3">{labels.common.loading}</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="p-8 text-center">
@@ -195,12 +200,12 @@ export default function ProviderNotificationsPage() {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-1">
-              {filter === 'unread' ? 'Keine ungelesenen Benachrichtigungen' : 'Keine Benachrichtigungen'}
+              {filter === 'unread' ? labels.notifications.noUnreadNotifications : labels.notifications.noNotifications}
             </h3>
             <p className="text-gray-500">
               {filter === 'unread' 
-                ? 'Sie haben alle Benachrichtigungen gelesen.'
-                : 'Es liegen derzeit keine Benachrichtigungen vor.'}
+                ? labels.notifications.allReadDesc
+                : labels.notifications.noNotificationsDesc}
             </p>
           </div>
         ) : (

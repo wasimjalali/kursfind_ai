@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { usePortalLanguage } from '../ProviderDashboardClient';
 
 export default function CoursesClient({ courses: initialCourses, totalCourses, activeCourses, totalViews }) {
   const router = useRouter();
+  const { labels } = usePortalLanguage();
   const [courses, setCourses] = useState(initialCourses);
   const [deletingId, setDeletingId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -40,7 +42,7 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
       
     } catch (error) {
       console.error('Error deleting course:', error);
-      alert(error.message || 'Fehler beim Löschen des Kurses');
+      alert(error.message || labels.myCourses.deleteError);
     } finally {
       setDeletingId(null);
       setShowDeleteModal(false);
@@ -54,21 +56,36 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
   };
 
   return (
-    <>
+    <div>
+      <div className="max-w-7xl mx-auto">
+        {/* Header - Mobile Optimized */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{labels.myCourses.title}</h1>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1">{labels.myCourses.subtitle}</p>
+          </div>
+          <Link
+            href="/provider/dashboard/courses/new"
+            className="w-full sm:w-auto text-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-shadow text-sm sm:text-base"
+          >
+            {labels.myCourses.newCourse}
+          </Link>
+        </div>
+
       {/* Stats Cards - Mobile Optimized */}
       <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6">
         <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
-          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Gesamt</p>
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">{labels.common.total}</p>
           <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-900">{courses.length}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
-          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Aktiv</p>
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">{labels.common.active}</p>
           <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-green-600">
             {courses.filter(c => c.is_active === true || c.is_active === 'true').length}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border p-3 sm:p-6">
-          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Aufrufe</p>
+          <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">{labels.common.views}</p>
           <p className="text-xl sm:text-3xl lg:text-4xl font-bold text-cyan-600">
             {courses.reduce((sum, c) => sum + (c.view_count || 0), 0)}
           </p>
@@ -81,13 +98,13 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
           <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
-          <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-2">Noch keine Kurse</h3>
-          <p className="text-base lg:text-lg text-gray-600 mb-6">Erstellen Sie Ihren ersten Kurs, um loszulegen.</p>
+          <h3 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-2">{labels.myCourses.noCourses}</h3>
+          <p className="text-base lg:text-lg text-gray-600 mb-6">{labels.myCourses.noCoursesDesc}</p>
           <Link
             href="/provider/dashboard/courses/new"
             className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold text-base lg:text-lg"
           >
-            Ersten Kurs erstellen
+            {labels.myCourses.createFirstCourse}
           </Link>
         </div>
       ) : (
@@ -97,13 +114,13 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Kurs</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Dauer</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden sm:table-cell">Ort</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Start</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">Status</th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">Aufrufe</th>
-                  <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase whitespace-nowrap">Aktionen</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">{labels.myCourses.table.course}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">{labels.myCourses.table.duration}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden sm:table-cell">{labels.myCourses.table.location}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">{labels.myCourses.table.start}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">{labels.myCourses.table.status}</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">{labels.myCourses.table.views}</th>
+                  <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase whitespace-nowrap">{labels.myCourses.table.actions}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -131,7 +148,7 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                           <span className={`inline-block mt-2 md:hidden px-2 py-0.5 rounded-full text-xs font-medium ${
                             (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                           }`}>
-                            {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
+                            {(course.is_active === true || course.is_active === 'true') ? labels.common.active : labels.common.inactive}
                           </span>
                         </div>
                       </div>
@@ -145,7 +162,7 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                       <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                         (course.is_active === true || course.is_active === 'true') ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                       }`}>
-                        {(course.is_active === true || course.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
+                        {(course.is_active === true || course.is_active === 'true') ? labels.common.active : labels.common.inactive}
                       </span>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">{course.view_count || 0}</td>
@@ -154,14 +171,14 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                         href={`/provider/dashboard/courses/${course.id}/edit`}
                         className="text-cyan-600 hover:text-cyan-700 mr-2 sm:mr-4"
                       >
-                        ✏️ <span className="hidden sm:inline">Bearbeiten</span>
+                        ✏️ <span className="hidden sm:inline">{labels.common.edit}</span>
                       </Link>
                       <button 
                         onClick={() => handleDeleteClick(course)}
                         disabled={deletingId === course.id}
                         className="text-red-600 hover:text-red-700 disabled:opacity-50"
                       >
-                        🗑️ <span className="hidden sm:inline">{deletingId === course.id ? 'Löschen...' : 'Löschen'}</span>
+                        🗑️ <span className="hidden sm:inline">{deletingId === course.id ? labels.myCourses.deleteModal.deleting : labels.common.delete}</span>
                       </button>
                     </td>
                   </tr>
@@ -183,15 +200,15 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Kurs löschen?</h3>
-                <p className="text-gray-600 text-sm">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                <h3 className="text-lg font-bold text-gray-900">{labels.myCourses.deleteModal.title}</h3>
+                <p className="text-gray-600 text-sm">{labels.myCourses.deleteModal.warning}</p>
               </div>
             </div>
             
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="font-medium text-gray-900">{courseToDelete.title}</p>
               <p className="text-sm text-gray-500 mt-1">
-                {courseToDelete.view_count || 0} Aufrufe • {(courseToDelete.is_active === true || courseToDelete.is_active === 'true') ? 'Aktiv' : 'Inaktiv'}
+                {courseToDelete.view_count || 0} {labels.common.views} • {(courseToDelete.is_active === true || courseToDelete.is_active === 'true') ? labels.common.active : labels.common.inactive}
               </p>
             </div>
             
@@ -200,20 +217,21 @@ export default function CoursesClient({ courses: initialCourses, totalCourses, a
                 onClick={handleDeleteCancel}
                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
               >
-                Abbrechen
+                {labels.common.cancel}
               </button>
               <button
                 onClick={handleDeleteConfirm}
                 disabled={deletingId}
                 className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                {deletingId ? 'Löschen...' : 'Löschen'}
+                {deletingId ? labels.myCourses.deleteModal.deleting : labels.common.delete}
               </button>
             </div>
           </div>
         </div>
       )}
-    </>
+      </div>
+    </div>
   );
 }
 
