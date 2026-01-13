@@ -11,13 +11,58 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     (course?.language || '').toLowerCase().includes('englisch');
   
   const ui = {
+    // Hero section
     apply: isEnglish ? 'Apply Now' : 'Jetzt bewerben',
     download: isEnglish ? 'Download brochure' : 'Infomaterial herunterladen',
     startLabel: isEnglish ? 'Next Start' : 'Nächster Start',
-    durationLabel: isEnglish ? 'Full-time' : 'Vollzeit',
     contactForInfo: isEnglish ? 'Please contact us for information materials' : 'Bitte kontaktieren Sie uns für Infomaterial',
+    
+    // Breadcrumbs
     home: isEnglish ? 'Home' : 'Home',
     allCourses: isEnglish ? 'All Courses' : 'Alle Kurse',
+    
+    // Sidebar
+    sidebar: {
+      title: isEnglish ? 'Course Details' : 'Kursdetails',
+      subtitle: isEnglish ? 'All important information at a glance' : 'Alle wichtigen Informationen auf einen Blick',
+      price: isEnglish ? 'Price' : 'Preis',
+      language: isEnglish ? 'Language' : 'Sprache',
+      format: isEnglish ? 'Format' : 'Format',
+      duration: isEnglish ? 'Duration' : 'Dauer',
+      hours: isEnglish ? 'Hours' : 'Stunden',
+      location: isEnglish ? 'Location' : 'Ort',
+      startDate: isEnglish ? 'Start Date' : 'Startdatum',
+    },
+    
+    // Content sections
+    sections: {
+      about: isEnglish ? 'About this course' : 'Über diesen Kurs',
+      benefits: isEnglish ? 'Additional Services & Benefits' : 'Zusätzliche Leistungen & Benefits',
+      outcomes: isEnglish ? 'What you will learn' : 'Was Sie lernen werden',
+      requirements: isEnglish ? 'Requirements' : 'Voraussetzungen',
+      certificate: isEnglish ? 'Recognized Certificate' : 'Anerkanntes Zertifikat',
+      funding: isEnglish ? 'Funding Options' : 'Finanzierungsmöglichkeiten',
+      provider: isEnglish ? 'About the Provider' : 'Über den Anbieter',
+      contact: isEnglish ? 'Contact the Provider' : 'Kontakt zum Anbieter',
+      curriculum: isEnglish ? 'Course Curriculum' : 'Kursinhalte',
+      faqs: isEnglish ? 'Frequently Asked Questions' : 'Häufig gestellte Fragen',
+      visitWebsite: isEnglish ? 'Visit website' : 'Website besuchen',
+      followUs: isEnglish ? 'Follow us' : 'Folgen Sie uns',
+      viewReviews: isEnglish ? 'View reviews' : 'Bewertungen ansehen',
+    },
+    
+    // Application form
+    form: {
+      title: isEnglish ? 'Apply Now' : 'Jetzt bewerben',
+      firstName: isEnglish ? 'First Name' : 'Vorname',
+      lastName: isEnglish ? 'Last Name' : 'Nachname',
+      email: isEnglish ? 'Email' : 'E-Mail',
+      phone: isEnglish ? 'Phone' : 'Telefon',
+      fundingType: isEnglish ? 'Funding Type' : 'Förderungsart',
+      placeholderSelect: isEnglish ? 'Please select' : 'Bitte wählen',
+      submit: isEnglish ? 'Submit Application' : 'Bewerbung absenden',
+      close: isEnglish ? 'Close' : 'Schließen',
+    },
   };
 
   // Debug: Log the data received
@@ -331,7 +376,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           {/* Über diesen Kurs Section */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
             <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-b border-gray-200">
-              <h2 className="text-3xl font-bold text-gray-900">Über diesen Kurs</h2>
+              <h2 className="text-3xl font-bold text-gray-900">{ui.sections.about}</h2>
             </div>
             <div className="p-8">
               <p className="text-gray-700 leading-relaxed text-lg">
@@ -363,7 +408,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
               <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 px-8 py-6 border-b border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Zusätzliche Leistungen & Benefits
+                  {ui.sections.benefits}
                 </h2>
               </div>
               <div className="p-8">
@@ -411,7 +456,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 <svg className="w-8 h-8 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
-                Was Sie lernen werden
+                {ui.sections.outcomes}
               </h2>
             </div>
             <div className="p-8">
@@ -808,7 +853,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-medium text-sm mt-2"
                 >
-                  Website besuchen
+                  {ui.sections.visitWebsite}
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
@@ -820,7 +865,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           {/* Social Media Links */}
           {provider?.social_media && typeof provider.social_media === 'object' && Object.keys(provider.social_media).length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Folgen Sie uns</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">{ui.sections.followUs}</h3>
               <div className="flex flex-wrap gap-3">
                 {provider.social_media.facebook && (
                   <a 
@@ -894,7 +939,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           {/* Trust Badges - Mobile & Desktop */}
           {(provider?.trustpilot_url || provider?.google_reviews_url) && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Bewertungen ansehen</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">{ui.sections.viewReviews}</h3>
               <div className="flex flex-wrap gap-3">
                 {provider?.trustpilot_url && provider.trustpilot_url.trim() !== '' && (
                   <a 
@@ -1027,8 +1072,8 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
               {/* Card Header with Gradient */}
               <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 p-6 text-white">
-                <h3 className="text-2xl font-bold mb-2">Kursdetails</h3>
-                <p className="text-white/90 text-sm">Alle wichtigen Informationen auf einen Blick</p>
+                <h3 className="text-2xl font-bold mb-2">{ui.sidebar.title}</h3>
+                <p className="text-white/90 text-sm">{ui.sidebar.subtitle}</p>
               </div>
 
               <div className="p-6 space-y-4">
@@ -1040,7 +1085,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Preis</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.price}</span>
                     </div>
                     <span className="font-bold text-xl text-gray-900">
                       {new Intl.NumberFormat('de-DE', { 
@@ -1058,7 +1103,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Sprache</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.language}</span>
                     </div>
                     <span className="font-semibold text-gray-900 flex items-center gap-1">
                       {(() => {
@@ -1081,7 +1126,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Format</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.format}</span>
                     </div>
                     <span className="font-semibold text-gray-900">{course.format}</span>
                   </div>
@@ -1094,7 +1139,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Dauer</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.duration}</span>
                     </div>
                     <span className="font-semibold text-gray-900">{course.duration}</span>
                   </div>
@@ -1107,7 +1152,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Stunden</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.hours}</span>
                     </div>
                     <span className="font-semibold text-gray-900">{course.duration_hours}</span>
                   </div>
@@ -1121,7 +1166,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Ort</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.location}</span>
                     </div>
                     <span className="font-semibold text-gray-900">{course.location}</span>
                   </div>
@@ -1134,7 +1179,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <svg className="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span className="text-gray-700 font-medium">Start</span>
+                      <span className="text-gray-700 font-medium">{ui.sidebar.startDate}</span>
                     </div>
                     <span className="font-semibold text-gray-900">
                       {new Date(course.start_date).toLocaleDateString('de-DE', {
@@ -1229,10 +1274,11 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Sticky Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 rounded-t-2xl">
-              <h2 className="text-2xl font-bold text-gray-900">Jetzt bewerben</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{ui.form.title}</h2>
               <button
                 onClick={() => setShowApplicationModal(false)}
                 className="text-gray-500 hover:text-gray-700 transition-colors"
+                aria-label={ui.form.close}
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1247,6 +1293,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 courseName={course.title}
                 providerId={provider.id}
                 providerName={provider.company_name || provider.name}
+                labels={ui.form}
               />
             </div>
           </div>

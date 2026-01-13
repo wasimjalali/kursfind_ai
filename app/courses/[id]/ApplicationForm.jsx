@@ -1,7 +1,18 @@
 'use client'
 import { useState } from 'react'
 
-export default function ApplicationForm({ courseId, courseName, providerId, providerName }) {
+export default function ApplicationForm({ courseId, courseName, providerId, providerName, labels }) {
+  // Default labels for backward compatibility
+  const defaultLabels = {
+    firstName: 'Vorname',
+    lastName: 'Nachname',
+    email: 'E-Mail',
+    phone: 'Telefon',
+    fundingType: 'Förderungsart',
+    placeholderSelect: 'Bitte wählen',
+    submit: 'Bewerbung absenden',
+  };
+  const ui = labels || defaultLabels;
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -131,7 +142,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* First Name */}
         <div>
           <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-            Vorname <span className="text-red-500">*</span>
+            {ui.firstName} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -148,7 +159,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* Last Name */}
         <div>
           <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-            Nachname <span className="text-red-500">*</span>
+            {ui.lastName} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -165,7 +176,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* Email */}
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            E-Mail <span className="text-red-500">*</span>
+            {ui.email} <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
@@ -182,7 +193,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* Phone */}
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-            Telefon <span className="text-red-500">*</span>
+            {ui.phone} <span className="text-red-500">*</span>
           </label>
           <input
             type="tel"
@@ -199,7 +210,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
         {/* Funding Type */}
         <div>
           <label htmlFor="fundingType" className="block text-sm font-medium text-gray-700 mb-1">
-            Förderungsart <span className="text-red-500">*</span>
+            {ui.fundingType} <span className="text-red-500">*</span>
           </label>
           <select
             id="fundingType"
@@ -209,7 +220,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             required
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-colors text-gray-900"
           >
-            <option value="">Bitte wählen</option>
+            <option value="">{ui.placeholderSelect}</option>
             <option value="Bildungsgutschein">Bildungsgutschein</option>
             <option value="AVGS">AVGS</option>
             <option value="Selbstzahler">Selbstzahler</option>
@@ -231,7 +242,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
             required
             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-colors text-gray-900"
           >
-            <option value="">Bitte wählen</option>
+            <option value="">{ui.placeholderSelect}</option>
             <option value="JobCenter">JobCenter</option>
             <option value="Agentur für Arbeit">Agentur für Arbeit</option>
             <option value="Nicht registriert">Nicht registriert</option>
@@ -342,7 +353,7 @@ export default function ApplicationForm({ courseId, courseName, providerId, prov
               <span>Wird gesendet...</span>
             </>
           ) : (
-            <span>Bewerbung absenden</span>
+            <span>{ui.submit}</span>
           )}
         </button>
 
