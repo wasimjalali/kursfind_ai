@@ -215,6 +215,7 @@ function ChatContent() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadingStage, setLoadingStage] = useState<'understanding' | 'searching' | 'preparing'>('understanding');
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [lang, setLang] = useState<'de' | 'en'>('de'); // Language state for localization
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
     filters: {},
@@ -636,7 +637,7 @@ function ChatContent() {
 
   return (
     <div className="flex h-screen bg-[#FFFBF5] overflow-hidden">
-      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <ChatSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} lang={lang} setLang={setLang} />
 
       <div className={`flex-1 flex flex-col h-screen transition-all duration-200 ease-in-out ${sidebarOpen ? 'lg:ml-[260px]' : 'lg:ml-[60px]'}`}>
         <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm lg:hidden">
@@ -677,7 +678,7 @@ function ChatContent() {
             
             {/* Show Welcome Screen if no messages */}
             {messages.length === 0 ? (
-              <WelcomeScreen onExampleClick={handleExampleClick} />
+              <WelcomeScreen onExampleClick={handleExampleClick} lang={lang} />
             ) : (
               <div className="space-y-6">
                 {messages.map((message, idx) => (
