@@ -41,6 +41,8 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
       outcomes: isEnglish ? 'What you will learn' : 'Was Sie lernen werden',
       requirements: isEnglish ? 'Requirements' : 'Voraussetzungen',
       certificate: isEnglish ? 'Recognized Certificate' : 'Anerkanntes Zertifikat',
+      certificateDescription: isEnglish ? 'Upon successful completion, you will receive a recognized certificate that documents your acquired qualifications and is highly regarded by employers.' : 'Nach erfolgreichem Abschluss erhalten Sie ein anerkanntes Zertifikat, das Ihre erworbenen Qualifikationen dokumentiert und bei Arbeitgebern hohes Ansehen genießt.',
+      placementRate: isEnglish ? 'Job placement rate after completion' : 'Vermittlungsquote nach Abschluss',
       funding: isEnglish ? 'Funding Options' : 'Finanzierungsmöglichkeiten',
       provider: isEnglish ? 'About the Provider' : 'Über den Anbieter',
       contact: isEnglish ? 'Contact the Provider' : 'Kontakt zum Anbieter',
@@ -73,15 +75,15 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
       submit: isEnglish ? 'Submit Application' : 'Bewerbung absenden',
       close: isEnglish ? 'Close' : 'Schließen',
       requiredFields: isEnglish ? 'Required fields' : 'Pflichtfelder',
-      // Funding type options
-      fundingBildungsgutschein: isEnglish ? 'Education Voucher' : 'Bildungsgutschein',
-      fundingAVGS: 'AVGS',
+      // Funding type options (Expert: Keep German terms as they are well-known and official)
+      fundingBildungsgutschein: 'Bildungsgutschein', // Official German term, recognized internationally
+      fundingAVGS: 'AVGS', // Official German acronym
       fundingSelfPayer: isEnglish ? 'Self-Payer' : 'Selbstzahler',
       fundingEmployer: isEnglish ? 'Employer' : 'Arbeitgeber',
       fundingOther: isEnglish ? 'Other' : 'Sonstiges',
-      // Registration status options
-      regJobCenter: 'JobCenter',
-      regAgency: isEnglish ? 'Employment Agency' : 'Agentur für Arbeit',
+      // Registration status options (Expert: Keep German institution names)
+      regJobCenter: 'JobCenter', // Official German institution name
+      regAgency: 'Agentur für Arbeit', // Official German institution name
       regNotRegistered: isEnglish ? 'Not registered' : 'Nicht registriert',
       // Loading and error messages
       submitting: isEnglish ? 'Submitting...' : 'Wird gesendet...',
@@ -643,7 +645,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                 {course.certificate_type}
               </p>
               <p className="text-gray-700 mb-4">
-                Nach erfolgreichem Abschluss erhalten Sie ein anerkanntes Zertifikat, das Ihre erworbenen Qualifikationen dokumentiert und bei Arbeitgebern hohes Ansehen genießt.
+                {ui.sections.certificateDescription}
               </p>
               {course.job_placement_rate && (
                 <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg inline-flex">
@@ -651,7 +653,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   <span className="font-semibold">
-                    {course.job_placement_rate}% Vermittlungsquote nach Abschluss
+                    {course.job_placement_rate}% {ui.sections.placementRate}
                   </span>
                 </div>
               )}
@@ -668,13 +670,13 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
               </div>
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Anerkanntes Zertifikat
+                  {ui.sections.certificate}
                 </h2>
                 <p className="text-lg text-cyan-600 font-semibold mb-3">
                   {course.certificate_type}
                 </p>
                 <p className="text-gray-700 mb-4">
-                  Nach erfolgreichem Abschluss erhalten Sie ein anerkanntes Zertifikat, das Ihre erworbenen Qualifikationen dokumentiert und bei Arbeitgebern hohes Ansehen genießt.
+                  {ui.sections.certificateDescription}
                 </p>
                 {course.job_placement_rate && (
                   <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg inline-flex">
@@ -682,7 +684,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span className="font-semibold">
-                      {course.job_placement_rate}% Vermittlungsquote nach Abschluss
+                      {course.job_placement_rate}% {ui.sections.placementRate}
                     </span>
                   </div>
                 )}
@@ -1285,7 +1287,7 @@ export default function CoursePageClient({ course, provider, providerFaqs }) {
             onClick={handleApplicationClick}
             className="w-full bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2"
           >
-            Jetzt bewerben
+            {ui.apply}
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
