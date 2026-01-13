@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import { getStudentLabels } from '@/lib/student-labels';
 
-export default function ChatSidebar({ isOpen, setIsOpen }) {
+export default function ChatSidebar({ isOpen, setIsOpen, lang = 'de', setLang }) {
   const [user, setUser] = useState(null);
   const [student, setStudent] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const labels = getStudentLabels(lang);
 
   useEffect(() => {
     checkUser();
@@ -113,7 +116,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       ), 
-      label: 'Alle Kurse', 
+      label: labels.aiSearch.sidebar.allCourses, 
       href: '/courses' 
     },
   ];
@@ -126,7 +129,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
         </svg>
       ), 
-      label: 'Konto Erstellen', 
+      label: lang === 'de' ? 'Konto Erstellen' : 'Create Account', 
       href: '/student/signup' 
     });
   } else if (user && student) {
@@ -138,7 +141,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
         ), 
-        label: 'Dashboard', 
+        label: labels.nav.dashboard, 
         href: '/student/dashboard' 
       },
       { 
@@ -147,7 +150,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         ), 
-        label: 'Gespeicherte Kurse', 
+        label: labels.nav.savedCourses, 
         href: '/student/dashboard/saved' 
       },
       { 
@@ -156,7 +159,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         ), 
-        label: 'Bewerbungen', 
+        label: labels.nav.applications, 
         href: '/student/dashboard/applications' 
       },
       { 
@@ -165,7 +168,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
         ), 
-        label: 'Benachrichtigungen', 
+        label: labels.nav.notifications, 
         href: '/student/dashboard/notifications',
         badge: unreadNotifications
       }
@@ -179,7 +182,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
         </svg>
       ), 
-      label: 'Student werden', 
+      label: lang === 'de' ? 'Student werden' : 'Become a Student', 
       href: '/student/signup' 
     });
   }
@@ -236,14 +239,14 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className="p-2.5 hover:bg-cyan-50 rounded-lg transition-colors text-gray-500 hover:text-cyan-600 cursor-pointer relative group"
-            aria-label={isOpen ? "Sidebar schließen" : "Sidebar öffnen"}
+            aria-label={isOpen ? labels.nav.closeSidebar : labels.nav.openSidebar}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="18" rx="1"/>
               <rect x="14" y="3" width="7" height="18" rx="1"/>
             </svg>
             {/* Tooltip - only when collapsed */}
-            {!isOpen && <Tooltip text="Sidebar öffnen" />}
+            {!isOpen && <Tooltip text={labels.nav.openSidebar} />}
           </button>
         </div>
 
@@ -263,9 +266,9 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
-            {isOpen && <span>Neue Suche</span>}
+            {isOpen && <span>{labels.aiSearch.sidebar.newSearch}</span>}
             {/* Tooltip when collapsed */}
-            {!isOpen && <Tooltip text="Neue Suche" />}
+            {!isOpen && <Tooltip text={labels.aiSearch.sidebar.newSearch} />}
           </button>
         </div>
 
@@ -311,7 +314,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
         {user && student && isOpen && (
           <div className="border-t border-gray-100 flex-1 overflow-y-auto max-h-[250px]">
             <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Verlauf
+              {labels.aiSearch.sidebar.history}
             </div>
             <div className="px-2 space-y-0.5">
               {conversations.length > 0 ? (
@@ -332,15 +335,75 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 })
               ) : (
                 <div className="px-3 py-4 text-center text-xs text-gray-400">
-                  Noch keine Chats
+                  {labels.aiSearch.sidebar.noChats}
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* User Profile Section */}
-        <div className="border-t border-gray-200 p-2 overflow-visible">
+        {/* Footer - Language Selector + User Profile */}
+        <div className="border-t border-gray-200 p-2 overflow-visible space-y-1">
+          {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              className="w-full flex items-center py-2.5 rounded-lg text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-all cursor-pointer relative group"
+              style={{ 
+                justifyContent: isOpen ? 'flex-start' : 'center',
+                gap: isOpen ? '12px' : '0',
+                paddingLeft: isOpen ? '16px' : '0',
+                paddingRight: isOpen ? '16px' : '0',
+              }}
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              {isOpen && (
+                <>
+                  <span className="font-medium text-[15px]">{labels.nav.language}</span>
+                  <span className="ml-auto text-xs font-semibold bg-gray-100 px-2 py-0.5 rounded">
+                    {lang === 'de' ? 'DE' : 'EN'}
+                  </span>
+                </>
+              )}
+              {!isOpen && <Tooltip text={labels.nav.language} />}
+            </button>
+            
+            {/* Language Dropdown */}
+            {showLangDropdown && setLang && (
+              <div 
+                className={`absolute ${isOpen ? 'bottom-full left-0 right-0 mb-1' : 'left-full bottom-0 ml-2'} bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-[99999]`}
+              >
+                <button
+                  onClick={() => { setLang('de'); setShowLangDropdown(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-cyan-50 transition-colors ${lang === 'de' ? 'bg-cyan-50 text-cyan-600' : 'text-gray-700'}`}
+                >
+                  <span className="text-lg">🇩🇪</span>
+                  <span className="font-medium">Deutsch</span>
+                  {lang === 'de' && (
+                    <svg className="w-4 h-4 ml-auto text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+                <button
+                  onClick={() => { setLang('en'); setShowLangDropdown(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-cyan-50 transition-colors ${lang === 'en' ? 'bg-cyan-50 text-cyan-600' : 'text-gray-700'}`}
+                >
+                  <span className="text-lg">🇬🇧</span>
+                  <span className="font-medium">English</span>
+                  {lang === 'en' && (
+                    <svg className="w-4 h-4 ml-auto text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* User Profile */}
           {user && student ? (
             <Link
               href="/student/dashboard/profile"
@@ -355,7 +418,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               {student.avatar_url ? (
                 <Image
                   src={student.avatar_url}
-                  alt="Profilbild"
+                  alt={labels.nav.profile}
                   width={36}
                   height={36}
                   className="w-9 h-9 rounded-full object-cover flex-shrink-0"
@@ -373,7 +436,7 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
                 </div>
               )}
               {/* Tooltip when collapsed */}
-              {!isOpen && <Tooltip text="Profil" />}
+              {!isOpen && <Tooltip text={labels.nav.profile} />}
             </Link>
           ) : (
             <Link
@@ -389,9 +452,9 @@ export default function ChatSidebar({ isOpen, setIsOpen }) {
               <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-              {isOpen && <span className="font-medium text-[15px]">Anmelden</span>}
+              {isOpen && <span className="font-medium text-[15px]">{lang === 'de' ? 'Anmelden' : 'Log In'}</span>}
               {/* Tooltip when collapsed */}
-              {!isOpen && <Tooltip text="Anmelden" />}
+              {!isOpen && <Tooltip text={lang === 'de' ? 'Anmelden' : 'Log In'} />}
             </Link>
           )}
         </div>
