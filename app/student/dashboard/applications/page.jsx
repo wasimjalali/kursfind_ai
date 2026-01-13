@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase-browser';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useStudentLanguage } from '../StudentDashboardClient';
 
 // FEATURE FLAG: Enable/disable animations
 const ENABLE_ANIMATIONS = true; // Set to false to disable all animations
@@ -12,6 +13,7 @@ export default function ApplicationsPage() {
   const [student, setStudent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [animateIn, setAnimateIn] = useState(false);
+  const { labels, lang } = useStudentLanguage();
 
   useEffect(() => {
     async function loadData() {
@@ -110,15 +112,16 @@ const { data: applicationsData, error: appError } = await supabase
   };
 
   const getStatusText = (status) => {
+    const statusLabels = labels?.applications?.status || {};
     switch (status) {
       case 'new':
-        return 'Neu';
+        return statusLabels.new || 'Neu';
       case 'contacted':
-        return 'Kontaktiert';
+        return statusLabels.contacted || 'Kontaktiert';
       case 'converted':
-        return 'Angenommen';
+        return statusLabels.accepted || 'Angenommen';
       case 'rejected':
-        return 'Abgelehnt';
+        return statusLabels.rejected || 'Abgelehnt';
       default:
         return status;
     }
@@ -149,7 +152,7 @@ const { data: applicationsData, error: appError } = await supabase
       <div className="p-6 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Lade Bewerbungen...</p>
+          <p className="text-gray-600">{lang === 'de' ? 'Lade Bewerbungen...' : 'Loading applications...'}</p>
         </div>
       </div>
     );
@@ -303,17 +306,17 @@ const { data: applicationsData, error: appError } = await supabase
       <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${animateIn && ENABLE_ANIMATIONS ? 'animate-header' : ''}`}>
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Meine Bewerbungen 📝
+            {labels?.applications?.title || 'Meine Bewerbungen'} 📝
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
-            Verwalten und verfolgen Sie Ihre Kursbewerbungen
+            {labels?.applications?.subtitle || 'Verwalten und verfolgen Sie Ihre Kursbewerbungen'}
           </p>
         </div>
         <Link
           href="/courses"
           className="w-full sm:w-auto text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all btn-hover"
         >
-          + Neue Bewerbung
+          {labels?.applications?.newApplication || '+ Neue Bewerbung'}
         </Link>
       </div>
 
@@ -322,7 +325,7 @@ const { data: applicationsData, error: appError } = await supabase
         <div className={`bg-white rounded-xl shadow-md border border-gray-100 p-4 sm:p-6 hover-lift cursor-pointer ${animateIn && ENABLE_ANIMATIONS ? 'animate-stat-card' : ''}`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Gesamt</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">{labels?.common?.total || 'Gesamt'}</p>
               <p className="text-2xl sm:text-3xl font-bold text-gray-900">{applications?.length || 0}</p>
             </div>
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center">
