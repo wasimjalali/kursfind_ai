@@ -57,7 +57,196 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
     </svg>
   ),
+  X: (props) => (
+    <svg {...props} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  ),
 };
+
+// Contact Form Modal Component
+function ContactFormModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto z-10">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h3 className="text-xl font-bold text-gray-900">Kontakt aufnehmen</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+            aria-label="Schließen"
+          >
+            <Icons.X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+        
+        {/* Form Content */}
+        <div className="p-6">
+          <style dangerouslySetInnerHTML={{__html: `
+            .sp-force-hide { display: none;}
+            .sp-form[sp-id="250261"] { 
+              display: block; 
+              background: #ffffff; 
+              padding: 0; 
+              width: 100%; 
+              max-width: 100%; 
+              border-radius: 0; 
+              border: none;
+              font-family: 'Inter', Arial, sans-serif;
+              box-shadow: none;
+            }
+            .sp-form[sp-id="250261"] input[type="checkbox"] { 
+              display: inline-block; 
+              opacity: 1; 
+              visibility: visible;
+              accent-color: #06b6d4;
+            }
+            .sp-form[sp-id="250261"] .sp-form-fields-wrapper { 
+              margin: 0 auto; 
+              width: 100%;
+            }
+            .sp-form[sp-id="250261"] .sp-form-control { 
+              background: #f9fafb; 
+              border-color: #d1d5db; 
+              border-style: solid; 
+              border-width: 1px; 
+              font-size: 15px; 
+              padding: 10px 12px; 
+              border-radius: 8px; 
+              height: 44px; 
+              width: 100%;
+              transition: all 0.2s;
+              color: #111827;
+            }
+            .sp-form[sp-id="250261"] .sp-form-control::placeholder {
+              color: #9ca3af;
+              opacity: 1;
+            }
+            .sp-form[sp-id="250261"] .sp-form-control:focus { 
+              outline: none;
+              border-color: #06b6d4;
+              background: #ffffff;
+              box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+            }
+            .sp-form[sp-id="250261"] .sp-field { 
+              margin-bottom: 16px;
+            }
+            .sp-form[sp-id="250261"] .sp-field label { 
+              color: #111827; 
+              font-size: 14px; 
+              font-style: normal; 
+              font-weight: 600;
+              display: block;
+              margin-bottom: 6px;
+            }
+            .sp-form[sp-id="250261"] .sp-button { 
+              border-radius: 8px; 
+              background: linear-gradient(to right, #06b6d4, #10b981);
+              color: #ffffff; 
+              width: 100%; 
+              font-weight: 700; 
+              font-size: 16px;
+              font-family: 'Inter', Arial, sans-serif;
+              padding: 14px 24px;
+              border: none;
+              cursor: pointer;
+              transition: all 0.2s;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+            .sp-form[sp-id="250261"] .sp-button:hover { 
+              transform: scale(1.02);
+              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            .sp-form[sp-id="250261"] .sp-button:active { 
+              transform: scale(0.98);
+            }
+            .sp-form[sp-id="250261"] .sp-button-container { 
+              text-align: center; 
+              width: 100%;
+              margin-top: 8px;
+            }
+            .sp-form[sp-id="250261"] .sp-checkbox-option {
+              display: flex;
+              align-items: start;
+              gap: 8px;
+            }
+            .sp-form[sp-id="250261"] .sp-checkbox-option label {
+              display: flex;
+              align-items: start;
+              gap: 8px;
+              cursor: pointer;
+              font-weight: 400;
+              font-size: 13px;
+              line-height: 1.5;
+            }
+            .sp-form[sp-id="250261"] .sp-checkbox-option input[type="checkbox"] {
+              margin-top: 2px;
+              width: 18px;
+              height: 18px;
+              flex-shrink: 0;
+            }
+          `}} />
+          
+          <div className="sp-form-outer">
+            <div id="sp-form-250261" sp-id="250261" sp-hash="049bdecf7b05af2e7af45d9a6d440eb9ec5713e6b51fb5138e6f02acedef72c9" sp-lang="de" className="sp-form sp-form-regular sp-form-embed" sp-show-options="%7B%22satellite%22%3Afalse%2C%22maDomain%22%3A%22login.sendpulse.com%22%2C%22formsDomain%22%3A%22forms.sendpulse.com%22%2C%22condition%22%3A%22onEnter%22%2C%22scrollTo%22%3A25%2C%22delay%22%3A10%2C%22repeat%22%3A3%2C%22background%22%3A%22rgba(0%2C%200%2C%200%2C%200.5)%22%2C%22position%22%3A%22bottom-right%22%2C%22animation%22%3A%22%22%2C%22hideOnMobile%22%3Afalse%2C%22submitRedirectUrl%22%3A%22%22%2C%22urlFilter%22%3Afalse%2C%22urlFilterConditions%22%3A%5B%7B%22force%22%3A%22hide%22%2C%22clause%22%3A%22contains%22%2C%22token%22%3A%22%22%7D%5D%2C%22analytics%22%3A%7B%22ga%22%3A%7B%22eventLabel%22%3A%22Subscription_form_Kursfind_Agent_Pilot%22%2C%22send%22%3Atrue%7D%7D%2C%22utmEnable%22%3Atrue%7D">
+              <div className="sp-form-fields-wrapper">
+                <div className="sp-message"><div></div></div>
+                <form noValidate className="sp-element-container">
+                  <div className="sp-field" sp-id="sp-1a9f9009-e677-4ab4-8ce2-ac75cb0decfd">
+                    <label className="sp-control-label"><span>E-Mail</span><strong>*</strong></label>
+                    <input type="email" sp-type="email" name="sform[email]" className="sp-form-control" placeholder="ihre@email.de" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%2C%22wrong%22%3A%22Ungültige%20E-Mail%22%7D" autoComplete="on" required />
+                  </div>
+                  <div className="sp-field" sp-id="sp-69b8268e-c891-4aa8-bd5e-2d9b1922d917">
+                    <label className="sp-control-label"><span>Unternehmen/Bildungsanbieter</span><strong>*</strong></label>
+                    <input type="text" sp-type="input" name="sform[Q29tcGFueQ==]" className="sp-form-control" placeholder="Ihr Unternehmen" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
+                  </div>
+                  <div className="sp-field" sp-id="sp-65002bd9-e5d8-43b7-81f4-30c4fede3bcf">
+                    <label className="sp-control-label"><span>Ansprechpartner</span><strong>*</strong></label>
+                    <input type="text" sp-type="input" name="sform[TmFtZQ==]" className="sp-form-control" placeholder="Ihr Name" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
+                  </div>
+                  <div className="sp-field" sp-id="sp-4ef7b084-54bd-4364-8691-df3986c74687">
+                    <label className="sp-control-label"><span>Telefonnummer</span></label>
+                    <input type="tel" sp-type="phone" name="sform[phone]" className="sp-form-control" placeholder="0123 456789" sp-tips="%7B%22wrong%22%3A%22Ungültige%20Telefonnummer%22%7D" autoComplete="on" />
+                  </div>
+                  <div className="sp-field" sp-id="sp-ea34a063-01b3-4448-840f-9255b909e88a">
+                    <div className="sp-checkbox-option">
+                      <label>
+                        <input type="checkbox" sp-type="checkbox" name="sform[Z2RwckNvbmZpcm0=]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
+                        <span>Ich stimme zu, Informationen von Kursfind AI zu erhalten <strong>*</strong></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="sp-field" sp-id="sp-801145bc-7b16-4e6f-85ae-165960c67bc5">
+                    <div className="sp-checkbox-option">
+                      <label>
+                        <input type="checkbox" sp-type="checkbox" name="sform[Z2RwclRlcm1z]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
+                        <span>Einwilligung zur Datenerhebung und -speicherung (DSGVO) <strong>*</strong></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="sp-field sp-button-container" sp-id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735">
+                    <button id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735" className="sp-button">Pilot-Partner werden</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <script type="text/javascript" async src="//web.webformscr.com/apps/fc3/build/default-handler.js?1758181175060"></script>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Cal.com Calendar Embed Component
 function CalendarEmbed() {
@@ -83,8 +272,11 @@ export default function AgentPage() {
 
   return (
     <MarketingLayout>
+      {/* Contact Form Modal */}
+      <ContactFormModal isOpen={showForm} onClose={() => setShowForm(false)} />
+
       {/* Hero Section */}
-      <section className="relative py-8 md:py-12 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
+      <section className="relative py-4 md:py-6 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
@@ -114,17 +306,17 @@ export default function AgentPage() {
               <div className="pt-4 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="#booking"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
                 >
                   <Icons.Sparkles className="w-5 h-5" />
                   Kostenloses Beratungsgespräch
                 </Link>
                 <button
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all cursor-pointer"
                 >
                   <Icons.Mail className="w-4 h-4" />
-                  Kontaktformular
+                  Kontakt aufnehmen
                 </button>
               </div>
             </div>
@@ -361,187 +553,16 @@ export default function AgentPage() {
             </div>
           </div>
 
-          {/* Alternative: SendPulse Form */}
+          {/* Alternative CTA */}
           <div className="mt-12 pt-12 border-t border-gray-200">
             <p className="text-gray-600 mb-4">Oder hinterlassen Sie Ihre Kontaktdaten und wir melden uns bei Ihnen:</p>
-            
-            {!showForm ? (
-              <button
-                onClick={() => setShowForm(true)}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all"
-              >
-                <Icons.Mail className="w-5 h-5" />
-                Kontaktformular öffnen
-              </button>
-            ) : (
-              <div className="max-w-xl mx-auto">
-                <div className="flex justify-end mb-2">
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Formular schließen
-                  </button>
-                </div>
-
-                {/* SendPulse Form Container */}
-                <div className="sp-form-container">
-                  <style dangerouslySetInnerHTML={{__html: `
-                    .sp-force-hide { display: none;}
-                    .sp-form[sp-id="250261"] { 
-                      display: block; 
-                      background: #ffffff; 
-                      padding: 20px; 
-                      width: 100%; 
-                      max-width: 100%; 
-                      border-radius: 12px; 
-                      border: 2px solid #06b6d4;
-                      font-family: 'Inter', Arial, sans-serif;
-                      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                    }
-                    .sp-form[sp-id="250261"] input[type="checkbox"] { 
-                      display: inline-block; 
-                      opacity: 1; 
-                      visibility: visible;
-                      accent-color: #06b6d4;
-                    }
-                    .sp-form[sp-id="250261"] .sp-form-fields-wrapper { 
-                      margin: 0 auto; 
-                      width: 100%;
-                    }
-                    .sp-form[sp-id="250261"] .sp-form-control { 
-                      background: #f9fafb; 
-                      border-color: #d1d5db; 
-                      border-style: solid; 
-                      border-width: 1px; 
-                      font-size: 15px; 
-                      padding: 10px 12px; 
-                      border-radius: 8px; 
-                      height: 44px; 
-                      width: 100%;
-                      transition: all 0.2s;
-                      color: #111827;
-                    }
-                    .sp-form[sp-id="250261"] .sp-form-control::placeholder {
-                      color: #9ca3af;
-                      opacity: 1;
-                    }
-                    .sp-form[sp-id="250261"] .sp-form-control:focus { 
-                      outline: none;
-                      border-color: #06b6d4;
-                      background: #ffffff;
-                      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-                    }
-                    .sp-form[sp-id="250261"] .sp-field { 
-                      margin-bottom: 20px;
-                    }
-                    .sp-form[sp-id="250261"] .sp-field label { 
-                      color: #111827; 
-                      font-size: 14px; 
-                      font-style: normal; 
-                      font-weight: 600;
-                      display: block;
-                      margin-bottom: 6px;
-                    }
-                    .sp-form[sp-id="250261"] .sp-button { 
-                      border-radius: 8px; 
-                      background: linear-gradient(to right, #06b6d4, #10b981);
-                      color: #ffffff; 
-                      width: 100%; 
-                      font-weight: 700; 
-                      font-size: 16px;
-                      font-family: 'Inter', Arial, sans-serif;
-                      padding: 14px 24px;
-                      border: none;
-                      cursor: pointer;
-                      transition: all 0.2s;
-                      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                    }
-                    .sp-form[sp-id="250261"] .sp-button:hover { 
-                      transform: scale(1.02);
-                      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                    }
-                    .sp-form[sp-id="250261"] .sp-button:active { 
-                      transform: scale(0.98);
-                    }
-                    .sp-form[sp-id="250261"] .sp-button-container { 
-                      text-align: center; 
-                      width: 100%;
-                      margin-top: 8px;
-                    }
-                    .sp-form[sp-id="250261"] .sp-checkbox-option {
-                      display: flex;
-                      align-items: start;
-                      gap: 8px;
-                    }
-                    .sp-form[sp-id="250261"] .sp-checkbox-option label {
-                      display: flex;
-                      align-items: start;
-                      gap: 8px;
-                      cursor: pointer;
-                      font-weight: 400;
-                      font-size: 13px;
-                      line-height: 1.5;
-                    }
-                    .sp-form[sp-id="250261"] .sp-checkbox-option input[type="checkbox"] {
-                      margin-top: 2px;
-                      width: 18px;
-                      height: 18px;
-                      flex-shrink: 0;
-                    }
-                  `}} />
-                  
-                  <div className="sp-form-outer">
-                    <div id="sp-form-250261" sp-id="250261" sp-hash="049bdecf7b05af2e7af45d9a6d440eb9ec5713e6b51fb5138e6f02acedef72c9" sp-lang="de" className="sp-form sp-form-regular sp-form-embed" sp-show-options="%7B%22satellite%22%3Afalse%2C%22maDomain%22%3A%22login.sendpulse.com%22%2C%22formsDomain%22%3A%22forms.sendpulse.com%22%2C%22condition%22%3A%22onEnter%22%2C%22scrollTo%22%3A25%2C%22delay%22%3A10%2C%22repeat%22%3A3%2C%22background%22%3A%22rgba(0%2C%200%2C%200%2C%200.5)%22%2C%22position%22%3A%22bottom-right%22%2C%22animation%22%3A%22%22%2C%22hideOnMobile%22%3Afalse%2C%22submitRedirectUrl%22%3A%22%22%2C%22urlFilter%22%3Afalse%2C%22urlFilterConditions%22%3A%5B%7B%22force%22%3A%22hide%22%2C%22clause%22%3A%22contains%22%2C%22token%22%3A%22%22%7D%5D%2C%22analytics%22%3A%7B%22ga%22%3A%7B%22eventLabel%22%3A%22Subscription_form_Kursfind_Agent_Pilot%22%2C%22send%22%3Atrue%7D%7D%2C%22utmEnable%22%3Atrue%7D">
-                      <div className="sp-form-fields-wrapper">
-                        <div className="sp-message"><div></div></div>
-                        <form noValidate className="sp-element-container">
-                          <div className="sp-field" sp-id="sp-1a9f9009-e677-4ab4-8ce2-ac75cb0decfd">
-                            <label className="sp-control-label"><span>E-Mail</span><strong>*</strong></label>
-                            <input type="email" sp-type="email" name="sform[email]" className="sp-form-control" placeholder="ihre@email.de" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%2C%22wrong%22%3A%22Ungültige%20E-Mail%22%7D" autoComplete="on" required />
-                          </div>
-                          <div className="sp-field" sp-id="sp-69b8268e-c891-4aa8-bd5e-2d9b1922d917">
-                            <label className="sp-control-label"><span>Unternehmen/Bildungsanbieter</span><strong>*</strong></label>
-                            <input type="text" sp-type="input" name="sform[Q29tcGFueQ==]" className="sp-form-control" placeholder="Ihr Unternehmen" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
-                          </div>
-                          <div className="sp-field" sp-id="sp-65002bd9-e5d8-43b7-81f4-30c4fede3bcf">
-                            <label className="sp-control-label"><span>Ansprechpartner</span><strong>*</strong></label>
-                            <input type="text" sp-type="input" name="sform[TmFtZQ==]" className="sp-form-control" placeholder="Ihr Name" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
-                          </div>
-                          <div className="sp-field" sp-id="sp-4ef7b084-54bd-4364-8691-df3986c74687">
-                            <label className="sp-control-label"><span>Telefonnummer</span></label>
-                            <input type="tel" sp-type="phone" name="sform[phone]" className="sp-form-control" placeholder="0123 456789" sp-tips="%7B%22wrong%22%3A%22Ungültige%20Telefonnummer%22%7D" autoComplete="on" />
-                          </div>
-                          <div className="sp-field" sp-id="sp-ea34a063-01b3-4448-840f-9255b909e88a">
-                            <div className="sp-checkbox-option">
-                              <label>
-                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwckNvbmZpcm0=]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
-                                <span>Ich stimme zu, Informationen von Kursfind AI zu erhalten <strong>*</strong></span>
-                              </label>
-                            </div>
-                          </div>
-                          <div className="sp-field" sp-id="sp-801145bc-7b16-4e6f-85ae-165960c67bc5">
-                            <div className="sp-checkbox-option">
-                              <label>
-                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwclRlcm1z]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
-                                <span>Einwilligung zur Datenerhebung und -speicherung (DSGVO) <strong>*</strong></span>
-                              </label>
-                            </div>
-                          </div>
-                          <div className="sp-field sp-button-container" sp-id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735">
-                            <button id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735" className="sp-button">Pilot-Partner werden</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <script type="text/javascript" async src="//web.webformscr.com/apps/fc3/build/default-handler.js?1758181175060"></script>
-                </div>
-              </div>
-            )}
+            <button
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all cursor-pointer"
+            >
+              <Icons.Mail className="w-5 h-5" />
+              Kontakt aufnehmen
+            </button>
           </div>
         </div>
       </section>
