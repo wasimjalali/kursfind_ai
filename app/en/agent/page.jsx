@@ -84,7 +84,7 @@ export default function AgentPageEN() {
   return (
     <MarketingLayoutEN>
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
+      <section className="relative py-8 md:py-12 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
@@ -119,13 +119,13 @@ export default function AgentPageEN() {
                   <Icons.Sparkles className="w-5 h-5" />
                   Book Free Consultation
                 </Link>
-                <Link
-                  href="/agent"
+                <button
+                  onClick={() => setShowForm(true)}
                   className="inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all"
                 >
-                  Deutsche Version
-                  <Icons.ArrowRight className="w-4 h-4" />
-                </Link>
+                  <Icons.Mail className="w-4 h-4" />
+                  Contact Form
+                </button>
               </div>
             </div>
 
@@ -327,9 +327,8 @@ export default function AgentPageEN() {
               </div>
             </div>
 
-            {/* Contact Information Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Contact Details Card */}
+            {/* Contact Information Card */}
+            <div className="max-w-2xl mx-auto">
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                   <Icons.Phone className="w-6 h-6 text-cyan-600" />
@@ -354,36 +353,10 @@ export default function AgentPageEN() {
                     <Icons.MessageCircle className="w-5 h-5 text-cyan-600 mt-1" />
                     <div>
                       <p className="font-semibold mb-1 text-gray-900 text-sm">WhatsApp</p>
-                      <a href="https://wa.me/4915223334725" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:text-cyan-700 transition text-sm">+49 1522 333 4725</a>
+                      <a href="https://wa.me/491630446980" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:text-cyan-700 transition text-sm">+49 163 044 6980</a>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* What to Expect Card */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                  <Icons.Sparkles className="w-6 h-6 text-cyan-600" />
-                  What to Expect
-                </h3>
-                <ul className="space-y-3 text-left text-gray-700">
-                  <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
-                    <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">Free pilot participation</span>
-                  </li>
-                  <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
-                    <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />
-                    <span className="text-sm">AI-powered course advising 24/7</span>
-                  </li>
-                  <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
-                    <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">Qualified leads directly via email</span>
-                  </li>
-                  <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
-                    <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />
-                    <span className="text-sm">Easy integration into your website</span>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>

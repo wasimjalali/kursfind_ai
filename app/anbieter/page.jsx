@@ -845,7 +845,7 @@ export default function AnbieterPage() {
                     <Icons.MessageCircle className="w-5 h-5 text-cyan-600 mt-1" />
                     <div>
                       <p className="font-semibold mb-1 text-gray-900 text-sm">WhatsApp</p>
-                      <a href="https://wa.me/4915223334725" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:text-cyan-700 transition text-sm">+49 1522 333 4725</a>
+                      <a href="https://wa.me/491630446980" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:text-cyan-700 transition text-sm">+49 163 044 6980</a>
                     </div>
                   </div>
                 </div>
