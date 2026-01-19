@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import MarketingLayout from '@/components/marketing/MarketingLayout';
+import MarketingLayoutEN from '@/components/marketing/MarketingLayoutEN';
 import Cal, { getCalApi } from '@calcom/embed-react';
 
 const Icons = {
@@ -78,11 +78,11 @@ function CalendarEmbed() {
   );
 }
 
-export default function AgentPage() {
+export default function AgentPageEN() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <MarketingLayout>
+    <MarketingLayoutEN>
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -96,19 +96,19 @@ export default function AgentPage() {
             <div className="space-y-6">
               <div className="inline-block">
                 <span className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold rounded-full shadow-lg">
-                  Für Bildungsanbieter
+                  For Education Providers
                 </span>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Der KI-Studienberater für{' '}
+                The AI Course Advisor for{' '}
                 <span className="bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
-                  Ihre Webseite
+                  Your Website
                 </span>
               </h1>
               
               <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
-                Beantwortet Fragen zu Ihren Kursen automatisch, prüft Förderfähigkeit (BGS/AVGS) und liefert qualifizierte Leads – 24/7 im Chat.
+                Instantly answers questions about your specific courses, checks funding eligibility (BGS/AVGS), and delivers qualified leads – 24/7 via chat.
               </p>
 
               <div className="pt-4 flex flex-col sm:flex-row gap-4">
@@ -117,13 +117,13 @@ export default function AgentPage() {
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   <Icons.Sparkles className="w-5 h-5" />
-                  Kostenloses Beratungsgespräch
+                  Book Free Consultation
                 </Link>
                 <Link
-                  href="/en/agent"
+                  href="/agent"
                   className="inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-cyan-500 hover:text-cyan-600 transition-all"
                 >
-                  English Version
+                  Deutsche Version
                   <Icons.ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -140,7 +140,7 @@ export default function AgentPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold">Kursfind Agent</h3>
-                      <p className="text-xs opacity-90">Online • Antwortet sofort</p>
+                      <p className="text-xs opacity-90">Online • Responds instantly</p>
                     </div>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function AgentPage() {
                   {/* User Message */}
                   <div className="flex justify-end">
                     <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%]">
-                      <p className="text-sm">Haben Sie einen Python Kurs mit Bildungsgutschein?</p>
+                      <p className="text-sm">Do you have a Python course with education voucher?</p>
                     </div>
                   </div>
 
@@ -158,15 +158,15 @@ export default function AgentPage() {
                   <div className="flex justify-start">
                     <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm">
                       <p className="text-sm text-gray-900 mb-2">
-                        <strong>Ja!</strong> Wir haben einen AZAV-zertifizierten Python Fullstack Bootcamp.
+                        <strong>Yes!</strong> We have an AZAV-certified Python Fullstack Bootcamp.
                       </p>
                       <ul className="text-xs text-gray-700 space-y-1 ml-4 list-disc">
-                        <li>Dauer: 6 Monate</li>
-                        <li>100% Bildungsgutschein-fähig</li>
-                        <li>Start: Jeden Monat</li>
+                        <li>Duration: 6 months</li>
+                        <li>100% education voucher eligible</li>
+                        <li>Start: Every month</li>
                       </ul>
                       <p className="text-xs text-gray-600 mt-2">
-                        Haben Sie bereits einen Bildungsgutschein vom Arbeitsamt?
+                        Do you already have an education voucher from the employment agency?
                       </p>
                     </div>
                   </div>
@@ -174,16 +174,16 @@ export default function AgentPage() {
                   {/* User Response */}
                   <div className="flex justify-end">
                     <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%]">
-                      <p className="text-sm">Ja, habe ich!</p>
+                      <p className="text-sm">Yes, I do!</p>
                     </div>
                   </div>
 
                   {/* AI Qualification */}
                   <div className="flex justify-start">
                     <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-emerald-200 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm">
-                      <p className="text-sm text-gray-900 font-semibold mb-1">Perfekt qualifiziert!</p>
+                      <p className="text-sm text-gray-900 font-semibold mb-1">Perfectly qualified!</p>
                       <p className="text-xs text-gray-700">
-                        Ich leite Ihre Anfrage an unser Team weiter. Sie erhalten binnen 24h alle Details per E-Mail.
+                        I'll forward your inquiry to our team. You'll receive all details via email within 24 hours.
                       </p>
                     </div>
                   </div>
@@ -194,7 +194,7 @@ export default function AgentPage() {
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
                     <input
                       type="text"
-                      placeholder="Nachricht schreiben..."
+                      placeholder="Type a message..."
                       className="flex-1 bg-transparent text-sm outline-none text-gray-400"
                       disabled
                     />
@@ -221,13 +221,13 @@ export default function AgentPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Mehr als nur ein{' '}
+              More Than Just a{' '}
               <span className="bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent">
                 Chatbot
               </span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Ihr persönlicher KI-Assistent, der Ihre Kurse kennt und qualifizierte Leads generiert.
+              Your personal AI assistant that knows your courses and generates qualified leads.
             </p>
           </div>
 
@@ -238,10 +238,10 @@ export default function AgentPage() {
                 <Icons.Brain className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900">
-                Kennt Ihre Kurse
+                Knows Your Courses
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Die KI lernt Ihre Kursinhalte und beantwortet spezifische Fragen zu Inhalten, Dauer und Voraussetzungen präzise.
+                The AI learns your course content and answers specific questions about content, duration, and requirements precisely.
               </p>
             </div>
 
@@ -251,10 +251,10 @@ export default function AgentPage() {
                 <Icons.CheckCircle className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900">
-                Prüft Förderfähigkeit
+                Checks Eligibility
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Klärt spielerisch im Chat, ob ein Bildungsgutschein oder AVGS vorliegt und ob der Interessent die Kriterien erfüllt.
+                Playfully clarifies in chat whether a voucher (BGS/AVGS) exists and if the prospect meets the criteria.
               </p>
             </div>
 
@@ -264,10 +264,10 @@ export default function AgentPage() {
                 <Icons.Users className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900">
-                Qualifizierte Übergabe
+                Qualified Handoff
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                Sie erhalten fertige Datensätze von interessierten, förderfähigen Teilnehmern direkt in Ihr Email-Postfach.
+                Receive complete datasets of interested, eligible participants directly in your inbox.
               </p>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function AgentPage() {
               href="#booking"
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
             >
-              <span>Kostenloses Beratungsgespräch</span>
+              <span>Book Free Consultation</span>
               <Icons.ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -291,17 +291,17 @@ export default function AgentPage() {
             <div className="flex flex-wrap items-center justify-center gap-6 text-center">
               <div className="flex items-center gap-2">
                 <Icons.Shield className="w-5 h-5 text-cyan-600" />
-                <span className="text-sm font-medium text-gray-700">Ein Produkt von Kursfind</span>
+                <span className="text-sm font-medium text-gray-700">A Kursfind Product</span>
               </div>
               <div className="w-px h-6 bg-gray-300 hidden sm:block"></div>
               <div className="flex items-center gap-2">
                 <Icons.Award className="w-5 h-5 text-emerald-600" />
-                <span className="text-sm font-medium text-gray-700">Serverstandort Deutschland</span>
+                <span className="text-sm font-medium text-gray-700">Servers in Germany</span>
               </div>
               <div className="w-px h-6 bg-gray-300 hidden sm:block"></div>
               <div className="flex items-center gap-2">
                 <Icons.CheckCircle className="w-5 h-5 text-cyan-600" />
-                <span className="text-sm font-medium text-gray-700">DSGVO-Konform</span>
+                <span className="text-sm font-medium text-gray-700">GDPR Compliant</span>
               </div>
             </div>
           </div>
@@ -311,17 +311,17 @@ export default function AgentPage() {
       {/* CTA Section with Cal.com Booking */}
       <section id="booking" className="py-20 px-4 bg-white relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Kursfind Agent für Ihre Webseite</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Kursfind Agent for Your Website</h2>
           <p className="text-xl mb-12 text-gray-700">
-            Werden Sie Pilot-Partner und erhalten Sie den KI-Studienberater kostenlos für Ihre Webseite. Begrenzte Plätze verfügbar.
+            Become a pilot partner and get the AI course advisor for your website for free. Limited spots available.
           </p>
 
           {/* Cal.com Booking Section */}
           <div className="max-w-7xl mx-auto px-4">
             {/* Cal.com Calendar - Full Width */}
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Kostenloses Beratungsgespräch</h3>
-              <p className="text-sm text-gray-700 text-center mb-4">Buchen Sie ein 15-minütiges Beratungsgespräch</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">Free Consultation Call</h3>
+              <p className="text-sm text-gray-700 text-center mb-4">Book a 15-minute consultation call</p>
               <div className="w-full min-h-[600px]">
                 <CalendarEmbed />
               </div>
@@ -333,20 +333,20 @@ export default function AgentPage() {
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                   <Icons.Phone className="w-6 h-6 text-cyan-600" />
-                  Kontaktinformation
+                  Contact Information
                 </h3>
                 <div className="space-y-4 text-left">
                   <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
                     <Icons.Mail className="w-5 h-5 text-cyan-600 mt-1" />
                     <div>
-                      <p className="font-semibold mb-1 text-gray-900 text-sm">E-Mail</p>
+                      <p className="font-semibold mb-1 text-gray-900 text-sm">Email</p>
                       <a href="mailto:wasim@kursfind.com" className="text-cyan-600 hover:text-cyan-700 transition text-sm break-all">wasim@kursfind.com</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
                     <Icons.Phone className="w-5 h-5 text-emerald-600 mt-1" />
                     <div>
-                      <p className="font-semibold mb-1 text-gray-900 text-sm">Telefon</p>
+                      <p className="font-semibold mb-1 text-gray-900 text-sm">Phone</p>
                       <a href="tel:+4915223334725" className="text-emerald-600 hover:text-emerald-700 transition text-sm">+49 1522 333 4725</a>
                     </div>
                   </div>
@@ -364,24 +364,24 @@ export default function AgentPage() {
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                   <Icons.Sparkles className="w-6 h-6 text-cyan-600" />
-                  Was Sie erwartet
+                  What to Expect
                 </h3>
                 <ul className="space-y-3 text-left text-gray-700">
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">Kostenlose Pilot-Teilnahme</span>
+                    <span className="text-sm">Free pilot participation</span>
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />
-                    <span className="text-sm">KI-gestützte Kursberatung 24/7</span>
+                    <span className="text-sm">AI-powered course advising 24/7</span>
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-cyan-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-cyan-600" />
-                    <span className="text-sm">Qualifizierte Leads direkt per E-Mail</span>
+                    <span className="text-sm">Qualified leads directly via email</span>
                   </li>
                   <li className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50">
                     <Icons.CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" />
-                    <span className="text-sm">Einfache Integration in Ihre Webseite</span>
+                    <span className="text-sm">Easy integration into your website</span>
                   </li>
                 </ul>
               </div>
@@ -390,7 +390,7 @@ export default function AgentPage() {
 
           {/* Alternative: SendPulse Form */}
           <div className="mt-12 pt-12 border-t border-gray-200">
-            <p className="text-gray-600 mb-4">Oder hinterlassen Sie Ihre Kontaktdaten und wir melden uns bei Ihnen:</p>
+            <p className="text-gray-600 mb-4">Or leave your contact details and we'll get back to you:</p>
             
             {!showForm ? (
               <button
@@ -398,7 +398,7 @@ export default function AgentPage() {
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all"
               >
                 <Icons.Mail className="w-5 h-5" />
-                Kontaktformular öffnen
+                Open Contact Form
               </button>
             ) : (
               <div className="max-w-xl mx-auto">
@@ -410,7 +410,7 @@ export default function AgentPage() {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Formular schließen
+                    Close form
                   </button>
                 </div>
 
@@ -522,44 +522,44 @@ export default function AgentPage() {
                   `}} />
                   
                   <div className="sp-form-outer">
-                    <div id="sp-form-250261" sp-id="250261" sp-hash="049bdecf7b05af2e7af45d9a6d440eb9ec5713e6b51fb5138e6f02acedef72c9" sp-lang="de" className="sp-form sp-form-regular sp-form-embed" sp-show-options="%7B%22satellite%22%3Afalse%2C%22maDomain%22%3A%22login.sendpulse.com%22%2C%22formsDomain%22%3A%22forms.sendpulse.com%22%2C%22condition%22%3A%22onEnter%22%2C%22scrollTo%22%3A25%2C%22delay%22%3A10%2C%22repeat%22%3A3%2C%22background%22%3A%22rgba(0%2C%200%2C%200%2C%200.5)%22%2C%22position%22%3A%22bottom-right%22%2C%22animation%22%3A%22%22%2C%22hideOnMobile%22%3Afalse%2C%22submitRedirectUrl%22%3A%22%22%2C%22urlFilter%22%3Afalse%2C%22urlFilterConditions%22%3A%5B%7B%22force%22%3A%22hide%22%2C%22clause%22%3A%22contains%22%2C%22token%22%3A%22%22%7D%5D%2C%22analytics%22%3A%7B%22ga%22%3A%7B%22eventLabel%22%3A%22Subscription_form_Kursfind_Agent_Pilot%22%2C%22send%22%3Atrue%7D%7D%2C%22utmEnable%22%3Atrue%7D">
+                    <div id="sp-form-250261" sp-id="250261" sp-hash="049bdecf7b05af2e7af45d9a6d440eb9ec5713e6b51fb5138e6f02acedef72c9" sp-lang="en" className="sp-form sp-form-regular sp-form-embed" sp-show-options="%7B%22satellite%22%3Afalse%2C%22maDomain%22%3A%22login.sendpulse.com%22%2C%22formsDomain%22%3A%22forms.sendpulse.com%22%2C%22condition%22%3A%22onEnter%22%2C%22scrollTo%22%3A25%2C%22delay%22%3A10%2C%22repeat%22%3A3%2C%22background%22%3A%22rgba(0%2C%200%2C%200%2C%200.5)%22%2C%22position%22%3A%22bottom-right%22%2C%22animation%22%3A%22%22%2C%22hideOnMobile%22%3Afalse%2C%22submitRedirectUrl%22%3A%22%22%2C%22urlFilter%22%3Afalse%2C%22urlFilterConditions%22%3A%5B%7B%22force%22%3A%22hide%22%2C%22clause%22%3A%22contains%22%2C%22token%22%3A%22%22%7D%5D%2C%22analytics%22%3A%7B%22ga%22%3A%7B%22eventLabel%22%3A%22Subscription_form_Kursfind_Agent_Pilot%22%2C%22send%22%3Atrue%7D%7D%2C%22utmEnable%22%3Atrue%7D">
                       <div className="sp-form-fields-wrapper">
                         <div className="sp-message"><div></div></div>
                         <form noValidate className="sp-element-container">
                           <div className="sp-field" sp-id="sp-1a9f9009-e677-4ab4-8ce2-ac75cb0decfd">
-                            <label className="sp-control-label"><span>E-Mail</span><strong>*</strong></label>
-                            <input type="email" sp-type="email" name="sform[email]" className="sp-form-control" placeholder="ihre@email.de" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%2C%22wrong%22%3A%22Ungültige%20E-Mail%22%7D" autoComplete="on" required />
+                            <label className="sp-control-label"><span>Email</span><strong>*</strong></label>
+                            <input type="email" sp-type="email" name="sform[email]" className="sp-form-control" placeholder="your@email.com" sp-tips="%7B%22required%22%3A%22Required%20field%22%2C%22wrong%22%3A%22Invalid%20email%22%7D" autoComplete="on" required />
                           </div>
                           <div className="sp-field" sp-id="sp-69b8268e-c891-4aa8-bd5e-2d9b1922d917">
-                            <label className="sp-control-label"><span>Unternehmen/Bildungsanbieter</span><strong>*</strong></label>
-                            <input type="text" sp-type="input" name="sform[Q29tcGFueQ==]" className="sp-form-control" placeholder="Ihr Unternehmen" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
+                            <label className="sp-control-label"><span>Company/Education Provider</span><strong>*</strong></label>
+                            <input type="text" sp-type="input" name="sform[Q29tcGFueQ==]" className="sp-form-control" placeholder="Your Company" sp-tips="%7B%22required%22%3A%22Required%20field%22%7D" autoComplete="on" required />
                           </div>
                           <div className="sp-field" sp-id="sp-65002bd9-e5d8-43b7-81f4-30c4fede3bcf">
-                            <label className="sp-control-label"><span>Ansprechpartner</span><strong>*</strong></label>
-                            <input type="text" sp-type="input" name="sform[TmFtZQ==]" className="sp-form-control" placeholder="Ihr Name" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" autoComplete="on" required />
+                            <label className="sp-control-label"><span>Contact Person</span><strong>*</strong></label>
+                            <input type="text" sp-type="input" name="sform[TmFtZQ==]" className="sp-form-control" placeholder="Your Name" sp-tips="%7B%22required%22%3A%22Required%20field%22%7D" autoComplete="on" required />
                           </div>
                           <div className="sp-field" sp-id="sp-4ef7b084-54bd-4364-8691-df3986c74687">
-                            <label className="sp-control-label"><span>Telefonnummer</span></label>
-                            <input type="tel" sp-type="phone" name="sform[phone]" className="sp-form-control" placeholder="0123 456789" sp-tips="%7B%22wrong%22%3A%22Ungültige%20Telefonnummer%22%7D" autoComplete="on" />
+                            <label className="sp-control-label"><span>Phone Number</span></label>
+                            <input type="tel" sp-type="phone" name="sform[phone]" className="sp-form-control" placeholder="1234567890" sp-tips="%7B%22wrong%22%3A%22Invalid%20phone%20number%22%7D" autoComplete="on" />
                           </div>
                           <div className="sp-field" sp-id="sp-ea34a063-01b3-4448-840f-9255b909e88a">
                             <div className="sp-checkbox-option">
                               <label>
-                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwckNvbmZpcm0=]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
-                                <span>Ich stimme zu, Informationen von Kursfind AI zu erhalten <strong>*</strong></span>
+                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwckNvbmZpcm0=]" value="yes" sp-tips="%7B%22required%22%3A%22Required%20field%22%7D" required />
+                                <span>I agree to receive information from Kursfind AI <strong>*</strong></span>
                               </label>
                             </div>
                           </div>
                           <div className="sp-field" sp-id="sp-801145bc-7b16-4e6f-85ae-165960c67bc5">
                             <div className="sp-checkbox-option">
                               <label>
-                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwclRlcm1z]" value="yes" sp-tips="%7B%22required%22%3A%22Pflichtfeld%22%7D" required />
-                                <span>Einwilligung zur Datenerhebung und -speicherung (DSGVO) <strong>*</strong></span>
+                                <input type="checkbox" sp-type="checkbox" name="sform[Z2RwclRlcm1z]" value="yes" sp-tips="%7B%22required%22%3A%22Required%20field%22%7D" required />
+                                <span>Consent to data collection and storage (GDPR) <strong>*</strong></span>
                               </label>
                             </div>
                           </div>
                           <div className="sp-field sp-button-container" sp-id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735">
-                            <button id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735" className="sp-button">Pilot-Partner werden</button>
+                            <button id="sp-db82d3ee-8cf8-4b64-a887-baac2635d735" className="sp-button">Become a Pilot Partner</button>
                           </div>
                         </form>
                       </div>
@@ -572,6 +572,6 @@ export default function AgentPage() {
           </div>
         </div>
       </section>
-    </MarketingLayout>
+    </MarketingLayoutEN>
   );
 }

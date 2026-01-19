@@ -57,6 +57,9 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
               <Link href="/anbieter#pricing" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 Preise
               </Link>
+              <Link href="/agent" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
+                Kursfind Agent
+              </Link>
               <Link href="/ueber-uns" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium cursor-pointer">
                 Über uns
               </Link>
@@ -113,6 +116,9 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
               </Link>
               <Link href="/anbieter#pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 Preise
+              </Link>
+              <Link href="/agent" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
+                Kursfind Agent
               </Link>
               <Link href="/ueber-uns" onClick={() => setMobileMenuOpen(false)} className="text-lg py-2 hover:text-cyan-600 cursor-pointer">
                 Über uns
