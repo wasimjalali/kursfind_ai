@@ -25,25 +25,15 @@ export default function ImprintPageEN() {
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
             <div className="prose prose-lg max-w-none">
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                <strong>Kursfind AI</strong> is operated by <strong>Wasim Academy UG (haftungsbeschränkt)</strong>
+                <strong>Kursfind</strong> is operated by <strong>Wasim Jalali</strong>
                 <br />
-                Mühlenstraße 8a, 14167 Berlin, Germany
+                Buchenlochstr. 60, 67663 Kaiserslautern, Germany
               </p>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Represented by the Managing Director</h3>
-                  <p className="text-gray-700">Wasim Jalali</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Commercial Register</h3>
-                  <p className="text-gray-700">
-                    Registry Court: Amtsgericht Charlottenburg (Berlin)
-                    <br />
-                    Registration Number: HRB 278618 B
-                  </p>
-                </div>
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Owner</h3>
+                <p className="text-gray-700">Wasim Jalali</p>
+                <p className="text-sm text-gray-600 mt-2">Sole Proprietor</p>
               </div>
 
               <div className="mt-8 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl p-6 border border-cyan-100">
@@ -76,17 +66,13 @@ export default function ImprintPageEN() {
                 </div>
               </div>
 
-              <div className="mt-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">VAT ID</h3>
-                <p className="text-gray-700">Applied for / in process</p>
-              </div>
 
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Responsible for Content according to § 55 Abs. 2 RStV</h3>
                 <p className="text-gray-700">
                   Wasim Jalali
                   <br />
-                  Mühlenstraße 8a, 14167 Berlin
+                  Buchenlochstr. 60, 67663 Kaiserslautern
                 </p>
               </div>
 

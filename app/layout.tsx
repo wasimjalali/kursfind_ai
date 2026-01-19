@@ -52,9 +52,9 @@ export const metadata: Metadata = {
     'Online Weiterbildung',
   ],
   
-  authors: [{ name: 'Kursfind AI', url: baseUrl }],
-  creator: 'Wasim Academy UG',
-  publisher: 'Wasim Academy UG',
+  authors: [{ name: 'Kursfind', url: baseUrl }],
+  creator: 'Wasim Jalali',
+  publisher: 'Kursfind',
   
   manifest: "/manifest.json",
   

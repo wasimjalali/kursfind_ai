@@ -23,9 +23,9 @@ export default function PrivacyPageEN() {
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto prose prose-lg">
           <p className="text-lg text-gray-700 leading-relaxed">
-            <strong>Kursfind AI</strong> is operated by <strong>Wasim Academy UG (haftungsbeschränkt)</strong>, Mühlenstraße 8a, 14167 Berlin, Germany
+            <strong>Kursfind</strong> is operated by <strong>Wasim Jalali</strong>, Buchenlochstr. 60, 67663 Kaiserslautern, Germany
             <br />
-            Managing Director: Wasim Jalali
+            Owner: Wasim Jalali
             <br />
             Email: <a href="mailto:kontakt@kursfind.de" className="text-cyan-600 hover:text-cyan-700">kontakt@kursfind.de</a>
           </p>

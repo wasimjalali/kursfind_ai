@@ -25,25 +25,15 @@ export default function ImpressumPage() {
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
             <div className="prose prose-lg max-w-none">
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                <strong>Kursfind AI</strong> wird betrieben von <strong>Wasim Academy UG (haftungsbeschränkt)</strong>
+                <strong>Kursfind</strong> wird betrieben von <strong>Wasim Jalali</strong>
                 <br />
-                Mühlenstraße 8a, 14167 Berlin, Deutschland
+                Buchenlochstr. 60, 67663 Kaiserslautern, Deutschland
               </p>
 
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Vertreten durch den Geschäftsführer</h3>
-                  <p className="text-gray-700">Wasim Jalali</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">Handelsregister</h3>
-                  <p className="text-gray-700">
-                    Registergericht: Amtsgericht Charlottenburg (Berlin)
-                    <br />
-                    Registernummer: HRB 278618 B
-                  </p>
-                </div>
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Inhaber</h3>
+                <p className="text-gray-700">Wasim Jalali</p>
+                <p className="text-sm text-gray-600 mt-2">Einzelunternehmer</p>
               </div>
 
               <div className="mt-8 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl p-6 border border-cyan-100">
@@ -76,17 +66,13 @@ export default function ImpressumPage() {
                 </div>
               </div>
 
-              <div className="mt-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Umsatzsteuer-ID</h3>
-                <p className="text-gray-700">Beantragt / in Bearbeitung</p>
-              </div>
 
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
                 <p className="text-gray-700">
                   Wasim Jalali
                   <br />
-                  Mühlenstraße 8a, 14167 Berlin
+                  Buchenlochstr. 60, 67663 Kaiserslautern
                 </p>
               </div>
 

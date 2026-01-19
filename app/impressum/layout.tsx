@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Impressum',
-  description: 'Impressum und rechtliche Informationen zu Kursfind AI - Wasim Academy UG.',
+  description: 'Impressum und rechtliche Informationen zu Kursfind - Wasim Jalali.',
   alternates: {
     canonical: 'https://kursfind.de/impressum',
     languages: {

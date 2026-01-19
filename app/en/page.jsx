@@ -775,7 +775,7 @@ export default function HomePageEN() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm opacity-60">
-            © 2025 Kursfind AI • Operated by Wasim Academy UG (haftungsbeschränkt), Berlin, Germany
+            © 2026 Kursfind • Operated by Wasim Jalali, Kaiserslautern, Germany
           </div>
         </div>
       </footer>

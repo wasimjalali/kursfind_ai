@@ -853,7 +853,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm opacity-60">
-            © 2025 Kursfind AI • Betrieben von Wasim Academy UG (haftungsbeschränkt), Berlin, Deutschland
+            © 2026 Kursfind • Betrieben von Wasim Jalali, Kaiserslautern, Deutschland
           </div>
         </div>
       </footer>
