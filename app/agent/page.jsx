@@ -77,14 +77,14 @@ export default function AgentPage() {
 
               <div className="pt-4">
                 <a
-                  href="mailto:wasim@kursfind.de?subject=Interesse%20an%20Kursfind%20Agent%20Pilot&body=Hallo,%0D%0A%0D%0AIch%20interessiere%20mich%20für%20den%20Kursfind%20Agent%20als%20Pilot-Partner.%0D%0A%0D%0AUnternehmen:%20%0D%0AWebsite:%20%0D%0AAnsprechpartner:%20%0D%0A%0D%0AViele%20Grüße"
+                  href="mailto:wasim@kursfind.com?subject=Interesse%20an%20Kursfind%20Agent%20Pilot&body=Hallo,%0D%0A%0D%0AIch%20interessiere%20mich%20für%20den%20Kursfind%20Agent%20als%20Pilot-Partner.%0D%0A%0D%0AUnternehmen:%20%0D%0AWebsite:%20%0D%0AAnsprechpartner:%20%0D%0A%0D%0AViele%20Grüße"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   <Icons.Mail className="w-5 h-5" />
                   Pilot-Partner werden
                 </a>
                 <p className="text-sm text-gray-600 mt-3">
-                  → <strong>wasim@kursfind.de</strong> | Kostenlos für erste Partner
+                  → <strong>wasim@kursfind.com</strong> | Kostenlos für erste Partner
                 </p>
               </div>
             </div>
@@ -267,7 +267,7 @@ export default function AgentPage() {
             <div className="mt-8 text-center">
               <p className="text-gray-600 mb-4">Bereit für mehr qualifizierte Leads?</p>
               <a
-                href="mailto:wasim@kursfind.de?subject=Kursfind%20Agent%20Demo%20anfragen"
+                href="mailto:wasim@kursfind.com?subject=Kursfind%20Agent%20Demo%20anfragen"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all"
               >
                 <Icons.Mail className="w-5 h-5" />
