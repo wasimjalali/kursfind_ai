@@ -276,7 +276,7 @@ export default function AgentPage() {
       <ContactFormModal isOpen={showForm} onClose={() => setShowForm(false)} />
 
       {/* Hero Section */}
-      <section className="relative py-4 md:py-6 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
+      <section className="relative pt-16 pb-20 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-72 h-72 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
