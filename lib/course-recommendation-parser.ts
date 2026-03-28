@@ -162,7 +162,7 @@ export function extractCourseReferences(
 
       // Initial badge assignment (will be refined later)
       let badgeType: 'top-wahl' | 'empfehlung' | 'alternative' | null = null;
-      let minDistance = Math.min(distanceToTop, distanceToEmpfehlung, distanceToAlternative);
+      const minDistance = Math.min(distanceToTop, distanceToEmpfehlung, distanceToAlternative);
 
       // Only assign badge if within 100 chars
       if (minDistance <= 100) {

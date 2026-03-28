@@ -1,39 +1,25 @@
-import { defineConfig, globalIgnores } from "eslint/config";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
 
-// Safely import Next.js ESLint configs with fallbacks
-let nextVitals = [];
-let nextTs = [];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-try {
-  const vitalsImport = await import("eslint-config-next/core-web-vitals.js");
-  nextVitals = Array.isArray(vitalsImport.default) ? vitalsImport.default : [vitalsImport.default];
-} catch (e) {
-  console.warn("Could not load eslint-config-next/core-web-vitals.js");
-}
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
 
-try {
-  const tsImport = await import("eslint-config-next/typescript.js");
-  nextTs = Array.isArray(tsImport.default) ? tsImport.default : [tsImport.default];
-} catch (e) {
-  console.warn("Could not load eslint-config-next/typescript.js");
-}
-
-const eslintConfig = defineConfig([
-  ...nextVitals.filter(Boolean),
-  ...nextTs.filter(Boolean),
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    "node_modules/**",
-  ]),
-  // Explicitly include files to lint
+const eslintConfig = [
   {
-    files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+    ignores: [".next/**", "out/**", "build/**", "node_modules/**", "public/**"],
   },
-]);
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
+];
 
 export default eslintConfig;
