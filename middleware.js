@@ -40,8 +40,9 @@ function isProtectedRoute(pathname) {
   )
 }
 
-function isPublicRoute(pathname) {
-  return PUBLIC_ROUTES.some(route => 
+// isPublicRoute available for future route-based access control
+function _isPublicRoute(pathname) {
+  return PUBLIC_ROUTES.some(route =>
     pathname === route || pathname.startsWith(`${route}/`) || pathname.startsWith(route)
   )
 }
@@ -133,7 +134,13 @@ export async function middleware(request) {
   );
 
   // Refresh session if expired - this keeps users logged in
-  await supabase.auth.getUser();
+  // Wrapped in try-catch to prevent middleware from blocking the response
+  // in browsers with strict cookie policies (e.g., DuckDuckGo)
+  try {
+    await supabase.auth.getUser();
+  } catch {
+    // Auth refresh failed — continue serving the page regardless
+  }
 
   return response;
 }

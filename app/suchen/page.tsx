@@ -20,6 +20,7 @@ import { useStudentLang } from '@/lib/useStudentLang';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   courses?: any[];  // Optional courses array for AI messages
   searchMeta?: {
     hasMore: boolean;
@@ -51,66 +52,12 @@ interface SearchState {
   totalCount: number;
 }
 
-// Typing animation component for loading text
-function TypingText({ text, className = '' }: { text: string; className?: string }) {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [currentText, setCurrentText] = useState(text);
-  
-  // Reset animation when text prop changes
-  useEffect(() => {
-    if (text !== currentText) {
-      setDisplayedText('');
-      setIsDeleting(false);
-      setCurrentText(text);
-    }
-  }, [text, currentText]);
-  
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    
-    if (!isDeleting && displayedText.length < currentText.length) {
-      // Typing forward
-      timeout = setTimeout(() => {
-        setDisplayedText(currentText.slice(0, displayedText.length + 1));
-      }, 50); // Speed of typing
-    } else if (!isDeleting && displayedText.length === currentText.length) {
-      // Pause at end before deleting
-      timeout = setTimeout(() => {
-        setIsDeleting(true);
-      }, 1500); // Wait 1.5s before deleting
-    } else if (isDeleting && displayedText.length > 0) {
-      // Deleting
-      timeout = setTimeout(() => {
-        setDisplayedText(currentText.slice(0, displayedText.length - 1));
-      }, 30); // Speed of deleting (faster)
-    } else if (isDeleting && displayedText.length === 0) {
-      // Start typing again
-      timeout = setTimeout(() => {
-        setIsDeleting(false);
-      }, 300); // Short pause before retyping
-    }
-    
-    return () => clearTimeout(timeout);
-  }, [displayedText, isDeleting, currentText]);
-  
-  return (
-    <span className={className}>
-      {displayedText}
-      <span className="animate-pulse">|</span>
-    </span>
-  );
-}
-
 // Adaptive Loading System: Mode A (Deep Search) vs Mode B (Simple Chat)
-function EnhancedLoadingIndicator({ 
-  stage, 
-  topic, 
-  progress, 
-  isCourseSearch 
-}: { 
-  stage: 'understanding' | 'searching' | 'preparing'; 
-  topic: string; 
+function EnhancedLoadingIndicator({
+  isCourseSearch
+}: {
+  stage: 'understanding' | 'searching' | 'preparing';
+  topic: string;
   progress: number;
   isCourseSearch: boolean;
 }) {
@@ -217,7 +164,7 @@ function ChatContent() {
   const [loadingStage, setLoadingStage] = useState<'understanding' | 'searching' | 'preparing'>('understanding');
   const [loadingProgress, setLoadingProgress] = useState(0);
   // Use shared language hook with localStorage persistence (synced with Student Dashboard)
-  const { lang, setLang, labels } = useStudentLang();
+  const { lang, setLang } = useStudentLang();
   const [currentSearch, setCurrentSearch] = useState<SearchState>({
     query: '',
     filters: {},
@@ -480,10 +427,12 @@ function ChatContent() {
       }
 
       // DEDUPLICATE courses from API response BEFORE storing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let uniqueCoursesFromAPI: any[] = [];
       if (Array.isArray(data.courses) && data.courses.length > 0) {
         const seenIds = new Set<string>();
         const seenTitles = new Set<string>();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         uniqueCoursesFromAPI = data.courses.filter((course: any) => {
           const courseId = course.id?.toString();
           const courseTitle = course.title?.toLowerCase().trim();
@@ -717,7 +666,7 @@ function ChatContent() {
                               <ReactMarkdown
                                 components={{
                                   // Bold text - Consistent 16px for better readability
-                                  strong: ({node, ...props}) => (
+                                  strong: ({...props}) => (
                                     <strong 
                                       className="font-bold" 
                                       style={{ color: '#1f2937', fontWeight: 700, fontSize: '16px' }} 
@@ -725,7 +674,7 @@ function ChatContent() {
                                     />
                                   ),
                                   // Italic text
-                                  em: ({node, ...props}) => (
+                                  em: ({...props}) => (
                                     <em 
                                       className="italic" 
                                       style={{ color: '#374151', fontSize: '16px' }} 
@@ -733,7 +682,7 @@ function ChatContent() {
                                     />
                                   ),
                                   // Paragraphs - Professional 16px for better readability
-                                  p: ({node, ...props}) => (
+                                  p: ({...props}) => (
                                     <p 
                                       className="mb-2.5 sm:mb-3 last:mb-0 leading-relaxed" 
                                       style={{ color: '#374151', fontSize: '16px' }} 
@@ -741,21 +690,21 @@ function ChatContent() {
                                     />
                                   ),
                                   // Headings - Consistent 18px for proper hierarchy
-                                  h1: ({node, ...props}) => (
+                                  h1: ({...props}) => (
                                     <h1 
                                       className="font-bold mb-2 sm:mb-3" 
                                       style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
                                       {...props} 
                                     />
                                   ),
-                                  h2: ({node, ...props}) => (
+                                  h2: ({...props}) => (
                                     <h2 
                                       className="font-bold mb-2 sm:mb-2.5" 
                                       style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
                                       {...props} 
                                     />
                                   ),
-                                  h3: ({node, ...props}) => (
+                                  h3: ({...props}) => (
                                     <h3 
                                       className="font-bold mb-1.5 sm:mb-2" 
                                       style={{ color: '#111827', fontWeight: 700, fontSize: '18px' }} 
@@ -763,7 +712,7 @@ function ChatContent() {
                                     />
                                   ),
                                   // Lists - FIXED: Visible markers with explicit dark color
-                                  ul: ({node, ...props}) => (
+                                  ul: ({...props}) => (
                                     <ul 
                                       className="my-2 sm:my-3 ml-4 sm:ml-5 space-y-1.5 sm:space-y-2 list-disc"
                                       style={{
@@ -774,7 +723,7 @@ function ChatContent() {
                                       {...props} 
                                     />
                                   ),
-                                  ol: ({node, ...props}) => (
+                                  ol: ({...props}) => (
                                     <ol 
                                       className="my-2 sm:my-3 ml-4 sm:ml-5 space-y-1.5 sm:space-y-2 list-decimal"
                                       style={{
@@ -786,7 +735,7 @@ function ChatContent() {
                                     />
                                   ),
                                   // List items - Consistent 16px text size
-                                  li: ({node, children, ...props}) => (
+                                  li: ({children, ...props}) => (
                                     <li 
                                       className="leading-relaxed marker:text-gray-600 marker:font-normal"
                                       style={{
@@ -800,7 +749,7 @@ function ChatContent() {
                                     </li>
                                   ),
                                   // Links - Consistent 16px text size
-                                  a: ({node, ...props}) => (
+                                  a: ({...props}) => (
                                     <a 
                                       className="underline font-medium" 
                                       style={{ color: '#0891b2', fontSize: '16px' }} 
@@ -808,7 +757,8 @@ function ChatContent() {
                                     />
                                   ),
                                   // Code - Dark text
-                                  code: ({node, ...props}: any) => {
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  code: ({...props}: any) => {
                                     const inline = !props.className?.includes('language-');
                                     return inline 
                                       ? <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono" style={{ color: '#1f2937' }} {...props} />
@@ -850,6 +800,7 @@ function ChatContent() {
                               if (deduplicatedCourses.length > 0) {
                                 const seenIds = new Set<string>();
                                 const seenTitles = new Set<string>();
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 deduplicatedCourses = deduplicatedCourses.filter((course: any) => {
                                   const courseId = course.id?.toString();
                                   const courseTitle = course.title?.toLowerCase().trim();
@@ -897,6 +848,7 @@ function ChatContent() {
                               if (coursesToDisplay.length > 0) {
                                 const finalSeenIds = new Set<string>();
                                 const finalSeenTitles = new Set<string>();
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 coursesToDisplay = coursesToDisplay.filter((course: any) => {
                                   const id = course.id?.toString();
                                   const title = course.title?.toLowerCase().trim();
@@ -924,6 +876,7 @@ function ChatContent() {
                                   
                                   {/* Course cards with full design and smart ordering - List View: One card per line */}
                                   <div className="flex flex-col gap-4 w-full">
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {coursesToDisplay.map((course: any, courseIdx: number) => {
                                       // Enhance course with recommendation context
                                       const enhancedCourse = FEATURES.SMART_CARD_ORDERING 
@@ -1046,6 +999,7 @@ function ChatContent() {
                   // Send on Enter (without Shift)
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     handleSubmit(e as any, null);
                   }
                   // Shift+Enter allows new line (default behavior)

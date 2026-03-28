@@ -9,7 +9,7 @@ export type Provider = {
   phone: string | null
   email: string | null
   website: string | null
-  faq: any[] | null
+  faq: Record<string, unknown>[] | null
   contact_name: string | null
   city: string | null
   short_description?: string | null
@@ -40,8 +40,8 @@ export type Course = {
   contact_email?: string | null
   contact_phone?: string | null
   benefits?: string | null
-  learning_objectives?: any[] | null
-  career_paths?: any | null
+  learning_objectives?: string[] | null
+  career_paths?: Record<string, unknown> | null
   image_url?: string | null
   infomaterial_url?: string | null
   status?: string | null

@@ -23,6 +23,9 @@ function AccessGateContent() {
         const script = document.createElement('script')
         script.src = 'https://web.webformscr.com/apps/fc3/build/default-handler.js?1758181175060'
         script.async = true
+        script.onerror = () => {
+          console.warn('SendPulse script blocked or failed to load')
+        }
         document.body.appendChild(script)
       }
     }
@@ -56,7 +59,7 @@ function AccessGateContent() {
         setError('Ungültiger oder abgelaufener Einladungscode')
         setShowWaitlist(true)
       }
-    } catch (err) {
+    } catch {
       setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.')
     }
 

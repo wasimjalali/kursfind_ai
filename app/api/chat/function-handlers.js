@@ -4,7 +4,7 @@
  */
 
 import { supabase } from '@/lib/supabase'
-import { createClient } from '@/lib/supabase-server'
+// createClient available via '@/lib/supabase-server' if needed for server-side operations
 
 /**
  * Keyword expansion for better search recall
@@ -417,8 +417,8 @@ async function searchCourses(args) {
     language,
     start_date_from,
     start_date_to,
-    duration_min,
-    duration_max,
+    duration_min: _duration_min,
+    duration_max: _duration_max,
     provider_id,
     is_featured,
     status = 'active',
@@ -1393,7 +1393,7 @@ async function getCourseStatistics(args) {
 // 10. COMPARE COURSES
 // ═══════════════════════════════════════════════════════════════
 async function compareCourses(args) {
-  const { course_ids, comparison_fields } = args;
+  const { course_ids, comparison_fields: _comparison_fields } = args;
 
   // Fetch courses with provider data using FK join
   const { data: courses, error } = await supabase
@@ -1496,11 +1496,11 @@ async function getChatHistory(args, context) {
 // ═══════════════════════════════════════════════════════════════
 // 12. RECOMMEND COURSES (AI-Powered)
 // ═══════════════════════════════════════════════════════════════
-async function recommendCourses(args, context) {
+async function recommendCourses(args, _context) {
   const {
     student_id,
     career_goal,
-    current_skills = [],
+    current_skills: _current_skills = [],
     interests = [],
     constraints = {},
     max_results = 5

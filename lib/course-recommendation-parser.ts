@@ -10,6 +10,14 @@
  * Feature Flags: SMART_CARD_ORDERING, STRICT_BADGE_ASSIGNMENT
  */
 
+// Lightweight course shape for recommendation parsing
+interface CourseInput {
+  id?: string | number;
+  title?: string;
+  slug?: string;
+  [key: string]: unknown;
+}
+
 export interface CourseReference {
   courseId: string;
   position: number;
@@ -128,7 +136,7 @@ function findNearestPhraseDistance(
  */
 export function extractCourseReferences(
   messageContent: string,
-  availableCourses: any[],
+  availableCourses: CourseInput[],
   previouslyShownCourseIds: string[] = []
 ): CourseReference[] {
   if (!messageContent || !availableCourses || availableCourses.length === 0) {
@@ -142,8 +150,7 @@ export function extractCourseReferences(
   availableCourses.forEach((course) => {
     if (!course) return;
 
-    const courseTitle = course.title?.toLowerCase() || '';
-    const courseSlug = course.slug?.toLowerCase() || '';
+    const courseTitle = (course.title as string)?.toLowerCase() || '';
     const courseId = course.id?.toString() || '';
 
     if (courseTitle && lowerContent.includes(courseTitle)) {
@@ -153,7 +160,6 @@ export function extractCourseReferences(
       const contextStart = Math.max(0, position - 100);
       const contextEnd = Math.min(lowerContent.length, position + courseTitle.length + 100);
       const context = messageContent.substring(contextStart, contextEnd);
-      const contextLower = context.toLowerCase();
 
       // Calculate distances to phrase types
       const distanceToTop = findNearestPhraseDistance(lowerContent, position, TOP_PHRASES);
@@ -234,10 +240,10 @@ export function extractCourseReferences(
  * ENHANCED: Reorder courses with strict badge logic
  */
 export function orderCoursesByRecommendation(
-  courses: any[],
+  courses: CourseInput[],
   messageContent: string,
   previouslyShownCourseIds: string[] = []
-): any[] {
+): CourseInput[] {
   if (!messageContent || !courses || courses.length === 0) {
     return courses;
   }
@@ -252,8 +258,8 @@ export function orderCoursesByRecommendation(
     references.map(ref => [ref.courseId, ref])
   );
 
-  const mentionedCourses: any[] = [];
-  const unmentionedCourses: any[] = [];
+  const mentionedCourses: CourseInput[] = [];
+  const unmentionedCourses: CourseInput[] = [];
 
   courses.forEach(course => {
     const courseId = course.id?.toString() || '';
@@ -292,7 +298,7 @@ export function orderCoursesByRecommendation(
  * Check if course should be displayed
  */
 export function shouldDisplayCourse(
-  course: any,
+  course: CourseInput,
   messageContent: string,
   showAllByDefault: boolean = true
 ): boolean {
@@ -301,12 +307,12 @@ export function shouldDisplayCourse(
   }
 
   const lowerContent = messageContent.toLowerCase();
-  const courseTitle = course.title?.toLowerCase() || '';
-  const courseSlug = course.slug?.toLowerCase() || '';
+  const courseTitle = (course.title as string)?.toLowerCase() || '';
+  const courseSlug = (course.slug as string)?.toLowerCase() || '';
 
   return (
-    (courseTitle && lowerContent.includes(courseTitle)) ||
-    (courseSlug && lowerContent.includes(courseSlug))
+    (!!courseTitle && lowerContent.includes(courseTitle)) ||
+    (!!courseSlug && lowerContent.includes(courseSlug))
   );
 }
 
@@ -315,10 +321,10 @@ export function shouldDisplayCourse(
  * ALWAYS re-evaluates on every render
  */
 export function enhanceCourseWithRecommendationContext(
-  course: any,
+  course: CourseInput,
   messageContent: string,
   previouslyShownCourseIds: string[] = []
-): any {
+): CourseInput {
   if (!messageContent) {
     return course;
   }
@@ -346,15 +352,16 @@ export function enhanceCourseWithRecommendationContext(
  */
 export function extractCoursesFromFollowUp(
   messageContent: string,
-  allAvailableCourses: any[],
-  conversationHistory: any[] = []
-): any[] {
+  allAvailableCourses: CourseInput[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _conversationHistory: any[] = []
+): CourseInput[] {
   if (!messageContent || !allAvailableCourses || allAvailableCourses.length === 0) {
     return [];
   }
 
   const lowerContent = messageContent.toLowerCase();
-  const matchedCourses: any[] = [];
+  const matchedCourses: CourseInput[] = [];
 
   const followUpPatterns = [
     'zeig',

@@ -813,7 +813,6 @@ export default function CoursesPage() {
                       }
                       
                       const imageUrl = getCourseImage()
-                      const providerName = provider?.company_name || provider?.name || course.provider
                       
                       // Ensure course.id is a number for comparison
                       const courseIdNum = typeof course.id === 'string' ? parseInt(course.id, 10) : course.id
@@ -822,8 +821,9 @@ export default function CoursesPage() {
                       
                       return imageUrl ? (
                         <div className="w-full h-48 bg-gradient-to-br from-cyan-100 to-emerald-100 overflow-hidden relative">
-                          <img 
-                            src={imageUrl} 
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={imageUrl}
                             alt={course.title}
                             className="w-full h-full object-cover"
                             onError={(e) => {
@@ -912,8 +912,9 @@ export default function CoursesPage() {
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                               {/* Provider Logo - 2.5x larger for better brand awareness */}
                               {providerLogo ? (
-                                <img 
-                                  src={providerLogo} 
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={providerLogo}
                                   alt={providerName || 'Provider Logo'}
                                   className="w-24 h-24 rounded-lg object-contain border border-gray-200 bg-white p-2 flex-shrink-0 shadow-sm"
                                 />

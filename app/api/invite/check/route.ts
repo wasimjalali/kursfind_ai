@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 
 const ACCESS_COOKIE_NAME = 'kursfind_access'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const cookieStore = await cookies()
     const accessCookie = cookieStore.get(ACCESS_COOKIE_NAME)

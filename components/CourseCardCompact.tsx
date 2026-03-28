@@ -22,12 +22,6 @@ const MonitorIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ArrowRightIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-  </svg>
-);
-
 // Course interface matching the database schema
 interface Course {
   id: string;
@@ -41,7 +35,7 @@ interface Course {
   language?: string;
   funding_type?: string;
   tags?: string[];
-  providers?: any; // Nested provider object from Supabase JOIN
+  providers?: Record<string, unknown>; // Nested provider object from Supabase JOIN
   provider?: string; // Fallback provider name
   is_featured?: boolean; // For "Top-Wahl" etc.
   benefits?: string; // Text field containing benefits like "Laptop included"

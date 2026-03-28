@@ -11,7 +11,6 @@ const IMAGE_CACHE = `kursfind-images-${CACHE_VERSION}`;
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
   '/offline',
-  '/suchen',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/landing/kursfind-ai-logo.jpg',
@@ -33,7 +32,14 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE)
       .then((cache) => {
         console.log('[SW] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        // Use individual fetches so one failure doesn't block the entire install
+        return Promise.allSettled(
+          STATIC_ASSETS.map((url) =>
+            cache.add(url).catch((err) => {
+              console.warn('[SW] Failed to cache:', url, err);
+            })
+          )
+        );
       })
       .then(() => {
         console.log('[SW] Static assets cached successfully');

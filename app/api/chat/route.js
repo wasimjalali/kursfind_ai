@@ -1,6 +1,4 @@
-import { supabase } from '@/lib/supabase'
 import { createClient } from '@/lib/supabase-server'
-import { extractSearchIntent } from '../ai/extract-intent'
 import { functionDefinitions } from './function-definitions'
 import { executeFunctionCall } from './function-handlers'
 import { 
@@ -140,8 +138,7 @@ export async function POST(req) {
 
     if (isCourseQuestion) {
       // COURSE-SPECIFIC CHAT (from floating widget on course detail page)
-      const userLanguage = detectLanguage(latestMessage)
-      const isEnglish = userLanguage === 'en'
+      const _userLanguage = detectLanguage(latestMessage)
       
       aiSystemPrompt = `You are an expert vocational training advisor for "Kursfind AI" with years of experience in the German education system.
 
