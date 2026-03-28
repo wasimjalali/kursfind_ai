@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const c = require\\(''''eslint-config-next''''\\); console.log\\(JSON.stringify\\(c, null, 2\\)\\)\")",
+      "Bash(npx eslint:*)",
+      "Bash(find /Users/wasimjalali/Desktop/Kursfind AI_Code -name next.config.* -o -name .headers -o -name vercel.json)"
+    ]
+  }
+}
