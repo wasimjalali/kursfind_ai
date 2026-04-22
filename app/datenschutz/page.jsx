@@ -89,7 +89,7 @@ export default function DatenschutzPage() {
           </p>
 
           <div className="mt-12 pt-8 border-t border-gray-200">
-            <Link href="/" className="text-cyan-600 hover:text-cyan-700 font-medium">
+            <Link href="/de" className="text-cyan-600 hover:text-cyan-700 font-medium">
               ← Zurück zur Startseite
             </Link>
           </div>

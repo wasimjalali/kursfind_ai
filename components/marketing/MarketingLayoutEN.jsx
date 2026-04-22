@@ -23,7 +23,7 @@ const Icons = {
   ),
 };
 
-export default function MarketingLayoutEN({ children, ctaHref, ctaLabel }) {
+export default function MarketingLayoutEN({ children, ctaHref, ctaLabel, germanHref = '/de' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const resolvedCtaHref = ctaHref ?? '/suchen';
@@ -66,7 +66,7 @@ export default function MarketingLayoutEN({ children, ctaHref, ctaLabel }) {
               <div className="flex items-center space-x-2 text-sm">
                 <span className="font-bold text-cyan-600">EN</span>
                 <span className="text-gray-400">|</span>
-                <Link href="/" className="text-gray-600 hover:text-cyan-600 transition-colors cursor-pointer">
+                <Link href={germanHref} className="text-gray-600 hover:text-cyan-600 transition-colors cursor-pointer">
                   DE
                 </Link>
               </div>
@@ -126,7 +126,7 @@ export default function MarketingLayoutEN({ children, ctaHref, ctaLabel }) {
               <div className="flex items-center space-x-2 text-sm py-2">
                 <span className="font-bold text-cyan-600">EN</span>
                 <span className="text-gray-400">|</span>
-                <Link href="/" className="text-gray-600 hover:text-cyan-600 cursor-pointer">DE</Link>
+                <Link href={germanHref} className="text-gray-600 hover:text-cyan-600 cursor-pointer">DE</Link>
               </div>
               <Link
                 href={resolvedCtaHref}

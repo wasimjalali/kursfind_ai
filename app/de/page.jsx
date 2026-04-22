@@ -3,16 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Script from 'next/script';
 
-// Demo texts for AI animation (English)
-const demoTextsEN = [
-  'Digital Marketing courses in Berlin',
-  'Web Development bootcamps in Munich',
-  'Data Science training in Hamburg',
-  'UX Design courses in Cologne',
+// Demo texts for AI animation (German)
+const demoTextsDE = [
+  'Digital Marketing Kursen in Berlin',
+  'Web Development Bootcamps in München',
+  'Data Science Weiterbildung in Hamburg',
+  'UX Design Kursen in Köln',
 ];
 
-// Icons
+// Lucide-style SVG Icons as components
 const Icons = {
   Sparkles: ({ className }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,14 +98,24 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
     </svg>
   ),
+  Check: ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    </svg>
+  ),
   X: ({ className }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
     </svg>
   ),
-  Check: ({ className }) => (
+  Plus: ({ className }) => (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+    </svg>
+  ),
+  Minus: ({ className }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
     </svg>
   ),
 };
@@ -112,24 +123,24 @@ const Icons = {
 // FAQ Data
 const faqData = [
   {
-    question: 'Is Kursfind AI really free for learners?',
-    answer: 'Yes, 100% free. We make money by connecting education providers with qualified learners. You pay nothing to search, compare, or apply.',
+    question: 'Ist Kursfind AI wirklich kostenlos für Lernende?',
+    answer: 'Ja, 100% kostenlos. Wir verdienen Geld, indem wir Bildungsanbieter mit qualifizierten Lernenden verbinden. Du zahlst keinen Cent zum Suchen, Vergleichen oder Bewerben.',
   },
   {
-    question: 'What funding options are supported?',
-    answer: 'All courses on Kursfind AI are AZAV-certified and eligible for Bildungsgutschein (from Arbeitsagentur or Jobcenter) or AVGS funding. We help you understand which funding applies to you.',
+    question: 'Welche Förderoptionen werden unterstützt?',
+    answer: 'Alle Kurse auf Kursfind AI sind AZAV-zertifiziert und für Bildungsgutschein (von Arbeitsagentur oder Jobcenter) oder AVGS-Förderung geeignet. Wir helfen dir zu verstehen, welche Förderung für dich gilt.',
   },
   {
-    question: 'How does the AI matching work?',
-    answer: 'Our AI analyzes your career goals, location, time preferences, and funding status, then finds the most relevant courses from our database of verified AZAV-certified programs. It\'s like having a personal education advisor, available 24/7.',
+    question: 'Wie funktioniert das KI-Matching?',
+    answer: 'Unsere KI analysiert deine Karriereziele, deinen Standort, deine Zeitpräferenzen und deinen Förderstatus und findet dann die relevantesten Kurse aus unserer Datenbank mit geprüften AZAV-zertifizierten Programmen. Es ist wie ein persönlicher Bildungsberater, 24/7 verfügbar.',
   },
   {
-    question: 'Can I apply to multiple courses?',
-    answer: 'Absolutely! You can save courses, compare them side-by-side, and apply to as many as you like. We recommend applying to 3-5 courses to maximize your chances of finding the perfect fit.',
+    question: 'Kann ich mich bei mehreren Kursen bewerben?',
+    answer: 'Absolut! Du kannst Kurse speichern, sie nebeneinander vergleichen und dich bei so vielen bewerben, wie du möchtest. Wir empfehlen, dich bei 3-5 Kursen zu bewerben, um deine Chancen zu erhöhen, den perfekten Kurs zu finden.',
   },
   {
-    question: 'How long does it take to get matched?',
-    answer: 'Instantly! As soon as you tell our AI your goals and preferences, you\'ll see personalized course recommendations in seconds. You can refine your search anytime or chat with our AI for more guidance.',
+    question: 'Wie lange dauert es, bis ich gematcht werde?',
+    answer: 'Sofort! Sobald du unserer KI deine Ziele und Präferenzen mitteilst, siehst du personalisierte Kursempfehlungen in Sekunden. Du kannst deine Suche jederzeit verfeinern oder mit unserer KI chatten für mehr Anleitung.',
   },
 ];
 
@@ -149,14 +160,20 @@ function FAQItem({ question, answer }) {
           {isOpen ? '−' : '+'}
         </span>
       </button>
-      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-        <div className="px-6 pb-6 text-gray-600 leading-relaxed bg-gray-50">{answer}</div>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          isOpen ? 'max-h-96' : 'max-h-0'
+        }`}
+      >
+        <div className="px-6 pb-6 text-gray-600 leading-relaxed bg-gray-50">
+          {answer}
+        </div>
       </div>
     </div>
   );
 }
 
-export default function HomePageEN() {
+export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
   
@@ -177,7 +194,7 @@ export default function HomePageEN() {
   useEffect(() => {
     let typingTimeout;
     let charIndex = 0;
-    const currentText = demoTextsEN[aiStep];
+    const currentText = demoTextsDE[aiStep];
     
     const typeNextChar = () => {
       if (charIndex <= currentText.length) {
@@ -193,11 +210,11 @@ export default function HomePageEN() {
     typeNextChar();
     
     // Update progress bar
-    setProgressWidth(((aiStep + 1) / demoTextsEN.length) * 100);
+    setProgressWidth(((aiStep + 1) / demoTextsDE.length) * 100);
     
     // Move to next step after 4 seconds
     const stepInterval = setTimeout(() => {
-      setAiStep((prev) => (prev + 1) % demoTextsEN.length);
+      setAiStep((prev) => (prev + 1) % demoTextsDE.length);
     }, 4000);
     
     return () => {
@@ -217,7 +234,7 @@ export default function HomePageEN() {
           <button
             onClick={() => setShowBanner(false)}
             className="absolute right-4 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity"
-            aria-label="Close banner"
+            aria-label="Banner schließen"
           >
             <Icons.X className="w-5 h-5" />
           </button>
@@ -228,7 +245,7 @@ export default function HomePageEN() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20 py-2 md:py-3">
-            <Link href="/en" className="flex items-center hover:opacity-90 transition-opacity">
+            <Link href="/de" className="flex items-center hover:opacity-90 transition-opacity">
               <Image
                 src="/landing/kursfind-ai-logo.jpg"
                 alt="Kursfind AI"
@@ -245,22 +262,22 @@ export default function HomePageEN() {
                 href="/suchen"
                 className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group"
               >
-                AI Search
+                KI-Suche
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
               <button
                 onClick={() => scrollToSection('for-students')}
                 className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group cursor-pointer"
               >
-                For Students
+                Für Lernende
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </button>
-              <Link href="/en/providers" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
-                For Providers
+              <Link href="/anbieter" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
+                Für Anbieter
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <Link href="/en/about" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
-                About Us
+              <Link href="/ueber-uns" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium relative group">
+                Über uns
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
               <button
@@ -271,15 +288,17 @@ export default function HomePageEN() {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></span>
               </button>
               <div className="flex items-center space-x-2 text-sm">
-                <span className="font-bold text-cyan-600">EN</span>
+                <Link href="/en" className="text-gray-600 hover:text-cyan-600 transition-colors">
+                  EN
+                </Link>
                 <span className="text-gray-400">|</span>
-                <Link href="/de" className="text-gray-600 hover:text-cyan-600 transition-colors">DE</Link>
+                <span className="font-bold text-cyan-600">DE</span>
               </div>
               <Link
                 href="/suchen"
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:shadow-xl transition-all relative overflow-hidden group"
               >
-                <span className="relative z-10">Find Courses Free</span>
+                <span className="relative z-10">Kurse kostenlos finden</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
             </nav>
@@ -288,7 +307,7 @@ export default function HomePageEN() {
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="md:hidden hover:opacity-80 transition-all"
-              aria-label="Open menu"
+              aria-label="Menü öffnen"
             >
               <Icons.Menu className="w-6 h-6" />
             </button>
@@ -309,36 +328,42 @@ export default function HomePageEN() {
                 className="h-10 w-auto rounded-xl"
               />
               <span className="ml-3 text-xl font-bold text-gray-900">Kursfind <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">AI</span></span>
-              <button onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="transition-transform"
+                aria-label="Menü schließen"
+              >
                 <Icons.X className="w-6 h-6" />
               </button>
             </div>
             <nav className="flex flex-col space-y-4">
               <Link href="/suchen" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
-                AI Search
+                KI-Suche
               </Link>
               <button onClick={() => scrollToSection('for-students')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
-                For Students
+                Für Lernende
               </button>
-              <Link href="/en/providers" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
-                For Providers
+              <Link href="/anbieter" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
+                Für Anbieter
               </Link>
-              <Link href="/en/about" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
-                About Us
+              <Link href="/ueber-uns" onClick={() => setMobileMenuOpen(false)} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
+                Über uns
               </Link>
               <button onClick={() => scrollToSection('faq')} className="text-left text-lg py-2 hover:text-cyan-600 transition-all cursor-pointer">
                 FAQ
               </button>
               <div className="flex items-center justify-center space-x-2 text-sm mb-4">
-                <span className="font-bold text-cyan-600">EN</span>
+                <Link href="/en" className="text-gray-600 hover:text-cyan-600 transition-colors">
+                  EN
+                </Link>
                 <span className="text-gray-400">|</span>
-                <Link href="/de" className="text-gray-600 hover:text-cyan-600 transition-colors">DE</Link>
+                <span className="font-bold text-cyan-600">DE</span>
               </div>
               <Link
                 href="/suchen"
                 className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium text-center hover:shadow-lg transition-all"
               >
-                Find Courses Free
+                Kurse kostenlos finden
               </Link>
             </nav>
           </div>
@@ -355,34 +380,34 @@ export default function HomePageEN() {
               <div>
                 <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
                   <Icons.Sparkles className="w-4 h-4" />
-                  <span>Free • No Sign-up Required</span>
+                  <span>Kostenlos • Keine Anmeldung nötig</span>
                 </div>
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                  Find your government-funded training courses
+                  Finde deine Weiterbildung
                   <br />
-                  in minutes,{' '}
+                  in Minuten mit{' '}
                   <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-                    powered by AI
+                    KI-Power
                   </span>
                 </h1>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-                  Kursfind AI instantly matches you with AZAV-certified courses funded by Bildungsgutschein or AVGS. Find the perfect course for your career goals, location, and funding status, completely free.
+                  Kursfind AI findet sofort den passenden AZAV-zertifizierten Kurs mit Bildungsgutschein oder AVGS-Förderung. Finde die perfekte Weiterbildung für deine Karriereziele, deinen Standort und deinen Förderstatus – komplett kostenlos.
                 </p>
                 <div className="space-y-4">
                   <Link
                     href="/suchen"
                     className="w-full md:w-auto bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
                   >
-                    <span className="relative z-10">Find Courses Free</span>
+                    <span className="relative z-10">Kurse kostenlos finden</span>
                     <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </Link>
 
                   <Link
-                    href="/en/providers"
+                    href="/anbieter"
                     className="w-full md:w-auto bg-white text-gray-800 px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all flex items-center justify-center space-x-2 border-2 border-gray-200 hover:border-cyan-500"
                   >
-                    <span>For Providers</span>
+                    <span>Für Anbieter</span>
                     <Icons.Building className="w-5 h-5" />
                   </Link>
                 </div>
@@ -390,15 +415,15 @@ export default function HomePageEN() {
                 <div className="flex flex-wrap items-center gap-8 mt-8">
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.GraduationCap className="w-5 h-5 text-cyan-500" />
-                    <span className="font-medium">Verified Courses</span>
+                    <span className="font-medium">Geprüfte Kurse</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.Building className="w-5 h-5 text-cyan-500" />
-                    <span className="font-medium">Verified Providers</span>
+                    <span className="font-medium">Geprüfte Anbieter</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600">
                     <Icons.CheckCircle className="w-5 h-5 text-cyan-500" />
-                    <span className="font-medium">100% Free for Learners</span>
+                    <span className="font-medium">100% kostenlos für Lernende</span>
                   </div>
                 </div>
               </div>
@@ -407,7 +432,7 @@ export default function HomePageEN() {
               <div className="relative">
                 <div className="text-center mb-4">
                   <span className="inline-block bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
-                    Live Preview of AI Search
+                    Live-Vorschau der KI-Suche
                   </span>
                 </div>
                 <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
@@ -421,7 +446,7 @@ export default function HomePageEN() {
                     </div>
                   </div>
                   <div className="text-gray-700 mb-6 min-h-[60px]">
-                    Searching for <span className="font-semibold text-cyan-600">{typedText}</span>
+                    Suche nach <span className="font-semibold text-cyan-600">{typedText}</span>
                     <span className="animate-pulse">|</span>
                   </div>
                   <div className="space-y-3">
@@ -452,13 +477,13 @@ export default function HomePageEN() {
             <div className="text-center mb-12">
               <div className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
                 <Icons.Target className="w-4 h-4" />
-                <span>Demo Video • 2 Minutes</span>
+                <span>Demo-Video • 2 Minuten</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                How Kursfind AI Finds Your Perfect Course
+                So findet Kursfind AI deine perfekte Weiterbildung
               </h2>
               <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
-                Watch how our AI helps you find the ideal AZAV-certified course with education vouchers in just 2 minutes – explained step by step.
+                Sieh dir in 2 Minuten an, wie unsere KI dir hilft, den idealen AZAV-zertifizierten Kurs mit Bildungsgutschein zu finden – Schritt für Schritt erklärt.
               </p>
             </div>
             
@@ -482,7 +507,7 @@ export default function HomePageEN() {
                 href="/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all"
               >
-                <span>Find Courses Free</span>
+                <span>Kurse kostenlos finden</span>
                 <Icons.ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -493,28 +518,28 @@ export default function HomePageEN() {
         <section id="how-it-works" className="py-20 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <div className="text-cyan-600 font-medium mb-2">How It Works</div>
-              <h2 className="text-4xl md:text-5xl font-bold">Three simple steps to your perfect course</h2>
+              <div className="text-cyan-600 font-medium mb-2">So funktioniert&apos;s</div>
+              <h2 className="text-4xl md:text-5xl font-bold">Drei einfache Schritte zu deinem perfekten Kurs</h2>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
                   num: '1',
                   icon: Icons.Target,
-                  title: '1. Describe Your Goals',
-                  desc: 'Tell our AI about your career aspirations, preferred location, and whether you have Bildungsgutschein or AVGS funding. Takes just 30 seconds.',
+                  title: '1. Beschreibe deine Ziele',
+                  desc: 'Erzähle unserer KI von deinen Karrierezielen, deinem Wunschort und ob du Bildungsgutschein oder AVGS-Förderung hast. Dauert nur 30 Sekunden.',
                 },
                 {
                   num: '2',
                   icon: Icons.Sparkles,
-                  title: '2. Get Instant Matches',
-                  desc: 'Our AI analyzes verified AZAV-certified courses and instantly recommends the best matches for your situation, goals, and funding eligibility.',
+                  title: '2. Erhalte sofortige Empfehlungen',
+                  desc: 'Unsere KI analysiert geprüfte AZAV-zertifizierte Kurse und empfiehlt dir sofort die besten Matches für deine Situation, Ziele und Förderberechtigung.',
                 },
                 {
                   num: '3',
                   icon: Icons.Mail,
-                  title: '3. Apply Directly',
-                  desc: 'Review course details, provider ratings, and start dates. Apply directly through our platform or contact providers with one click. No hidden fees ever.',
+                  title: '3. Bewirb dich direkt',
+                  desc: 'Prüfe Kursdetails, Anbieter-Bewertungen und Starttermine. Bewirb dich direkt über unsere Plattform oder kontaktiere Anbieter mit einem Klick. Keine versteckten Kosten. Nie.',
                 },
               ].map((step) => (
                 <div
@@ -539,13 +564,13 @@ export default function HomePageEN() {
             <div className="text-center mb-10">
               <div className="inline-flex items-center space-x-2 bg-cyan-50 text-cyan-600 px-4 py-2 rounded-full font-medium mb-4 border border-cyan-200">
                 <Icons.Target className="w-4 h-4" />
-                <span>Your Personal Dashboard</span>
+                <span>Dein persönliches Dashboard</span>
               </div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Manage Everything in One Place
+                Alles an einem Ort verwalten
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Track your applications, save courses for later, and get personalized recommendations. Your dashboard always shows you the current status.
+                Verfolge deine Bewerbungen, speichere Kurse für später und erhalte personalisierte Empfehlungen. Dein Dashboard zeigt dir immer den aktuellen Stand.
               </p>
             </div>
             
@@ -553,7 +578,7 @@ export default function HomePageEN() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 mb-10">
               <Image
                 src="/screenshots/Student-dashboard-main-page.png"
-                alt="Your Learner Dashboard"
+                alt="Dein Lernenden-Dashboard"
                 width={1200}
                 height={700}
                 className="w-full h-auto"
@@ -565,10 +590,10 @@ export default function HomePageEN() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <ul className="flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-3">
                 {[
-                  'Saved Courses',
-                  'Application Status',
-                  'AI Recommendations',
-                  'Chat History',
+                  'Gespeicherte Kurse',
+                  'Bewerbungsstatus',
+                  'KI-Empfehlungen',
+                  'Chat-Verlauf',
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <div className="w-5 h-5 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -582,7 +607,7 @@ export default function HomePageEN() {
                 href="/suchen"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium hover:shadow-xl transition-all group"
               >
-                <span>Start AI Search Free</span>
+                <span>Kurse kostenlos finden</span>
                 <Icons.ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -593,50 +618,50 @@ export default function HomePageEN() {
         <section id="for-students" className="py-20 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold">Why learners trust Kursfind AI</h2>
+              <h2 className="text-4xl md:text-5xl font-bold">Warum Lernende Kursfind AI vertrauen</h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[
                 {
                   icon: Icons.ShieldCheck,
-                  title: 'AZAV-Certified Courses',
-                  desc: 'All courses meet strict German education standards and qualify for Bildungsgutschein or AVGS funding.',
+                  title: 'AZAV-zertifizierte Kurse',
+                  desc: 'Alle Kurse erfüllen strenge deutsche Bildungsstandards und qualifizieren für Bildungsgutschein oder AVGS-Förderung.',
                   highlight: true,
                 },
                 {
                   icon: Icons.Gift,
-                  title: 'Completely Free for You',
-                  desc: 'Providers pay us so you can search and apply at no cost. No hidden fees, no subscriptions, no surprises.',
+                  title: 'Komplett kostenlos für dich',
+                  desc: 'Anbieter zahlen uns, damit du kostenlos suchst und dich bewirbst. Keine versteckten Gebühren, keine Abos, keine Überraschungen.',
                 },
                 {
                   icon: Icons.Award,
-                  title: 'Only Verified Quality Providers',
-                  desc: 'Every provider is AZAV-certified and government-approved. You\'ll only find trusted education providers eligible for Bildungsgutschein or AVGS funding.',
+                  title: 'Nur geprüfte Qualitätsanbieter',
+                  desc: 'Jeder Anbieter ist AZAV-zertifiziert und staatlich geprüft. Du findest hier ausschließlich vertrauenswürdige Bildungsträger mit Bildungsgutschein oder AVGS-Förderung.',
                 },
                 {
                   icon: Icons.Sparkles,
-                  title: 'Save Hours of Research',
-                  desc: 'Our AI finds courses that actually fit your career goals, location, and schedule in seconds. No more endless Googling.',
+                  title: 'Spare Stunden an Recherche',
+                  desc: 'Unsere KI findet in Sekunden Kurse, die wirklich zu deinen Karrierezielen, deinem Standort und deinem Zeitplan passen. Schluss mit endlosem Googeln.',
                 },
                 {
                   icon: Icons.FileCheck,
-                  title: 'Maximize Your Funding',
-                  desc: 'Find courses that accept your Bildungsgutschein or AVGS. We guide you through the funding process step-by-step.',
+                  title: 'Nutze deine Förderung optimal',
+                  desc: 'Finde Kurse, die deinen Bildungsgutschein oder AVGS akzeptieren. Wir begleiten dich Schritt für Schritt durch den Förderprozess.',
                 },
                 {
                   icon: Icons.Zap,
-                  title: 'Quick Answers to Your Questions',
-                  desc: 'Get instant answers about courses, funding, and career paths. AI support means faster responses so you can start sooner.',
+                  title: 'Schnelle Antworten auf deine Fragen',
+                  desc: 'Erhalte sofort Antworten zu Kursen, Förderung und Karrierewegen. Dank KI-Unterstützung geht alles schneller und du kannst früher starten.',
                 },
                 {
                   icon: Icons.Globe,
-                  title: 'Multilingual Support',
-                  desc: 'Use the platform in German, English, or Dari. Language should not be a barrier to your education.',
+                  title: 'Mehrsprachiger Support',
+                  desc: 'Nutze die Plattform auf Deutsch, Englisch oder Dari. Sprache sollte keine Barriere für deine Bildung sein.',
                 },
                 {
                   icon: Icons.Lock,
-                  title: 'GDPR Compliant & Safe',
-                  desc: 'Your data is protected. We only share your information with providers you explicitly choose. No selling, no spam.',
+                  title: 'DSGVO-konform & sicher',
+                  desc: 'Deine Daten sind geschützt. Wir teilen deine Informationen nur mit Anbietern, die du ausdrücklich wählst. Kein Weiterverkauf, kein Spam.',
                 },
               ].map((benefit, i) => (
                 <div
@@ -664,7 +689,7 @@ export default function HomePageEN() {
         <section id="faq" className="py-20 px-4 bg-white">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold">Frequently Asked Questions</h2>
+              <h2 className="text-4xl md:text-5xl font-bold">Häufig gestellte Fragen</h2>
             </div>
             <div className="space-y-4">
               {faqData.map((faq, i) => (
@@ -675,43 +700,44 @@ export default function HomePageEN() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white relative overflow-hidden">
+        <section id="student-waitlist-section" className="py-20 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>Start your course search now</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>Starte jetzt deine Kurssuche</h2>
             <p className="text-xl mb-8" style={{ color: 'white', opacity: 0.9 }}>
-              Find the perfect AZAV-certified course in minutes. AI-powered, government-funded, 100% free.
+              Finde in Minuten den perfekten AZAV-zertifizierten Kurs. KI-gestützt, staatlich gefördert, 100% kostenlos.
             </p>
             <Link
               href="/suchen"
               className="inline-flex items-center space-x-2 bg-white text-cyan-600 px-8 py-4 rounded-lg font-semibold hover:shadow-2xl transition-all"
             >
-              <span>Find Courses Free</span>
+              <span>Kurse kostenlos finden</span>
               <Icons.ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="mt-4 text-sm" style={{ color: 'white', opacity: 0.8 }}>✨ We&apos;ll help you find the perfect course</p>
+            <p className="mt-4 text-sm" style={{ color: 'white', opacity: 0.8 }}>✨ Wir helfen dir, den perfekten Kurs zu finden</p>
           </div>
         </section>
 
         {/* Provider Promo Section */}
         <section className="py-20 px-4 bg-gray-50">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="text-cyan-600 font-medium mb-2">For Education Providers</div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Get verified, high-quality leads for your courses</h2>
+            <div className="text-cyan-600 font-medium mb-2">Für Bildungsträger</div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Erhalte geprüfte, hochwertige Leads für deine Kurse</h2>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              If you&apos;re an AZAV-certified provider in Germany, Kursfind AI helps you reach serious learners with full consent and GDPR compliance. List unlimited courses completely free.
+              Wenn du ein AZAV-zertifizierter Anbieter in Deutschland bist, hilft dir Kursfind AI, ernsthafte Lernende zu erreichen – mit voller Einwilligung und DSGVO-Konformität. Liste unbegrenzt Kurse komplett kostenlos.
             </p>
             <Link
-              href="/en/providers"
+              href="/anbieter"
               className="bg-gradient-to-r from-cyan-500 to-emerald-500 text-white px-8 py-4 rounded-lg font-medium inline-flex items-center space-x-2 hover:shadow-2xl transition-all group relative overflow-hidden"
             >
-              <span className="relative z-10">Learn More for Providers</span>
+              <span className="relative z-10">Mehr für Anbieter erfahren</span>
               <Icons.ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </Link>
           </div>
         </section>
+
       </main>
 
       {/* Footer */}
@@ -720,7 +746,7 @@ export default function HomePageEN() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Logo & Description */}
             <div>
-              <Link href="/en" className="flex items-center mb-4 hover:opacity-80 transition-all">
+              <Link href="/de" className="flex items-center mb-4 hover:opacity-80 transition-all">
                 <Image
                   src="/landing/kursfind-ai-logo.jpg"
                   alt="Kursfind AI Logo"
@@ -729,53 +755,105 @@ export default function HomePageEN() {
                   className="h-24 md:h-32 w-auto rounded-xl"
                 />
               </Link>
-              <p className="text-sm text-white">Find your training in minutes, powered by AI.</p>
+              <p className="text-sm text-white">Finde deine Weiterbildung in Minuten mit KI-Power.</p>
             </div>
             
-            {/* For Learners */}
+            {/* Für Lernende */}
             <div>
-              <h4 className="text-white font-semibold mb-4">For Learners</h4>
+              <h4 className="text-white font-semibold mb-4">Für Lernende</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/suchen" className="hover:text-cyan-400 transition-all">Start AI Search</Link></li>
-                <li><Link href="/en#how-it-works" className="hover:text-cyan-400 transition-all">How It Works</Link></li>
-                <li><Link href="/en#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
-                <li><Link href="/en#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+                <li>
+                  <Link href="/suchen" className="hover:text-cyan-400 transition-all">
+                    KI-Suche starten
+                  </Link>
+                </li>
+                <li>
+                  <button onClick={() => scrollToSection('how-it-works')} className="hover:text-cyan-400 transition-all">
+                    So funktioniert&apos;s
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => scrollToSection('demo')} className="hover:text-cyan-400 transition-all">
+                    Demo
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => scrollToSection('faq')} className="hover:text-cyan-400 transition-all">
+                    FAQ
+                  </button>
+                </li>
               </ul>
             </div>
             
-            {/* For Providers */}
+            {/* Für Anbieter */}
             <div>
-              <h4 className="text-white font-semibold mb-4">For Providers</h4>
+              <h4 className="text-white font-semibold mb-4">Für Anbieter</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/en/providers" className="hover:text-cyan-400 transition-all">Overview</Link></li>
-                <li><Link href="/en/providers#demo" className="hover:text-cyan-400 transition-all">Demo</Link></li>
-                <li><Link href="/en/providers#pricing" className="hover:text-cyan-400 transition-all">Pricing</Link></li>
-                <li><Link href="/en/providers#booking" className="hover:text-cyan-400 transition-all">Free Consultation Call</Link></li>
-                <li><Link href="/en/providers#faq" className="hover:text-cyan-400 transition-all">FAQ</Link></li>
+                <li>
+                  <Link href="/anbieter" className="hover:text-cyan-400 transition-all">
+                    Übersicht
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#demo" className="hover:text-cyan-400 transition-all">
+                    Demo
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#pricing" className="hover:text-cyan-400 transition-all">
+                    Preise
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#booking" className="hover:text-cyan-400 transition-all">
+                    Kostenloses Beratungsgespräch
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/anbieter#faq" className="hover:text-cyan-400 transition-all">
+                    FAQ
+                  </Link>
+                </li>
               </ul>
             </div>
             
-            {/* Legal & Contact */}
+            {/* Rechtliches & Kontakt */}
             <div>
-              <h4 className="text-white font-semibold mb-4">Legal</h4>
+              <h4 className="text-white font-semibold mb-4">Rechtliches</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/en/privacy" className="hover:text-cyan-400 transition-all">Privacy Policy</Link></li>
-                <li><Link href="/en/imprint" className="hover:text-cyan-400 transition-all">Imprint</Link></li>
-                <li><Link href="/en/about" className="hover:text-cyan-400 transition-all">About Us</Link></li>
+                <li>
+                  <Link href="/datenschutz" className="hover:text-cyan-400 transition-all">
+                    Datenschutzerklärung
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/impressum" className="hover:text-cyan-400 transition-all">
+                    Impressum
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ueber-uns" className="hover:text-cyan-400 transition-all">
+                    Über uns
+                  </Link>
+                </li>
               </ul>
-              <h4 className="text-white font-semibold mb-4 mt-8">Contact</h4>
+              <h4 className="text-white font-semibold mb-4 mt-8">Kontakt</h4>
               <div className="flex items-center space-x-2 mb-2">
                 <Icons.Mail className="w-5 h-5 text-gray-400" />
-                <a href="mailto:kontakt@kursfind.de" className="text-sm hover:text-cyan-400 transition-all">kontakt@kursfind.de</a>
+                <a href="mailto:kontakt@kursfind.de" className="text-sm hover:text-cyan-400 transition-all">
+                  kontakt@kursfind.de
+                </a>
               </div>
               <div className="flex items-center space-x-2">
                 <Icons.Mail className="w-5 h-5 text-gray-400" />
-                <a href="mailto:partner@kursfind.de" className="text-sm hover:text-cyan-400 transition-all">partner@kursfind.de</a>
+                <a href="mailto:partner@kursfind.de" className="text-sm hover:text-cyan-400 transition-all">
+                  partner@kursfind.de
+                </a>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm opacity-60">
-            © 2026 Kursfind • Operated by Wasim Jalali, Kaiserslautern, Germany
+            © 2026 Kursfind • Betrieben von Wasim Jalali, Kaiserslautern, Deutschland
           </div>
         </div>
       </footer>

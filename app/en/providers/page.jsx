@@ -171,7 +171,7 @@ function CalendarEmbed() {
 export default function ProvidersPageEN() {
   
   return (
-    <MarketingLayoutEN ctaHref="/provider/login" ctaLabel="Provider Login">
+    <MarketingLayoutEN germanHref="/anbieter" ctaHref="/provider/login" ctaLabel="Provider Login">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white via-cyan-50/30 to-gray-50 pt-16 pb-20 px-4">
         <div className="max-w-7xl mx-auto">

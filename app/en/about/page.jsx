@@ -65,7 +65,7 @@ export default function AboutPageEN() {
   ];
 
   return (
-    <MarketingLayoutEN>
+    <MarketingLayoutEN germanHref="/ueber-uns">
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-br from-cyan-50 via-white to-emerald-50 overflow-hidden">
         <div className="absolute inset-0 opacity-10">

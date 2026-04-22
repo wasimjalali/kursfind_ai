@@ -271,7 +271,7 @@ export default function AgentPageEN() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <MarketingLayoutEN>
+    <MarketingLayoutEN germanHref="/agent">
       {/* Contact Form Modal */}
       <ContactFormModal isOpen={showForm} onClose={() => setShowForm(false)} />
 

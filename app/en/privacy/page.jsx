@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function PrivacyPageEN() {
   return (
-    <MarketingLayoutEN>
+    <MarketingLayoutEN germanHref="/datenschutz">
       {/* Header */}
       <section className="py-16 px-4 bg-gradient-to-br from-cyan-50 to-white">
         <div className="max-w-4xl mx-auto text-center">

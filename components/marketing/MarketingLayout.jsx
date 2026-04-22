@@ -35,7 +35,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20 py-2 md:py-3">
-            <Link href="/" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
+            <Link href="/de" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
               <Image
                 src="/landing/kursfind-ai-logo.jpg"
                 alt="Kursfind AI"
@@ -151,7 +151,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Logo & Description */}
             <div>
-              <Link href="/" className="flex items-center mb-4 hover:opacity-80 transition-all cursor-pointer">
+              <Link href="/de" className="flex items-center mb-4 hover:opacity-80 transition-all cursor-pointer">
                 <Image
                   src="/landing/kursfind-ai-logo.jpg"
                   alt="Kursfind AI Logo"
