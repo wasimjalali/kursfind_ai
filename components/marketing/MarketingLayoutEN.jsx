@@ -204,7 +204,7 @@ export default function MarketingLayoutEN({ children, ctaHref, ctaLabel, germanH
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm opacity-60">
-            © 2026 Kursfind • Operated by Wasim Jalali, Kaiserslautern, Germany
+            © 2026 Kursfind • ISRAR Group LLC, 30 N Gould St Ste R, Sheridan, WY 82801 USA
           </div>
         </div>
       </footer>

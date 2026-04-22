@@ -23,9 +23,9 @@ export default function PrivacyPageEN() {
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto prose prose-lg">
           <p className="text-lg text-gray-700 leading-relaxed">
-            <strong>Kursfind</strong> is operated by <strong>Wasim Jalali</strong>, Buchenlochstr. 60, 67663 Kaiserslautern, Germany
+            <strong>Kursfind</strong> is operated by <strong>ISRAR Group LLC</strong>, 30 N Gould St Ste R, Sheridan, WY 82801, USA
             <br />
-            Owner: Wasim Jalali
+            Company: ISRAR Group LLC
             <br />
             Email: <a href="mailto:kontakt@kursfind.de" className="text-cyan-600 hover:text-cyan-700">kontakt@kursfind.de</a>
           </p>

@@ -25,15 +25,15 @@ export default function ImpressumPage() {
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
             <div className="prose prose-lg max-w-none">
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                <strong>Kursfind</strong> wird betrieben von <strong>Wasim Jalali</strong>
+                <strong>Kursfind</strong> wird betrieben von <strong>ISRAR Group LLC</strong>
                 <br />
-                Buchenlochstr. 60, 67663 Kaiserslautern, Deutschland
+                30 N Gould St Ste R, Sheridan, WY 82801, USA
               </p>
 
               <div className="bg-gray-50 rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-3">Inhaber</h3>
-                <p className="text-gray-700">Wasim Jalali</p>
-                <p className="text-sm text-gray-600 mt-2">Einzelunternehmer</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Unternehmen</h3>
+                <p className="text-gray-700">ISRAR Group LLC</p>
+                <p className="text-sm text-gray-600 mt-2">Limited Liability Company</p>
               </div>
 
               <div className="mt-8 bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-xl p-6 border border-cyan-100">
@@ -70,9 +70,9 @@ export default function ImpressumPage() {
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
                 <p className="text-gray-700">
-                  Wasim Jalali
+                  ISRAR Group LLC
                   <br />
-                  Buchenlochstr. 60, 67663 Kaiserslautern
+                  30 N Gould St Ste R, Sheridan, WY 82801, USA
                 </p>
               </div>
 

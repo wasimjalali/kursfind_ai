@@ -204,7 +204,7 @@ export default function MarketingLayout({ children, ctaHref, ctaLabel }) {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm opacity-60">
-            © 2026 Kursfind • Betrieben von Wasim Jalali, Kaiserslautern, Deutschland
+            © 2026 Kursfind • ISRAR Group LLC, 30 N Gould St Ste R, Sheridan, WY 82801 USA
           </div>
         </div>
       </footer>
