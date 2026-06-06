@@ -49,7 +49,7 @@ Before running this project, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/wasimjalali2004-art/kursfind_ai.git
+git clone https://github.com/wasimjalali/kursfind_ai.git
 cd kursfind_ai
 ```
 
