@@ -1,5 +1,7 @@
 # Kursfind AI
 
+**Find the right course in Germany, and apply in minutes.**
+
 An AI-powered course discovery platform that connects students with education providers in Germany. Featuring intelligent course recommendations, multi-language support, and streamlined application workflows.
 
 ## 🌟 Features
