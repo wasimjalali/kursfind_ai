@@ -2,6 +2,10 @@
 
 **Find the right course in Germany, and apply in minutes.**
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
+
 An AI-powered course discovery platform that connects students with education providers in Germany. Featuring intelligent course recommendations, multi-language support, and streamlined application workflows.
 
 ## 🌟 Features
